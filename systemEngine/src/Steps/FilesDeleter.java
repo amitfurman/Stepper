@@ -33,42 +33,18 @@ public class FilesDeleter implements StepInterface{
         //log before delete
         System.out.println("About to start delete " + totalFiles.getValue() + " files");
 
-   /*    ListDataDefinition<FileDataDefinition> TEMP_FILES_LIST = new ListDataDefinition<FileDataDefinition>();
-       for (int i = 0; i < FILES_LIST.numberOfElements(); i++) {
+        ListDataDefinition<FileDataDefinition> TEMP_FILES_LIST = new ListDataDefinition<FileDataDefinition>();
+        for (int i = 0; i < FILES_LIST.numberOfElements(); i++) {
             TEMP_FILES_LIST.addElement(new FileDataDefinition((FileDataDefinition) FILES_LIST.getElement(i)));
-        }*/
-
-        /*
-        for(FileDataDefinition file : FILES_LIST){
-             System.out.println("Inside for");
-
-             if (!TEMP_FILES_LIST.deleteElementByVal(file)) {
-                    DELETED_LIST.addElement(file);
-                    System.out.println("Failed to delete file" + file.fileName());
-             }
-
-        }*/
-        Iterator<FileDataDefinition> iterator = FILES_LIST.iterator();
-        FileDataDefinition file = iterator.next();
-        while (iterator.hasNext()) {
-            FileDataDefinition next = iterator.next();
-
-            if (!FILES_LIST.deleteElement(file)) {
-                DELETED_LIST.addElement(file);
-                System.out.println("Failed to delete file" + file.fileName());
-                file = next;
-            }
-
-
         }
 
-        //iterator = (Iterator<FileDataDefinition>) iterator.next();
-       // FILES_LIST = TEMP_FILES_LIST;
+        for(FileDataDefinition file : TEMP_FILES_LIST){
 
-
-        // FileDataDefinition file = (FileDataDefinition) fileDataDefinition;
-        //   file = new FileDataDefinition(tempFile);
-
+            if (!FILES_LIST.deleteElementByVal(file)) {
+                DELETED_LIST.addElement(file);
+                System.out.println("Failed to delete file" + file.fileName());
+            }
+        }
 
         deleteCount.setValue((totalFiles.getValue()-DELETED_LIST.numberOfElements()));
 
@@ -86,10 +62,7 @@ public class FilesDeleter implements StepInterface{
         DELETION_STATS.setCar(deleteCount);
         DELETION_STATS.setCdr(new NumberDataDefinition(totalFiles.getValue() - deleteCount.getValue()));
     }
-
 }
-
-
 
 /*        Iterator<FileDataDefinition> iterator = FILES_LIST.iterator();
         FileDataDefinition file = iterator.next();
@@ -113,8 +86,23 @@ public class FilesDeleter implements StepInterface{
                 System.out.println("Failed to delete file" + file.fileName());
             }
         });
+*/
 
+        /*
+        Iterator<FileDataDefinition> iterator = FILES_LIST.iterator();
+        FileDataDefinition file = iterator.next();
+        FileDataDefinition next;
+        while (iterator.hasNext()) {
+           next = iterator.next();
 
-
-
+            if (!FILES_LIST.deleteElement(file)) {
+                DELETED_LIST.addElement(file);
+                System.out.println("Failed to delete file" + file.fileName());
+                file = next;
+            }
+        }
+        iterator = (Iterator<FileDataDefinition>) iterator.next();
+        FILES_LIST = TEMP_FILES_LIST;
+        FileDataDefinition file = (FileDataDefinition) fileDataDefinition;
+        file = new FileDataDefinition(tempFile);
 */

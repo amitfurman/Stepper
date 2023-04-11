@@ -79,11 +79,18 @@ public class ListDataDefinition<F> implements DataDefinitions, Iterable<F> {
     }
 
     public boolean deleteElement(DataDefinitions element) {
-         return this.list.remove(element);
+        return this.list.remove(element);
     }
 
     public boolean deleteElementByVal(DataDefinitions element) {
-        return this.list.remove(String.valueOf(element.getValue()));
+        for (int i = 0; i < numberOfElements(); i++) {
+            DataDefinitions comparisonFile = getElement(i);
+            if (comparisonFile.equals(element)) { // Use equals() for comparison
+                this.list.remove(i);
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isEmpty() {

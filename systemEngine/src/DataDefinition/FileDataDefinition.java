@@ -3,11 +3,22 @@ package DataDefinition;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 public class FileDataDefinition implements DataDefinitions {
     private String filePath;
     private Path path;
     private File file;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FileDataDefinition)) //checking if the object o being compared is an instance of the FileDataDefinition class
+            return false;                       //the "instanceof" operator is used to check if an object is an instance of a particular class or its subclass.
+        FileDataDefinition other = (FileDataDefinition) o;
+        // Compare relevant properties to determine equality
+        return Objects.equals(this.fileName(), other.fileName());
+    }
 
     public FileDataDefinition(String filePath) {
         setValue(filePath);
