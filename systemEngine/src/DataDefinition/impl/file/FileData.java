@@ -1,0 +1,14 @@
+package DataDefinition.impl.file;
+
+import java.io.File;
+
+public class FileData {
+    private String filePath;
+    private File file;
+
+    public FileData(String filePath) {
+        this.filePath = filePath;
+        file = new File(filePath);
+    }
+
+}
