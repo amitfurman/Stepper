@@ -14,16 +14,25 @@ public class RelationData {
         rows = new ArrayList<>();
     }
 
-    int numOfColumns() {
+    public int numOfColumns() {
         return columns.size();
     }
 
-    int numOfRows() {
+    public int numOfRows() {
         return rows.size();
     }
 
     public List<String> getRowDataByColumnsOrder(int rowId) {
         return new ArrayList<>();
+    }
+
+    public void addRow(List<String> list) {
+        SingleRow row = new SingleRow();
+        for (int i=0;i < columns.size();i++)
+        {
+            row.addData(columns.get(i), list.get(i));
+        }
+        rows.add(row);
     }
 
 

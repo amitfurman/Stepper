@@ -44,19 +44,14 @@ public class FileDumper extends AbstractStepDefinition {
 
         System.out.println("About to create file named " + fileName + " before starting to work on the file");
 
-        Writer out = null;
-        try {
-            out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName)));
-            out.write(content);
-        } catch (FileNotFoundException e) {
+        try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8")))
+        { out.write(content);}
+        catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (out != null) {
-                try { out.close();}
-                catch (IOException ignored) {}
-            }
         }
         context.storeDataValue("RESULT", StepResult.SUCCESS.toString());
         return StepResult.SUCCESS;
