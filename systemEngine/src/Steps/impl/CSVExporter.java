@@ -2,15 +2,13 @@ package Steps.impl;
 
 import DataDefinition.DataDefinitionRegistry;
 import DataDefinition.api.IO_NAMES;
-import DataDefinition.impl.relation.RelationDataDefinition;
+import DataDefinition.impl.relation.RelationData;
 import Steps.api.AbstractStepDefinition;
 import Steps.api.DataDefinitionDeclarationImpl;
 import Steps.api.DataNecessity;
 import Steps.api.StepResult;
 import flow.execution.context.StepExecutionContext;
-
-import javax.management.relation.Relation;
-import java.io.File;
+import java.util.List;
 
 public class CSVExporter extends AbstractStepDefinition {
 
@@ -26,34 +24,34 @@ public class CSVExporter extends AbstractStepDefinition {
 
     @Override
     public StepResult invoke(StepExecutionContext context) {
-       Relation source = context.getDataValue(IO_NAMES.SOURCE, Relation.class);
-
+       RelationData source = context.getDataValue(IO_NAMES.SOURCE, RelationData.class);
         StringBuilder csvBuilder = new StringBuilder();
 
-        // Checking if source data is empty
-        if (source == null) {
+        int totalLines = source.numOfRows() + 1; // Include header row?
+        System.out.println("About to process " + totalLines + " lines of data before starting to work on the table");
+
+        // Write column names to CSV
+        List<String> columns = source.getColumns();
+        csvBuilder.append(String.join(",", columns));
+        csvBuilder.append("\n");
+
+        if (source.isEmpty()) {
             System.out.println("Warning: Source data is empty");
-            // add summaryLine
-            csvBuilder.append("COLUMN1, COLUMN2, COLUMN3\n");
-
-
-           // context.storeDataValue("RESULT",  csvBuilder.append());
+            String summaryLine = "The table is empty of content, so we converted only the column names of the table to the CSV format file.";
+            context.storeDataValue("RESULT", csvBuilder);
             return StepResult.WARNING;
         }
-        else {
-            // Appending column names to CSV
-            csvBuilder.append("COLUMN1, COLUMN2, COLUMN3\n");
-            // Logging total lines of data to be processed
-            /*System.out.println("About to process " + source.size() + " lines of data before starting to work on the table");
-            // Looping through source data and appending rows to CSV
-            for (Map<String, String> row : source) {
-                csvBuilder.append(row.get("COLUMN1")).append(", ").append(row.get("COLUMN2")).append(", ").append(row.get("COLUMN3")).append("\n");
-            }*/
+
+            // Write row data to CSV
+        for (int rowId = 0; rowId < source.numOfRows(); rowId++) {
+            List<String> rowData = source.getRowDataByColumnsOrder(rowId);
+            if (!rowData.isEmpty()) {
+                csvBuilder.append(String.join(",", rowData));
+                csvBuilder.append("\n");
+            }
         }
 
-        // Returning CSV string as result
-        //return csvBuilder.toString();
-
-        return null;
+        context.storeDataValue("RESULT", csvBuilder);
+        return StepResult.SUCCESS;
     }
 }

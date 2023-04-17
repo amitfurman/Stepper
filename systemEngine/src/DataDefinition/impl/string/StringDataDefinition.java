@@ -1,4 +1,4 @@
-package DataDefinition.impl;
+package DataDefinition.impl.string;
 
 import DataDefinition.api.AbstractDataDefinition;
 public class StringDataDefinition extends AbstractDataDefinition {

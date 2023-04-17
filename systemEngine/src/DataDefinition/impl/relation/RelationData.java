@@ -14,13 +14,9 @@ public class RelationData {
         rows = new ArrayList<>();
     }
 
-    public int numOfColumns() {
-        return columns.size();
-    }
+    public int numOfColumns() { return columns.size();}
 
-    public int numOfRows() {
-        return rows.size();
-    }
+    public int numOfRows() {return rows.size();}
 
     public List<String> getRowDataByColumnsOrder(int rowId) {
         return new ArrayList<>();
@@ -28,15 +24,22 @@ public class RelationData {
 
     public void addRow(List<String> list) {
         SingleRow row = new SingleRow();
-        for (int i=0;i < columns.size();i++)
-        {
+        for (int i=0;i < columns.size();i++) {
             row.addData(columns.get(i), list.get(i));
         }
         rows.add(row);
     }
 
+    public List<String> getColumns() {
+        return columns;
+    }
 
-    private static class SingleRow {
+    public boolean isEmpty() {
+        return rows.isEmpty();
+    }
+
+
+        private static class SingleRow {
         private Map<String, String> data;
 
         public SingleRow() {

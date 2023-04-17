@@ -21,8 +21,7 @@ public class FileDumper extends AbstractStepDefinition {
         // step outputs
         addOutput(new DataDefinitionDeclarationImpl("RESULT", DataNecessity.NA, "File Creation Result", DataDefinitionRegistry.STRING));
     }
-
-
+    
     @Override
     public StepResult invoke(StepExecutionContext context) {
         String content = context.getDataValue(IO_NAMES.CONTENT, String.class);
@@ -37,7 +36,7 @@ public class FileDumper extends AbstractStepDefinition {
 
         // Check if file already exists
         if (file.exists()) {
-            String log = StepResult.FAILURE.toString() + " because file already exists.";
+            String log = StepResult.FAILURE + " because file already exists.";
             context.storeDataValue("RESULT", log);
             return StepResult.FAILURE;
         }

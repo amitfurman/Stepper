@@ -2,8 +2,6 @@ package Steps.impl;
 
 import DataDefinition.DataDefinitionRegistry;
 import DataDefinition.api.IO_NAMES;
-import DataDefinition.api.NumericValue;
-import DataDefinition.impl.NumberDataDefinition;
 import Steps.api.AbstractStepDefinition;
 import Steps.api.DataDefinitionDeclarationImpl;
 import Steps.api.DataNecessity;
@@ -24,18 +22,15 @@ public class SpendSomeTime extends AbstractStepDefinition {
 
         if (timeToSpend <= 0) {
             //add log and summaryLine
-            System.out.println("Failed. Time to spend must be a positive number.");
+            String log = "Failed. Time to spend must be a positive number.";
             return StepResult.FAILURE;
         }
 
         // Log before sleeping
         System.out.println("About to sleep for " + timeToSpend + " seconds...");
 
-        try{
-            Thread.sleep(timeToSpend * 1000); }
-        catch (InterruptedException e) {
-            throw new RuntimeException(e);//check if needed here
-        }
+        try{ Thread.sleep(timeToSpend * 1000); }
+        catch (InterruptedException e) { throw new RuntimeException(e); }
 
         // Log after sleeping
         System.out.println("Done sleeping...");

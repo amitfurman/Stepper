@@ -1,15 +1,17 @@
 package DataDefinition.impl.list;
 
-import DataDefinition.api.DataDefinitions;
-import java.util.ArrayList;
 import java.util.List;
 
-public class ListData {
-    public List<DataDefinitions> list;
-    public ListData() {
-        this.list = new ArrayList<>();
+public class ListData<T> {
+
+    private List<T> list;
+    public ListData(List<T> source) {
+        this.list =source;
     }
 
+    public List<T> getItems() {
+        return list;
+    }
 
 /*    public String userPresentation() {
         StringBuilder sb = new StringBuilder();

@@ -1,4 +1,4 @@
-package DataDefinition.impl;
+package DataDefinition.impl.numbers;
 
 import DataDefinition.api.AbstractDataDefinition;
 public class DoubleDataDefinition extends AbstractDataDefinition {

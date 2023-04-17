@@ -1,14 +1,16 @@
 package DataDefinition;
 
 import DataDefinition.api.DataDefinitions;
-import DataDefinition.impl.DoubleDataDefinition;
-import DataDefinition.impl.NumberDataDefinition;
-import DataDefinition.impl.StringDataDefinition;
+import DataDefinition.impl.list.FileListDataDefinition;
+import DataDefinition.impl.list.StringListDataDefinition;
+import DataDefinition.impl.mapping.NumberMappingDataDefinition;
+import DataDefinition.impl.numbers.DoubleDataDefinition;
+import DataDefinition.impl.numbers.NumberDataDefinition;
+import DataDefinition.impl.string.StringDataDefinition;
 import DataDefinition.impl.file.FileDataDefinition;
 import DataDefinition.impl.list.ListDataDefinition;
 import DataDefinition.impl.mapping.MappingDataDefinition;
 import DataDefinition.impl.relation.RelationDataDefinition;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 public enum DataDefinitionRegistry implements DataDefinitions {
     STRING(new StringDataDefinition()),
@@ -17,7 +19,10 @@ public enum DataDefinitionRegistry implements DataDefinitions {
     RELATION(new RelationDataDefinition()),
     LIST(new ListDataDefinition()),
     FILE(new FileDataDefinition()),
-    MAPPING(new MappingDataDefinition())
+    FILE_LIST(new FileListDataDefinition()),
+    STRING_LIST(new StringListDataDefinition()),
+    MAPPING(new MappingDataDefinition()),
+    MAPPING2NUMBERS(new NumberMappingDataDefinition())
     ;
 
     private final DataDefinitions dataDefinition;

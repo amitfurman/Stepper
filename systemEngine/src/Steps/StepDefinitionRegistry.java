@@ -2,7 +2,6 @@ package Steps;
 
 import Steps.api.StepDefinition;
 import Steps.impl.*;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 public enum StepDefinitionRegistry {
     SPEND_SOME_TIME(new SpendSomeTime()),

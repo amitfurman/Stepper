@@ -1,88 +1,80 @@
 package Steps.impl;
 
 import DataDefinition.DataDefinitionRegistry;
-import DataDefinition.impl.*;
-import DataDefinition.impl.file.FileDataDefinition;
-import DataDefinition.impl.list.ListDataDefinition;
-import DataDefinition.impl.mapping.MappingDataDefinition;
+import DataDefinition.api.IO_NAMES;
+import DataDefinition.impl.list.*;
+import DataDefinition.impl.mapping.NumberMappingData;
 import Steps.api.AbstractStepDefinition;
 import Steps.api.DataDefinitionDeclarationImpl;
 import Steps.api.DataNecessity;
 import Steps.api.StepResult;
 import flow.execution.context.StepExecutionContext;
 
+import java.io.File;
+
 public class FilesDeleter extends AbstractStepDefinition {
 
     public FilesDeleter() {
-        super("Files Deleter",false);
+        super("Files Deleter", false);
 
         // step inputs
-        addInput(new DataDefinitionDeclarationImpl("FILES_LIST", DataNecessity.MANDATORY, "Files to delete", DataDefinitionRegistry.LIST));
+        addInput(new DataDefinitionDeclarationImpl("FILES_LIST", DataNecessity.MANDATORY, "Files to delete", DataDefinitionRegistry.FILE_LIST));
 
         // step outputs
-        addOutput(new DataDefinitionDeclarationImpl("DELETED_LIST", DataNecessity.NA, "Files failed to be deleted", DataDefinitionRegistry.LIST));
-        addOutput(new DataDefinitionDeclarationImpl("DELETION_STATS", DataNecessity.NA, "Deletion summary results", DataDefinitionRegistry.MAPPING));
+        addOutput(new DataDefinitionDeclarationImpl("DELETED_LIST", DataNecessity.NA, "Files failed to be deleted", DataDefinitionRegistry.STRING_LIST));
+        addOutput(new DataDefinitionDeclarationImpl("DELETION_STATS", DataNecessity.NA, "Deletion summary results", DataDefinitionRegistry.MAPPING2NUMBERS));
 
     }
+
     @Override
     public StepResult invoke(StepExecutionContext context) {
-        return null;
-    }
+        FileListData filesToDelete = context.getDataValue(IO_NAMES.FILES_LIST, FileListData.class);
+        StringListData DELETED_LIST = null;
+        NumberMappingData DELETION_STATS = null;
+        int totalFiles = filesToDelete.getItems().size(), deleteCount = 0;
+        DELETION_STATS.getItems().put(0,0); //initialize
 
-   /*  private ListDataDefinition<FileDataDefinition> FILES_LIST;
-    private ListDataDefinition DELETED_LIST;
-    private MappingDataDefinition<NumberDataDefinition,NumberDataDefinition> DELETION_STATS;
-    NumberDataDefinition totalFiles;
-    NumberDataDefinition deleteCount;
+        String logStart = ("About to start delete " + totalFiles + " files");
+/*
 
-    @Override
-    public boolean isReadOnly() {
-        return false;
-    }
-
-    public FilesDeleter(ListDataDefinition filesList) {
-        FILES_LIST =  filesList;
-        NumberDataDefinition car = new NumberDataDefinition(0);
-        NumberDataDefinition cdr = new NumberDataDefinition(0);
-        DELETION_STATS = new MappingDataDefinition(car, cdr);
-        totalFiles = new NumberDataDefinition(FILES_LIST.numberOfElements());
-        deleteCount =  new NumberDataDefinition(0);
-    }
-
-   public void deleteFiles() {
-        ListDataDefinition<StringDataDefinition> DELETED_LIST = new ListDataDefinition<>();
-        //log before delete
-        System.out.println("About to start delete " + totalFiles.getValue() + " files");
-
-        ListDataDefinition<FileDataDefinition> TEMP_FILES_LIST = new ListDataDefinition<FileDataDefinition>();
-        for (int i = 0; i < FILES_LIST.numberOfElements(); i++) {
-            TEMP_FILES_LIST.addElement(new FileDataDefinition((FileDataDefinition) FILES_LIST.getElement(i)));
+        FileListData TEMP_FILES_LIST;
+        for (int i = 0; i < filesToDelete.getItems().size(); i++) {
+           // TEMP_FILES_LIST.getItems().add(filesToDelete.getItems().stream())(new FileDataDefinition((FileDataDefinition) FILES_LIST.getElement(i)));
         }
+*/
 
-        for(FileDataDefinition file : TEMP_FILES_LIST){
+        for(File file : filesToDelete.getItems()){
 
-            if (!FILES_LIST.deleteElementByVal(file)) {
-                DELETED_LIST.addElement(file);
-                System.out.println("Failed to delete file" + file.fileName());
+            if (!file.delete()) {
+                DELETED_LIST.getItems().add(file.getPath());
+                System.out.println("Failed to delete file" + file.getName());
             }
         }
+        deleteCount = totalFiles - DELETED_LIST.getItems().size();
 
-        deleteCount.setValue((totalFiles.getValue()-DELETED_LIST.numberOfElements()));
+       // DELETION_STATS.getItems().put(deleteCount , (totalFiles - deleteCount));
+        DELETION_STATS.getItems().put(0, deleteCount); // Update value for key 0
+        DELETION_STATS.getItems().put(1, totalFiles - deleteCount); // Update value for key 1
 
-        if (DELETED_LIST.isEmpty()) {
+        context.storeDataValue("DELETED_LIST",DELETED_LIST);
+        context.storeDataValue("DELETION_STATS",DELETION_STATS);
+
+        if (DELETED_LIST.getItems().isEmpty()) {
             System.out.println("All files were deleted successfully.");
+            return StepResult.SUCCESS;
         }
-        else if(totalFiles.getValue() == DELETED_LIST.numberOfElements()){
-            System.out.println("Warning. All the files failed to be deleted.");
-            return;
+        else if(totalFiles == DELETED_LIST.getItems().size()){
+            System.out.println("Failure. All the files failed to be deleted.");
+            return StepResult.FAILURE;
         }
         else {
-            System.out.println(deleteCount.getValue() + " files deleted, " + (totalFiles.getValue() -deleteCount.getValue()) + " files failed to be deleted");
-            System.out.println("Files failed to be deleted: \n" + DELETED_LIST.userPresentation());
+            System.out.println(deleteCount + " files deleted, " + (totalFiles - deleteCount) + " files failed to be deleted");
+            System.out.println("Files failed to be deleted: \n" + DELETED_LIST );
+            return StepResult.WARNING;
         }
-        DELETION_STATS.setCar(deleteCount);
-        DELETION_STATS.setCdr(new NumberDataDefinition(totalFiles.getValue() - deleteCount.getValue()));
-    }*/
+
+    }
+
 }
 
 
