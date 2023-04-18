@@ -1,5 +1,8 @@
 package jaxb.schema;
 
+import exceptions.DuplicateFlowsNames;
+import exceptions.OutputsWithSameName;
+import exceptions.UnExistsStep;
 import flow.validator.VerifyFlow;
 import jaxb.schema.generated.STStepper;
 
@@ -21,10 +24,18 @@ public class SchemaBasedJAXBMain {
             STStepper stepper = deserializeFrom(inputStream);
 
             VerifyFlow flow = new VerifyFlow(stepper);
-
+            flow.verifyIfExistsFlowsWithDuplicateNames();
+            flow.ReferenceToUnExistsStep();
+            flow.OutputsWithTheSameName();
 
         } catch (JAXBException | FileNotFoundException e) {
             e.printStackTrace();
+        } catch (DuplicateFlowsNames e) {
+            System.out.printf(e.getMessage());
+        } catch (UnExistsStep e) {
+            System.out.printf(e.getMessage());
+        } catch (OutputsWithSameName e) {
+            System.out.printf(e.getMessage());
         }
     }
     private static STStepper deserializeFrom(InputStream in) throws JAXBException {

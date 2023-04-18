@@ -1,29 +1,84 @@
 package flow.validator;
 
+import exceptions.DuplicateFlowsNames;
+import exceptions.OutputsWithSameName;
+import exceptions.UnExistsStep;
 import jaxb.schema.generated.STFlow;
 import jaxb.schema.generated.STFlows;
+import jaxb.schema.generated.STStepInFlow;
 import jaxb.schema.generated.STStepper;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class VerifyFlow {
     private STStepper stepper;
+    private List<String> stepsNames;
+    private List<String> outputsNames;
 
-    private VerifyFlow(STStepper stepper) {
+    public VerifyFlow(STStepper stepper) {
         this.stepper = stepper;
+        stepsNames = new ArrayList<>(Arrays.asList("Spend Some Time", "Collect Files In Folder", "Files Deleter", "Files Renamer", "Files Content Extractor", "CSV Exporter", "Properties Exporter", "File Dumper"));
+        outputsNames = new ArrayList<>();
     }
 
-    public void verifyIfExistsFlowsWithDuplicateNames()
-    {
+    public void verifyIfExistsFlowsWithDuplicateNames() throws DuplicateFlowsNames {
         List<STFlow> stFlows = stepper.getSTFlows().getSTFlow();
-        boolean isDuplicateNames=
-        stFlows.
-            stream().
-                anyMatch(flow -> stFlows.stream().filter(f -> f != flow).
-                        anyMatch(otherFlow -> otherFlow.getName().equals(flow.getName())));
-if(!isDuplicateNames) {
-}
-}
+
+        boolean isDuplicateNames =
+                stFlows.stream()
+                        .anyMatch(flow ->
+                                stFlows.stream()
+                                        .filter(f -> !f.equals(flow))
+                                        .anyMatch((otherFlow ->
+                                                otherFlow.getName().equals(flow.getName()))));
+        if(isDuplicateNames) {
+            throw new DuplicateFlowsNames();
+        }
     }
+
+    public void ReferenceToUnExistsStep() throws UnExistsStep {
+        List<STFlow> stFlows = stepper.getSTFlows().getSTFlow();
+
+        for(STFlow flow : stFlows) {
+            List<STStepInFlow> stStepFlow = flow.getSTStepsInFlow().getSTStepInFlow();
+            for (STStepInFlow step : stStepFlow) {
+                String stepName = step.getName();
+                boolean isPresent =
+                        stepsNames.
+                                stream().anyMatch(str -> str.equals(stepName));
+                if(!isPresent)
+                    throw new UnExistsStep();
+            }
+        }
+    }
+
+    public void OutputsWithTheSameName() throws OutputsWithSameName {
+        List<STFlow> stFlows = stepper.getSTFlows().getSTFlow();
+
+        for (STFlow flow : stFlows) {
+            String output = flow.getSTFlowOutput();
+            List<String> names = Arrays.stream(output.split(",")) // Split the string into an array of names using comma as the delimiter, and convert it to a stream
+                    .map(String::trim) // Trim leading and trailing spaces from each name
+                    .collect(Collectors.toList()); // Collect the names into a list
+            outputsNames.addAll(names); // Add all names to the outputsNames list
+        }
+        boolean isPresent =
+                outputsNames.
+                        stream().anyMatch(name -> Collections.frequency(outputsNames, name) > 1);
+//Do we also need the list without duplicate names???
+        if(isPresent){
+            throw new OutputsWithSameName();
+        }
+    }
+
+    public void MandatoryInputsIsNotUserFriendly(){
+        List<STFlow> stFlows = stepper.getSTFlows().getSTFlow();
+
+    }
+
 
 }
