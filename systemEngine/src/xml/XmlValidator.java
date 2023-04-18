@@ -1,3 +1,5 @@
+package xml;
+
 import exceptions.FileIsNotXmlTypeException;
 import exceptions.FileNotExistsException;
 import org.w3c.dom.Document;
@@ -10,16 +12,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 
+////UI ASKING FOR XML PATH
 public class XmlValidator {
-    private String filePath;
 
-    public XmlValidator(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public void isXmlFileValid() throws FileNotExistsException, FileIsNotXmlTypeException {
+    public void isXmlFileValid(String filePath) throws FileNotExistsException, FileIsNotXmlTypeException {
         File xmlFile = new File(filePath);
-        try {
 
             // Check if file exists
             if (!xmlFile.exists()) {
@@ -29,31 +26,14 @@ public class XmlValidator {
             if (!filePath.endsWith(".xml")) {
                 throw new FileIsNotXmlTypeException();
             }
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = factory.newDocumentBuilder();
-            Document doc = dBuilder.parse(new File(filePath));
-            doc.getDocumentElement().normalize();
-
-
-        }
-
-
-        //לבדוק עם אביעד אם פשוט יעבור לUI ושם יודפס הSTRING
-        catch (FileNotExistsException e) {
-            System.out.println(e.getMessage());
-        } catch (FileIsNotXmlTypeException e) {
-            System.out.println(e.getMessage());
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (SAXException e) {
-            throw new RuntimeException(e);
-        }
 
 
     }
-
+            /*
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = factory.newDocumentBuilder();
+            Document doc = dBuilder.parse(new File(filePath));*/
+    //     doc.getDocumentElement().normalize();
    /* public boolean isThereFlowsWithDuplicateName(){
         HashSet<String> flowNames = new HashSet<>();
         NodeList flowNodes = doc.getElementsByTagName("Flow");

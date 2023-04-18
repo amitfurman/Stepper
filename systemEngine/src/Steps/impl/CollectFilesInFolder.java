@@ -28,7 +28,6 @@ public class CollectFilesInFolder extends AbstractStepDefinition {
 
     @Override
     public StepResult invoke(StepExecutionContext context) {
-        // File folder = context.getDataValue(IO_NAMES.FOLDER_NAME, File.class);
         String folderPath = context.getDataValue(IO_NAMES.FOLDER_NAME, String.class);
         String filter = context.getDataValue(IO_NAMES.FILTER, String.class);
         FileListData FILES_LIST = null;
@@ -52,8 +51,8 @@ public class CollectFilesInFolder extends AbstractStepDefinition {
 
         File[] files = folder.listFiles();
 
-        if (files == null || files.length == 0) { //need null?
-            context.storeDataValue("FILES_LIST", null); //ok?
+        if( files.length == 0) {
+            context.storeDataValue("FILES_LIST", null);
             context.storeDataValue("TOTAL_FOUND", TotalFound);
             System.out.println("Warning. The folder " + folder.getName() + " does not contain any files.");
             return StepResult.WARNING;

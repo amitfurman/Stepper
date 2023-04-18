@@ -27,7 +27,7 @@ public class Properties extends AbstractStepDefinition {
 
         if (source.isEmpty()) {
             System.out.println("Warning: The table is empty.");
-            context.storeDataValue("RESULT",properties=null); //=null?
+            context.storeDataValue("RESULT", null);
             return StepResult.WARNING;
         }
 

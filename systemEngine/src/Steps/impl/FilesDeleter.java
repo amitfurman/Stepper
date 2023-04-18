@@ -23,7 +23,6 @@ public class FilesDeleter extends AbstractStepDefinition {
         // step outputs
         addOutput(new DataDefinitionDeclarationImpl("DELETED_LIST", DataNecessity.NA, "Files failed to be deleted", DataDefinitionRegistry.STRING_LIST));
         addOutput(new DataDefinitionDeclarationImpl("DELETION_STATS", DataNecessity.NA, "Deletion summary results", DataDefinitionRegistry.MAPPING2NUMBERS));
-
     }
 
     @Override
@@ -52,9 +51,9 @@ public class FilesDeleter extends AbstractStepDefinition {
         }
         deleteCount = totalFiles - DELETED_LIST.getItems().size();
 
-       // DELETION_STATS.getItems().put(deleteCount , (totalFiles - deleteCount));
-        DELETION_STATS.getItems().put(0, deleteCount); // Update value for key 0
-        DELETION_STATS.getItems().put(1, totalFiles - deleteCount); // Update value for key 1
+        DELETION_STATS.getItems().put(deleteCount , (totalFiles - deleteCount));
+        //DELETION_STATS.getItems().put(0, deleteCount); // Update value for key 0
+        //DELETION_STATS.getItems().put(1, (totalFiles - deleteCount)); // Update value for key 1
 
         context.storeDataValue("DELETED_LIST",DELETED_LIST);
         context.storeDataValue("DELETION_STATS",DELETION_STATS);

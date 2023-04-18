@@ -37,7 +37,7 @@ public class FilesRenamer extends AbstractStepDefinition {
         String suffix = context.getDataValue(IO_NAMES.SUFFIX, String.class);
 
         List<String> columns = new ArrayList<>(Arrays.asList("Serial Number", "Original file's name", "file's name after change"));
-        RelationData relation = new RelationData(columns); ///???
+        RelationData relation = new RelationData(columns);
 
         String log = "About to start renaming " + filesToRename.getItems().size() + " files. Adding prefix: " + prefix + "; adding suffix: " + suffix;
 
@@ -66,7 +66,7 @@ public class FilesRenamer extends AbstractStepDefinition {
             if (renamed) {
                 relation.addRow(new ArrayList<>(Arrays.asList(String.valueOf(serialNumber), originalFileName, fileNameAfterChange)));
             } else {
-                relation.addRow(new ArrayList<>(Arrays.asList(String.valueOf(serialNumber), originalFileName, originalFileName))); //// new comment
+                relation.addRow(new ArrayList<>(Arrays.asList(String.valueOf(serialNumber), originalFileName, originalFileName)));
                 System.out.println("Problem renaming file " + originalFileName);
                 failedFiles += (originalFileName + '\n');
             }
