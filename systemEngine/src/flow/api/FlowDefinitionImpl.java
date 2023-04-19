@@ -1,8 +1,11 @@
 package flow.api;
 
 import Steps.api.DataDefinitionDeclaration;
+import exceptions.OutputsWithSameName;
+import jaxb.schema.generated.STFlow;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FlowDefinitionImpl implements FlowDefinition {
@@ -19,13 +22,21 @@ public class FlowDefinitionImpl implements FlowDefinition {
         steps = new ArrayList<>();
     }
 
+    @Override
+    public void addStepToFlow(StepUsageDeclaration stepUsageDeclaration){
+        steps.add(stepUsageDeclaration);
+    }
+
+
     public void addFlowOutput(String outputName) {
         flowOutputs.add(outputName);
     }
 
     @Override
     public void validateFlowStructure() {
-        // do some validation logic...
+        validateIfOutputsHaveSameName();
+        MandatoryInputsIsNotUserFriendly();
+
     }
 
     @Override
@@ -52,4 +63,22 @@ public class FlowDefinitionImpl implements FlowDefinition {
     public List<String> getFlowFormalOutputs() {
         return flowOutputs;
     }
+
+    public void validateIfOutputsHaveSameName() {
+        boolean isPresent =
+                flowOutputs
+                        .stream()
+                        .anyMatch(name -> Collections
+                                .frequency(flowOutputs, name) > 1);
+
+        if(isPresent){
+            String log = "Invalid. There are 2 or more outputs with the same name.";
+        }
+    }
+
+    public void MandatoryInputsIsNotUserFriendly(){
+
+
+    }
+
 }

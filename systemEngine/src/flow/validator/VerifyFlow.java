@@ -56,29 +56,5 @@ public class VerifyFlow {
         }
     }
 
-    public void OutputsWithTheSameName() throws OutputsWithSameName {
-        List<STFlow> stFlows = stepper.getSTFlows().getSTFlow();
-
-        for (STFlow flow : stFlows) {
-            String output = flow.getSTFlowOutput();
-            List<String> names = Arrays.stream(output.split(",")) // Split the string into an array of names using comma as the delimiter, and convert it to a stream
-                    .map(String::trim) // Trim leading and trailing spaces from each name
-                    .collect(Collectors.toList()); // Collect the names into a list
-            outputsNames.addAll(names); // Add all names to the outputsNames list
-        }
-        boolean isPresent =
-                outputsNames.
-                        stream().anyMatch(name -> Collections.frequency(outputsNames, name) > 1);
-//Do we also need the list without duplicate names???
-        if(isPresent){
-            throw new OutputsWithSameName();
-        }
-    }
-
-    public void MandatoryInputsIsNotUserFriendly(){
-        List<STFlow> stFlows = stepper.getSTFlows().getSTFlow();
-
-    }
-
 
 }

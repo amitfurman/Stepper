@@ -10,5 +10,6 @@ public interface FlowDefinition {
     List<StepUsageDeclaration> getFlowSteps();
     List<String> getFlowFormalOutputs();
     void validateFlowStructure();
+    void addStepToFlow(StepUsageDeclaration stepUsageDeclaration);
     List<DataDefinitionDeclaration> getFlowFreeInputs();
 }

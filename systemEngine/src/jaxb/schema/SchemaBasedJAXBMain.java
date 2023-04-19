@@ -18,10 +18,11 @@ public class SchemaBasedJAXBMain {
 
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "jaxb.schema.generated";
 
-    public void schemaBasedJAXBMain() {
+    public void schemaBasedJAXB() {
         try {
             InputStream inputStream = new FileInputStream(new File("systemEngine/src/resources/ex1.xml"));
             STStepper stepper = deserializeFrom(inputStream);
+
 
             VerifyFlow flow = new VerifyFlow(stepper);
             flow.verifyIfExistsFlowsWithDuplicateNames();
@@ -37,7 +38,10 @@ public class SchemaBasedJAXBMain {
         } catch (OutputsWithSameName e) {
             System.out.printf(e.getMessage());
         }
+
     }
+
+
     private static STStepper deserializeFrom(InputStream in) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);
         Unmarshaller u = jc.createUnmarshaller();

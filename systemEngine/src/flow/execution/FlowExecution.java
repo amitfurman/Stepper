@@ -1,13 +1,16 @@
 package flow.execution;
 import flow.api.FlowDefinition;
 
+import java.awt.*;
 import java.time.Duration;
-public class FlowExecution {
+import java.util.Map;
 
+public class FlowExecution {
     private final String uniqueId;
     private final FlowDefinition flowDefinition;
     private Duration totalTime;
     private FlowExecutionResult flowExecutionResult;
+    private Map<String,Object> freeInputs;
 
     // lots more data that needed to be stored while flow is being executed...
 
