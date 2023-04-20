@@ -7,7 +7,7 @@ public enum StepDefinitionRegistry {
     SPEND_SOME_TIME(new SpendSomeTime()),
     COLLECT_FILES_IN_FOLDER(new CollectFilesInFolder()),
     FILE_DELETER(new FilesDeleter()),
-    FILE_RENAMER (new FilesRenamer()),
+    FILES_RENAMER(new FilesRenamer()),
     FILES_CONTENT_EXTRACTOR(new FilesContentExtractor()),
     CSV_EXPORTER(new CSVExporter()),
     PROPERTIES_EXPORTER(new Properties()),

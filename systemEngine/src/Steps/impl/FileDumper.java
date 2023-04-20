@@ -52,6 +52,7 @@ public class FileDumper extends AbstractStepDefinition {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         context.storeDataValue("RESULT", StepResult.SUCCESS.toString());
         return StepResult.SUCCESS;
     }

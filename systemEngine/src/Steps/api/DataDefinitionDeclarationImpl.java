@@ -9,6 +9,7 @@ public class DataDefinitionDeclarationImpl implements DataDefinitionDeclaration 
     private final String userString;
     private final DataDefinitions dataDefinition;
 
+
     public DataDefinitionDeclarationImpl(String name, DataNecessity necessity, String userString, DataDefinitions dataDefinition) {
         this.name = name;
         this.necessity = necessity;

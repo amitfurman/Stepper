@@ -2,6 +2,7 @@ package flow.execution.context;
 
 import DataDefinition.api.DataDefinitions;
 import DataDefinition.api.IO_NAMES;
+import flow.api.FlowDefinition;
 import flow.execution.context.StepExecutionContext;
 
 import java.util.HashMap;
@@ -10,16 +11,22 @@ import java.util.Map;
 public class StepExecutionContextImpl implements StepExecutionContext {
 
     private final Map<String, Object> dataValues;
+    private final Map<String, DataDefinitions> name2DD;
+    private final Map<String, String> name2alias;
 
-    public StepExecutionContextImpl() {
+    public StepExecutionContextImpl(Map<String, DataDefinitions> originalDDMap, Map<String, String> originalAliasMap) {
         dataValues = new HashMap<>();
+        name2DD = new HashMap<>(originalDDMap);
+        name2alias = new HashMap<>(originalAliasMap);
     }
 
     ///////////overview the exception
     @Override
     public <T> T getDataValue(String dataName, Class<T> expectedDataType) {
+
         //return the data definition from the name
-        DataDefinitions theExpectedDataDefinition = IO_NAMES.name2DataDefinition.get(dataName);
+        DataDefinitions theExpectedDataDefinition = name2DD.get(dataName);
+            //    IO_NAMES.name2DataDefinition.get(dataName);
 
         if (expectedDataType.isAssignableFrom(theExpectedDataDefinition.getType())) {
             Object aValue = dataValues.get(dataName);
@@ -44,11 +51,12 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     @Override
     public boolean storeDataValue(String dataName, Object value) {
         // assuming that from the data name we can get to its data definition
-        DataDefinitions theData = null;
+        DataDefinitions theData  = IO_NAMES.name2DataDefinition.get(dataName);
 
         // we have the DD type so we can make sure that its from the same type
         if (theData.getType().isAssignableFrom(value.getClass())) {
-            dataValues.put(dataName, value);
+            String alias = name2alias.get(dataName);
+            dataValues.put(alias, value);
         } else {
             // error handling of some sort...
         }

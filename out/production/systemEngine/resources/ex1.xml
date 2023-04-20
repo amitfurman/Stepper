@@ -32,7 +32,7 @@
 			<ST-FlowOutput>TOTAL_FOUND,DELETION_STATS</ST-FlowOutput>
 			<ST-StepsInFlow>
 				<ST-StepInFlow name="Collect Files In Folder"/>
-				<ST-StepInFlow name="Spend some Time"/>
+				<ST-StepInFlow name="Spend Some Time"/>
 				<ST-StepInFlow name="Files Deleter"/>
 			</ST-StepsInFlow>
 		</ST-Flow>

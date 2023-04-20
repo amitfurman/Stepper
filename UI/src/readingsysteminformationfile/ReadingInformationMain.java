@@ -25,7 +25,7 @@ public class ReadingInformationMain {
         ////asking for new xml
 
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
-        schema.schemaBasedJAXBMain();
+        schema.schemaBasedJAXB();
 
 
     }
