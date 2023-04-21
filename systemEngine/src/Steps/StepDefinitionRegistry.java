@@ -6,7 +6,7 @@ import Steps.impl.*;
 public enum StepDefinitionRegistry {
     SPEND_SOME_TIME(new SpendSomeTime()),
     COLLECT_FILES_IN_FOLDER(new CollectFilesInFolder()),
-    FILE_DELETER(new FilesDeleter()),
+    FILES_DELETER(new FilesDeleter()),
     FILES_RENAMER(new FilesRenamer()),
     FILES_CONTENT_EXTRACTOR(new FilesContentExtractor()),
     CSV_EXPORTER(new CSVExporter()),

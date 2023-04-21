@@ -3,6 +3,9 @@ package flow.api;
 import DataDefinition.api.DataDefinitions;
 import Steps.api.DataDefinitionDeclaration;
 import exceptions.OutputsWithSameName;
+import flow.Mapping.AutomaticMapping;
+import flow.Mapping.CustomMapping;
+import flow.api.FlowIO.IO;
 import flow.api.FlowIO.SingleFlowIOData;
 import jaxb.schema.generated.STFlow;
 
@@ -33,16 +36,8 @@ public class FlowDefinitionImpl implements FlowDefinition {
         steps.add(stepUsageDeclaration);
     }
 
-
     public void addFlowOutput(String outputName) {
         flowOutputs.add(outputName);
-    }
-
-    @Override
-    public void validateFlowStructure() {
-        validateIfOutputsHaveSameName();
-        MandatoryInputsIsNotUserFriendly();
-
     }
 
     @Override
@@ -80,7 +75,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
         name2alias.put(name, alias);
     }
 
-
     @Override
     public DataDefinitions getDDFromMap(String InputName) {
 
@@ -112,6 +106,15 @@ public class FlowDefinitionImpl implements FlowDefinition {
             IOlist.add(IOElement);
     }
 
+    @Override
+    public void validateFlowStructure() {
+        validateIfOutputsHaveSameName();
+        AutomaticMapping automaticMapping = new AutomaticMapping(this);
+        CustomMapping customMapping = new CustomMapping(this);
+        flowOutputsIsNotExists();
+        mandatoryInputsIsNotUserFriendly();
+
+    }
     public void validateIfOutputsHaveSameName() {
         boolean isPresent =
                 flowOutputs
@@ -120,13 +123,46 @@ public class FlowDefinitionImpl implements FlowDefinition {
                                 .frequency(flowOutputs, name) > 1);
 
         if (isPresent) {
-            String log = "Invalid. There are 2 or more outputs with the same name.";
+            String exception = "Invalid. There are 2 or more outputs with the same name.";
         }
     }
 
-    public void MandatoryInputsIsNotUserFriendly() {
+    public void mandatoryInputsIsNotUserFriendly() {
+        boolean isPresent =
+                getIOlist()
+                        .stream()
+                        .filter(data -> data.getType() == IO.INPUT)
+                        .filter(data -> data.getOptionalInputs().isEmpty())
+                        .anyMatch(data -> data.getDD().isUserFriendly() == false);
 
+        if (isPresent) {
+            String exception = "Invalid. There are mandatory inputs that is not user friendly.";
+        }
+    }
 
+    public void flowOutputsIsNotExists(){
+       /* for(String output : getFlowFormalOutputs()) {
+            boolean isPresent ;
+
+            if (isPresent) {
+                String exception = "Invalid. There is at least one flow output that is not exists.";
+            }*/
+    }
+
+    public void mandatoryInputsWithSameNameAndDifferentType() {
+        for(SingleFlowIOData currData  : getIOlist()) {
+            boolean isPresent =
+                    getIOlist()
+                            .stream()
+                            .filter(data -> data.getType() == IO.INPUT)
+                            .filter(data -> data.getOptionalInputs().isEmpty())
+                            .filter(data -> data.getName().equals(currData.getName()))
+                            .anyMatch(data -> !data.getType().equals(currData.getType()));
+
+            if (isPresent) {
+                String exception = "Invalid. There are mandatory inputs with the same name but different type.";
+            }
+        }
     }
 
 }

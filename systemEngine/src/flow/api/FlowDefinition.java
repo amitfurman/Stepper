@@ -18,13 +18,15 @@ public interface FlowDefinition {
     Map<String, DataDefinitions> getName2DDMap();
     Map<String, String> getName2aliasMap();
     List<SingleFlowIOData> getIOlist();
-    String getAliasFromMap(String originalName);
 
-    void validateFlowStructure();
+    String getAliasFromMap(String originalName);
     void addStepToFlow(StepUsageDeclaration stepUsageDeclaration);
     void addToName2DDMap(String Name, DataDefinitions DD);
     void addToName2AliasMap(String Name, String alias);
     void addElementToIoList(SingleFlowIOData IOElement);
-
-
+    void validateFlowStructure();
+    void validateIfOutputsHaveSameName();
+    void mandatoryInputsIsNotUserFriendly();
+    void flowOutputsIsNotExists();
+    void mandatoryInputsWithSameNameAndDifferentType();
     }

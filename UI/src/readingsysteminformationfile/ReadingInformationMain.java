@@ -27,6 +27,5 @@ public class ReadingInformationMain {
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         schema.schemaBasedJAXB();
 
-
     }
 }
