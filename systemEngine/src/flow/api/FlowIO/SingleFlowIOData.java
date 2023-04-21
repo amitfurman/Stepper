@@ -15,8 +15,8 @@ public class SingleFlowIOData {
     private DataDefinitions dataDefinition;
     private String userString;
     private StepDefinition MyStep;
-    private List<SingleFlowIOData> optionalInputs;//nodes that can be input to current node.
-    private List<SingleFlowIOData> optionalOutput;//nodes that current node can be input for them.
+    private List<SingleFlowIOData> optionalInputs;
+    private List<SingleFlowIOData> optionalOutput;
 
     public SingleFlowIOData(IO type, String originalName, String finalName, DataDefinitions dataDefinition,
                             String userString, StepDefinition MyStep) {

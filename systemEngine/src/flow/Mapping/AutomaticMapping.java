@@ -18,12 +18,12 @@ public class AutomaticMapping {
         for (StepUsageDeclaration step : flow.getFlowSteps()) {
             for (DataDefinitionDeclaration input : step.getStepDefinition().inputs()) {
                 flow.addElementToIoList(new SingleFlowIOData(IO.INPUT, input.getName(),
-                        flow.getAliasFromMap(input.getName()),flow.getDDFromMap(input.getName()),input.userString(),
+                        flow.getIOAliasFromMap(step.getFinalStepName(), input.getName()),flow.getDDFromMap(input.getName()),input.userString(),
                         step.getStepDefinition()));
             }
             for (DataDefinitionDeclaration output : step.getStepDefinition().outputs()) {
                 flow.addElementToIoList(new SingleFlowIOData(IO.OUTPUT, output.getName(),
-                        flow.getAliasFromMap(output.getName()),flow.getDDFromMap(output.getName()),output.userString(),
+                        flow.getIOAliasFromMap(step.getFinalStepName() ,output.getName()),flow.getDDFromMap(output.getName()),output.userString(),
                         step.getStepDefinition()));
             }
         }
@@ -32,7 +32,7 @@ public class AutomaticMapping {
         {
             if(data.getType() == IO.OUTPUT) {
                 //nodes that current node can be input for them.
-                data.setOptionalOutput(flow.getIOlist().stream().
+                data.setOptionalInputs(flow.getIOlist().stream().
                         skip(flow.getIOlist().indexOf(data)).
                         filter(io -> io.getType() != data.getType()).
                         filter(io -> io.getDD().equals(data.getDD())).//filter the outputs to outputs with the DD
@@ -40,8 +40,8 @@ public class AutomaticMapping {
                 //CHECK IF ALIAS OR NAME
                         collect(Collectors.toList()));
 
-                for(SingleFlowIOData storeData : data.getOptionalOutput()) {
-                    storeData.addToOptionalInputs(storeData);//nodes that can be input to current node.
+                for(SingleFlowIOData storeData : data.getOptionalInputs()) {
+                    storeData.addToOptionalOutput(storeData);//nodes that can be input to current node.
                 }
             }
         }

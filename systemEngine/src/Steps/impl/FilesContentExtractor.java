@@ -66,7 +66,7 @@ public class FilesContentExtractor extends AbstractStepDefinition {
                 }
             }
         }
-        context.storeDataValue("DATA", relation);
+        context.storeDataValue("Files Content Extractor","DATA", relation);
         return StepResult.SUCCESS;
     }
 }

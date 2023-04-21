@@ -2,12 +2,10 @@ package flow.api;
 
 import DataDefinition.api.DataDefinitions;
 import Steps.api.DataDefinitionDeclaration;
-import exceptions.OutputsWithSameName;
 import flow.Mapping.AutomaticMapping;
 import flow.Mapping.CustomMapping;
 import flow.api.FlowIO.IO;
 import flow.api.FlowIO.SingleFlowIOData;
-import jaxb.schema.generated.STFlow;
 
 import java.util.*;
 
@@ -18,7 +16,9 @@ public class FlowDefinitionImpl implements FlowDefinition {
     private final List<String> flowOutputs;
     private final List<StepUsageDeclaration> steps;
     private final Map<String, DataDefinitions> name2DataDefinition;
-    private final Map<String, String> name2alias;
+    private final Map<String, Map<String, String>> MapIOName2Alias;
+    private final Map<String, String> MapStepName2Alias;
+
     private final List<SingleFlowIOData> IOlist;
 
     public FlowDefinitionImpl(String name, String description) {
@@ -27,8 +27,9 @@ public class FlowDefinitionImpl implements FlowDefinition {
         flowOutputs = new ArrayList<>();
         steps = new LinkedList<>();
         name2DataDefinition = new HashMap<>();
-        name2alias = new HashMap<>();
         IOlist = new ArrayList<>();
+        MapIOName2Alias = new HashMap<>();
+        MapStepName2Alias = new HashMap<>();
     }
 
     @Override
@@ -71,8 +72,15 @@ public class FlowDefinitionImpl implements FlowDefinition {
     }
 
     @Override
-    public void addToName2AliasMap(String name, String alias) {
-        name2alias.put(name, alias);
+    public void addToIOName2AliasMap(String stepName, String IOName, String alias) {
+        Map<String,String> newElement = new HashMap<>();
+        newElement.put(IOName,alias);
+        MapIOName2Alias.put(stepName ,newElement);
+    }
+
+    @Override
+    public void addToStepName2AliasMap(String stepName, String alias) {
+        MapStepName2Alias.put(stepName ,alias);
     }
 
     @Override
@@ -82,8 +90,8 @@ public class FlowDefinitionImpl implements FlowDefinition {
     }
 
    @Override
-    public String getAliasFromMap(String originalName) {
-        return name2alias.get(originalName);
+    public String getIOAliasFromMap(String stepName ,String originalName) {
+       return MapIOName2Alias.get(stepName).get(originalName);
     }
 
     @Override
@@ -92,8 +100,13 @@ public class FlowDefinitionImpl implements FlowDefinition {
     }
 
     @Override
-    public Map<String, String> getName2aliasMap() {
-        return name2alias;
+    public Map<String,String> getStepName2aliasMap() {
+        return MapStepName2Alias;
+    }
+
+    @Override
+    public Map<String,Map<String, String>> getIOName2aliasMap() {
+        return MapIOName2Alias;
     }
 
     @Override
@@ -105,12 +118,14 @@ public class FlowDefinitionImpl implements FlowDefinition {
     public void addElementToIoList(SingleFlowIOData IOElement) {
             IOlist.add(IOElement);
     }
+
     @Override
     public boolean stepExist(String stepName) {
         boolean isPresent =
                 getFlowSteps()
                         .stream()
                         .anyMatch(name -> name.getFinalStepName().equals(stepName));
+
 //the warning is species to aliasing flow def - need to change
         if (!isPresent) {
             String warning = "There is aliasing flow definition for step that does not exist within the Flow definition";
@@ -149,7 +164,7 @@ public class FlowDefinitionImpl implements FlowDefinition {
         boolean isPresent = true;
         for(String outputName : outputsNamesList) {
             isPresent =
-                    getName2aliasMap()
+                    getIOName2aliasMap()
                             .values()
                             .stream()
                             .anyMatch(output -> output.equals(outputName));
@@ -188,7 +203,7 @@ public class FlowDefinitionImpl implements FlowDefinition {
                 getIOlist()
                         .stream()
                         .filter(data -> data.getType() == IO.INPUT)
-                        .filter(data -> data.getOptionalInputs().isEmpty())
+                        .filter(data -> data.getOptionalOutput().isEmpty())
                         .anyMatch(data -> data.getDD().isUserFriendly() == false);
 
         if (isPresent) {
@@ -197,12 +212,11 @@ public class FlowDefinitionImpl implements FlowDefinition {
     }
 
     public void flowOutputsIsNotExists(){
-       /* for(String output : getFlowFormalOutputs()) {
-            boolean isPresent ;
+      /* for(String output : getFlowFormalOutputs()) {
+            boolean isPresent  ;
 
             if (isPresent) {
-                String exception = "Invalid. There is at least one flow output that is not exists.";
-            }*/
+                String exception = "Invalid. There is at least one flow output that is not exists.";*/
     }
 
     public void mandatoryInputsWithSameNameAndDifferentType() {

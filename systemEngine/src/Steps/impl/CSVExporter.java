@@ -38,7 +38,7 @@ public class CSVExporter extends AbstractStepDefinition {
         if (source.isEmpty()) {
             System.out.println("Warning: Source data is empty");
             String summaryLine = "The table is empty of content, so we converted only the column names of the table to the CSV format file.";
-            context.storeDataValue("RESULT", csvBuilder);
+            context.storeDataValue("CSV Exporter","RESULT", csvBuilder);
             return StepResult.WARNING;
         }
 
@@ -51,7 +51,7 @@ public class CSVExporter extends AbstractStepDefinition {
             }
         }
 
-        context.storeDataValue("RESULT", csvBuilder);
+        context.storeDataValue("CSV Exporter","RESULT", csvBuilder);
         return StepResult.SUCCESS;
     }
 }

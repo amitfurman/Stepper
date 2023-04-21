@@ -2,6 +2,8 @@ package flow.api;
 
 import Steps.api.StepDefinition;
 
+import java.util.Map;
+
 public class StepUsageDeclarationImpl implements StepUsageDeclaration {
     private final StepDefinition stepDefinition;
     private final boolean skipIfFail;

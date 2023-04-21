@@ -43,7 +43,7 @@ public class FilesRenamer extends AbstractStepDefinition {
 
         if (filesToRename.getItems().isEmpty()) {
             String summaryLine1 = "FILES_TO_RENAME is empty, so there are no files to rename.";
-            context.storeDataValue("RENAME_RESULT", relation);
+            context.storeDataValue("Files Renamer","RENAME_RESULT", relation);
             return StepResult.SUCCESS;
         }
         String failedFiles = null;
@@ -71,7 +71,7 @@ public class FilesRenamer extends AbstractStepDefinition {
                 failedFiles += (originalFileName + '\n');
             }
         }
-        context.storeDataValue("RENAME_RESULT", relation);
+        context.storeDataValue("Files Renamer","RENAME_RESULT", relation);
         ////check
         if(relation.numOfRows() != filesToRename.getItems().size()) {
             String summaryLine2 = "There was a failure in converting the names of the following files: " + failedFiles + "\nThat's why the step ends with a warning";

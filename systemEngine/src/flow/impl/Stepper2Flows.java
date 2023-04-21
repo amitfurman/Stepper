@@ -36,34 +36,34 @@ public class Stepper2Flows {
                 StepDefinitionRegistry myEnum = StepDefinitionRegistry.valueOf(step.getName().toUpperCase().replace(" ", "_"));
                 if (step.getAlias() != null && step.isContinueIfFailing()) {
                     flow.addStepToFlow(new StepUsageDeclarationImpl(myEnum.getStepDefinition(), step.isContinueIfFailing(), step.getAlias()));
+                    flow.addToStepName2AliasMap(step.getName(), step.getAlias());
                 } else if (step.getAlias() != null) {
                     flow.addStepToFlow(new StepUsageDeclarationImpl(myEnum.getStepDefinition(), step.getAlias()));
+                    flow.addToStepName2AliasMap(step.getName(), step.getAlias());
                 } else {
                     flow.addStepToFlow(new StepUsageDeclarationImpl(myEnum.getStepDefinition()));
+                    flow.addToStepName2AliasMap(step.getName(),step.getName());
                 }
 
                 List<DataDefinitionDeclaration> stepInputs = myEnum.getStepDefinition().inputs();
                 for (DataDefinitionDeclaration input : stepInputs) {
-
                     flow.addToName2DDMap(input.getName(), input.dataDefinition());
-                    flow.addToName2AliasMap(input.getName(), input.getName());
+                    flow.addToIOName2AliasMap(step.getName(),input.getName(), input.getName());
                 }
                 List<DataDefinitionDeclaration> stepOutputs = myEnum.getStepDefinition().outputs();
                 for (DataDefinitionDeclaration output : stepOutputs) {
                     flow.addToName2DDMap(output.getName(), output.dataDefinition());
-                    flow.addToName2AliasMap(output.getName(), output.getName());
+                    flow.addToIOName2AliasMap(step.getName(),output.getName(), output.getName());
                 }
+
             }
 
             //FlowLevelAliasing
-
-            //GUG!!!!!!!!!!!!!!!!!!!!!!!
-            /*
             for (STFlowLevelAlias flowLevelAlias : currFlow.getSTFlowLevelAliasing().getSTFlowLevelAlias()) {
                 if (flow.stepExist(flowLevelAlias.getStep()) && flow.dataExist(flowLevelAlias.getStep(), flowLevelAlias.getSourceDataName())) {
                     DataDefinitions data = flow.getDDFromMap(flowLevelAlias.getSourceDataName());
                     flow.addToName2DDMap(flowLevelAlias.getAlias(), data);
-                    flow.addToName2AliasMap(flowLevelAlias.getSourceDataName(), flowLevelAlias.getAlias());
+                    flow.addToIOName2AliasMap(flowLevelAlias.getStep(),flowLevelAlias.getSourceDataName(), flowLevelAlias.getAlias());
                 }
                 else {//flow in not valid
                     return;
@@ -79,7 +79,7 @@ public class Stepper2Flows {
             if(flow.isFlowOutputsValid(names)) {
                 flow.getFlowFormalOutputs().addAll(names);
             }
-*/
+
             flow.validateFlowStructure();
 
                 //I put Automatic&Custom Mapping in validateFlowStructure() FOR NOW because there are methods that need to be after mapping.

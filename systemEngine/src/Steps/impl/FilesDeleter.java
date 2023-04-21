@@ -55,8 +55,8 @@ public class FilesDeleter extends AbstractStepDefinition {
         //DELETION_STATS.getItems().put(0, deleteCount); // Update value for key 0
         //DELETION_STATS.getItems().put(1, (totalFiles - deleteCount)); // Update value for key 1
 
-        context.storeDataValue("DELETED_LIST",DELETED_LIST);
-        context.storeDataValue("DELETION_STATS",DELETION_STATS);
+        context.storeDataValue("Files Deleter","DELETED_LIST",DELETED_LIST);
+        context.storeDataValue("Files Deleter","DELETION_STATS",DELETION_STATS);
 
         if (DELETED_LIST.getItems().isEmpty()) {
             System.out.println("All files were deleted successfully.");

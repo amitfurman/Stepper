@@ -30,14 +30,14 @@ public class FileDumper extends AbstractStepDefinition {
 
         if (content.isEmpty()) {
             String log = "Warning: Content is empty. File will be created empty.";
-            context.storeDataValue("RESULT", StepResult.SUCCESS.toString());
+            context.storeDataValue("File Dumper","RESULT", StepResult.SUCCESS.toString());
             return StepResult.WARNING;
         }
 
         // Check if file already exists
         if (file.exists()) {
             String log = StepResult.FAILURE + " because file already exists.";
-            context.storeDataValue("RESULT", log);
+            context.storeDataValue("File Dumper","RESULT", log);
             return StepResult.FAILURE;
         }
 
@@ -53,7 +53,7 @@ public class FileDumper extends AbstractStepDefinition {
             throw new RuntimeException(e);
         }
 
-        context.storeDataValue("RESULT", StepResult.SUCCESS.toString());
+        context.storeDataValue("File Dumper","RESULT", StepResult.SUCCESS.toString());
         return StepResult.SUCCESS;
     }
 }
