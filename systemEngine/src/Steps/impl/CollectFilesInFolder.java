@@ -52,8 +52,8 @@ public class CollectFilesInFolder extends AbstractStepDefinition {
         File[] files = folder.listFiles();
 
         if( files.length == 0) {
-            context.storeDataValue("Collect Files In Folder", "FILES_LIST", null);
-            context.storeDataValue("Collect Files In Folder","TOTAL_FOUND", TotalFound);
+            context.storeDataValue( "FILES_LIST", null);
+            context.storeDataValue("TOTAL_FOUND", TotalFound);
             System.out.println("Warning. The folder " + folder.getName() + " does not contain any files.");
             return StepResult.WARNING;
         }
@@ -65,8 +65,8 @@ public class CollectFilesInFolder extends AbstractStepDefinition {
             }
         }
 
-        context.storeDataValue("Collect Files In Folder","FILES_LIST",FILES_LIST);
-        context.storeDataValue("Collect Files In Folder","TOTAL_FOUND",TotalFound);
+        context.storeDataValue("FILES_LIST",FILES_LIST);
+        context.storeDataValue("TOTAL_FOUND",TotalFound);
 
         //After reading the files
         System.out.println("Found " + TotalFound +" files in folder matching the filter.");

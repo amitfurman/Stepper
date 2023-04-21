@@ -25,6 +25,7 @@ public class SingleFlowIOData {
         this.finalName = finalName;
         this.dataDefinition = dataDefinition;
         this.userString = userString;
+        this.MyStep = MyStep;
         this.optionalInputs = new LinkedList<>();
         this.optionalOutput = new LinkedList<>();
     }
@@ -63,6 +64,10 @@ public class SingleFlowIOData {
     public String getName()
     {
         return this.originalName;
+    }
+    public String getFinalName()
+    {
+        return this.finalName;
     }
 
 

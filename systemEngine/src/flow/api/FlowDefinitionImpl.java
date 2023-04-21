@@ -2,6 +2,7 @@ package flow.api;
 
 import DataDefinition.api.DataDefinitions;
 import Steps.api.DataDefinitionDeclaration;
+import Steps.api.StepResult;
 import flow.Mapping.AutomaticMapping;
 import flow.Mapping.CustomMapping;
 import flow.api.FlowIO.IO;
@@ -16,8 +17,11 @@ public class FlowDefinitionImpl implements FlowDefinition {
     private final List<String> flowOutputs;
     private final List<StepUsageDeclaration> steps;
     private final Map<String, DataDefinitions> name2DataDefinition;
-    private final Map<String, Map<String, String>> MapIOName2Alias;
-    private final Map<String, String> MapStepName2Alias;
+    //private final Map<String, Map<String, String>> MapIOName2Alias;
+
+    private final Map<String , String> InputName2Alias;
+    private final Map<String , String> OutputName2Alias;
+    private final Map<String, String> MapAlias2StepName;
 
     private final List<SingleFlowIOData> IOlist;
 
@@ -28,8 +32,10 @@ public class FlowDefinitionImpl implements FlowDefinition {
         steps = new LinkedList<>();
         name2DataDefinition = new HashMap<>();
         IOlist = new ArrayList<>();
-        MapIOName2Alias = new HashMap<>();
-        MapStepName2Alias = new HashMap<>();
+       // MapIOName2Alias = new HashMap<>();
+        MapAlias2StepName = new HashMap<>();
+        InputName2Alias = new HashMap<>();
+        OutputName2Alias = new HashMap<>();
     }
 
     @Override
@@ -71,16 +77,29 @@ public class FlowDefinitionImpl implements FlowDefinition {
         name2DataDefinition.put(name, DD);
     }
 
-    @Override
+ /*   @Override
     public void addToIOName2AliasMap(String stepName, String IOName, String alias) {
         Map<String,String> newElement = new HashMap<>();
         newElement.put(IOName,alias);
         MapIOName2Alias.put(stepName ,newElement);
-    }
+    }*/
 
     @Override
-    public void addToStepName2AliasMap(String stepName, String alias) {
-        MapStepName2Alias.put(stepName ,alias);
+    public void addToInputName2AliasMap(String stepName, String inputName, String alias) {
+        String result = stepName + "." + inputName;
+        InputName2Alias.put(result,alias);
+    }
+    @Override
+    public void addToOutputName2AliasMap(String stepName, String outputName, String alias) {
+        String result = stepName + "." + outputName;
+        OutputName2Alias.put(result,alias);
+    }
+
+
+
+        @Override
+    public void addToAlias2StepNameMap(String stepName, String alias) {
+        MapAlias2StepName.put(stepName ,alias);
     }
 
     @Override
@@ -89,9 +108,17 @@ public class FlowDefinitionImpl implements FlowDefinition {
         return name2DataDefinition.get(InputName);
     }
 
-   @Override
-    public String getIOAliasFromMap(String stepName ,String originalName) {
+   /* @Override
+   public String getIOAliasFromMap(String stepName ,String originalName) {
        return MapIOName2Alias.get(stepName).get(originalName);
+    }*/
+   @Override
+   public String getInputAliasFromMap(String stepName ,String originalInputName) {
+       return InputName2Alias.get(stepName + "." + originalInputName);
+   }
+    @Override
+    public String getOutputAliasFromMap(String stepName ,String originalOutputName) {
+        return OutputName2Alias.get(stepName + "." + originalOutputName);
     }
 
     @Override
@@ -100,15 +127,24 @@ public class FlowDefinitionImpl implements FlowDefinition {
     }
 
     @Override
-    public Map<String,String> getStepName2aliasMap() {
-        return MapStepName2Alias;
+    public Map<String,String> getAlias2StepNameMap() {
+        return MapAlias2StepName;
     }
 
-    @Override
+   /* @Override
     public Map<String,Map<String, String>> getIOName2aliasMap() {
         return MapIOName2Alias;
     }
+*/
+    @Override
+    public Map<String, String> getInputName2aliasMap() {
+        return InputName2Alias;
+    }
 
+    @Override
+    public Map<String, String> getOutputName2aliasMap() {
+        return OutputName2Alias;
+    }
     @Override
     public List<SingleFlowIOData> getIOlist() {
         return IOlist;
@@ -164,7 +200,7 @@ public class FlowDefinitionImpl implements FlowDefinition {
         boolean isPresent = true;
         for(String outputName : outputsNamesList) {
             isPresent =
-                    getIOName2aliasMap()
+                    getOutputName2aliasMap() ////
                             .values()
                             .stream()
                             .anyMatch(output -> output.equals(outputName));

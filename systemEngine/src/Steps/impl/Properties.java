@@ -27,7 +27,7 @@ public class Properties extends AbstractStepDefinition {
 
         if (source.isEmpty()) {
             System.out.println("Warning: The table is empty.");
-            context.storeDataValue("Properties Exporter","RESULT", null);
+            context.storeDataValue("RESULT", null);
             return StepResult.WARNING;
         }
 
@@ -46,7 +46,7 @@ public class Properties extends AbstractStepDefinition {
             }
         }
         String finalLog = "Extracted total of " + rowKeys.size();
-        context.storeDataValue("Properties Exporter","RESULT",properties);
+        context.storeDataValue("RESULT",properties);
         return StepResult.SUCCESS;
     }
 }

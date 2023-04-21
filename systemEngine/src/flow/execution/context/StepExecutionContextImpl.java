@@ -12,13 +12,13 @@ public class StepExecutionContextImpl implements StepExecutionContext {
 
     private final Map<String, Object> dataValues;
     private final Map<String, DataDefinitions> name2DD;
-    private final Map<String, Map<String, String>> IOname2alias;
+    private final Map<String, String> outputName2alias;
     private final Map<String, String> stepName2alias;
 
-    public StepExecutionContextImpl(Map<String, DataDefinitions> originalDDMap, Map<String, Map<String, String>> originalIOAliasMap, Map<String, String> originalStepName2alias) {
+    public StepExecutionContextImpl(Map<String, DataDefinitions> originalDDMap, Map<String,String> originalOutputAliasMap, Map<String, String> originalStepName2alias) {
         dataValues = new HashMap<>();
         name2DD = new HashMap<>(originalDDMap);
-        IOname2alias = new HashMap<>(originalIOAliasMap);
+        outputName2alias = new HashMap<>(originalOutputAliasMap);
         stepName2alias = new HashMap<>(originalStepName2alias);
     }
 
@@ -51,15 +51,21 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     }
 
     @Override
-    public boolean storeDataValue(String originalStepName, String dataName, Object value) {
+    public boolean storeDataValue(String dataName, Object value) {
         // assuming that from the data name we can get to its data definition
         DataDefinitions theData = name2DD.get(dataName);
 
         // we have the DD type so we can make sure that its from the same type
         if (theData.getType().isAssignableFrom(value.getClass())) {
-            String stepAlias = stepName2alias.get(originalStepName);
-            String IOalias = IOname2alias.get(stepAlias).get(dataName);
-            dataValues.put(IOalias, value);
+            String stepName,outputAlias = null;
+            for (String key : outputName2alias.keySet()) {
+                if (key.endsWith("." + dataName)) {
+                    stepName = key.substring(0, key.lastIndexOf("."));
+                    outputAlias = outputName2alias.get(key);
+                    break;
+                }
+            }
+            dataValues.put(outputAlias, value);
         } else {
             // error handling of some sort...
         }
