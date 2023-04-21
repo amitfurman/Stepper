@@ -24,19 +24,13 @@ public class Stepper2Flows {
         int numberOfFlows = stepper.getSTFlows().getSTFlow().size();
         List<FlowDefinition> allFlows = new ArrayList<>();
         FlowDefinition flow;
-        ////////each flow///////////
+        //each flow
         for (int i = 0; i < numberOfFlows; i++) {
             STFlow currFlow = stepper.getSTFlows().getSTFlow().get(i);
             flow = new FlowDefinitionImpl(currFlow.getName(), currFlow.getSTFlowDescription());
 
-            //add output to flow
-            String outputsName = currFlow.getSTFlowOutput();
-            List<String> names = Arrays.stream(outputsName.split(","))
-                    .map(String::trim)
-                    .collect(Collectors.toList());
-            flow.getFlowFormalOutputs().addAll(names);
 
-            /////////each step///////////
+            //each step
             //add steps to flow (we need to change and add more ctor)
             for (STStepInFlow step : currFlow.getSTStepsInFlow().getSTStepInFlow()) {
                 StepDefinitionRegistry myEnum = StepDefinitionRegistry.valueOf(step.getName().toUpperCase().replace(" ", "_"));
@@ -60,15 +54,33 @@ public class Stepper2Flows {
                     flow.addToName2AliasMap(output.getName(), output.getName());
                 }
             }
-            ////////FlowLevelAliasing/////////
+
+            //FlowLevelAliasing
+
+            //GUG!!!!!!!!!!!!!!!!!!!!!!!
+            /*
             for (STFlowLevelAlias flowLevelAlias : currFlow.getSTFlowLevelAliasing().getSTFlowLevelAlias()) {
-                if (!stepDoesNotExist(flowLevelAlias.getStep()) && !dataDoesNotExist(flowLevelAlias.getStep())) {
+                if (flow.stepExist(flowLevelAlias.getStep()) && flow.dataExist(flowLevelAlias.getStep(), flowLevelAlias.getSourceDataName())) {
                     DataDefinitions data = flow.getDDFromMap(flowLevelAlias.getSourceDataName());
                     flow.addToName2DDMap(flowLevelAlias.getAlias(), data);
                     flow.addToName2AliasMap(flowLevelAlias.getSourceDataName(), flowLevelAlias.getAlias());
                 }
+                else {//flow in not valid
+                    return;
+                }
+            }
 
-                flow.validateFlowStructure();
+            //add output to flow
+            String outputsName = currFlow.getSTFlowOutput();
+            List<String> names = Arrays.stream(outputsName.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+
+            if(flow.isFlowOutputsValid(names)) {
+                flow.getFlowFormalOutputs().addAll(names);
+            }
+*/
+            flow.validateFlowStructure();
 
                 //I put Automatic&Custom Mapping in validateFlowStructure() FOR NOW because there are methods that need to be after mapping.
            /*  AutomaticMapping automaticMapping = new AutomaticMapping(flow);
@@ -95,19 +107,5 @@ public class Stepper2Flows {
         fLowExecutor.executeFlow(flow2Execution1);
 
  */
-        }
-    }
-
-    boolean stepDoesNotExist(String stepName) {
-
-        String warning = "There is aliasing flow definition for step that does not exist within the Flow definition";
-
-        return true;
-    }
-
-    boolean dataDoesNotExist(String dataName) {
-        String warning = "There is aliasing flow definition for source-data-name that does not exist within the Flow definition";
-
-        return true;
     }
 }

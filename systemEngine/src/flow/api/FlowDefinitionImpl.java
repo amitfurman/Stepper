@@ -105,6 +105,62 @@ public class FlowDefinitionImpl implements FlowDefinition {
     public void addElementToIoList(SingleFlowIOData IOElement) {
             IOlist.add(IOElement);
     }
+    @Override
+    public boolean stepExist(String stepName) {
+        boolean isPresent =
+                getFlowSteps()
+                        .stream()
+                        .anyMatch(name -> name.getFinalStepName().equals(stepName));
+//the warning is species to aliasing flow def - need to change
+        if (!isPresent) {
+            String warning = "There is aliasing flow definition for step that does not exist within the Flow definition";
+            return false;
+        }
+        return true;
+    }
+    @Override
+    public boolean dataExist(String stepName, String dataName) {
+
+        boolean isPresentInInput =
+                getFlowSteps()
+                        .stream()
+                        .filter(step -> step.getFinalStepName().equals(stepName))
+                        .flatMap(step -> step.getStepDefinition().inputs().stream()) //go to inputs list of step
+                        .anyMatch(input -> input.getName().equals(dataName));
+
+        boolean isPresentInOutput =
+                getFlowSteps()
+                        .stream()
+                        .filter(step -> step.getFinalStepName().equals(stepName))
+                        .flatMap(step -> step.getStepDefinition().outputs().stream()) //go to output list of step
+                        .anyMatch(output -> output.getName().equals(dataName));
+
+//the warning is species to aliasing flow def - need to change
+        if (!isPresentInInput && !isPresentInOutput) {
+            String warning = "There is aliasing flow definition for source-data-name that does not exist within the Flow definition";
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean isFlowOutputsValid(List<String> outputsNamesList){
+
+        boolean isPresent = true;
+        for(String outputName : outputsNamesList) {
+            isPresent =
+                    getName2aliasMap()
+                            .values()
+                            .stream()
+                            .anyMatch(output -> output.equals(outputName));
+        }
+//the warning is species to aliasing flow def - need to change
+        if (!isPresent) {
+            String warning = "Output Flow contains an information item that does not exist";
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public void validateFlowStructure() {

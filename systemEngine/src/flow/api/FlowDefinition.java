@@ -3,6 +3,7 @@ package flow.api;
 import DataDefinition.api.DataDefinitions;
 import Steps.api.DataDefinitionDeclaration;
 import flow.api.FlowIO.SingleFlowIOData;
+import javafx.util.Pair;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,8 +23,11 @@ public interface FlowDefinition {
     String getAliasFromMap(String originalName);
     void addStepToFlow(StepUsageDeclaration stepUsageDeclaration);
     void addToName2DDMap(String Name, DataDefinitions DD);
-    void addToName2AliasMap(String Name, String alias);
+    void addToName2AliasMap(String name, String alias);
     void addElementToIoList(SingleFlowIOData IOElement);
+    boolean stepExist(String stepName);
+    boolean dataExist(String stepName, String dataName);
+    boolean isFlowOutputsValid(List<String> outputsNamesList);
     void validateFlowStructure();
     void validateIfOutputsHaveSameName();
     void mandatoryInputsIsNotUserFriendly();

@@ -14,6 +14,7 @@
 				<ST-StepInFlow name="File Dumper" alias="Properties File Dumper" continue-if-failing="true"/>
 			</ST-StepsInFlow>
 			<ST-FlowLevelAliasing>
+				<ST-FlowLevelAlias step="Files Deleter" source-data-name="FILES_LIST" alias="SOURCE"/>
 				<ST-FlowLevelAlias step="CSV File Dumper" source-data-name="FILE_NAME" alias="CSV_FILE_NAME"/>
 				<ST-FlowLevelAlias step="CSV File Dumper" source-data-name="RESULT" alias="CSV_FILE_DUMP_RESULT"/>
 				<ST-FlowLevelAlias step="CSV Exporter" source-data-name="RESULT" alias="CSV_RESULT"/>
