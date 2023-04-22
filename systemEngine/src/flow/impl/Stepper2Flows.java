@@ -1,20 +1,17 @@
 package flow.impl;
 
-import DataDefinition.api.DataDefinitions;
-import Steps.StepDefinitionRegistry;
-import Steps.api.DataDefinitionDeclaration;
-import flow.Mapping.AutomaticMapping;
-import flow.Mapping.CustomMapping;
+import datadefinition.api.DataDefinitions;
+import flow.api.CustomMapping;
+import steps.StepDefinitionRegistry;
+import steps.api.DataDefinitionDeclaration;
 import flow.api.FlowDefinition;
 import flow.api.FlowDefinitionImpl;
-import flow.api.StepUsageDeclaration;
 import flow.api.StepUsageDeclarationImpl;
-import flow.execution.FlowExecution;
 import flow.execution.runner.FlowExecutor;
 import jaxb.schema.generated.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,13 +19,12 @@ public class Stepper2Flows {
 
     public Stepper2Flows(STStepper stepper) {
         int numberOfFlows = stepper.getSTFlows().getSTFlow().size();
-        List<FlowDefinition> allFlows = new ArrayList<>();
+        LinkedList<FlowDefinition> allFlows = new LinkedList<>();
         FlowDefinition flow;
         //each flow
         for (int i = 0; i < numberOfFlows; i++) {
             STFlow currFlow = stepper.getSTFlows().getSTFlow().get(i);
             flow = new FlowDefinitionImpl(currFlow.getName(), currFlow.getSTFlowDescription());
-
 
             //each step
             //add steps to flow (we need to change and add more ctor)
@@ -69,20 +65,21 @@ public class Stepper2Flows {
 
             //FlowLevelAliasing
             for (STFlowLevelAlias flowLevelAlias : currFlow.getSTFlowLevelAliasing().getSTFlowLevelAlias()) {
-                if (flow.stepExist(flowLevelAlias.getStep()) && flow.dataExist(flowLevelAlias.getStep(), flowLevelAlias.getSourceDataName())) {
+                if(flow.stepExist(flowLevelAlias.getStep()) && flow.dataExist(flowLevelAlias.getStep(), flowLevelAlias.getSourceDataName())) {
                     DataDefinitions data = flow.getDDFromMap(flowLevelAlias.getSourceDataName());
                     flow.addToName2DDMap(flowLevelAlias.getAlias(), data);
-                    if((flow.getInputName2aliasMap().get(flowLevelAlias.getStep() + "." + flowLevelAlias.getSourceDataName()))!=null) {
-                        flow.addToInputName2AliasMap(flowLevelAlias.getStep(),flowLevelAlias.getSourceDataName(), flowLevelAlias.getAlias());
-                    }
-                    else {
-                        flow.addToOutputName2AliasMap(flowLevelAlias.getStep(),flowLevelAlias.getSourceDataName(), flowLevelAlias.getAlias());
+                    if ((flow.getInputName2aliasMap().get(flowLevelAlias.getStep() + "." + flowLevelAlias.getSourceDataName())) != null) {
+                        flow.addToInputName2AliasMap(flowLevelAlias.getStep(), flowLevelAlias.getSourceDataName(), flowLevelAlias.getAlias());
+                    } else {
+                        flow.addToOutputName2AliasMap(flowLevelAlias.getStep(), flowLevelAlias.getSourceDataName(), flowLevelAlias.getAlias());
 
                     }
                 }
-                else {//flow in not valid
-                    return;
-                }
+            }
+
+            /////Custom Mapping
+            for(STCustomMapping  customMapping : currFlow.getSTCustomMappings().getSTCustomMapping()){
+                flow.addToCustomMapping(new CustomMapping(customMapping.getSourceStep(), customMapping.getSourceData(), customMapping.getTargetStep(), customMapping.getTargetData()));
             }
 
             //add output to flow
@@ -90,10 +87,7 @@ public class Stepper2Flows {
             List<String> names = Arrays.stream(outputsName.split(","))
                     .map(String::trim)
                     .collect(Collectors.toList());
-
-            if(flow.isFlowOutputsValid(names)) {
-                flow.getFlowFormalOutputs().addAll(names);
-            }
+            flow.getFlowFormalOutputs().addAll(names);
 
             flow.validateFlowStructure();
 
@@ -104,12 +98,9 @@ public class Stepper2Flows {
 
                 FlowExecutor fLowExecutor = new FlowExecutor();
 
-                //add flow to flows list
-                allFlows.add(flow);
+                 allFlows.addFirst(flow);
             }
 
-
-            //list of flows
 
 /*
 

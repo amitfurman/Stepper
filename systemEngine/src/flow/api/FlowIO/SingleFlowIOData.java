@@ -1,9 +1,9 @@
 package flow.api.FlowIO;
 
-import DataDefinition.api.DataDefinitions;
-import Steps.api.StepDefinition;
+import datadefinition.api.DataDefinitions;
+import flow.api.StepUsageDeclaration;
+import steps.api.StepDefinition;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,12 +14,12 @@ public class SingleFlowIOData {
     private String finalName;
     private DataDefinitions dataDefinition;
     private String userString;
-    private StepDefinition MyStep;
+    private StepUsageDeclaration MyStep;
     private List<SingleFlowIOData> optionalInputs;
     private List<SingleFlowIOData> optionalOutput;
 
     public SingleFlowIOData(IO type, String originalName, String finalName, DataDefinitions dataDefinition,
-                            String userString, StepDefinition MyStep) {
+                            String userString, StepUsageDeclaration MyStep) {
         this.type = type;
         this.originalName = originalName;
         this.finalName = finalName;
@@ -65,12 +65,13 @@ public class SingleFlowIOData {
     {
         return this.originalName;
     }
-    public String getFinalName()
-    {
+
+    public String getFinalName() {
         return this.finalName;
     }
-
-
+    public String getStepName() {
+        return this.MyStep.getFinalStepName();
+    }
 
 
 }

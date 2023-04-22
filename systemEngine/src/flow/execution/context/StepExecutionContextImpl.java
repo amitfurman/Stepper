@@ -1,12 +1,8 @@
 package flow.execution.context;
 
-import DataDefinition.api.DataDefinitions;
-import DataDefinition.api.IO_NAMES;
-import flow.api.FlowDefinition;
-import flow.execution.context.StepExecutionContext;
+import datadefinition.api.DataDefinitions;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class StepExecutionContextImpl implements StepExecutionContext {
 
@@ -14,12 +10,17 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     private final Map<String, DataDefinitions> name2DD;
     private final Map<String, String> outputName2alias;
     private final Map<String, String> stepName2alias;
+    private final List<String> logsList;
+    private final List<String> summaryLinesList;
+
 
     public StepExecutionContextImpl(Map<String, DataDefinitions> originalDDMap, Map<String,String> originalOutputAliasMap, Map<String, String> originalStepName2alias) {
         dataValues = new HashMap<>();
         name2DD = new HashMap<>(originalDDMap);
         outputName2alias = new HashMap<>(originalOutputAliasMap);
         stepName2alias = new HashMap<>(originalStepName2alias);
+        logsList = new LinkedList<>();
+        summaryLinesList = new LinkedList<>(); //need list?
     }
 
     ///////////overview the exception
@@ -28,7 +29,6 @@ public class StepExecutionContextImpl implements StepExecutionContext {
 
         //return the data definition from the name
         DataDefinitions theExpectedDataDefinition = name2DD.get(dataName);
-            //    IO_NAMES.name2DataDefinition.get(dataName);
 
         if (expectedDataType.isAssignableFrom(theExpectedDataDefinition.getType())) {
             Object aValue = dataValues.get(dataName);
@@ -71,6 +71,16 @@ public class StepExecutionContextImpl implements StepExecutionContext {
         }
 
         return false;
+    }
+
+    @Override
+    public void storeLogLine(String logLine) {
+        logsList.add(logLine);
+    }
+
+    @Override
+    public void setSummaryLine(String summaryLine) {
+
     }
 
 

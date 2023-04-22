@@ -1,8 +1,6 @@
 package flow.api;
 
-import Steps.api.StepDefinition;
-
-import java.util.Map;
+import steps.api.StepDefinition;
 
 public class StepUsageDeclarationImpl implements StepUsageDeclaration {
     private final StepDefinition stepDefinition;

@@ -1,6 +1,6 @@
 package flow.api;
 
-import Steps.api.StepDefinition;
+import steps.api.StepDefinition;
 
 public interface StepUsageDeclaration {
     String getFinalStepName();

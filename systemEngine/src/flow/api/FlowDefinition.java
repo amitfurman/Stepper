@@ -1,11 +1,9 @@
 package flow.api;
 
-import DataDefinition.api.DataDefinitions;
-import Steps.api.DataDefinitionDeclaration;
+import datadefinition.api.DataDefinitions;
+import steps.api.DataDefinitionDeclaration;
 import flow.api.FlowIO.SingleFlowIOData;
-import javafx.util.Pair;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +24,8 @@ public interface FlowDefinition {
     Map<String, String> getInputName2aliasMap();
     Map<String, String> getOutputName2aliasMap();
     Map<String,String> getAlias2StepNameMap();
+    SingleFlowIOData getElementFromIOList(String stepName, String dataName );
+    List<CustomMapping> getCustomMappingList();
 
     void addStepToFlow(StepUsageDeclaration stepUsageDeclaration);
     void addToName2DDMap(String Name, DataDefinitions DD);
@@ -34,13 +34,16 @@ public interface FlowDefinition {
     void addToOutputName2AliasMap(String stepName, String outputName, String alias);
     void addElementToIoList(SingleFlowIOData IOElement);
     void addToAlias2StepNameMap(String stepName, String alias);
+    void addToCustomMapping(CustomMapping obj);
 
     boolean stepExist(String stepName);
     boolean dataExist(String stepName, String dataName);
     boolean isFlowOutputsValid(List<String> outputsNamesList);
     void validateFlowStructure();
     void validateIfOutputsHaveSameName();
-    void mandatoryInputsIsNotUserFriendly();
+    void mandatoryInputsIsUserFriendly();
     void flowOutputsIsNotExists();
     void mandatoryInputsWithSameNameAndDifferentType();
+    boolean doesSourceStepBeforeTargetStep(String sourceStepName, String targetStepName);
+    boolean isTheSameDD (String sourceName, String targetStepName);
     }
