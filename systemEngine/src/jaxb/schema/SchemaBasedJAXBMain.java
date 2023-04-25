@@ -1,10 +1,11 @@
 package jaxb.schema;
 
+import dto.DTOAllStepperFlows;
 import exceptions.DuplicateFlowsNames;
-import exceptions.OutputsWithSameName;
 import exceptions.UnExistsStep;
 import flow.impl.Stepper2Flows;
-import flow.validator.VerifyFlow;
+import jaxb.schema.generated.STFlow;
+import jaxb.schema.generated.STStepInFlow;
 import jaxb.schema.generated.STStepper;
 
 import javax.xml.bind.JAXBContext;
@@ -14,23 +15,24 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class SchemaBasedJAXBMain {
 
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "jaxb.schema.generated";
 
-    public void schemaBasedJAXB() {
+    public DTOAllStepperFlows schemaBasedJAXB(String filePath) {
         try {
-            InputStream inputStream = new FileInputStream(new File("systemEngine/src/resources/ex1.xml"));
+            InputStream inputStream = new FileInputStream(new File(filePath));
             STStepper stepper = deserializeFrom(inputStream);
 
-
-            VerifyFlow flow = new VerifyFlow(stepper);
-            flow.verifyIfExistsFlowsWithDuplicateNames();
-            flow.ReferenceToUnExistsStep();
+            verifyIfExistsFlowsWithDuplicateNames(stepper);
+            ReferenceToUnExistsStep(stepper);
 
             Stepper2Flows step = new Stepper2Flows(stepper);
-
+            return step.getAllStepperFlows();
 
         } catch (JAXBException | FileNotFoundException e) {
             e.printStackTrace();
@@ -39,12 +41,46 @@ public class SchemaBasedJAXBMain {
         } catch (UnExistsStep e) {
             System.out.printf(e.getMessage());
         }
-    }
 
+       return null;
+    }
 
     private static STStepper deserializeFrom(InputStream in) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);
         Unmarshaller u = jc.createUnmarshaller();
         return (STStepper) u.unmarshal(in);
     }
+
+    public void verifyIfExistsFlowsWithDuplicateNames(STStepper stepper) throws DuplicateFlowsNames {
+        List<STFlow> stFlows = stepper.getSTFlows().getSTFlow();
+
+        boolean isDuplicateNames =
+                stFlows.stream()
+                        .anyMatch(flow ->
+                                stFlows.stream()
+                                        .filter(f -> !f.equals(flow))
+                                        .anyMatch((otherFlow ->
+                                                otherFlow.getName().equals(flow.getName()))));
+        if(isDuplicateNames) {
+            throw new DuplicateFlowsNames();
+        }
+    }
+
+    public void ReferenceToUnExistsStep(STStepper stepper) throws UnExistsStep {
+        List<STFlow> stFlows = stepper.getSTFlows().getSTFlow();
+        List<String>  stepsNames = new ArrayList<>(Arrays.asList("Spend Some Time", "Collect Files In Folder", "Files Deleter", "Files Renamer", "Files Content Extractor", "CSV Exporter", "Properties Exporter", "File Dumper"));
+
+        for(STFlow flow : stFlows) {
+            List<STStepInFlow> stStepFlow = flow.getSTStepsInFlow().getSTStepInFlow();
+            for (STStepInFlow step : stStepFlow) {
+                String stepName = step.getName();
+                boolean isPresent =
+                        stepsNames.
+                                stream().anyMatch(str -> str.equals(stepName));
+                if(!isPresent)
+                    throw new UnExistsStep();
+            }
+        }
+    }
+
 }

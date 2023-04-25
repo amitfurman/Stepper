@@ -16,27 +16,28 @@ public class FlowDefinitionImpl implements FlowDefinition {
     private final String description;
     private final List<String> flowOutputs;
     private final List<StepUsageDeclaration> steps;
+    private boolean isFlowReadOnly;
     private final Map<String, DataDefinitions> name2DataDefinition;
-    //private final Map<String, Map<String, String>> MapIOName2Alias;
-
     private final Map<String, String> InputName2Alias;
     private final Map<String, String> OutputName2Alias;
     private final Map<String, String> MapAlias2StepName;
     private final List<SingleFlowIOData> IOlist;
     private final List<CustomMapping> customMapping;
+    private final List<SingleFlowIOData> freeInputs;
 
     public FlowDefinitionImpl(String name, String description) {
         this.name = name;
         this.description = description;
-        flowOutputs = new ArrayList<>();
-        steps = new LinkedList<>();
-        name2DataDefinition = new HashMap<>();
-        IOlist = new ArrayList<>();
-        // MapIOName2Alias = new HashMap<>();
-        MapAlias2StepName = new HashMap<>();
-        InputName2Alias = new HashMap<>();
-        OutputName2Alias = new HashMap<>();
-        customMapping = new ArrayList<>();
+        this.flowOutputs = new ArrayList<>();
+        this.isFlowReadOnly = true;
+        this.steps = new LinkedList<>();
+        this.name2DataDefinition = new HashMap<>();
+        this.IOlist = new ArrayList<>();
+        this.MapAlias2StepName = new HashMap<>();
+        this.InputName2Alias = new HashMap<>();
+        this.OutputName2Alias = new HashMap<>();
+        this.customMapping = new ArrayList<>();
+        this.freeInputs = new ArrayList<>();
     }
 
     @Override
@@ -64,6 +65,22 @@ public class FlowDefinitionImpl implements FlowDefinition {
     }
 
     @Override
+    public void setFlowReadOnly() {
+        this.isFlowReadOnly = checkIfFlowIsReadOnly();
+    }
+
+    @Override
+    public boolean checkIfFlowIsReadOnly() {
+        return steps.stream().anyMatch(step -> !(step.getStepDefinition().isReadonly()));
+    }
+
+    @Override
+    public boolean getFlowReadOnly() {
+        return this.isFlowReadOnly;
+    }
+
+
+    @Override
     public List<StepUsageDeclaration> getFlowSteps() {
         return steps;
     }
@@ -78,13 +95,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
         name2DataDefinition.put(name, DD);
     }
 
- /*   @Override
-    public void addToIOName2AliasMap(String stepName, String IOName, String alias) {
-        Map<String,String> newElement = new HashMap<>();
-        newElement.put(IOName,alias);
-        MapIOName2Alias.put(stepName ,newElement);
-    }*/
-
     @Override
     public void addToInputName2AliasMap(String stepName, String inputName, String alias) {
         String result = stepName + "." + inputName;
@@ -96,8 +106,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
         String result = stepName + "." + outputName;
         OutputName2Alias.put(result, alias);
     }
-
-
     @Override
     public void addToAlias2StepNameMap(String stepName, String alias) {
         MapAlias2StepName.put(stepName, alias);
@@ -108,11 +116,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
 
         return name2DataDefinition.get(InputName);
     }
-
-    /* @Override
-    public String getIOAliasFromMap(String stepName ,String originalName) {
-        return MapIOName2Alias.get(stepName).get(originalName);
-     }*/
     @Override
     public String getInputAliasFromMap(String stepName, String originalInputName) {
         return InputName2Alias.get(stepName + "." + originalInputName);
@@ -133,11 +136,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
         return MapAlias2StepName;
     }
 
-    /* @Override
-     public Map<String,Map<String, String>> getIOName2aliasMap() {
-         return MapIOName2Alias;
-     }
- */
     @Override
     public Map<String, String> getInputName2aliasMap() {
         return InputName2Alias;
@@ -165,9 +163,8 @@ public class FlowDefinitionImpl implements FlowDefinition {
                         .stream()
                         .anyMatch(name -> name.getFinalStepName().equals(stepName));
 
-//the warning is species to aliasing flow def - need to change
         if (!isPresent) {
-            String warning = "The step" + stepName +"does not exists in the current flow.";
+            String warning = "The step" + stepName + "does not exists in the current flow.";
             return false;
         }
         return true;
@@ -196,35 +193,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
     }
 
     @Override
-    public boolean isFlowOutputsValid(List<String> outputsNamesList) {
-
-        boolean isPresent = true;
-        for (String outputName : outputsNamesList) {
-            isPresent =
-                    getOutputName2aliasMap() ////
-                            .values()
-                            .stream()
-                            .anyMatch(output -> output.equals(outputName));
-        }
-//the warning is species to aliasing flow def - need to change
-        if (!isPresent) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public void validateFlowStructure() {
-        validateIfOutputsHaveSameName();
-        FlowAutomaticMapping automaticMapping = new FlowAutomaticMapping(this);
-        FlowCustomMapping customMapping = new FlowCustomMapping(this);
-        flowOutputsIsNotExists();
-        mandatoryInputsWithSameNameAndDifferentType();
-        mandatoryInputsIsUserFriendly();
-
-    }
-
-    @Override
     public void validateIfOutputsHaveSameName() {
         boolean isPresent =
                 flowOutputs
@@ -238,20 +206,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
     }
 
     @Override
-    public void mandatoryInputsIsUserFriendly() {
-        boolean isPresent =
-                getIOlist()
-                        .stream()
-                        .filter(data -> data.getType().equals(IO.INPUT))
-                        .filter(data -> data.getOptionalOutput().isEmpty())
-                        .anyMatch(data -> !data.getDD().isUserFriendly());
-
-        if (isPresent) {
-            String exception = "Invalid. There are mandatory inputs that is not user friendly.";
-        }
-    }
-
-    @Override
     public void flowOutputsIsNotExists() {
         for (String output : getFlowFormalOutputs()) {
             boolean isPresent = getIOlist()
@@ -260,24 +214,35 @@ public class FlowDefinitionImpl implements FlowDefinition {
 
             if (!isPresent) {
                 String exception = "Invalid. There is at least one flow output that is not exists.";
+
             }
         }
     }
 
     @Override
     public void mandatoryInputsWithSameNameAndDifferentType() {
-        for (SingleFlowIOData currData : getIOlist()) {
+        for (SingleFlowIOData currData :  freeInputs) {
             boolean isPresent =
-                    getIOlist()
+                    freeInputs
                             .stream()
-                            .filter(data -> data.getType() == IO.INPUT)
-                            .filter(data -> data.getOptionalInputs().isEmpty())
-                            .filter(data -> data.getName().equals(currData.getName()))
-                            .anyMatch(data -> !data.getType().equals(currData.getType()));
+                            .filter(data -> data.getFinalName().equals(currData.getFinalName()))
+                            .anyMatch(data -> !data.getDD().equals(currData.getDD()));
 
             if (isPresent) {
                 String exception = "Invalid. There are mandatory inputs with the same name but different type.";
             }
+        }
+    }
+
+    @Override
+    public void mandatoryInputsIsUserFriendly() {
+        boolean isPresent =
+                freeInputs
+                        .stream()
+                        .anyMatch(data -> !data.getDD().isUserFriendly());
+
+        if (isPresent) {
+            String exception = "Invalid. There are mandatory inputs that is not user friendly.";
         }
     }
 
@@ -310,13 +275,58 @@ public class FlowDefinitionImpl implements FlowDefinition {
        }
        return true;
     }
-
     @Override
     public List<CustomMapping> getCustomMappingList(){
         return customMapping;
     }
+
     @Override
     public void addToCustomMapping(CustomMapping obj){
         customMapping.add(obj);
     }
+
+    @Override
+    public void addToMandatoryInputsList(SingleFlowIOData mandatoryInput){
+        freeInputs.add(mandatoryInput);
+    }
+
+    @Override
+    public List<SingleFlowIOData> getMandatoryInputsList(){
+        return freeInputs;
+    }
+
+    @Override
+    public void initMandatoryInputsList(){
+        freeInputs.addAll(getIOlist()
+                .stream()
+                .filter(data -> data.getType().equals(IO.INPUT))
+                .filter(data -> data.getOptionalOutput().isEmpty()).collect(Collectors.toList()));
+    }
 }
+
+/*
+    @Override
+    public void validateFlowStructure() {
+        validateIfOutputsHaveSameName();
+        flowOutputsIsNotExists();
+        mandatoryInputsWithSameNameAndDifferentType();
+        mandatoryInputsIsUserFriendly();
+
+    }
+ */
+/* @Override
+    public boolean isFlowOutputsValid(List<String> outputsNamesList) {
+
+        boolean isPresent = true;
+        for (String outputName : outputsNamesList) {
+            isPresent =
+                    getOutputName2aliasMap() ////
+                            .values()
+                            .stream()
+                            .anyMatch(output -> output.equals(outputName));
+        }
+        if (!isPresent) {
+            return false;
+        }
+        return true;
+    }*/

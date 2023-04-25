@@ -13,7 +13,7 @@ public class SpendSomeTime extends AbstractStepDefinition {
     public SpendSomeTime () {
         super("Spend Some Time", true);
         //step input
-        addInput(new DataDefinitionDeclarationImpl("TIME_TO_TIME_TO_SPEND", DataNecessity.MANDATORY, "Total sleeping time (sec)", DataDefinitionRegistry.NUMBER));
+        addInput(new DataDefinitionDeclarationImpl("TIME_TO_SPEND", DataNecessity.MANDATORY, "Total sleeping time (sec)", DataDefinitionRegistry.NUMBER));
     }
 
     @Override

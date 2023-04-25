@@ -33,7 +33,6 @@ public class FlowAutomaticMapping {
                         filter(io -> io.getType() != data.getType()).
                         filter(io -> io.getDD().equals(data.getDD())).//filter the outputs to outputs with the DD
                         filter(io -> io.getFinalName().equals(data.getFinalName())).//filter the outputs to outputs with the same name
-                //CHECK IF ALIAS OR NAME
                         collect(Collectors.toList()));
 
                 for(SingleFlowIOData storeData : data.getOptionalInputs()) {

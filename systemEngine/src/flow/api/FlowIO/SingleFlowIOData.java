@@ -15,8 +15,8 @@ public class SingleFlowIOData {
     private DataDefinitions dataDefinition;
     private String userString;
     private StepUsageDeclaration MyStep;
-    private List<SingleFlowIOData> optionalInputs;
-    private List<SingleFlowIOData> optionalOutput;
+    private List<SingleFlowIOData> inputsThatCanGetCurrOutput;
+    private List<SingleFlowIOData> outputThatCanBringDataToCurrInput;
 
     public SingleFlowIOData(IO type, String originalName, String finalName, DataDefinitions dataDefinition,
                             String userString, StepUsageDeclaration MyStep) {
@@ -26,30 +26,30 @@ public class SingleFlowIOData {
         this.dataDefinition = dataDefinition;
         this.userString = userString;
         this.MyStep = MyStep;
-        this.optionalInputs = new LinkedList<>();
-        this.optionalOutput = new LinkedList<>();
+        this.inputsThatCanGetCurrOutput = new LinkedList<>();
+        this.outputThatCanBringDataToCurrInput = new LinkedList<>();
     }
 
     public void setOptionalInputs(List<SingleFlowIOData> optionalInputs){
-        this.optionalInputs = optionalInputs;
+        this.inputsThatCanGetCurrOutput = optionalInputs;
     }
 
     public void setOptionalOutput(List<SingleFlowIOData> optionalOutput){
-        this.optionalOutput= optionalOutput;
+        this.outputThatCanBringDataToCurrInput= optionalOutput;
     }
     public void addToOptionalInputs(SingleFlowIOData data){
-        this.optionalInputs.add(data);
+        this.inputsThatCanGetCurrOutput.add(data);
     }
 
     public void addToOptionalOutput(SingleFlowIOData data){
-        this.optionalOutput.add(data);
+        this.outputThatCanBringDataToCurrInput.add(data);
     }
 
     public List<SingleFlowIOData> getOptionalInputs(){
-        return this.optionalInputs;
+        return this.inputsThatCanGetCurrOutput;
     }
     public List<SingleFlowIOData> getOptionalOutput(){
-        return this.optionalOutput;
+        return this.outputThatCanBringDataToCurrInput;
     }
 
     public IO getType(){
