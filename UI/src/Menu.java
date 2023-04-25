@@ -135,66 +135,70 @@ public class Menu {
         return false;
     }
 
-    /////////divide to small funcs
     public static void IntroduceTheChosenFlow(int flowNumber, DTOAllStepperFlows allStepperFlows) {
         DTOFlowDefinitionImpl flow = allStepperFlows.getAllFlows().get(flowNumber - 1);
-        AtomicInteger stepesIndex= new AtomicInteger(1);
-        AtomicInteger freeInputsIndex= new AtomicInteger(1);
-        AtomicInteger flowOutputsIndex= new AtomicInteger(1);
 
         StringBuilder flowData = new StringBuilder();
         flowData.append("Flow Name: " + flow.getName() + '\n');
         flowData.append("Flow Description: " + flow.getDescription() + '\n');
         flowData.append("Flow Formal Outputs: " + String.join(", ", flow.getFlowFormalOutputs()) + '\n');
-        flowData.append("Is The Flow Raed Only? " + flow.getFlowReadOnly() + '\n');
-        flowData.append("The information for the steps in the current flow: \n");
-        flow
-                .getFlowStepsData()
-                .stream()
-                .forEach(node -> {
-                    flowData.append("Step " + stepesIndex.getAndIncrement() + ": \n");
-                    flowData.append("Original Name: " + node.getOriginalStepName() + '\n');
-                    if (node.getFinalStepName() != node.getOriginalStepName()) {
-                        flowData.append("Final Name: " + Objects.toString(node.getFinalStepName(), "") + "\n");
-                    }
-                    flowData.append("Is The Step Read Only? " + node.getIsReadOnly() +"\n\n");
-                });
-        flowData.append("The information about free inputs in the current flow: \n");
-
-        flow
-                .getFlowFreeInputs()
-                .stream()
-                .forEach(node -> {
-                    flowData.append("Free Input " + freeInputsIndex.getAndIncrement() + ": \n");
-                    flowData.append("Final Name: " + node.getFinalName() + '\n');
-                    flowData.append("Type: " + node.getType().getName() + '\n');
-                    flowData.append("Connected Steps: " + String.join(", ", flow.getListOfStepsWithCurrInput(node.getFinalName())) +'\n');
-                    flowData.append("Mandatory / Optional: " + node.getNecessity() + "\n\n");
-                });
-
-        flow.getIOlist()
-                .stream().forEach(node -> {
-                    if(flow.getFlowFormalOutputs().stream().anyMatch(output->output.equals(node.getFinalName()))) {
-                        flowData.append("Flow Outputs " + flowOutputsIndex.getAndIncrement() + ": \n");
-                        flowData.append("Final Name: " + node.getFinalName() + '\n');
-                        flowData.append("Type: " + node.getDD().getName() + '\n');
-                        flowData.append("Creating Step: " + node.getStepName() + "\n\n");
-                    }
-                });
+        flowData.append("Is The Flow Read Only? " + flow.getFlowReadOnly() + "\n\n");
+        flowData.append(printStepsInfo(flow));
+        flowData.append(printFreeInputsInfo(flow));
+        flowData.append(printFlowOutputs(flow));
 
         System.out.println(flowData);
     }
 
-    public String printStepsInfo(DTOAllStepperFlows allStepperFlows) {
-        
+    public static StringBuilder printStepsInfo(DTOFlowDefinitionImpl flow) {
+        AtomicInteger stepsIndex= new AtomicInteger(1);
+        StringBuilder stepData = new StringBuilder();
+        stepData.append("*The information for the steps in the current flow: *\n");
+        flow
+                .getFlowStepsData()
+                .stream()
+                .forEach(node -> {
+                    stepData.append("Step " + stepsIndex.getAndIncrement() + ": \n");
+                    stepData.append("Original Name: " + node.getOriginalStepName() + '\n');
+                    if (node.getFinalStepName() != node.getOriginalStepName()) {
+                        stepData.append("Final Name: " + Objects.toString(node.getFinalStepName(), "") + "\n");
+                    }
+                    stepData.append("Is The Step Read Only? " + node.getIsReadOnly() +"\n\n");
+                });
+        return stepData;
     }
 
-    public String printFreeInputsInfo() {
-
+    public static StringBuilder printFreeInputsInfo(DTOFlowDefinitionImpl flow) {
+        AtomicInteger freeInputsIndex= new AtomicInteger(1);
+        StringBuilder inputData = new StringBuilder();
+        inputData.append("*The information about free inputs in the current flow: *\n");
+        flow
+                .getFlowFreeInputs()
+                .stream()
+                .forEach(node -> {
+                    inputData.append("Free Input " + freeInputsIndex.getAndIncrement() + ": \n");
+                    inputData.append("Final Name: " + node.getFinalName() + '\n');
+                    inputData.append("Type: " + node.getType().getName() + '\n');
+                    inputData.append("Connected Steps: " + String.join(", ", flow.getListOfStepsWithCurrInput(node.getFinalName())) +'\n');
+                    inputData.append("Mandatory / Optional: " + node.getNecessity() + "\n\n");
+                });
+        return inputData;
     }
 
-    public String printFlowOutputs() {
-
+    public static StringBuilder printFlowOutputs(DTOFlowDefinitionImpl flow) {
+        AtomicInteger flowOutputsIndex= new AtomicInteger(1);
+        StringBuilder outputData = new StringBuilder();
+        outputData.append("*The information about the flow outputs: *\n");
+        flow.getIOlist()
+                .stream().forEach(node -> {
+                    if(flow.getFlowFormalOutputs().stream().anyMatch(output->output.equals(node.getFinalName()))) {
+                        outputData.append("Flow Outputs " + flowOutputsIndex.getAndIncrement() + ": \n");
+                        outputData.append("Final Name: " + node.getFinalName() + '\n');
+                        outputData.append("Type: " + node.getDD().getName() + '\n');
+                        outputData.append("Creating Step: " + node.getStepName() + "\n\n");
+                    }
+                });
+        return outputData;
     }
 }
 

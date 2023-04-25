@@ -65,7 +65,7 @@ public class DTOFlowDefinitionImpl implements DTOFlowDefinition{
         List<String> stepsWithCurrInput = new LinkedList<>();
 
         for(DTOSingleFlowIOData input : freeInputs){
-            if(input.getFinalName() == inputName){
+            if(input.getFinalName().equals(inputName)){
                 stepsWithCurrInput.add(input.getStepName());
             }
         }
