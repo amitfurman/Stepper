@@ -1,7 +1,6 @@
 package flow.api;
 
 import datadefinition.api.DataDefinitions;
-import steps.api.DataDefinitionDeclaration;
 import flow.api.FlowIO.SingleFlowIOData;
 
 import java.util.List;
@@ -12,7 +11,7 @@ public interface FlowDefinition {
     String getDescription();
     List<StepUsageDeclaration> getFlowSteps();
     List<String> getFlowFormalOutputs();
-    List<DataDefinitionDeclaration> getFlowFreeInputs();
+    List<SingleFlowIOData> getFlowFreeInputs();
     List<SingleFlowIOData> getIOlist();
     DataDefinitions getDDFromMap(String InputName);
     String getInputAliasFromMap(String stepName ,String originalInputName);
@@ -44,7 +43,6 @@ public interface FlowDefinition {
     void initMandatoryInputsList();
     void setFlowReadOnly();
     boolean checkIfFlowIsReadOnly();
+    List<String> getListOfStepsWithCurrInput(String inputName);
 
-    //boolean isFlowOutputsValid(List<String> outputsNamesList);
-    //void validateFlowStructure();
     }

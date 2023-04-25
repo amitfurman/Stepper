@@ -1,7 +1,5 @@
 package flow.api;
 
-import javax.xml.bind.annotation.XmlAttribute;
-
 public class CustomMapping {
     protected String targetStep;
     protected String targetData;

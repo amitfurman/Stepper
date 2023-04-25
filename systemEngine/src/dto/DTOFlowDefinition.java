@@ -1,7 +1,6 @@
 package dto;
 
-import flow.api.StepUsageDeclaration;
-
+import flow.api.FlowIO.SingleFlowIOData;
 import java.util.List;
 
 public interface DTOFlowDefinition {
@@ -10,6 +9,7 @@ public interface DTOFlowDefinition {
     List<String> getFlowFormalOutputs();
     boolean getFlowReadOnly();
     List<DTOStepUsageDeclaration> getFlowStepsData();
-
-
+    List<SingleFlowIOData> getIOlist();
+    List<String> getListOfStepsWithCurrInput(String inputName);
+    List<DTOSingleFlowIOData> getFlowFreeInputs();
 }

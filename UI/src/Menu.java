@@ -135,10 +135,12 @@ public class Menu {
         return false;
     }
 
+    /////////divide to small funcs
     public static void IntroduceTheChosenFlow(int flowNumber, DTOAllStepperFlows allStepperFlows) {
         DTOFlowDefinitionImpl flow = allStepperFlows.getAllFlows().get(flowNumber - 1);
-        AtomicInteger index= new AtomicInteger(1);
-
+        AtomicInteger stepesIndex= new AtomicInteger(1);
+        AtomicInteger freeInputsIndex= new AtomicInteger(1);
+        AtomicInteger flowOutputsIndex= new AtomicInteger(1);
 
         StringBuilder flowData = new StringBuilder();
         flowData.append("Flow Name: " + flow.getName() + '\n');
@@ -150,15 +152,48 @@ public class Menu {
                 .getFlowStepsData()
                 .stream()
                 .forEach(node -> {
-                    flowData.append("Step " + index.getAndIncrement() + ": \n");
+                    flowData.append("Step " + stepesIndex.getAndIncrement() + ": \n");
                     flowData.append("Original Name: " + node.getOriginalStepName() + '\n');
                     if (node.getFinalStepName() != node.getOriginalStepName()) {
                         flowData.append("Final Name: " + Objects.toString(node.getFinalStepName(), "") + "\n");
                     }
                     flowData.append("Is The Step Read Only? " + node.getIsReadOnly() +"\n\n");
                 });
+        flowData.append("The information about free inputs in the current flow: \n");
+
+        flow
+                .getFlowFreeInputs()
+                .stream()
+                .forEach(node -> {
+                    flowData.append("Free Input " + freeInputsIndex.getAndIncrement() + ": \n");
+                    flowData.append("Final Name: " + node.getFinalName() + '\n');
+                    flowData.append("Type: " + node.getType().getName() + '\n');
+                    flowData.append("Connected Steps: " + String.join(", ", flow.getListOfStepsWithCurrInput(node.getFinalName())) +'\n');
+                    flowData.append("Mandatory / Optional: " + node.getNecessity() + "\n\n");
+                });
+
+        flow.getIOlist()
+                .stream().forEach(node -> {
+                    if(flow.getFlowFormalOutputs().stream().anyMatch(output->output.equals(node.getFinalName()))) {
+                        flowData.append("Flow Outputs " + flowOutputsIndex.getAndIncrement() + ": \n");
+                        flowData.append("Final Name: " + node.getFinalName() + '\n');
+                        flowData.append("Type: " + node.getDD().getName() + '\n');
+                        flowData.append("Creating Step: " + node.getStepName() + "\n\n");
+                    }
+                });
 
         System.out.println(flowData);
+    }
+
+    public String printStepsInfo(DTOAllStepperFlows allStepperFlows) {
+        
+    }
+
+    public String printFreeInputsInfo() {
+
+    }
+
+    public String printFlowOutputs() {
 
     }
 }

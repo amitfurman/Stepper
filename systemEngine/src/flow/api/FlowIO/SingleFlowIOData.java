@@ -2,6 +2,7 @@ package flow.api.FlowIO;
 
 import datadefinition.api.DataDefinitions;
 import flow.api.StepUsageDeclaration;
+import steps.api.DataNecessity;
 import steps.api.StepDefinition;
 
 import java.util.LinkedList;
@@ -14,20 +15,25 @@ public class SingleFlowIOData {
     private String finalName;
     private DataDefinitions dataDefinition;
     private String userString;
+    private DataNecessity necessity;
     private StepUsageDeclaration MyStep;
     private List<SingleFlowIOData> inputsThatCanGetCurrOutput;
     private List<SingleFlowIOData> outputThatCanBringDataToCurrInput;
+   // private List<String> stepsWithCurrIO;
 
     public SingleFlowIOData(IO type, String originalName, String finalName, DataDefinitions dataDefinition,
-                            String userString, StepUsageDeclaration MyStep) {
+                            String userString, DataNecessity necessity, StepUsageDeclaration MyStep) {
         this.type = type;
         this.originalName = originalName;
         this.finalName = finalName;
         this.dataDefinition = dataDefinition;
         this.userString = userString;
+        this.necessity = necessity;
         this.MyStep = MyStep;
         this.inputsThatCanGetCurrOutput = new LinkedList<>();
         this.outputThatCanBringDataToCurrInput = new LinkedList<>();
+        //this.stepsWithCurrIO = new LinkedList<>();
+
     }
 
     public void setOptionalInputs(List<SingleFlowIOData> optionalInputs){
@@ -37,6 +43,7 @@ public class SingleFlowIOData {
     public void setOptionalOutput(List<SingleFlowIOData> optionalOutput){
         this.outputThatCanBringDataToCurrInput= optionalOutput;
     }
+
     public void addToOptionalInputs(SingleFlowIOData data){
         this.inputsThatCanGetCurrOutput.add(data);
     }
@@ -48,6 +55,7 @@ public class SingleFlowIOData {
     public List<SingleFlowIOData> getOptionalInputs(){
         return this.inputsThatCanGetCurrOutput;
     }
+
     public List<SingleFlowIOData> getOptionalOutput(){
         return this.outputThatCanBringDataToCurrInput;
     }
@@ -69,9 +77,20 @@ public class SingleFlowIOData {
     public String getFinalName() {
         return this.finalName;
     }
+
     public String getStepName() {
         return this.MyStep.getFinalStepName();
     }
 
+    public DataNecessity getNecessity() {return necessity;}
 
+    public void setNecessity(DataNecessity necessity) {this.necessity = necessity;}
+
+ /*   public List<String> getStepsWithCurrIO() {
+        return stepsWithCurrIO;
+    }
+
+    public void setStepsWithCurrIO(List<String> stepsWithCurrIO) {
+        this.stepsWithCurrIO = stepsWithCurrIO;
+    }*/
 }

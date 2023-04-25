@@ -27,5 +27,4 @@ public class DTOStepUsageDeclarationImpl implements DTOStepUsageDeclaration{
     public boolean getIsReadOnly() {
         return isReadOnly;
     }
-
 }

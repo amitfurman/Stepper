@@ -37,7 +37,7 @@ public class FlowDefinitionImpl implements FlowDefinition {
         this.InputName2Alias = new HashMap<>();
         this.OutputName2Alias = new HashMap<>();
         this.customMapping = new ArrayList<>();
-        this.freeInputs = new ArrayList<>();
+        this.freeInputs = new LinkedList<>();
     }
 
     @Override
@@ -50,8 +50,8 @@ public class FlowDefinitionImpl implements FlowDefinition {
     }
 
     @Override
-    public List<DataDefinitionDeclaration> getFlowFreeInputs() {
-        return new ArrayList<>();
+    public List<SingleFlowIOData> getFlowFreeInputs() {
+        return this.freeInputs;
     }
 
     @Override
@@ -106,6 +106,7 @@ public class FlowDefinitionImpl implements FlowDefinition {
         String result = stepName + "." + outputName;
         OutputName2Alias.put(result, alias);
     }
+
     @Override
     public void addToAlias2StepNameMap(String stepName, String alias) {
         MapAlias2StepName.put(stepName, alias);
@@ -275,6 +276,7 @@ public class FlowDefinitionImpl implements FlowDefinition {
        }
        return true;
     }
+
     @Override
     public List<CustomMapping> getCustomMappingList(){
         return customMapping;
@@ -302,31 +304,20 @@ public class FlowDefinitionImpl implements FlowDefinition {
                 .filter(data -> data.getType().equals(IO.INPUT))
                 .filter(data -> data.getOptionalOutput().isEmpty()).collect(Collectors.toList()));
     }
-}
 
-/*
     @Override
-    public void validateFlowStructure() {
-        validateIfOutputsHaveSameName();
-        flowOutputsIsNotExists();
-        mandatoryInputsWithSameNameAndDifferentType();
-        mandatoryInputsIsUserFriendly();
+    public List<String> getListOfStepsWithCurrInput(String inputName){
 
+        List<String> stepsWithCurrInput = new LinkedList<>();
+
+        for(SingleFlowIOData input : freeInputs){
+            if(input.getFinalName() == inputName){
+                stepsWithCurrInput.add(input.getStepName());
+            }
+        }
+
+        return stepsWithCurrInput;
     }
- */
-/* @Override
-    public boolean isFlowOutputsValid(List<String> outputsNamesList) {
 
-        boolean isPresent = true;
-        for (String outputName : outputsNamesList) {
-            isPresent =
-                    getOutputName2aliasMap() ////
-                            .values()
-                            .stream()
-                            .anyMatch(output -> output.equals(outputName));
-        }
-        if (!isPresent) {
-            return false;
-        }
-        return true;
-    }*/
+
+}
