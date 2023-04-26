@@ -2,7 +2,6 @@ package flow.execution;
 
 import steps.api.Logger;
 import steps.api.StepResult;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;

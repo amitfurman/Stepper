@@ -10,7 +10,7 @@ public class DTOFlowDefinitionImpl implements DTOFlowDefinition{
     private boolean isFlowReadOnly;
     private final List<String> flowOutputs;
     private final List<DTOStepUsageDeclaration> steps;
-    private final List<SingleFlowIOData> IOlist;
+    private final List<DTOSingleFlowIOData> IOlist;
     private final List<DTOSingleFlowIOData> freeInputs;
 
     public DTOFlowDefinitionImpl(FlowDefinition flow) {
@@ -22,7 +22,10 @@ public class DTOFlowDefinitionImpl implements DTOFlowDefinition{
         for (StepUsageDeclaration step: flow.getFlowSteps()) {
             this.steps.add(new DTOStepUsageDeclarationImpl(step));
         }
-        this.IOlist = new ArrayList<SingleFlowIOData>(flow.getIOlist());
+        this.IOlist = new ArrayList<>();
+        for (SingleFlowIOData input: flow.getIOlist()) {
+            this.IOlist.add(new DTOSingleFlowIODataImpl(input));
+        }
         this.freeInputs = new LinkedList<>();
         for (SingleFlowIOData input: flow.getMandatoryInputsList()) {
           this.freeInputs.add(new DTOSingleFlowIODataImpl(input));
@@ -55,7 +58,7 @@ public class DTOFlowDefinitionImpl implements DTOFlowDefinition{
     }
 
     @Override
-    public List<SingleFlowIOData> getIOlist() {
+    public List<DTOSingleFlowIOData> getIOlist() {
         return IOlist;
     }
 

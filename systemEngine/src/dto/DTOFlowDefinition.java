@@ -9,7 +9,7 @@ public interface DTOFlowDefinition {
     List<String> getFlowFormalOutputs();
     boolean getFlowReadOnly();
     List<DTOStepUsageDeclaration> getFlowStepsData();
-    List<SingleFlowIOData> getIOlist();
+    List<DTOSingleFlowIOData> getIOlist();
     List<String> getListOfStepsWithCurrInput(String inputName);
     List<DTOSingleFlowIOData> getFlowFreeInputs();
 }

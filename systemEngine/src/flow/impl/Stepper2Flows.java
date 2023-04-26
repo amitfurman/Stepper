@@ -107,7 +107,7 @@ public class Stepper2Flows {
             FlowCustomMapping customMapping = new FlowCustomMapping(flow);
 
             flow.initMandatoryInputsList();
-            flow.mandatoryInputsWithSameNameAndDifferentType();
+            flow.freeInputsWithSameNameAndDifferentType();
             flow.mandatoryInputsIsUserFriendly();
 
 
@@ -118,18 +118,6 @@ public class Stepper2Flows {
         }
 
         allStepperFlows = new DTOAllStepperFlows(allFlows);
-
-
-    /* FlowExecutor flowExecutor = new FlowExecutor();
-        FlowExecution flow2Execution1 = new FlowExecution("1", flow2);
-        // collect all user inputs and store them on the flow execution object
-        fLowExecutor.executeFlow(flow2Execution1);
-
-        FlowExecution flow2Execution2 = new FlowExecution("2", flow2);
-        // collect all user inputs and store them on the flow execution object
-        fLowExecutor.executeFlow(flow2Execution1);
-
- */
     }
 
     public LinkedList<DTOFlowDefinitionImpl> getAllFlows() {

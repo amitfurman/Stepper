@@ -1,25 +1,30 @@
 package flow.execution;
-import flow.api.FlowDefinition;
 
-import java.awt.*;
+import flow.api.FlowDefinition;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class FlowExecution {
-    private final String uniqueId;
+    private final UUID uniqueId;
     private final FlowDefinition flowDefinition;
     private Duration totalTime;
+    private long startTime;
+    private long endTime;
     private FlowExecutionResult flowExecutionResult;
-    private Map<String,Object> freeInputs;
+    private Map<String,Object> dataValues;
+    private List<StepExecutionData> stepExecutionDataList;
 
     // lots more data that needed to be stored while flow is being executed...
 
-    public FlowExecution(String uniqueId, FlowDefinition flowDefinition) {
-        this.uniqueId = uniqueId;
+    public FlowExecution(FlowDefinition flowDefinition) {
+        this.uniqueId = UUID.randomUUID();
         this.flowDefinition = flowDefinition;
+        this.startTime = System.currentTimeMillis();
     }
 
-    public String getUniqueId() {
+    public UUID getUniqueId() {
         return uniqueId;
     }
 

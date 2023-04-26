@@ -8,4 +8,5 @@ public interface DTOSingleFlowIOData {
    String getFinalName();
    String getStepName();
    DataNecessity getNecessity();
+   String getUserString();
 }

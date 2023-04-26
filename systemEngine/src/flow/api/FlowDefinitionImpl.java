@@ -221,7 +221,7 @@ public class FlowDefinitionImpl implements FlowDefinition {
     }
 
     @Override
-    public void mandatoryInputsWithSameNameAndDifferentType() {
+    public void freeInputsWithSameNameAndDifferentType() {
         for (SingleFlowIOData currData :  freeInputs) {
             boolean isPresent =
                     freeInputs

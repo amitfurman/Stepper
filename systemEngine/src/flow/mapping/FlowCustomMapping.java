@@ -3,8 +3,6 @@ package flow.mapping;
 import flow.api.CustomMapping;
 import flow.api.FlowDefinition;
 import flow.api.FlowIO.SingleFlowIOData;
-import jaxb.schema.generated.STCustomMapping;
-import jaxb.schema.generated.STCustomMappings;
 
 public class FlowCustomMapping {
     public FlowCustomMapping(FlowDefinition flow){

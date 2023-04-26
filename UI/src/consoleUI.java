@@ -1,16 +1,24 @@
-import dto.DTOAllStepperFlows;
-import dto.DTOFlowDefinition;
-import dto.DTOFlowDefinitionImpl;
+import dto.*;
 import exceptions.FileIsNotXmlTypeException;
 import exceptions.FileNotExistsException;
 import jaxb.schema.SchemaBasedJAXBMain;
+import systemengine.systemengine;
+import systemengine.systemengineImpl;
 import xml.XmlValidator;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Menu {
+public class consoleUI {
+    private static systemengine systemEngineInterface;
+
+    public consoleUI() {
+        this.systemEngineInterface = new systemengineImpl();
+    }
+
     public static void main(String[] args) {
         DTOAllStepperFlows allStepperFlows = null;
         int choice = 0;
@@ -29,11 +37,10 @@ public class Menu {
                     allStepperFlows = readingTheSystemInformationFile();
                     break;
                 case 2:
-                    int flowNumber = choosingWhichFlowToIntroduce(allStepperFlows);
-                    IntroduceTheChosenFlow(flowNumber, allStepperFlows);
+                    introduceFlows(allStepperFlows);
                     break;
                 case 3:
-                    // Code to activate flow
+                    executeFlow(allStepperFlows);
                     System.out.println("Flow activation (Execution)");
                     break;
                 case 4:
@@ -45,7 +52,7 @@ public class Menu {
                     System.out.println("Statistics");
                     break;
                 case 6:
-                    System.out.println("Exiting the system");
+                    exitProgram();
                     break;
                 default:
                     System.out.println("Invalid choice, please choose again");
@@ -54,12 +61,75 @@ public class Menu {
         } while (choice != 6);
     }
 
+    public static void executeFlow(DTOAllStepperFlows allStepperFlows) {
+        Map<String, Object> freeInputMap = new HashMap<>();
+        String userContinue;
+        int flowNumber = choosingWhichFlowToIntroduce(allStepperFlows);
+        DTOFlowDefinition flow = allStepperFlows.getAllFlows().get(flowNumber - 1);
+        boolean isActivateFlow = false;
+
+        while (!isActivateFlow) {
+            // check if all mandatory inputs are received
+            boolean hasAllMandatoryInputs = hasAllMandatoryInputs(flow, freeInputMap);
+
+            // if all mandatory inputs are received, offer options to the user
+            if (hasAllMandatoryInputs) {
+                System.out.println("All mandatory inputs have been received.");
+                System.out.println("1. Continue to activate the flow.");
+                System.out.println("2. Update an input.");
+                System.out.println("3. Return to the main menu.");
+                int option = readChoice();
+                switch (option) {
+                    case 1:
+                        DTOFreeInputs freeInputs = new DTOFreeInputs(freeInputMap);
+                        systemEngineInterface.activateFlow(flow,freeInputs);
+                        isActivateFlow = true;
+                        return;
+                    case 2:
+                        // show available inputs to update
+                        printFreeInputsByUserString(flow);
+                        System.out.println("Please select the input number you want to update: (press 0 to return to the main menu)");
+                        int userChoice = readChoice();
+                        if (userChoice == 0) {
+                            return;
+                        } else {
+                            // update input value
+                            updateInputValue(userChoice, flow);
+                        }
+                        break;
+                    case 3:
+                        return;
+                }
+            }
+            // if mandatory inputs are not received, show available inputs to the user
+            else {
+                do {
+                    printFreeInputsByUserString(flow);
+                    System.out.println("Please select the input number you want to update: (press 0 to return to the main menu)");
+                    int userFreeInputChoice = readChoice();
+                    if (userFreeInputChoice == 0) {
+                        return;
+                    }
+                    DTOSingleFlowIOData chosenInput = flow.getFlowFreeInputs().get(userFreeInputChoice - 1);
+                    System.out.println("Please enter the new value for the input: " + chosenInput.getUserString());
+
+                    Object newValue = readObject();
+                    freeInputMap.put(chosenInput.getFinalName(), newValue);
+                    System.out.println("The new value for the input: " + chosenInput.getUserString() + " is: " + newValue);
+
+                    System.out.println("Do you want to continue updating inputs? (yes/no)");
+                    userContinue = readString();
+
+                } while (userContinue.equals("yes"));
+            }
+        }
+
+    }
     public static int readChoice() {
         Scanner input = new Scanner(System.in);
         int choice = input.nextInt();
         return choice;
     }
-
     public static DTOAllStepperFlows readingTheSystemInformationFile() {
         Scanner scanner = new Scanner(System.in);
         XmlValidator validator = new XmlValidator();
@@ -95,9 +165,8 @@ public class Menu {
         }
         return null;
     }
-
     public static int choosingWhichFlowToIntroduce(DTOAllStepperFlows allStepperFlows) {
-        printFlowsName(allStepperFlows);
+        System.out.println(printFlowsName(allStepperFlows));
         int flowNumber;
         boolean isValidChoice;
         do {
@@ -106,23 +175,26 @@ public class Menu {
         } while (flowNumber != 0 && !isValidChoice);
         return flowNumber;
     }
-
-    public static void printFlowsName(DTOAllStepperFlows allStepperFlows) {
+    public static void introduceFlows(DTOAllStepperFlows allStepperFlows) {
+        int flowNumber = choosingWhichFlowToIntroduce(allStepperFlows);
+        IntroduceTheChosenFlow(flowNumber, allStepperFlows);
+    }
+    public static StringBuilder printFlowsName(DTOAllStepperFlows allStepperFlows) {
         int index = 1;
-        System.out.println("The flow options to choose are:");
+        StringBuilder flowData = new StringBuilder();
+        flowData.append("Flows Names: " + '\n');
         for (DTOFlowDefinition flow : allStepperFlows.getAllFlows()) {
-            System.out.println(index + ". " + flow.getName());
+            flowData.append(index + ". " + flow.getName() + '\n');
             index++;
         }
+        return flowData;
     }
-
     public static int getFlowChoice() {
         System.out.println("Please select the flow number you want us to display its data: (press 0 to return to the main menu)");
         int userChoice = readChoice();
 
         return userChoice;
     }
-
     public static boolean validFlowInputChoice(int choice, int numberOfFlows) {
         if (choice > numberOfFlows) {
             System.out.println("Invalid input! The number chosen cannot be greater than the maximum flows that existing in the system." +
@@ -134,12 +206,11 @@ public class Menu {
         }
         return false;
     }
-
     public static void IntroduceTheChosenFlow(int flowNumber, DTOAllStepperFlows allStepperFlows) {
-        DTOFlowDefinitionImpl flow = allStepperFlows.getAllFlows().get(flowNumber - 1);
+        DTOFlowDefinition flow = allStepperFlows.getAllFlows().get(flowNumber - 1);
 
         StringBuilder flowData = new StringBuilder();
-        flowData.append("Flow Name: " + flow.getName() + '\n');
+        flowData.append(printFlowsName(allStepperFlows));
         flowData.append("Flow Description: " + flow.getDescription() + '\n');
         flowData.append("Flow Formal Outputs: " + String.join(", ", flow.getFlowFormalOutputs()) + '\n');
         flowData.append("Is The Flow Read Only? " + flow.getFlowReadOnly() + "\n\n");
@@ -149,9 +220,8 @@ public class Menu {
 
         System.out.println(flowData);
     }
-
-    public static StringBuilder printStepsInfo(DTOFlowDefinitionImpl flow) {
-        AtomicInteger stepsIndex= new AtomicInteger(1);
+    public static StringBuilder printStepsInfo(DTOFlowDefinition flow) {
+        AtomicInteger stepsIndex = new AtomicInteger(1);
         StringBuilder stepData = new StringBuilder();
         stepData.append("*The information for the steps in the current flow: *\n");
         flow
@@ -163,13 +233,12 @@ public class Menu {
                     if (node.getFinalStepName() != node.getOriginalStepName()) {
                         stepData.append("Final Name: " + Objects.toString(node.getFinalStepName(), "") + "\n");
                     }
-                    stepData.append("Is The Step Read Only? " + node.getIsReadOnly() +"\n\n");
+                    stepData.append("Is The Step Read Only? " + node.getIsReadOnly() + "\n\n");
                 });
         return stepData;
     }
-
-    public static StringBuilder printFreeInputsInfo(DTOFlowDefinitionImpl flow) {
-        AtomicInteger freeInputsIndex= new AtomicInteger(1);
+    public static StringBuilder printFreeInputsInfo(DTOFlowDefinition flow) {
+        AtomicInteger freeInputsIndex = new AtomicInteger(1);
         StringBuilder inputData = new StringBuilder();
         inputData.append("*The information about free inputs in the current flow: *\n");
         flow
@@ -179,27 +248,72 @@ public class Menu {
                     inputData.append("Free Input " + freeInputsIndex.getAndIncrement() + ": \n");
                     inputData.append("Final Name: " + node.getFinalName() + '\n');
                     inputData.append("Type: " + node.getType().getName() + '\n');
-                    inputData.append("Connected Steps: " + String.join(", ", flow.getListOfStepsWithCurrInput(node.getFinalName())) +'\n');
+                    inputData.append("Connected Steps: " + String.join(", ", flow.getListOfStepsWithCurrInput(node.getFinalName())) + '\n');
                     inputData.append("Mandatory / Optional: " + node.getNecessity() + "\n\n");
                 });
         return inputData;
     }
-
-    public static StringBuilder printFlowOutputs(DTOFlowDefinitionImpl flow) {
-        AtomicInteger flowOutputsIndex= new AtomicInteger(1);
+    public static StringBuilder printFlowOutputs(DTOFlowDefinition flow) {
+        AtomicInteger flowOutputsIndex = new AtomicInteger(1);
         StringBuilder outputData = new StringBuilder();
         outputData.append("*The information about the flow outputs: *\n");
         flow.getIOlist()
                 .stream().forEach(node -> {
-                    if(flow.getFlowFormalOutputs().stream().anyMatch(output->output.equals(node.getFinalName()))) {
+                    if (flow.getFlowFormalOutputs().stream().anyMatch(output -> output.equals(node.getFinalName()))) {
                         outputData.append("Flow Outputs " + flowOutputsIndex.getAndIncrement() + ": \n");
                         outputData.append("Final Name: " + node.getFinalName() + '\n');
-                        outputData.append("Type: " + node.getDD().getName() + '\n');
+                        outputData.append("Type: " + node.getType().getName() + '\n');
                         outputData.append("Creating Step: " + node.getStepName() + "\n\n");
                     }
                 });
+
         return outputData;
     }
-}
+    public static String readString() {
+        Scanner scanner = new Scanner(System.in);
+        return scanner.next();
+    }
+    private static boolean hasAllMandatoryInputs(DTOFlowDefinition flow, Map<String, Object> freeInputMap) {
+        for (DTOSingleFlowIOData input : flow.getFlowFreeInputs()) {
+            boolean found = freeInputMap.keySet().stream().anyMatch(key -> key.equals(input.getFinalName()));
+            if(!found){
+                return false;
+            }
+        }
+        return true;
+    }
+    public static Object readObject() {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.next();
 
+        try {
+            return Integer.parseInt(input); // try to parse input as an integer
+        } catch (NumberFormatException e1) {
+            try {
+                return Double.parseDouble(input); // try to parse input as a double
+            } catch (NumberFormatException e2) {
+                // if parsing as integer or double fails, return input as a string
+                return input;
+            }
+        }
+    }
+    public static void printFreeInputsByUserString(DTOFlowDefinition flow) {
+        AtomicInteger freeInputsIndex = new AtomicInteger(1);
+        System.out.println("*The free inputs in the current flow: *");
+        flow
+                .getFlowFreeInputs()
+                .stream()
+                .forEach(node -> {
+                    System.out.println("Free Input " + freeInputsIndex.getAndIncrement() + ": ");
+                    System.out.println(String.format("Input Name: %s (%s)" ,node.getUserString(), node.getFinalName()));
+                    System.out.println("Mandatory / Optional: " + node.getNecessity() + "\n");
+                });
+
+    }
+    public static void exitProgram() {
+        System.out.println("Thank you for using our system. See you later (:");
+        System.exit(0);
+    }
+
+}
 

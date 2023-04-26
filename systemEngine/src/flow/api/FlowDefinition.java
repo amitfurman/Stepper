@@ -37,7 +37,7 @@ public interface FlowDefinition {
     void validateIfOutputsHaveSameName();
     void mandatoryInputsIsUserFriendly();
     void flowOutputsIsNotExists();
-    void mandatoryInputsWithSameNameAndDifferentType();
+    void freeInputsWithSameNameAndDifferentType();
     boolean doesSourceStepBeforeTargetStep(String sourceStepName, String targetStepName);
     boolean isTheSameDD (String sourceName, String targetStepName);
     void initMandatoryInputsList();

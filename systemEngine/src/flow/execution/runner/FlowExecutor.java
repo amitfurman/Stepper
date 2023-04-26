@@ -1,23 +1,29 @@
 package flow.execution.runner;
 
+import dto.DTOFreeInputs;
 import steps.api.StepResult;
 import flow.api.StepUsageDeclaration;
 import flow.execution.FlowExecution;
 import flow.execution.context.StepExecutionContext;
 import flow.execution.context.StepExecutionContextImpl;
 
+import java.util.Map;
+
 public class FlowExecutor {
 
-    public void executeFlow(FlowExecution flowExecution) {
+    public void executeFlow(FlowExecution flowExecution , DTOFreeInputs freeInputs) {
 
         System.out.println("Starting execution of flow " + flowExecution.getFlowDefinition().getName() + " [ID: " + flowExecution.getUniqueId() + "]");
 
         StepExecutionContext context = new StepExecutionContextImpl
                 (flowExecution.getFlowDefinition().getName2DDMap(),flowExecution.getFlowDefinition().getOutputName2aliasMap(), flowExecution.getFlowDefinition().getAlias2StepNameMap()); // actual object goes here...
-
         // populate context with all free inputs (mandatory & optional) that were given from the user
         // (typically stored on top of the flow execution object)
 
+        ////??????
+         for (Map.Entry<String, Object> entry : freeInputs.getFreeInputMap().entrySet()) {
+             context.storeDataValue(entry.getKey(), entry.getValue());
+         }
 
         // start actual execution
         for (int i = 0; i < flowExecution.getFlowDefinition().getFlowSteps().size(); i++) {

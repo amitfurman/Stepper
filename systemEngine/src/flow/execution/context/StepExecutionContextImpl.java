@@ -1,7 +1,6 @@
 package flow.execution.context;
 
 import datadefinition.api.DataDefinitions;
-
 import java.util.*;
 
 public class StepExecutionContextImpl implements StepExecutionContext {

@@ -23,7 +23,7 @@ public class CollectFilesInFolder extends AbstractStepDefinition {
 
         // step outputs
         addOutput(new DataDefinitionDeclarationImpl("FILES_LIST", DataNecessity.NA, "Files list", DataDefinitionRegistry.FILE_LIST));
-        addOutput(new DataDefinitionDeclarationImpl("TOTAL_FOUND ", DataNecessity.NA, "Total files found", DataDefinitionRegistry.NUMBER));
+        addOutput(new DataDefinitionDeclarationImpl("TOTAL_FOUND", DataNecessity.NA, "Total files found", DataDefinitionRegistry.NUMBER));
     }
 
     @Override

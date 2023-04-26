@@ -5,7 +5,6 @@ import flow.api.FlowDefinition;
 import flow.api.FlowIO.IO;
 import flow.api.FlowIO.SingleFlowIOData;
 import flow.api.StepUsageDeclaration;
-
 import java.util.stream.Collectors;
 
 public class FlowAutomaticMapping {

@@ -3,7 +3,6 @@ package flow.api.FlowIO;
 import datadefinition.api.DataDefinitions;
 import flow.api.StepUsageDeclaration;
 import steps.api.DataNecessity;
-import steps.api.StepDefinition;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -85,6 +84,7 @@ public class SingleFlowIOData {
     public DataNecessity getNecessity() {return necessity;}
 
     public void setNecessity(DataNecessity necessity) {this.necessity = necessity;}
+    public String getUserString() {return this.userString;}
 
  /*   public List<String> getStepsWithCurrIO() {
         return stepsWithCurrIO;
