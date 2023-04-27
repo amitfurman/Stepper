@@ -3,6 +3,7 @@ package jaxb.schema;
 import dto.DTOAllStepperFlows;
 import exceptions.DuplicateFlowsNames;
 import exceptions.UnExistsStep;
+import flow.api.FlowDefinition;
 import flow.impl.Stepper2Flows;
 import jaxb.schema.generated.STFlow;
 import jaxb.schema.generated.STStepInFlow;
@@ -17,13 +18,14 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class SchemaBasedJAXBMain {
 
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "jaxb.schema.generated";
 
-    public DTOAllStepperFlows schemaBasedJAXB(String filePath) {
+    public LinkedList<FlowDefinition> schemaBasedJAXB(String filePath) {
         try {
             InputStream inputStream = new FileInputStream(new File(filePath));
             STStepper stepper = deserializeFrom(inputStream);
@@ -32,7 +34,7 @@ public class SchemaBasedJAXBMain {
             ReferenceToUnExistsStep(stepper);
 
             Stepper2Flows step = new Stepper2Flows(stepper);
-            return step.getAllStepperFlows();
+            return step.getAllFlows();
 
         } catch (JAXBException | FileNotFoundException e) {
             e.printStackTrace();

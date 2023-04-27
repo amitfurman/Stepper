@@ -11,6 +11,7 @@ import steps.api.StepResult;
 import flow.execution.context.StepExecutionContext;
 
 import java.io.File;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +33,7 @@ public class FilesRenamer extends AbstractStepDefinition {
 
     @Override
     public StepResult invoke(StepExecutionContext context) {
+        Instant start = Instant.now();
         FileListData filesToRename = context.getDataValue(IO_NAMES.FILES_TO_RENAME, FileListData.class);
         String prefix = context.getDataValue(IO_NAMES.PREFIX, String.class);
         String suffix = context.getDataValue(IO_NAMES.SUFFIX, String.class);
@@ -42,8 +44,9 @@ public class FilesRenamer extends AbstractStepDefinition {
         context.storeLogLine("About to start rename " + filesToRename.getItems().size() + " files. Adding prefix: " + prefix + "; adding suffix: " + suffix);
 
         if (filesToRename.getItems().isEmpty()) {
-            String summaryLine1 = "FILES_TO_RENAME is empty, so there are no files to rename.";
+            context.storeSummaryLine("FILES_TO_RENAME is empty, so there are no files to rename.");
             context.storeDataValue("RENAME_RESULT", relation);
+            context.storeStepTotalTime(start);
             return StepResult.SUCCESS;
         }
         String failedFiles = null;
@@ -72,11 +75,13 @@ public class FilesRenamer extends AbstractStepDefinition {
             }
         }
         context.storeDataValue("RENAME_RESULT", relation);
-        ////check
+
         if(relation.numOfRows() != filesToRename.getItems().size()) {
-            String summaryLine2 = "There was a failure in converting the names of the following files: " + failedFiles + "\nThat's why the step ends with a warning";
+            context.storeSummaryLine("There was a failure in converting the names of the following files: " + failedFiles + "\nThat's why the step ends with a warning");
+            context.storeStepTotalTime(start);
             return StepResult.WARNING;
         }
+        context.storeStepTotalTime(start);
         return StepResult.SUCCESS;
     }
 }

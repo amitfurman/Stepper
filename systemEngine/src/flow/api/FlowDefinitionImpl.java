@@ -2,6 +2,7 @@ package flow.api;
 
 import datadefinition.api.DataDefinitions;
 import flow.mapping.FlowCustomMapping;
+import statistic.StatisticData;
 import steps.api.DataDefinitionDeclaration;
 import flow.mapping.FlowAutomaticMapping;
 import flow.api.FlowIO.IO;
@@ -24,6 +25,7 @@ public class FlowDefinitionImpl implements FlowDefinition {
     private final List<SingleFlowIOData> IOlist;
     private final List<CustomMapping> customMapping;
     private final List<SingleFlowIOData> freeInputs;
+    private final StatisticData flowStatisticData;
 
     public FlowDefinitionImpl(String name, String description) {
         this.name = name;
@@ -38,7 +40,9 @@ public class FlowDefinitionImpl implements FlowDefinition {
         this.OutputName2Alias = new HashMap<>();
         this.customMapping = new ArrayList<>();
         this.freeInputs = new LinkedList<>();
+        this.flowStatisticData = new StatisticData(name); ///maybe without name
     }
+
 
     @Override
     public void addStepToFlow(StepUsageDeclaration stepUsageDeclaration) {

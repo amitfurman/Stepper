@@ -4,13 +4,14 @@ package steps.impl;
 import datadefinition.DataDefinitionRegistry;
 import datadefinition.api.IO_NAMES;
 import datadefinition.impl.list.FileListData;
-import steps.api.AbstractStepDefinition;
-import steps.api.DataDefinitionDeclarationImpl;
-import steps.api.DataNecessity;
-import steps.api.StepResult;
+import steps.api.*;
 import flow.execution.context.StepExecutionContext;
 
 import java.io.File;
+import java.time.Instant;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CollectFilesInFolder extends AbstractStepDefinition {
 
@@ -28,19 +29,22 @@ public class CollectFilesInFolder extends AbstractStepDefinition {
 
     @Override
     public StepResult invoke(StepExecutionContext context) {
+        Instant start = Instant.now();
         String folderPath = context.getDataValue(IO_NAMES.FOLDER_NAME, String.class);
         String filter = context.getDataValue(IO_NAMES.FILTER, String.class);
-        FileListData FILES_LIST = null;
+        FileListData FILES_LIST = new FileListData(new ArrayList<File>());
         int TotalFound = 0 ;
         File folder = new File(folderPath);
 
         if (!folder.exists()) {
-            context.storeLogLine("Step failed. The entered path is not exists.");
+            context.storeLogLineAndSummaryLine("Step failed. The entered path is not exists.");
+            context.storeStepTotalTime(start);
             return StepResult.FAILURE;
         }
 
         if (!folder.isDirectory()) {
-            context.storeLogLine("Step failed. The entered path is not a folder.");
+            context.storeLogLineAndSummaryLine("Step failed. The entered path is not a folder.");
+            context.storeStepTotalTime(start);
             return StepResult.FAILURE;
         }
 
@@ -55,7 +59,8 @@ public class CollectFilesInFolder extends AbstractStepDefinition {
         if( files.length == 0) {
             context.storeDataValue( "FILES_LIST", null);
             context.storeDataValue("TOTAL_FOUND", TotalFound);
-            context.storeLogLine("Warning! The folder " + folder.getName() + " does not contain any files.");
+            context.storeLogLineAndSummaryLine("Warning! The folder " + folder.getName() + " does not contain any files.");
+            context.storeStepTotalTime(start);
             return StepResult.WARNING;
         }
 
@@ -66,15 +71,14 @@ public class CollectFilesInFolder extends AbstractStepDefinition {
             }
         }
 
+        Duration totalTime = Duration.between(start, Instant.now());
         context.storeDataValue("FILES_LIST",FILES_LIST);
         context.storeDataValue("TOTAL_FOUND",TotalFound);
 
         //After reading the files
-        context.storeLogLine("Found " + TotalFound +" files in folder matching the filter.");
-
+        context.storeLogLineAndSummaryLine("Found " + TotalFound +" files in folder matching the filter.");
+        context.storeStepTotalTime(start);
         return StepResult.SUCCESS;
     }
-
-
 
 }

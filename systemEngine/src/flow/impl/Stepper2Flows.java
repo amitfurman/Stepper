@@ -21,9 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Stepper2Flows {
-    private LinkedList<DTOFlowDefinitionImpl> allFlows;
-    private DTOAllStepperFlows allStepperFlows;
-
+    private LinkedList<FlowDefinition> allFlows;
     public Stepper2Flows(STStepper stepper) {
         allFlows = new LinkedList<>();
         int numberOfFlows = stepper.getSTFlows().getSTFlow().size();
@@ -110,21 +108,12 @@ public class Stepper2Flows {
             flow.freeInputsWithSameNameAndDifferentType();
             flow.mandatoryInputsIsUserFriendly();
 
-
-            DTOFlowDefinitionImpl DTOflow = new DTOFlowDefinitionImpl(flow);
-            allFlows.add(DTOflow);
-
-
+            allFlows.add(flow);
         }
-
-        allStepperFlows = new DTOAllStepperFlows(allFlows);
     }
 
-    public LinkedList<DTOFlowDefinitionImpl> getAllFlows() {
+    public LinkedList<FlowDefinition> getAllFlows() {
         return allFlows;
     }
 
-    public DTOAllStepperFlows getAllStepperFlows() {
-        return allStepperFlows;
-    }
 }

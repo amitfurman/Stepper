@@ -8,6 +8,8 @@ import steps.api.DataNecessity;
 import steps.api.StepResult;
 import flow.execution.context.StepExecutionContext;
 
+import java.time.Instant;
+
 public class SpendSomeTime extends AbstractStepDefinition {
 
     public SpendSomeTime () {
@@ -18,11 +20,12 @@ public class SpendSomeTime extends AbstractStepDefinition {
 
     @Override
     public StepResult invoke(StepExecutionContext context) {
+        Instant start = Instant.now();
         int timeToSpend = context.getDataValue(IO_NAMES.TIME_TO_SPEND, Integer.class);
 
         if (timeToSpend <= 0) {
-            //add log and summaryLine
-            context.storeLogLine("Step failed. The total sleeping time must be a positive number.");
+            context.storeLogLineAndSummaryLine("Step failed. The total sleeping time must be a positive number.");
+            context.storeStepTotalTime(start);
             return StepResult.FAILURE;
         }
 
@@ -36,6 +39,8 @@ public class SpendSomeTime extends AbstractStepDefinition {
         context.storeLogLine("Done sleeping...");
 
         // Return result
+        context.storeSummaryLine("Done sleeping for "+ timeToSpend + "seconds");
+        context.storeStepTotalTime(start);
         return StepResult.SUCCESS;
     }
 }

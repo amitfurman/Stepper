@@ -11,6 +11,7 @@ import steps.api.StepResult;
 import flow.execution.context.StepExecutionContext;
 
 import java.io.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +30,7 @@ public class FilesContentExtractor extends AbstractStepDefinition {
     }
     @Override
     public StepResult invoke(StepExecutionContext context) {
+        Instant start = Instant.now();
         FileListData filesToExtract = context.getDataValue(IO_NAMES.FILES_TO_RENAME, FileListData.class);
         int line = context.getDataValue(IO_NAMES.LINE,Integer.class);
 
@@ -37,7 +39,7 @@ public class FilesContentExtractor extends AbstractStepDefinition {
         RelationData relation = new RelationData(columns);
 
         if (filesToExtract.getItems().isEmpty()) {
-            context.storeLogLine("The list of files to extract is empty, so there are no files to rename.");
+            context.storeLogLineAndSummaryLine("The list of files to extract is empty, so there are no files to rename.");
         }
         else {
             for (File file : filesToExtract.getItems()) {
@@ -67,6 +69,8 @@ public class FilesContentExtractor extends AbstractStepDefinition {
             }
         }
         context.storeDataValue("DATA", relation);
+        context.storeSummaryLine("The data extraction was created successfully from the files list.");
+        context.storeStepTotalTime(start);
         return StepResult.SUCCESS;
     }
 }

@@ -2,16 +2,15 @@ package flow.execution;
 
 import flow.api.FlowDefinition;
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.Instant;
+import java.util.*;
 
 public class FlowExecution {
     private final UUID uniqueId;
     private final FlowDefinition flowDefinition;
     private Duration totalTime;
-    private long startTime;
-    private long endTime;
+    private Instant startTime;
+    private Instant endTime;
     private FlowExecutionResult flowExecutionResult;
     private Map<String,Object> dataValues;
     private List<StepExecutionData> stepExecutionDataList;
@@ -21,9 +20,9 @@ public class FlowExecution {
     public FlowExecution(FlowDefinition flowDefinition) {
         this.uniqueId = UUID.randomUUID();
         this.flowDefinition = flowDefinition;
-        this.startTime = System.currentTimeMillis();
+        this.dataValues = new HashMap<>();
+        this.stepExecutionDataList = new LinkedList<>();
     }
-
     public UUID getUniqueId() {
         return uniqueId;
     }
@@ -35,4 +34,17 @@ public class FlowExecution {
     public FlowExecutionResult getFlowExecutionResult() {
         return flowExecutionResult;
     }
+
+    public void setStartTime(Instant startTime) { this.startTime = startTime;}
+
+    public void setEndTime(Instant endTime) { this.endTime = endTime;}
+
+    public void setTotalTime(Duration totalTime) {this.totalTime = totalTime;}
+
+    public void setFlowExecutionResult(FlowExecutionResult result){ this.flowExecutionResult = result;}
+
+    public  List<StepExecutionData> getStepExecutionDataList(){ return stepExecutionDataList;}
+
+    public Map<String,Object> getDataValues(){ return dataValues;}
+    public void setDataValues(Map<String,Object> dataValues){ this.dataValues = dataValues;}
 }

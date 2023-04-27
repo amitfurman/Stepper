@@ -8,6 +8,8 @@ import steps.api.DataDefinitionDeclarationImpl;
 import steps.api.DataNecessity;
 import steps.api.StepResult;
 import flow.execution.context.StepExecutionContext;
+
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 public class Properties extends AbstractStepDefinition {
@@ -22,12 +24,14 @@ public class Properties extends AbstractStepDefinition {
 
     @Override
     public StepResult invoke(StepExecutionContext context) {
+        Instant start = Instant.now();
         RelationData source = context.getDataValue(IO_NAMES.SOURCE, RelationData.class);
         StringBuilder properties = new StringBuilder();
 
         if (source.isEmpty()) {
-            context.storeLogLine("Warning! The source data is empty.");
+            context.storeLogLineAndSummaryLine("Warning! The source data is empty.");
             context.storeDataValue("RESULT", null);
+            context.storeStepTotalTime(start);
             return StepResult.WARNING;
         }
 
@@ -46,7 +50,10 @@ public class Properties extends AbstractStepDefinition {
             }
         }
         context.storeLogLine("Extracted total of " + rowKeys.size());
+        context.storeSummaryLine("Exported the source data to properties file successfully. ");
         context.storeDataValue("RESULT",properties);
+        context.storeStepTotalTime(start);
+        context.storeStepTotalTime(start);
         return StepResult.SUCCESS;
     }
 }

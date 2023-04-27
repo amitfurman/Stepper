@@ -11,6 +11,9 @@ import steps.api.StepResult;
 import flow.execution.context.StepExecutionContext;
 
 import java.io.File;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FilesDeleter extends AbstractStepDefinition {
 
@@ -27,23 +30,16 @@ public class FilesDeleter extends AbstractStepDefinition {
 
     @Override
     public StepResult invoke(StepExecutionContext context) {
+        Instant start = Instant.now();
         FileListData filesToDelete = context.getDataValue(IO_NAMES.FILES_LIST, FileListData.class);
-        StringListData DELETED_LIST = null;
-        NumberMappingData DELETION_STATS = null;
+        StringListData DELETED_LIST = new StringListData(new ArrayList<String>());
+        NumberMappingData DELETION_STATS = new NumberMappingData(new HashMap<Number, Number>());
         int totalFiles = filesToDelete.getItems().size(), deleteCount = 0;
         DELETION_STATS.getItems().put(0,0); //initialize
 
         context.storeLogLine("About to start delete " + totalFiles + " files");
-/*
-
-        FileListData TEMP_FILES_LIST;
-        for (int i = 0; i < filesToDelete.getItems().size(); i++) {
-           // TEMP_FILES_LIST.getItems().add(filesToDelete.getItems().stream())(new FileDataDefinition((FileDataDefinition) FILES_LIST.getElement(i)));
-        }
-*/
 
         for(File file : filesToDelete.getItems()){
-
             if (!file.delete()) {
                 DELETED_LIST.getItems().add(file.getPath());
                 context.storeLogLine("Failed to delete file" + file.getName());
@@ -51,31 +47,41 @@ public class FilesDeleter extends AbstractStepDefinition {
         }
         deleteCount = totalFiles - DELETED_LIST.getItems().size();
 
-        DELETION_STATS.getItems().put(deleteCount , (totalFiles - deleteCount));
-        //DELETION_STATS.getItems().put(0, deleteCount); // Update value for key 0
-        //DELETION_STATS.getItems().put(1, (totalFiles - deleteCount)); // Update value for key 1
+        //DELETION_STATS.getItems().put(deleteCount , (totalFiles - deleteCount));
+        DELETION_STATS.getItems().put(0, deleteCount); // Update value for key 0
+        DELETION_STATS.getItems().put(1, (totalFiles - deleteCount)); // Update value for key 1
 
         context.storeDataValue("DELETED_LIST",DELETED_LIST);
         context.storeDataValue("DELETION_STATS",DELETION_STATS);
 
         if (DELETED_LIST.getItems().isEmpty()) {
-            context.storeLogLine("All files were deleted successfully.");
-            /////בדף לא רשום להוסיף לוג במקרה של הצלחה רק שורת סיכום הוספתי בכל מקרה
+            context.storeSummaryLine("All files were deleted successfully.");
+            context.storeStepTotalTime(start);
             return StepResult.SUCCESS;
         }
         else if(totalFiles == DELETED_LIST.getItems().size()){
-            context.storeLogLine("Step failed. All the files failed to be deleted.");
+            context.storeLogLineAndSummaryLine("Step failed. All the files failed to be deleted.");
+            context.storeStepTotalTime(start);
             return StepResult.FAILURE;
         }
         else {
-            context.storeLogLine(deleteCount + " files deleted, " + (totalFiles - deleteCount) + " files failed to be deleted.\n" +
+            context.storeLogLineAndSummaryLine(deleteCount + " files deleted, " + (totalFiles - deleteCount) + " files failed to be deleted.\n" +
                     "List of files that failed to be deleted: \n" + DELETED_LIST );
+            context.storeStepTotalTime(start);
             return StepResult.WARNING;
         }
 
     }
 
 }
+
+/*
+        FileListData TEMP_FILES_LIST;
+        for (int i = 0; i < filesToDelete.getItems().size(); i++) {
+           // TEMP_FILES_LIST.getItems().add(filesToDelete.getItems().stream())(new FileDataDefinition((FileDataDefinition) FILES_LIST.getElement(i)));
+        }
+*/
+
 
 
 /*        Iterator<FileDataDefinition> iterator = FILES_LIST.iterator();

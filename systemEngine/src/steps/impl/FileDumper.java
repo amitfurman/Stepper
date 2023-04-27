@@ -9,6 +9,7 @@ import steps.api.StepResult;
 import flow.execution.context.StepExecutionContext;
 
 import java.io.*;
+import java.time.Instant;
 
 public class FileDumper extends AbstractStepDefinition {
     public FileDumper() {
@@ -24,20 +25,23 @@ public class FileDumper extends AbstractStepDefinition {
     
     @Override
     public StepResult invoke(StepExecutionContext context) {
+        Instant start = Instant.now();
         String content = context.getDataValue(IO_NAMES.CONTENT, String.class);
         String fileName = context.getDataValue(IO_NAMES.FILE_NAME, String.class);
         File file = new File(fileName);
 
         if (content.isEmpty()) {
-            context.storeLogLine("Warning! Content is empty. File will be created empty.");
+            context.storeLogLineAndSummaryLine("Warning! Content is empty. File will be created empty.");
             context.storeDataValue("RESULT", StepResult.SUCCESS.toString());
+            context.storeStepTotalTime(start);
             return StepResult.WARNING;
         }
 
         // Check if file already exists
         if (file.exists()) {
-            context.storeLogLine("Step failed because the target file path already exists.");
+            context.storeLogLineAndSummaryLine("Step failed because the target file path already exists.");
             context.storeDataValue("RESULT", StepResult.FAILURE);
+            context.storeStepTotalTime(start);
             return StepResult.FAILURE;
         }
 
@@ -53,7 +57,10 @@ public class FileDumper extends AbstractStepDefinition {
             throw new RuntimeException(e);
         }
 
+        context.storeSummaryLine("The text file was created successfully at " + fileName);
         context.storeDataValue("RESULT", StepResult.SUCCESS.toString());
+        context.storeStepTotalTime(start);
+        context.storeStepTotalTime(start);
         return StepResult.SUCCESS;
     }
 }

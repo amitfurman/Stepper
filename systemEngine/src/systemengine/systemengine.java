@@ -1,10 +1,19 @@
 package systemengine;
 
-import dto.DTOFlowExecution;
-import dto.DTOFreeInputs;
+import dto.*;
 import flow.api.FlowDefinition;
 
-public interface systemengine {
+import java.util.List;
+import java.util.Map;
 
-    DTOFlowExecution activateFlow(FlowDefinition currFlow, DTOFreeInputs freeInputs);
+public interface systemengine {
+    public void cratingFlowFromXml(String filePath);
+    DTOFlowsNames printFlowsName();
+    List<FlowDefinition> getFlowDefinitionList();
+    DTOFlowDefinition IntroduceTheChosenFlow(int flowNumber);
+    boolean hasAllMandatoryInputs(int flowChoice, Map<String, Object> freeInputMap);
+    DTOFlowExecution activateFlow(int flowChoice, DTOFreeInputsFromUser freeInputs);
+    DTOFreeInputsByUserString printFreeInputsByUserString(int choice);
+    DTOSingleFlowIOData getSpecificFreeInput(int flowChoice, int freeInputChoice);
+
 }

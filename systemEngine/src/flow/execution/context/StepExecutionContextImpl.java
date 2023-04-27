@@ -1,17 +1,22 @@
 package flow.execution.context;
 
 import datadefinition.api.DataDefinitions;
+import flow.execution.StepExecutionData;
+import steps.api.Logger;
+
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class StepExecutionContextImpl implements StepExecutionContext {
 
     private final Map<String, Object> dataValues;
     private final Map<String, DataDefinitions> name2DD;
     private final Map<String, String> outputName2alias;
-    private final Map<String, String> stepName2alias;
-    private final List<String> logsList;
-    private final List<String> summaryLinesList;
-
+    private final Map<String, String> stepName2alias;//key - step name after alias, value - original step name
+    private final List<StepExecutionData> logsList;
+    private StepExecutionData currInvokingStep;
 
     public StepExecutionContextImpl(Map<String, DataDefinitions> originalDDMap, Map<String,String> originalOutputAliasMap, Map<String, String> originalStepName2alias) {
         dataValues = new HashMap<>();
@@ -19,10 +24,13 @@ public class StepExecutionContextImpl implements StepExecutionContext {
         outputName2alias = new HashMap<>(originalOutputAliasMap);
         stepName2alias = new HashMap<>(originalStepName2alias);
         logsList = new LinkedList<>();
-        summaryLinesList = new LinkedList<>(); //need list?
     }
-
-    ///////////overview the exception
+    @Override
+    public void setCurrInvokingStep(String stepName){
+        this.currInvokingStep = new StepExecutionData(stepName);
+    }
+    @Override
+    public StepExecutionData getCurrInvokingStep(){ return this.currInvokingStep; }
     @Override
     public <T> T getDataValue(String dataName, Class<T> expectedDataType) {
 
@@ -35,9 +43,8 @@ public class StepExecutionContextImpl implements StepExecutionContext {
                 // If the value exists, cast and return it
                 return expectedDataType.cast(aValue);
             } else {
-                // If the value does not exist, throw an exception or return a default value as needed
-                // For example, throw an exception:
-                throw new NullPointerException("Data value for " + dataName + " is null.");
+               // throw new NullPointerException("Data value for " + dataName + " is null.");
+                return null;
             }
         }
         else {
@@ -48,7 +55,6 @@ public class StepExecutionContextImpl implements StepExecutionContext {
         }
 
     }
-
     @Override
     public boolean storeDataValue(String dataName, Object value) {
         // assuming that from the data name we can get to its data definition
@@ -56,7 +62,7 @@ public class StepExecutionContextImpl implements StepExecutionContext {
 
         // we have the DD type so we can make sure that its from the same type
         if (theData.getType().isAssignableFrom(value.getClass())) {
-            String stepName,outputAlias = null;
+            String stepName,outputAlias = dataName;
             for (String key : outputName2alias.keySet()) {
                 if (key.endsWith("." + dataName)) {
                     stepName = key.substring(0, key.lastIndexOf("."));
@@ -66,21 +72,39 @@ public class StepExecutionContextImpl implements StepExecutionContext {
             }
             dataValues.put(outputAlias, value);
         } else {
-            // error handling of some sort...
+            //error handling of some sort...
         }
 
         return false;
     }
-
     @Override
-    public void storeLogLine(String logLine) {
-        logsList.add(logLine);
+    public void storeLogLine(String log) {
+        currInvokingStep.addLogger(new Logger(log));
+    }
+    @Override
+    public void storeSummaryLine(String summaryLine) {
+        currInvokingStep.setSummaryLine(summaryLine);
+    }
+    @Override
+    public void storeLogLineAndSummaryLine(String log) {
+        currInvokingStep.addLogger(new Logger(log));
+        currInvokingStep.setSummaryLine(log);
+    }
+    @Override
+    public void storeStepTotalTime(Instant startTime) {
+        Duration totalTime = Duration.between(startTime, Instant.now());
+        currInvokingStep.setTotalTime(totalTime);
+    }
+    @Override
+    public Map<String, Object> getDataValues() {
+        return dataValues;
     }
 
     @Override
-    public void setSummaryLine(String summaryLine) {
-
+    public void addCurrInvokingStepToLogsList() {
+        logsList.add(currInvokingStep);
     }
+
 
 
 }
