@@ -23,6 +23,7 @@ public class FlowExecution {
         this.dataValues = new HashMap<>();
         this.stepExecutionDataList = new LinkedList<>();
     }
+
     public UUID getUniqueId() {
         return uniqueId;
     }
@@ -46,5 +47,6 @@ public class FlowExecution {
     public  List<StepExecutionData> getStepExecutionDataList(){ return stepExecutionDataList;}
 
     public Map<String,Object> getDataValues(){ return dataValues;}
+
     public void setDataValues(Map<String,Object> dataValues){ this.dataValues = dataValues;}
 }

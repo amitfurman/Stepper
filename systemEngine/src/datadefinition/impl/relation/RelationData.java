@@ -18,8 +18,8 @@ public class RelationData {
 
     public int numOfRows() {return rows.size();}
 
-    public List<String> getRowDataByColumnsOrder(int rowId) {
-        return new ArrayList<>();
+    public List<SingleRow> getRows() {
+        return rows;
     }
 
     public void addRow(List<String> list) {
@@ -30,6 +30,10 @@ public class RelationData {
         rows.add(row);
     }
 
+    public List<String> getRowDataByColumnsOrder(int rowId) {
+        return new ArrayList();
+    }
+
     public List<String> getColumns() {
         return columns;
     }
@@ -38,8 +42,26 @@ public class RelationData {
         return rows.isEmpty();
     }
 
-        private static class SingleRow {
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\tThe column names are:" + System.lineSeparator());
+        sb.append("\t");
+        for (String column : columns) {
+            sb.append(column);
+            sb.append("   ");
+        }
+        sb.append(System.lineSeparator());
+        sb.append("\tThe number of rows: " + rows.size());
+
+        return sb.toString();
+    }
+
+    public static class SingleRow {
+
         private Map<String, String> data;
+        public Map<String, String> getRowData() {
+            return data;
+        }
 
         public SingleRow() {
             data = new HashMap<>();
@@ -47,6 +69,10 @@ public class RelationData {
 
         public void addData(String columnName, String value) {
             data.put(columnName, value);
+        }
+
+        public Map<String, String> getMap() {
+            return this.data;
         }
     }
 }

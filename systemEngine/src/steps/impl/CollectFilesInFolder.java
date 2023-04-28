@@ -57,7 +57,7 @@ public class CollectFilesInFolder extends AbstractStepDefinition {
         File[] files = folder.listFiles();
 
         if( files.length == 0) {
-            context.storeDataValue( "FILES_LIST", null);
+            context.storeDataValue( "FILES_LIST", FILES_LIST);
             context.storeDataValue("TOTAL_FOUND", TotalFound);
             context.storeLogLineAndSummaryLine("Warning! The folder " + folder.getName() + " does not contain any files.");
             context.storeStepTotalTime(start);

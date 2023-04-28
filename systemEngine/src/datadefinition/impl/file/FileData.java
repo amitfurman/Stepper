@@ -11,4 +11,8 @@ public class FileData {
         file = new File(filePath);
     }
 
+    public String toString() {
+        return "\t" + filePath;
+    }
+
 }

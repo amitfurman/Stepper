@@ -57,10 +57,8 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     }
     @Override
     public boolean storeDataValue(String dataName, Object value) {
-        // assuming that from the data name we can get to its data definition
         DataDefinitions theData = name2DD.get(dataName);
 
-        // we have the DD type so we can make sure that its from the same type
         if (theData.getType().isAssignableFrom(value.getClass())) {
             String stepName,outputAlias = dataName;
             for (String key : outputName2alias.keySet()) {

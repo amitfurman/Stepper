@@ -45,6 +45,7 @@ public class FlowExecutor {
                 flowExecution.setFlowExecutionResult(FlowExecutionResult.WARNING);
             }
             else {
+                flowExecution.setFlowExecutionResult(FlowExecutionResult.SUCCESS);
                 StatisticData stepStatistic = new StatisticData(flowExecution.getFlowDefinition().getFlowSteps().get(i).getStepDefinition().name());
                 stepStatistic.incrementTimesRun();
                 stepStatistic.addToTotalTime(context.getCurrInvokingStep().getTotalStepTime());
@@ -56,7 +57,6 @@ public class FlowExecutor {
         }
 
         ////statistics
-        flowExecution.setFlowExecutionResult(FlowExecutionResult.SUCCESS);
         Instant endTime = Instant.now();
         flowExecution.setEndTime(endTime);
         flowExecution.setTotalTime(Duration.between(startTime, endTime));

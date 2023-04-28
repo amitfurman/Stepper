@@ -2,7 +2,7 @@ package exceptions;
 
 public class DuplicateFlowsNames extends Exception{
 
-    private final String EXCEPTION_MESSAGE = "There are flows with duplicate names.";
+    private final String EXCEPTION_MESSAGE = "Invalid flow! There are flows with duplicate names.\n";
 
     @Override
     public String getMessage() {

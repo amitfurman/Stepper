@@ -11,6 +11,7 @@ import flow.execution.context.StepExecutionContext;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 public class CSVExporter extends AbstractStepDefinition {
 
@@ -47,15 +48,18 @@ public class CSVExporter extends AbstractStepDefinition {
         }
 
             // Write row data to CSV
-        for (int rowId = 0; rowId < source.numOfRows(); rowId++) {
-            List<String> rowData = source.getRowDataByColumnsOrder(rowId);
-            if (!rowData.isEmpty()) {
-                csvBuilder.append(String.join(",", rowData));
-                csvBuilder.append("\n");
+        for (RelationData.SingleRow row :source.getRows()) {
+            Map<String, String> rowData = row.getRowData();
+            csvBuilder.append("\t");
+            for (String column : columns) {
+                csvBuilder.append(rowData.get(column)); // append column value
+                csvBuilder.append(","); // append comma
             }
+            csvBuilder.setLength(csvBuilder.length() - 1); // remove trailing comma
+            csvBuilder.append("\n");
         }
 
-        context.storeDataValue("RESULT", csvBuilder);
+        context.storeDataValue("RESULT", csvBuilder.toString());
         context.storeSummaryLine("The source data was converted successfully to the CSV export result");
         context.storeStepTotalTime(start);
         return StepResult.SUCCESS;

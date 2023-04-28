@@ -31,7 +31,7 @@ public class FilesContentExtractor extends AbstractStepDefinition {
     @Override
     public StepResult invoke(StepExecutionContext context) {
         Instant start = Instant.now();
-        FileListData filesToExtract = context.getDataValue(IO_NAMES.FILES_TO_RENAME, FileListData.class);
+        FileListData filesToExtract = context.getDataValue(IO_NAMES.FILES_LIST, FileListData.class);
         int line = context.getDataValue(IO_NAMES.LINE,Integer.class);
 
         //List<String> columns = new ArrayList<>(Arrays.asList("Serial Number", "Original file's name", "Data file line") );
@@ -42,11 +42,12 @@ public class FilesContentExtractor extends AbstractStepDefinition {
             context.storeLogLineAndSummaryLine("The list of files to extract is empty, so there are no files to rename.");
         }
         else {
+            int serialNumber = 1;
             for (File file : filesToExtract.getItems()) {
                 context.storeLogLine("About to start work on file " + file.getName());
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));) {
                     String newLine;
-                    int serialNumber = 1, currentLine = 1;
+                    int currentLine = 1;
                     boolean foundLine = false;
                     while ((newLine = reader.readLine()) != null) {
                         if (currentLine == line) {

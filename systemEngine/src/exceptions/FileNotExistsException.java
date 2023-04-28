@@ -1,7 +1,7 @@
 package exceptions;
 
 public class FileNotExistsException extends Exception{
-    private final String EXCEPTION_MESSAGE = "The file is not exists.";
+    private final String EXCEPTION_MESSAGE = "Invalid flow! The file is not exists.\n";
 
     @Override
     public String getMessage() {

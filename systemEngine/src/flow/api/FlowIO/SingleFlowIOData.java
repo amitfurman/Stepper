@@ -84,6 +84,7 @@ public class SingleFlowIOData {
     public DataNecessity getNecessity() {return necessity;}
 
     public void setNecessity(DataNecessity necessity) {this.necessity = necessity;}
+
     public String getUserString() {return this.userString;}
 
  /*   public List<String> getStepsWithCurrIO() {
