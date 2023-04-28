@@ -38,7 +38,6 @@ public class RelationData {
         return rows.isEmpty();
     }
 
-
         private static class SingleRow {
         private Map<String, String> data;
 

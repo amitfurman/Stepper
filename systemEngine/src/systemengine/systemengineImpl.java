@@ -54,7 +54,7 @@ public class systemengineImpl implements systemengine{
 
     public DTOFlowDefinition IntroduceTheChosenFlow(int flowNumber) {
         FlowDefinition flow = flowDefinitionList.get(flowNumber - 1);
-        return new DTOFlowDefinitionImpl(flow);
+        return new DTOFlowDefinition(flow);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class systemengineImpl implements systemengine{
         flowExecutor.executeFlow(flowExecution, freeInputs, statisticData);
         FlowExecutionList.addFirst(flowExecution);
 
-        return new DTOFlowExecutionImpl(flowExecution);
+        return new DTOFlowExecution(flowExecution);
     }
     @Override
     public DTOFreeInputsByUserString printFreeInputsByUserString(int choice) {
@@ -97,7 +97,7 @@ public class systemengineImpl implements systemengine{
 
     @Override
     public DTOSingleFlowIOData getSpecificFreeInput(int flowChoice, int freeInputChoice) {
-        return new DTOSingleFlowIODataImpl(flowDefinitionList.get(flowChoice-1).getFlowFreeInputs().get(freeInputChoice-1));
+        return new DTOSingleFlowIOData(flowDefinitionList.get(flowChoice-1).getFlowFreeInputs().get(freeInputChoice-1));
     }
 
 }

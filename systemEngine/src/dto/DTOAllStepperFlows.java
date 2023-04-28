@@ -4,12 +4,12 @@ import java.util.LinkedList;
 
 public class DTOAllStepperFlows {
 
-    private LinkedList<DTOFlowDefinitionImpl> allFlowsList ;
+    private LinkedList<DTOFlowDefinition> allFlowsList ;
 
-    public DTOAllStepperFlows(LinkedList<DTOFlowDefinitionImpl> allFlows) {
+    public DTOAllStepperFlows(LinkedList<DTOFlowDefinition> allFlows) {
         this.allFlowsList = new LinkedList<>(allFlows);}
 
-    public LinkedList<DTOFlowDefinitionImpl> getAllFlows() {
+    public LinkedList<DTOFlowDefinition> getAllFlows() {
         return allFlowsList;
     }
 }

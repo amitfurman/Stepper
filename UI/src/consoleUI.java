@@ -23,8 +23,9 @@ public class consoleUI {
         //DTOAllStepperFlows allStepperFlows = null;
         console.menu();
     }
-    public void menu(){
+    public void menu() {
         int choice = 0;
+        boolean systemInfoRead = false;
         do {
             System.out.println("Please choose an option:");
             System.out.println("1. Reading the system information file");
@@ -35,39 +36,73 @@ public class consoleUI {
             System.out.println("6. Exiting the system");
             choice = readChoice();
 
-            switch (choice) {
-                case 1:
-                    readingTheSystemInformationFile();
-                    break;
-                case 2:
-                    introduceFlows();
-                    break;
-                case 3:
-                    executeFlow();
-                    break;
-                case 4:
-                    // Code to display past activation details
-                    System.out.println("Displaying full details of past activation");
-                    break;
-                case 5:
-                    // Code to display statistics
-                    System.out.println("Statistics");
-                    break;
-                case 6:
-                    exitProgram();
-                    break;
-                default:
-                    System.out.println("Invalid choice, please choose again");
-                    break;
+            if (!systemInfoRead && choice != 1 && choice != 6) {
+                System.out.println("You cant choose this option before you choose option 1 and enter valid file.");
+            } else {
+                switch (choice) {
+                    case 1:
+                        systemInfoRead = readingTheSystemInformationFile();
+                        break;
+                    case 2:
+                        introduceFlows();
+                        break;
+                    case 3:
+                        executeFlow();
+                        break;
+                    case 4:
+                        // Code to display past activation details
+                        System.out.println("Displaying full details of past activation");
+                        break;
+                    case 5:
+                        // Code to display statistics
+                        System.out.println("Statistics");
+                        break;
+                    case 6:
+                        exitProgram();
+                        break;
+                    default:
+                        System.out.println("Invalid choice, please choose again");
+                        break;
+                }
             }
-        } while (choice != 6);
+        } while (choice != 6) ;
     }
+
     public int readChoice() {
         Scanner input = new Scanner(System.in);
-        int choice = input.nextInt();
+        boolean validInput = false;
+        int choice = 0;
+        do {
+            if (input.hasNextInt()) {
+                choice = input.nextInt();
+                validInput = true;
+            } else {
+                System.out.println("Error: You must enter a number, please try again");
+                input.next();
+            }
+        } while (!validInput);
         return choice;
     }
-    public void readingTheSystemInformationFile() {
+
+    public String readString() {
+        Scanner input = new Scanner(System.in);
+        return input.next();
+        /*
+        boolean validInput = false;
+        String str = "";
+        do {
+            if (input.hasNextLine()) {
+                str = input.next();
+                validInput = true;
+            } else {
+                System.out.println("Error: You must enter a string, please try again");
+                input.nextLine(); // discard the invalid input
+            }
+        } while (!validInput);
+        return str;
+         */
+    }
+    public boolean readingTheSystemInformationFile() {
         Scanner scanner = new Scanner(System.in);
         XmlValidator validator = new XmlValidator();
         boolean isFileValid = false;
@@ -98,7 +133,10 @@ public class consoleUI {
 
         if (validFilePath != null) {
             systemEngineInterface.cratingFlowFromXml(validFilePath);
+            return true;
         }
+
+        return false;
     }
     public void introduceFlows() {
         int flowNumber = choosingWhichFlowToIntroduce();
@@ -270,15 +308,12 @@ public class consoleUI {
         flowExecution.getFormalFlowOutputs().forEach(output -> {
             System.out.println("Output " + counter.getAndIncrement() + ":");
             System.out.println("Output Name: " + output);
-            System.out.println(flowExecution
+           // System.out.println(flowExecution
             System.out.println("Output Value: " +  flowExecution.getDataValues().get(output) + "\n"); //?
         });
     }
 
-    public String readString() {
-        Scanner scanner = new Scanner(System.in);
-        return scanner.next();
-    }
+
 
     public Object readObject() {
         Scanner scanner = new Scanner(System.in);
