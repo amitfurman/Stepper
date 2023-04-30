@@ -19,16 +19,4 @@ public class XmlValidator {
         }
     }
 
-   /* public boolean isThereFlowsWithDuplicateName(){
-        HashSet<String> flowNames = new HashSet<>();
-        NodeList flowNodes = doc.getElementsByTagName("Flow");
-        for (int i = 0; i < flowNodes.getLength(); i++) {
-            Element flowNode = (Element) flowNodes.item(i);
-            String flowName = flowNode.getAttribute("Name");
-            if (flowNames.contains(flowName)) {
-                System.out.println("Error: Duplicate flow name: " + flowName);
-                return;
-            }
-            flowNames.add(flowName);
-    }*/
 }

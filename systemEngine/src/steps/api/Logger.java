@@ -9,7 +9,7 @@ public class Logger {
 
     public Logger(String log) {
         this.log = log;
-        logTime = LocalTime.now();
+        this.logTime = LocalTime.now();
     }
 
     public String getLog() {

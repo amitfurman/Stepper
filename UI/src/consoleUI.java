@@ -181,14 +181,14 @@ public class consoleUI {
             return readChoice(scanner,maxChoice);
     }
     public StringBuilder printStepsInfo(DTOFlowDefinition flow) {
-            AtomicInteger stepsIndex = new AtomicInteger(1);
+            AtomicInteger stepIndex = new AtomicInteger(1);
             StringBuilder stepData = new StringBuilder();
             stepData.append("*The information for the steps in the current flow: *\n");
             flow
                     .getFlowStepsData()
                     .stream()
                     .forEach(node -> {
-                        stepData.append("Step " + stepsIndex.getAndIncrement() + ": \n");
+                        stepData.append("Step " + stepIndex.getAndIncrement() + ": \n");
                         stepData.append("\tOriginal Name: " + node.getOriginalStepName() + '\n');
                         if (!(node.getFinalStepName().equals(node.getOriginalStepName()))) {
                             stepData.append("\tFinal Name: " + Objects.toString(node.getFinalStepName(), "") + "\n");
@@ -198,14 +198,14 @@ public class consoleUI {
         return stepData;
     }
     public StringBuilder printFreeInputsInfo(DTOFlowDefinition flow) {
-        AtomicInteger freeInputsIndex = new AtomicInteger(1);
+        AtomicInteger freeInputIndex = new AtomicInteger(1);
         StringBuilder inputData = new StringBuilder();
         inputData.append("*The information about free inputs in the current flow: *\n");
         flow
                 .getFlowFreeInputs()
                 .stream()
                 .forEach(node -> {
-                    inputData.append("Free Input " + freeInputsIndex.getAndIncrement() + ": \n");
+                    inputData.append("Free Input " + freeInputIndex.getAndIncrement() + ": \n");
                     inputData.append("\tFinal Name: " + node.getFinalName() + '\n');
                     inputData.append("\tType: " + node.getType().getName() + '\n');
                     inputData.append("\tConnected Steps: " + String.join(", ", flow.getListOfStepsWithCurrInput(node.getFinalName())) + '\n');
@@ -214,13 +214,13 @@ public class consoleUI {
         return inputData;
     }
     public StringBuilder printFlowOutputs(DTOFlowDefinition flow) {
-        AtomicInteger flowOutputsIndex = new AtomicInteger(1);
+        AtomicInteger flowOutputIndex = new AtomicInteger(1);
         StringBuilder outputData = new StringBuilder();
         outputData.append("*The information about the flow outputs: *\n");
         flow.getIOlist()
                 .stream().forEach(node -> {
                     if (flow.getFlowFormalOutputs().stream().anyMatch(output -> output.equals(node.getFinalName()))) {
-                        outputData.append("Flow Outputs " + flowOutputsIndex.getAndIncrement() + ": \n");
+                        outputData.append("Flow Outputs " + flowOutputIndex.getAndIncrement() + ": \n");
                         outputData.append("\tFinal Name: " + node.getFinalName() + '\n');
                         outputData.append("\tType: " + node.getType().getName() + '\n');
                         outputData.append("\tCreating Step: " + node.getStepName() + "\n\n");
@@ -306,7 +306,7 @@ public class consoleUI {
         return true;
     }
     public void printInformationAboutFlowActivation(DTOFlowExecution flowExecution) {
-       AtomicInteger counter = new AtomicInteger(1);
+       AtomicInteger flowIndex = new AtomicInteger(1);
         System.out.println("The flow has been activated successfully.");
         System.out.println("The flow outputs are: ");
         System.out.println("Flow ID: " + flowExecution.getUniqueId());
@@ -314,7 +314,7 @@ public class consoleUI {
         System.out.println("Flow Result: " + flowExecution.getFlowExecutionResult());
         System.out.println("Flow Outputs: \n");
         flowExecution.getFlowOutputExecutionList().forEach(output -> {
-            System.out.println("Output " + counter.getAndIncrement() + ":");
+            System.out.println("Output " + flowIndex.getAndIncrement() + ":");
             System.out.println("\t" + output.getUserString());
             if(output.getValue() != null){
                 System.out.println("\tValue: " +  output.getValue().toString());
@@ -323,7 +323,6 @@ public class consoleUI {
                 System.out.println("\tValue: Not created due to failure in flow");
             }
         });
-       // System.out.println("\n");
     }
     public Object readObject(Scanner scanner) {
         String input = scanner.nextLine();
@@ -341,10 +340,10 @@ public class consoleUI {
     }
     public void displayPastFlowActivationDetails(Scanner scanner) {
         DTOFlowsExecutionList flowsExecutionList = systemEngineInterface.getFlowsExecutionList();
-        int index = 1;
+        AtomicInteger flowIndex = new AtomicInteger(1);
         System.out.println("Flows executed:");
         for (DTOFlowExecution flow: flowsExecutionList.getFlowsExecutionNamesList()) {
-            System.out.println("Flow " + index++ + ": ");
+            System.out.println("Flow " + flowIndex.getAndIncrement() + ": ");
             System.out.println("Flow Name: " + flow.getFlowName());
             System.out.println("Flow ID: " + flow.getUniqueId());
             System.out.println("Flow Start Time: " + flow.getStartTimeFormatted());
@@ -431,18 +430,18 @@ public class consoleUI {
     }
     public void displayStatistics(){
         DTOFlowAndStepStatisticData statisticData = systemEngineInterface.getStatisticData();
-        int index =1;
+        AtomicInteger flowIndex = new AtomicInteger(1);
         System.out.println("Flows Statistics:");
         for (DTOStatisticData flow: statisticData.getFlowsStatisticData()) {
-            System.out.println("Flow " + index++ + ": ");
+            System.out.println("Flow " + flowIndex.getAndIncrement() + ": ");
             System.out.println("\tNumber Of Run Times: " + flow.getTimesRun());
             System.out.println("\tAverage Run Time: " + flow.getAverageTime());
         }
 
-        index=1;
+        AtomicInteger stepIndex = new AtomicInteger(1);
         System.out.println("Steps Statistics:");
         for (DTOStatisticData step: statisticData.getStepsStatisticData()) {
-            System.out.println("Step " + index++ + ": ");
+            System.out.println("Step " + stepIndex.getAndIncrement() + ": ");
             System.out.println("\tNumber Of Run Times: " + step.getTimesRun());
             System.out.println("\tAverage Run Time: " + step.getAverageTime());
         }

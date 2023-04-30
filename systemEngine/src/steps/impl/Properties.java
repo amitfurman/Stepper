@@ -59,16 +59,3 @@ public class Properties extends AbstractStepDefinition {
         return StepResult.SUCCESS;
     }
 }
-
-/*    List<String> rowKeys = new ArrayList<>();
-        for (int i = 0; i < source.numOfRows(); i++) {
-        List<String> rowData = source.getRowDataByColumnsOrder(i);
-        String rowKey = "row-" + (i + 1);
-        rowKeys.add(rowKey);
-        for (int j = 0; j < rowData.size(); j++) {
-        String columnName = columns.get(j);
-        String cellValue = rowData.get(j);
-        String property = rowKey + "." + columnName + "=" + cellValue;
-        properties.append(property).append("\n");
-        }
-        }*/

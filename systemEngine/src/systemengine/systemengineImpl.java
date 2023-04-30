@@ -116,20 +116,3 @@ public class systemengineImpl implements systemengine{
     public DTOFlowAndStepStatisticData getStatisticData(){return new DTOFlowAndStepStatisticData(statisticData);}
 }
 
-///////
-/*
-    public static DTOFlowDefinitionData IntroduceTheChosenFlow(int flowNumber) {
-        DTOFlowDefinition flow = allStepperFlows.getAllFlows().get(flowNumber - 1);
-
-        StringBuilder flowData = new StringBuilder();
-        flowData.append(printFlowsName(allStepperFlows));
-        flowData.append("Flow Description: " + flow.getDescription() + '\n');
-        flowData.append("Flow Formal Outputs: " + String.join(", ", flow.getFlowFormalOutputs()) + '\n');
-        flowData.append("Is The Flow Read Only? " + flow.getFlowReadOnly() + "\n\n");
-        flowData.append(printStepsInfo(flow));
-        flowData.append(printFreeInputsInfo(flow));
-        flowData.append(printFlowOutputs(flow));
-
-        System.out.println(flowData);
-    }
-*/
