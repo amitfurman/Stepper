@@ -53,15 +53,18 @@ public class FilesContentExtractor extends AbstractStepDefinition {
                         if (currentLine == line) {
                             relation.addRow(new ArrayList<>(Arrays.asList(String.valueOf(serialNumber), file.getName(), newLine)));
                             foundLine = true;
-                            serialNumber++;
                             break;
                         }
                         currentLine++;
                     }
                     if (!foundLine) {
-                        context.storeLogLine("Problem extracting line number " + line +
-                                " from file " + file.getName());
+                        relation.addRow(new ArrayList<>(Arrays.asList(String.valueOf(serialNumber), file.getName(),"Not such line")));
+                        context.storeLogLine("Problem extracting line number " + line + " from file " + file.getName());
+                    } else if (!file.exists()) {
+                        relation.addRow(new ArrayList<>(Arrays.asList(String.valueOf(serialNumber), file.getName(),"File not found")));
+                        context.storeLogLine("Problem extracting line number " + line + " from file " + file.getName());
                     }
+                    serialNumber++;
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 } catch (IOException e) {

@@ -51,7 +51,7 @@ public class CollectFilesInFolder extends AbstractStepDefinition {
         //Before reading the files
         String log = ("Reading folder " + folderPath + "content with filter ");
         if(!(filter == null)) {log += filter; }
-        else { log += "N/A" ;}
+        else { log += "N/A." ;}
         context.storeLogLine(log);
 
         File[] files = folder.listFiles();

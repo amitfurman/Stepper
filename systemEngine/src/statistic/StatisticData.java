@@ -30,6 +30,7 @@ public class StatisticData {
     public int getTimesRun() {
         return timesRun;
     }
+    public Duration getTotalTime() {return totalTime; }
 
     public double getAverageTime() {
         return timesRun == 0 ? 0 : totalTime.toMillis() / timesRun;

@@ -1,14 +1,15 @@
 import dto.*;
 import exceptions.FileIsNotXmlTypeException;
 import exceptions.FileNotExistsException;
+import flow.api.FlowIO.IO;
+import steps.api.DataNecessity;
 import systemengine.systemengine;
 import systemengine.systemengineImpl;
 import xml.XmlValidator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
+
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class consoleUI {
     private final systemengine systemEngineInterface ;
@@ -26,7 +27,7 @@ public class consoleUI {
         boolean systemInfoRead = false;
         Scanner scanner = new Scanner(System.in);
         do {
-            System.out.println("Please choose an option:");
+            System.out.println("\nPlease choose an option:");
             System.out.println("1. Reading the system information file");
             System.out.println("2. Introducing the Flow definition");
             System.out.println("3. Flow activation (Execution)");
@@ -49,12 +50,10 @@ public class consoleUI {
                         executeFlow(scanner);
                         break;
                     case 4:
-                        // Code to display past activation details
-                        System.out.println("Displaying full details of past activation");
+                        displayPastFlowActivationDetails(scanner);
                         break;
                     case 5:
-                        // Code to display statistics
-                        System.out.println("Statistics");
+                        displayStatistics();
                         break;
                     case 6:
                         exitProgram();
@@ -66,7 +65,6 @@ public class consoleUI {
             }
         } while (choice != 6) ;
     }
-///???
     public int readChoice(Scanner scanner) {
         boolean validInput = false;
         int choice = 0;
@@ -82,19 +80,17 @@ public class consoleUI {
         } while (!validInput);
         return choice;
     }
-
     public String readString(Scanner scanner) {
         boolean validInput = false;
         String input = null;
         do {
             if(scanner.hasNextInt() || scanner.hasNextDouble()) {
                 System.out.println("Error: You must enter a string, please try again");
-                input = scanner.nextLine();
             }
             else {
                 validInput = true;
-                input = scanner.nextLine();
             }
+            input = scanner.nextLine();
 
         } while (!validInput);
 
@@ -105,7 +101,6 @@ public class consoleUI {
         return scanner.nextLine();*/
         return input;
     }
-
     public boolean readingTheSystemInformationFile(Scanner scanner) {
         XmlValidator validator = new XmlValidator();
         boolean isFileValid = false;
@@ -234,7 +229,6 @@ public class consoleUI {
 
         return outputData;
     }
-
     public void executeFlow(Scanner scanner) {
         Map<String, Object> freeInputMap = new HashMap<>();
         String userContinue;
@@ -284,7 +278,6 @@ public class consoleUI {
             }
         }
     }
-
     public int askTheUserForInputValue(int flowNumber, Map<String, Object> freeInputsMap, Scanner scanner) {
         DTOFreeInputsByUserString freeInputsByUserString = systemEngineInterface.printFreeInputsByUserString(flowNumber);
         System.out.println(freeInputsByUserString.getFreeInputsByUserString());
@@ -305,7 +298,6 @@ public class consoleUI {
         System.out.println("The new value for the input: " + chosenInput.getUserString() + " is: " + newValue);
         return userFreeInputChoice;
     }
-
     public boolean validFreeInputValue(Object newValue,DTOSingleFlowIOData chosenInput) {
 
         if(!chosenInput.getType().getType().getSimpleName().equals(newValue.getClass().getSimpleName())) {
@@ -316,7 +308,6 @@ public class consoleUI {
         }
         return true;
     }
-
     public void printInformationAboutFlowActivation(DTOFlowExecution flowExecution) {
        AtomicInteger counter = new AtomicInteger(1);
         System.out.println("The flow has been activated successfully.");
@@ -328,16 +319,15 @@ public class consoleUI {
         flowExecution.getFlowOutputExecutionList().forEach(output -> {
             System.out.println("Output " + counter.getAndIncrement() + ":");
             System.out.println("\t" + output.getUserString());
-            if(output.getValue() != null) {
+            if(output.getValue() != null){
                 System.out.println("\tValue: " +  output.getValue().toString());
             }
             else {
                 System.out.println("\tValue: Not created due to failure in flow");
             }
         });
-        System.out.println("\n");
+       // System.out.println("\n");
     }
-
     public Object readObject(Scanner scanner) {
         String input = scanner.nextLine();
 
@@ -352,7 +342,119 @@ public class consoleUI {
             }
         }
     }
+    public void displayPastFlowActivationDetails(Scanner scanner) {
+        DTOFlowsExecutionList flowsExecutionList = systemEngineInterface.getFlowsExecutionList();
+        int index = 1;
+        System.out.println("Flows executed:");
+        for (DTOFlowExecution flow: flowsExecutionList.getFlowsExecutionNamesList()) {
+            System.out.println("Flow " + index++ + ": ");
+            System.out.println("Flow Name: " + flow.getFlowName());
+            System.out.println("Flow ID: " + flow.getUniqueId());
+            System.out.println("Flow Start Time: " + flow.getStartTimeFormatted());
+            System.out.println("\n");
+        }
+        int flowNumber;
+        boolean isValidChoice;
+        do {
+            flowNumber = getFlowChoice(scanner);
+            isValidChoice = validFlowInputChoice(flowNumber, systemEngineInterface.getFlowDefinitionList().size());
+        } while (flowNumber != 0 && !isValidChoice);
+        if(flowNumber == 0){
+            return;
+        }
+        DTOFlowExecution flowExecution = systemEngineInterface.getFlowExecutionDetails(flowNumber);
+        printFlowExecutionDetails(flowExecution);
+    }
+    public void printFlowExecutionDetails(DTOFlowExecution flowExecution) {
+        printFlowInfo(flowExecution);
+        printFreeInputData(flowExecution);
+        printStepsOutputs(flowExecution);
+        printStepsData(flowExecution);
+    }
+    public void printFlowInfo(DTOFlowExecution flowExecution) {
+        System.out.println("Flow ID: " + flowExecution.getUniqueId());
+        System.out.println("Flow Name: " + flowExecution.getFlowName());
+        System.out.println("Flow Result: " + flowExecution.getFlowExecutionResult());
+        System.out.println(String.format("Total Running Time: %d ms", flowExecution.getTotalTime().toMillis()));
+        System.out.print("\n");
+    }
+    public void printFreeInputData(DTOFlowExecution flowExecution){
+        AtomicInteger freeInputIndex = new AtomicInteger(1);
+        System.out.println("Flow's Free Inputs: ");
+        List<DTOSingleFlowIOData> sortedList = flowExecution.getFreeInputsList().stream()
+                .sorted(Comparator.comparing(obj -> obj.getNecessity().equals(DataNecessity.MANDATORY) ? 0 : 1))
+                .collect(Collectors.toList());
 
+        sortedList.stream().forEach(input -> {
+            System.out.println("Free Input " + freeInputIndex.getAndIncrement() + ":" );
+            System.out.println("\tFinal Name:" + input.getFinalName());
+            System.out.println("\tType:" + input.getType());
+            if (input.getValue() != null) {
+                System.out.println("\tValue: " + input.getValue().toString());
+            } else {
+                System.out.println("\tValue: N/A");
+            }
+            System.out.println("\tIs Mandatory / Optional: " + input.getNecessity());
+        });
+        System.out.print("\n");
+    }
+    public void printStepsOutputs(DTOFlowExecution flowExecution){
+        System.out.println("Flow's Outputs: ");
+        AtomicInteger outputIndex = new AtomicInteger(1);
+        List<DTOSingleFlowIOData> outputs = flowExecution.getIOlist().stream().filter(io -> io.getIOType().equals(IO.OUTPUT)).collect(Collectors.toList());
+        for(DTOSingleFlowIOData output: outputs) {
+            System.out.println("Output " + outputIndex.getAndIncrement() + ":");
+            System.out.println("\tFinal Name:" + output.getFinalName());
+            System.out.println("\tType:" + output.getType());
+            if (output.getValue() != null) {
+                System.out.println("\tValue: " + output.getValue().toString());
+            } else {
+                System.out.println("\tValue: Not created due to failure in flow");
+            }
+        }
+        System.out.print("\n");
+    }
+    public void printStepsData(DTOFlowExecution flowExecution){
+        AtomicInteger stepIndex = new AtomicInteger(1);
+        System.out.println("Flow's Steps: ");
+        flowExecution.getStepExecutionDataList().stream().forEach(step -> {
+            System.out.println("Step Number " + stepIndex.getAndIncrement()+ ":");
+            if(step.getFinalNameStep().equals(step.getOriginalName())){
+                System.out.println("\tStep Name:" + step.getOriginalName());
+            }
+            else {
+                System.out.println("\tStep Name:" + step.getOriginalName() + " (renamed to " + step.getFinalNameStep() + ")");
+            }
+            System.out.println("\tTotal Running Time: " +  step.getTotalStepTime().toMillis() + " ms");
+            System.out.println("\tStep Result: " +  step.getResult());
+            System.out.println("\tStep Summery Line: " +  step.getSummaryLine());
+            System.out.println("\tStep's Logs:");
+            AtomicInteger logIndex = new AtomicInteger(1);
+            step.getLoggerList().forEach(log -> {
+                System.out.println("\tLog " + logIndex.getAndIncrement() + ":");
+                System.out.println("\t\tLog Time: " + log.getLogTime());
+                System.out.println("\t\tLog Message: " + log.getLog());
+            });
+        });
+    }
+    public void displayStatistics(){
+        DTOFlowAndStepStatisticData statisticData = systemEngineInterface.getStatisticData();
+        int index =1;
+        System.out.println("Flows Statistics:");
+        for (DTOStatisticData flow: statisticData.getFlowsStatisticData()) {
+            System.out.println("Flow " + index++ + ": ");
+            System.out.println("\tNumber Of Run Times: " + flow.getTimesRun());
+            System.out.println("\tAverage Run Time: " + flow.getAverageTime());
+        }
+
+        index=1;
+        System.out.println("Steps Statistics:");
+        for (DTOStatisticData step: statisticData.getStepsStatisticData()) {
+            System.out.println("Step " + index++ + ": ");
+            System.out.println("\tNumber Of Run Times: " + step.getTimesRun());
+            System.out.println("\tAverage Run Time: " + step.getAverageTime());
+        }
+    }
     public void exitProgram() {
         System.out.println("Thank you for using our system. See you later (:");
         System.exit(0);

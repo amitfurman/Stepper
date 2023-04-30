@@ -39,6 +39,12 @@ public class FilesDeleter extends AbstractStepDefinition {
 
         context.storeLogLine("About to start delete " + totalFiles + " files");
 
+        if (totalFiles == 0) {
+            context.storeLogLineAndSummaryLine("The list of files to delete is empty, so there are no files to delete.");
+            context.storeStepTotalTime(start);
+            return StepResult.SUCCESS;
+        }
+
         for(File file : filesToDelete.getItems()){
             if (!file.delete()) {
                 DELETED_LIST.getItems().add(file.getPath());

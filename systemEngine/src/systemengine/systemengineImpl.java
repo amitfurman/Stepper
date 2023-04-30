@@ -18,7 +18,7 @@ public class systemengineImpl implements systemengine{
 
     public List<FlowDefinition> flowDefinitionList;
 
-    public LinkedList<FlowExecution> FlowExecutionList;
+    public LinkedList<FlowExecution> flowExecutionList;
 
     public FlowAndStepStatisticData statisticData;
 
@@ -26,7 +26,7 @@ public class systemengineImpl implements systemengine{
 
     public systemengineImpl() {
         this.flowDefinitionList = new LinkedList<>();
-        this.FlowExecutionList = new LinkedList<>();
+        this.flowExecutionList = new LinkedList<>();
         this.statisticData = new FlowAndStepStatisticData();
     }
 
@@ -36,6 +36,7 @@ public class systemengineImpl implements systemengine{
         flowDefinitionList = schema.schemaBasedJAXB(filePath);
     }
 
+    @Override
     public DTOFlowsNames printFlowsName() {
         int index = 1;
         StringBuilder flowData = new StringBuilder();
@@ -52,6 +53,7 @@ public class systemengineImpl implements systemengine{
         return flowDefinitionList;
     }
 
+    @Override
     public DTOFlowDefinition IntroduceTheChosenFlow(int flowNumber) {
         FlowDefinition flow = flowDefinitionList.get(flowNumber - 1);
         return new DTOFlowDefinition(flow);
@@ -74,11 +76,12 @@ public class systemengineImpl implements systemengine{
         FlowDefinition currFlow = flowDefinitionList.get(flowChoice-1);
 
         FlowExecution flowExecution = new FlowExecution(currFlow);
+        flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
         flowExecutor.executeFlow(flowExecution, freeInputs, statisticData);
-        FlowExecutionList.addFirst(flowExecution);
-
+        flowExecutionList.addFirst(flowExecution);
         return new DTOFlowExecution(flowExecution);
     }
+
     @Override
     public DTOFreeInputsByUserString printFreeInputsByUserString(int choice) {
         AtomicInteger freeInputsIndex = new AtomicInteger(1);
@@ -94,12 +97,20 @@ public class systemengineImpl implements systemengine{
                 });
         return new DTOFreeInputsByUserString(freeInputsData);
     }
-
     @Override
     public DTOSingleFlowIOData getSpecificFreeInput(int flowChoice, int freeInputChoice) {
         return new DTOSingleFlowIOData(flowDefinitionList.get(flowChoice-1).getFlowFreeInputs().get(freeInputChoice-1));
     }
-
+    @Override
+    public DTOFlowsExecutionList getFlowsExecutionList() {
+        return new DTOFlowsExecutionList(flowExecutionList);
+    }
+    @Override
+    public DTOFlowExecution getFlowExecutionDetails(int flowExecutionChoice) {
+        return new DTOFlowExecution(flowExecutionList.get(flowExecutionChoice-1));
+    }
+    @Override
+    public DTOFlowAndStepStatisticData getStatisticData(){return new DTOFlowAndStepStatisticData(statisticData);}
 }
 
 ///////

@@ -15,5 +15,8 @@ public interface systemengine {
     DTOFlowExecution activateFlow(int flowChoice, DTOFreeInputsFromUser freeInputs);
     DTOFreeInputsByUserString printFreeInputsByUserString(int choice);
     DTOSingleFlowIOData getSpecificFreeInput(int flowChoice, int freeInputChoice);
+    DTOFlowsExecutionList getFlowsExecutionList();
+    DTOFlowExecution getFlowExecutionDetails(int flowExecutionChoice);
+    DTOFlowAndStepStatisticData getStatisticData();
 
 }

@@ -15,6 +15,7 @@ public class ListData<T> {
     public List<T> getItems() {
         return list;
     }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         int counter = 1;
@@ -25,6 +26,7 @@ public class ListData<T> {
             sb.append(System.lineSeparator());
             sb.append("\t");
         }
+        //sb.setLength(sb.length() - 1);
         return sb.toString();
     }
 }

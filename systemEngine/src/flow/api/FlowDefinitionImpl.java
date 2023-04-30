@@ -82,85 +82,62 @@ public class FlowDefinitionImpl implements FlowDefinition {
     public boolean getFlowReadOnly() {
         return this.isFlowReadOnly;
     }
-
-
     @Override
-    public List<StepUsageDeclaration> getFlowSteps() {
-        return steps;
-    }
-
+    public List<StepUsageDeclaration> getFlowSteps() { return steps;}
     @Override
     public List<String> getFlowFormalOutputs() {
         return flowOutputs;
     }
-
     @Override
     public void addToName2DDMap(String name, DataDefinitions DD) {
         name2DataDefinition.put(name, DD);
     }
-
     @Override
     public void addToInputName2AliasMap(String stepName, String inputName, String alias) {
         String result = stepName + "." + inputName;
         InputName2Alias.put(result, alias);
     }
-
     @Override
     public void addToOutputName2AliasMap(String stepName, String outputName, String alias) {
         String result = stepName + "." + outputName;
         OutputName2Alias.put(result, alias);
     }
-
     @Override
     public void addToAlias2StepNameMap(String stepName, String alias) {
         MapAlias2StepName.put(stepName, alias);
     }
-
     @Override
-    public DataDefinitions getDDFromMap(String InputName) {
-
-        return name2DataDefinition.get(InputName);
-    }
+    public DataDefinitions getDDFromMap(String InputName) { return name2DataDefinition.get(InputName);}
     @Override
     public String getInputAliasFromMap(String stepName, String originalInputName) {
         return InputName2Alias.get(stepName + "." + originalInputName);
     }
-
     @Override
     public String getOutputAliasFromMap(String stepName, String originalOutputName) {
         return OutputName2Alias.get(stepName + "." + originalOutputName);
     }
-
     @Override
-    public Map<String, DataDefinitions> getName2DDMap() {
-        return name2DataDefinition;
-    }
-
+    public Map<String, DataDefinitions> getName2DDMap() { return name2DataDefinition;}
     @Override
     public Map<String, String> getAlias2StepNameMap() {
         return MapAlias2StepName;
     }
-
     @Override
     public Map<String, String> getInputName2aliasMap() {
         return InputName2Alias;
     }
-
     @Override
     public Map<String, String> getOutputName2aliasMap() {
         return OutputName2Alias;
     }
-
     @Override
     public List<SingleFlowIOData> getIOlist() {
         return IOlist;
     }
-
     @Override
     public void addElementToIoList(SingleFlowIOData IOElement) {
         IOlist.add(IOElement);
     }
-
     @Override
     public boolean stepExist(String stepName) {
         boolean isPresent =
@@ -174,7 +151,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
         }
         return true;
     }
-
     @Override
     public boolean dataExist(String stepName, String dataName) {
 
@@ -193,10 +169,8 @@ public class FlowDefinitionImpl implements FlowDefinition {
             String warning = "The data" + dataName + "does not exists in the current flow.";
             return false;
         }
-
         return true;
     }
-
     @Override
     public void validateIfOutputsHaveSameName() {
         boolean isPresent =
@@ -209,7 +183,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
             String exception = "Invalid. There are 2 or more outputs with the same name.";
         }
     }
-
     @Override
     public void flowOutputsIsNotExists() {
         for (String output : getFlowFormalOutputs()) {
@@ -219,7 +192,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
 
             if (!isPresent) {
                 String exception = "Invalid. There is at least one flow output that is not exists.";
-
             }
         }
     }
@@ -238,7 +210,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
             }
         }
     }
-
     @Override
     public void mandatoryInputsIsUserFriendly() {
         boolean isPresent =
@@ -260,7 +231,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
         }
         return null;
     }
-
     @Override
     public boolean doesSourceStepBeforeTargetStep(String sourceStepName, String targetStepName){
         int sourceIndex = steps.indexOf(sourceStepName);
@@ -271,7 +241,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
         }
         return true;
     }
-
     @Override
     public boolean isTheSameDD (String sourceDataName, String targetDataName) {
        if(!name2DataDefinition.get(sourceDataName).equals(name2DataDefinition.get(targetDataName))){
@@ -285,22 +254,18 @@ public class FlowDefinitionImpl implements FlowDefinition {
     public List<CustomMapping> getCustomMappingList(){
         return customMapping;
     }
-
     @Override
     public void addToCustomMapping(CustomMapping obj){
         customMapping.add(obj);
     }
-
     @Override
     public void addToMandatoryInputsList(SingleFlowIOData mandatoryInput){
         freeInputs.add(mandatoryInput);
     }
-
     @Override
     public List<SingleFlowIOData> getMandatoryInputsList(){
         return freeInputs;
     }
-
     @Override
     public void initMandatoryInputsList(){
         freeInputs.addAll(getIOlist()
@@ -308,10 +273,8 @@ public class FlowDefinitionImpl implements FlowDefinition {
                 .filter(data -> data.getType().equals(IO.INPUT))
                 .filter(data -> data.getOptionalOutput().isEmpty()).collect(Collectors.toList()));
     }
-
     @Override
     public List<String> getListOfStepsWithCurrInput(String inputName){
-
         List<String> stepsWithCurrInput = new LinkedList<>();
 
         for(SingleFlowIOData input : freeInputs){
@@ -319,9 +282,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
                 stepsWithCurrInput.add(input.getStepName());
             }
         }
-
         return stepsWithCurrInput;
     }
-
-
 }

@@ -30,23 +30,15 @@ public class FileDumper extends AbstractStepDefinition {
         String fileName = context.getDataValue(IO_NAMES.FILE_NAME, String.class);
         File file = new File(fileName);
 
-        if (content.isEmpty()) {
-            context.storeLogLineAndSummaryLine("Warning! Content is empty. File will be created empty.");
-            context.storeDataValue("RESULT", StepResult.SUCCESS.toString());
-            context.storeStepTotalTime(start);
-            return StepResult.WARNING;
-        }
-
         // Check if file already exists
         if (file.exists()) {
             context.storeLogLineAndSummaryLine("Step failed because the target file path already exists.");
-            context.storeDataValue("RESULT", StepResult.FAILURE);
+            context.storeDataValue("RESULT", StepResult.FAILURE.toString());
             context.storeStepTotalTime(start);
             return StepResult.FAILURE;
         }
 
         context.storeLogLine("About to create file named " + fileName);
-
         try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8")))
         { out.write(content);}
         catch (FileNotFoundException e) {
@@ -55,6 +47,13 @@ public class FileDumper extends AbstractStepDefinition {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        if (content.isEmpty()) {
+            context.storeLogLineAndSummaryLine("Warning! Content is empty. File will be created empty.");
+            context.storeDataValue("RESULT", StepResult.SUCCESS.toString());
+            context.storeStepTotalTime(start);
+            return StepResult.WARNING;
         }
 
         context.storeSummaryLine("The text file was created successfully at " + fileName);

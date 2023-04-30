@@ -3,6 +3,7 @@ package flow.execution.context;
 import datadefinition.api.DataDefinitions;
 import flow.execution.StepExecutionData;
 import steps.api.Logger;
+import steps.api.StepResult;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -15,20 +16,22 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     private final Map<String, DataDefinitions> name2DD;
     private final Map<String, String> outputName2alias;
     private final Map<String, String> stepName2alias;//key - step name after alias, value - original step name
-    private final List<StepExecutionData> logsList;
+    private final List<StepExecutionData> StepExecutionList;
     private StepExecutionData currInvokingStep;
+
 
     public StepExecutionContextImpl(Map<String, DataDefinitions> originalDDMap, Map<String,String> originalOutputAliasMap, Map<String, String> originalStepName2alias) {
         dataValues = new HashMap<>();
         name2DD = new HashMap<>(originalDDMap);
         outputName2alias = new HashMap<>(originalOutputAliasMap);
         stepName2alias = new HashMap<>(originalStepName2alias);
-        logsList = new LinkedList<>();
+        StepExecutionList = new LinkedList<>();
     }
     @Override
-    public void setCurrInvokingStep(String stepName){
-        this.currInvokingStep = new StepExecutionData(stepName);
+    public void setCurrInvokingStep(String finalStepName, String originalStepName) {
+        this.currInvokingStep = new StepExecutionData(finalStepName, originalStepName);
     }
+
     @Override
     public StepExecutionData getCurrInvokingStep(){ return this.currInvokingStep; }
     @Override
@@ -99,10 +102,18 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     }
 
     @Override
-    public void addCurrInvokingStepToLogsList() {
-        logsList.add(currInvokingStep);
+    public void setStepResultToCurrInvokingStep(StepResult stepResult) {
+        currInvokingStep.setResult(stepResult);
+    }
+    @Override
+    public void addCurrInvokingStepToStepExecutionList() { StepExecutionList.add(currInvokingStep);
     }
 
+    @Override
+    public StepResult getStepResultToCurrInvokingStep() {return currInvokingStep.getResult();
+    }
+    @Override
+    public List<StepExecutionData> getStepExecutionList() { return StepExecutionList;}
 
 
 }

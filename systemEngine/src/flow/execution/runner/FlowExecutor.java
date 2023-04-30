@@ -26,20 +26,22 @@ public class FlowExecutor {
                 (flowExecution.getFlowDefinition().getName2DDMap(),flowExecution.getFlowDefinition().getOutputName2aliasMap(),
                         flowExecution.getFlowDefinition().getAlias2StepNameMap());
 
-        ////??????
         for (Map.Entry<String, Object> entry : freeInputs.getFreeInputMap().entrySet()) {
             context.storeDataValue(entry.getKey(), entry.getValue());
         }
 
         // start actual execution
         for (int i = 0; i < flowExecution.getFlowDefinition().getFlowSteps().size(); i++) {
-            context.setCurrInvokingStep(flowExecution.getFlowDefinition().getFlowSteps().get(i).getFinalStepName());
+            context.setCurrInvokingStep(flowExecution.getFlowDefinition().getFlowSteps().get(i).getFinalStepName() , flowExecution.getFlowDefinition().getFlowSteps().get(i).getStepDefinition().name() );
             StepUsageDeclaration stepUsageDeclaration = flowExecution.getFlowDefinition().getFlowSteps().get(i);
             StepResult stepResult = stepUsageDeclaration.getStepDefinition().invoke(context);
 
             if(stepResult.equals(StepResult.FAILURE)) {
-                flowExecution.setFlowExecutionResult(FlowExecutionResult.FAILURE);
-                if(!(stepUsageDeclaration.skipIfFail())) {break;}
+                flowExecution.setFlowExecutionResult(FlowExecutionResult.WARNING);
+                if(!(stepUsageDeclaration.skipIfFail())) {
+                    flowExecution.setFlowExecutionResult(FlowExecutionResult.FAILURE);
+                    break;
+                }
             }
             else if (stepResult.equals(StepResult.WARNING)) {
                 flowExecution.setFlowExecutionResult(FlowExecutionResult.WARNING);
@@ -53,13 +55,18 @@ public class FlowExecutor {
                     flowStatisticData.addStepToStatistic(stepStatistic);
                 }
             }
-            context.addCurrInvokingStepToLogsList();
+            context.setStepResultToCurrInvokingStep(stepResult);
+            context.addCurrInvokingStepToStepExecutionList();
         }
+        flowExecution.setDataValues(context.getDataValues());
+        flowExecution.setStepExecutionDataList(context.getStepExecutionList());
 
         ////statistics
         Instant endTime = Instant.now();
         flowExecution.setEndTime(endTime);
-        flowExecution.setTotalTime(Duration.between(startTime, endTime));
+        Duration totalTime = Duration.between(startTime, endTime);
+        long totalTimeMillis = totalTime.toMillis();
+        flowExecution.setTotalTime(Duration.ofMillis(totalTimeMillis));
 
         StatisticData currFlowStatistic = new StatisticData(flowExecution.getFlowDefinition().getName());
         flowStatisticData.addFlowToStatistic(currFlowStatistic);
