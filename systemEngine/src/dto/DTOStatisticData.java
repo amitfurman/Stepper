@@ -1,7 +1,6 @@
 package dto;
 
 import statistic.StatisticData;
-
 import java.time.Duration;
 
 public class DTOStatisticData {
@@ -14,7 +13,6 @@ public class DTOStatisticData {
         this.timesRun = statisticData.getTimesRun();
         this.totalTime = statisticData.getTotalTime();
     }
-
     public String getName() {
         return name;
     }

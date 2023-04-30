@@ -20,8 +20,6 @@ public class FlowExecution {
     private List<SingleFlowIOData> freeInputsList;
     private final List<SingleFlowIOData> IOlist;
 
-    // lots more data that needed to be stored while flow is being executed...
-
     public FlowExecution(FlowDefinition flowDefinition) {
         this.uniqueId = UUID.randomUUID();
         this.flowDefinition = flowDefinition;
@@ -41,9 +39,7 @@ public class FlowExecution {
     public FlowExecutionResult getFlowExecutionResult() {
         return flowExecutionResult;
     }
-    public void setStartTime(Instant startTime) {
-        this.startTime = startTime;
-    }
+    public void setStartTime(Instant startTime) { this.startTime = startTime;}
     public void setEndTime(Instant endTime) { this.endTime = endTime;}
     public void setTotalTime(Duration totalTime) {this.totalTime = totalTime;}
     public void setFlowExecutionResult(FlowExecutionResult result){ this.flowExecutionResult = result;}

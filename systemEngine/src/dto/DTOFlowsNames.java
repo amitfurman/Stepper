@@ -6,7 +6,6 @@ public class DTOFlowsNames {
     public DTOFlowsNames(StringBuilder flowsNames) {
         this.flowsNames = flowsNames;
     }
-
     public StringBuilder getFlowName() {
         return flowsNames;
     }

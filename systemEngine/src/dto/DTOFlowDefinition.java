@@ -3,7 +3,6 @@ package dto;
 import flow.api.FlowDefinition;
 import flow.api.FlowIO.SingleFlowIOData;
 import flow.api.StepUsageDeclaration;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,28 +38,21 @@ public class DTOFlowDefinition {
     public String getName() {
         return name;
     }
-
     public String getDescription() {
         return description;
     }
-
     public List<String> getFlowFormalOutputs() {
         return flowOutputs;
     }
-
     public boolean getFlowReadOnly() {
         return this.isFlowReadOnly;
     }
-
     public List<DTOStepUsageDeclaration> getFlowStepsData() {
         return steps;
     }
-
-
     public List<DTOSingleFlowIOData> getIOlist() {
         return IOlist;
     }
-
     public List<String> getListOfStepsWithCurrInput(String inputName){
 
         List<String> stepsWithCurrInput = new LinkedList<>();
@@ -72,7 +64,6 @@ public class DTOFlowDefinition {
         }
         return stepsWithCurrInput;
     }
-
     public List<DTOSingleFlowIOData> getFlowFreeInputs() {
         return this.freeInputs;
     }

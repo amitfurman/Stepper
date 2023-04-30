@@ -26,21 +26,17 @@ public enum DataDefinitionRegistry implements DataDefinitions {
     ;
 
     private final DataDefinitions dataDefinition;
-
     DataDefinitionRegistry(DataDefinitions dataDefinition) {
         this.dataDefinition = dataDefinition;
     }
-
     @Override
     public String getName() {
         return dataDefinition.getName();
     }
-
     @Override
     public boolean isUserFriendly() {
         return dataDefinition.isUserFriendly();
     }
-
     @Override
     public Class<?> getType() {
         return dataDefinition.getType();

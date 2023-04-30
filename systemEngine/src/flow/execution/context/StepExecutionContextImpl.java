@@ -31,32 +31,23 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     public void setCurrInvokingStep(String finalStepName, String originalStepName) {
         this.currInvokingStep = new StepExecutionData(finalStepName, originalStepName);
     }
-
     @Override
     public StepExecutionData getCurrInvokingStep(){ return this.currInvokingStep; }
     @Override
     public <T> T getDataValue(String dataName, Class<T> expectedDataType) {
-
-        //return the data definition from the name
         DataDefinitions theExpectedDataDefinition = name2DD.get(dataName);
 
         if (expectedDataType.isAssignableFrom(theExpectedDataDefinition.getType())) {
             Object aValue = dataValues.get(dataName);
             if (aValue != null) {
-                // If the value exists, cast and return it
                 return expectedDataType.cast(aValue);
             } else {
-               // throw new NullPointerException("Data value for " + dataName + " is null.");
-                return null;
+               throw new NullPointerException("Data value for " + dataName + " is null.");
             }
         }
         else {
-            // error handling of some sort...
-            // If the data definition is not found or expected data type is not compatible, throw an exception or handle the error as needed
-            // For example, throw an exception:
             throw new IllegalArgumentException("Data definition for " + dataName + " is not found or expected data type is not compatible.");
         }
-
     }
     @Override
     public boolean storeDataValue(String dataName, Object value) {
@@ -73,7 +64,7 @@ public class StepExecutionContextImpl implements StepExecutionContext {
             }
             dataValues.put(outputAlias, value);
         } else {
-            //error handling of some sort...
+            throw new IllegalArgumentException("Data definition for " + dataName + " is not found or expected data type is not compatible.");
         }
 
         return false;
@@ -93,27 +84,23 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     }
     @Override
     public void storeStepTotalTime(Instant startTime) {
-        Duration totalTime = Duration.between(startTime, Instant.now());
-        currInvokingStep.setTotalTime(totalTime);
+        Instant endTime = Instant.now();
+        Duration totalTime = Duration.between(startTime, endTime);
+        long totalTimeMillis = totalTime.toMillis();
+        currInvokingStep.setTotalTime(Duration.ofMillis(totalTimeMillis));
     }
     @Override
     public Map<String, Object> getDataValues() {
         return dataValues;
     }
-
     @Override
     public void setStepResultToCurrInvokingStep(StepResult stepResult) {
         currInvokingStep.setResult(stepResult);
     }
     @Override
-    public void addCurrInvokingStepToStepExecutionList() { StepExecutionList.add(currInvokingStep);
-    }
-
+    public void addCurrInvokingStepToStepExecutionList() { StepExecutionList.add(currInvokingStep);}
     @Override
-    public StepResult getStepResultToCurrInvokingStep() {return currInvokingStep.getResult();
-    }
+    public StepResult getStepResultToCurrInvokingStep() {return currInvokingStep.getResult();}
     @Override
     public List<StepExecutionData> getStepExecutionList() { return StepExecutionList;}
-
-
 }

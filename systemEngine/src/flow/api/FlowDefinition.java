@@ -44,5 +44,5 @@ public interface FlowDefinition {
     void setFlowReadOnly();
     boolean checkIfFlowIsReadOnly();
     List<String> getListOfStepsWithCurrInput(String inputName);
-
+    void addFlowOutput(String outputName);
     }

@@ -1,17 +1,12 @@
 package datadefinition.impl.list;
 
-import datadefinition.api.DataDefinitions;
-
 import java.util.List;
 
 public class ListData<T> {
-
     private List<T> list;
-
     public ListData(List<T> source) {
         this.list = source;
     }
-
     public List<T> getItems() {
         return list;
     }
@@ -26,7 +21,6 @@ public class ListData<T> {
             sb.append(System.lineSeparator());
             sb.append("\t");
         }
-        //sb.setLength(sb.length() - 1);
         return sb.toString();
     }
 }

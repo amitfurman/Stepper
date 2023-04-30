@@ -1,13 +1,17 @@
 package systemengine;
 
 import dto.*;
+import exceptions.DuplicateFlowsNames;
+import exceptions.UnExistsStep;
 import flow.api.FlowDefinition;
 
+import javax.xml.bind.JAXBException;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
 public interface systemengine {
-    public void cratingFlowFromXml(String filePath);
+    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException;
     DTOFlowsNames printFlowsName();
     List<FlowDefinition> getFlowDefinitionList();
     DTOFlowDefinition IntroduceTheChosenFlow(int flowNumber);

@@ -27,7 +27,6 @@ public class Stepper2Flows {
             STFlow currFlow = stepper.getSTFlows().getSTFlow().get(i);
             flow = new FlowDefinitionImpl(currFlow.getName(), currFlow.getSTFlowDescription());
 
-            //each step
             //add steps to flow
             for (STStepInFlow step : currFlow.getSTStepsInFlow().getSTStepInFlow()) {
                 StepDefinitionRegistry myEnum = StepDefinitionRegistry.valueOf(step.getName().toUpperCase().replace(" ", "_"));
@@ -90,7 +89,7 @@ public class Stepper2Flows {
             flow.flowOutputsIsNotExists();
 
 
-            /////Custom Mapping
+            //Custom Mapping
             if(currFlow.getSTCustomMappings() != null) {
                 for (STCustomMapping customMapping : currFlow.getSTCustomMappings().getSTCustomMapping()) {
                     flow.addToCustomMapping(new CustomMapping(customMapping.getSourceStep(), customMapping.getSourceData(), customMapping.getTargetStep(), customMapping.getTargetData()));
@@ -107,9 +106,7 @@ public class Stepper2Flows {
             allFlows.add(flow);
         }
     }
-
     public LinkedList<FlowDefinition> getAllFlows() {
         return allFlows;
     }
-
 }

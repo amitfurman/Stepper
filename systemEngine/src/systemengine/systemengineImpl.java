@@ -1,6 +1,8 @@
 package systemengine;
 
 import dto.*;
+import exceptions.DuplicateFlowsNames;
+import exceptions.UnExistsStep;
 import flow.api.FlowDefinition;
 import flow.api.FlowIO.SingleFlowIOData;
 import flow.execution.FlowExecution;
@@ -9,6 +11,8 @@ import jaxb.schema.SchemaBasedJAXBMain;
 import statistic.FlowAndStepStatisticData;
 import steps.api.DataNecessity;
 
+import javax.xml.bind.JAXBException;
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +26,6 @@ public class systemengineImpl implements systemengine{
 
     public FlowAndStepStatisticData statisticData;
 
-   // public FlowExecution optionalFlowExecution;
 
     public systemengineImpl() {
         this.flowDefinitionList = new LinkedList<>();
@@ -31,7 +34,7 @@ public class systemengineImpl implements systemengine{
     }
 
     @Override
-    public void cratingFlowFromXml(String filePath){
+    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException {
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         flowDefinitionList = schema.schemaBasedJAXB(filePath);
     }

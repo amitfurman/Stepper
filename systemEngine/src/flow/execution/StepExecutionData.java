@@ -28,22 +28,14 @@ public class StepExecutionData {
         return finalName;
     }
     public String getOriginalName() { return originalName; }
-    public void setOriginalName(String originalName) { this.originalName = originalName;}
-    public Duration getTotalStepTime(){
-        return totalStepTime;
-    }
-    public void addLogger(Logger log){ loggerList.add(log); }
-    public void setTotalStepTime(Duration totalStepTime) {
-        this.totalStepTime = totalStepTime;
-    }
-    public void setSummaryLine(String summaryLine) { this.summaryLine = summaryLine; }
-    public void setTotalTime(Duration totalTime) {
-        this.totalStepTime = totalTime;
-    }
-    public void setResult(StepResult result) { this.result = result; }
+    public Duration getTotalStepTime(){ return totalStepTime;}
     public StepResult getResult() { return result; }
     public String getSummaryLine(){return summaryLine;}
     public List<Logger> getLoggerList(){return loggerList;}
-
-    
+    public void addLogger(Logger log){ loggerList.add(log); }
+    public void setOriginalName(String originalName) { this.originalName = originalName;}
+    public void setTotalStepTime(Duration totalStepTime) { this.totalStepTime = totalStepTime;}
+    public void setSummaryLine(String summaryLine) { this.summaryLine = summaryLine; }
+    public void setTotalTime(Duration totalTime) { this.totalStepTime = totalTime;}
+    public void setResult(StepResult result) { this.result = result; }
 }

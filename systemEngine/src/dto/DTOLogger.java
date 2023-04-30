@@ -1,10 +1,6 @@
 package dto;
 
 import steps.api.Logger;
-
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-
 public class DTOLogger {
     private String log;
     private String logTime;

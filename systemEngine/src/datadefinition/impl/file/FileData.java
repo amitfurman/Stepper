@@ -14,5 +14,4 @@ public class FileData {
     public String toString() {
         return "\t" + filePath;
     }
-
 }

@@ -12,7 +12,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class FlowDefinitionImpl implements FlowDefinition {
-
     private final String name;
     private final String description;
     private final List<String> flowOutputs;
@@ -43,50 +42,95 @@ public class FlowDefinitionImpl implements FlowDefinition {
         this.flowStatisticData = new StatisticData(name); ///maybe without name
     }
 
-
     @Override
-    public void addStepToFlow(StepUsageDeclaration stepUsageDeclaration) {
-        steps.add(stepUsageDeclaration);
-    }
-
-    public void addFlowOutput(String outputName) {
-        flowOutputs.add(outputName);
-    }
-
-    @Override
-    public List<SingleFlowIOData> getFlowFreeInputs() {
-        return this.freeInputs;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
+    public String getName() { return name;}
     @Override
     public String getDescription() {
         return description;
     }
-
     @Override
-    public void setFlowReadOnly() {
-        this.isFlowReadOnly = checkIfFlowIsReadOnly();
+    public List<String> getFlowFormalOutputs() {
+        return flowOutputs;
     }
-
     @Override
-    public boolean checkIfFlowIsReadOnly() {
-        return steps.stream().anyMatch(step -> !(step.getStepDefinition().isReadonly()));
-    }
-
+    public List<StepUsageDeclaration> getFlowSteps() { return steps;}
     @Override
     public boolean getFlowReadOnly() {
         return this.isFlowReadOnly;
     }
     @Override
-    public List<StepUsageDeclaration> getFlowSteps() { return steps;}
+    public Map<String, DataDefinitions> getName2DDMap() { return name2DataDefinition;}
     @Override
-    public List<String> getFlowFormalOutputs() {
-        return flowOutputs;
+    public String getInputAliasFromMap(String stepName, String originalInputName) {
+        return InputName2Alias.get(stepName + "." + originalInputName);
+    }
+    @Override
+    public String getOutputAliasFromMap(String stepName, String originalOutputName) {
+        return OutputName2Alias.get(stepName + "." + originalOutputName);
+    }
+    @Override
+    public DataDefinitions getDDFromMap(String InputName) { return name2DataDefinition.get(InputName);}
+    @Override
+    public Map<String, String> getAlias2StepNameMap() {
+        return MapAlias2StepName;
+    }
+    @Override
+    public Map<String, String> getInputName2aliasMap() {
+        return InputName2Alias;
+    }
+    @Override
+    public Map<String, String> getOutputName2aliasMap() {
+        return OutputName2Alias;
+    }
+    @Override
+    public List<SingleFlowIOData> getIOlist() {
+        return IOlist;
+    }
+    @Override
+    public void addElementToIoList(SingleFlowIOData IOElement) {
+        IOlist.add(IOElement);
+    }
+    @Override
+    public List<SingleFlowIOData> getFlowFreeInputs() {return this.freeInputs;}
+    @Override
+    public List<CustomMapping> getCustomMappingList(){
+        return customMapping;
+    }
+    @Override
+    public List<SingleFlowIOData> getMandatoryInputsList(){
+        return freeInputs;
+    }
+    @Override
+    public List<String> getListOfStepsWithCurrInput(String inputName){
+        List<String> stepsWithCurrInput = new LinkedList<>();
+
+        for(SingleFlowIOData input : freeInputs){
+            if(input.getFinalName() == inputName){
+                stepsWithCurrInput.add(input.getStepName());
+            }
+        }
+        return stepsWithCurrInput;
+    }
+    @Override
+    public SingleFlowIOData getElementFromIOList(String stepName, String dataName) {
+        for (SingleFlowIOData obj : IOlist) {
+            if (obj.getStepName().equals(stepName) && obj.getFinalName().equals(dataName)) {
+                return obj;
+            }
+        }
+        return null;
+    }
+    @Override
+    public void setFlowReadOnly() {
+        this.isFlowReadOnly = checkIfFlowIsReadOnly();
+    }
+    @Override
+    public void addStepToFlow(StepUsageDeclaration stepUsageDeclaration) {
+        steps.add(stepUsageDeclaration);
+    }
+    @Override
+     public void addFlowOutput(String outputName) {
+        flowOutputs.add(outputName);
     }
     @Override
     public void addToName2DDMap(String name, DataDefinitions DD) {
@@ -107,36 +151,16 @@ public class FlowDefinitionImpl implements FlowDefinition {
         MapAlias2StepName.put(stepName, alias);
     }
     @Override
-    public DataDefinitions getDDFromMap(String InputName) { return name2DataDefinition.get(InputName);}
-    @Override
-    public String getInputAliasFromMap(String stepName, String originalInputName) {
-        return InputName2Alias.get(stepName + "." + originalInputName);
+    public void addToCustomMapping(CustomMapping obj){
+        customMapping.add(obj);
     }
     @Override
-    public String getOutputAliasFromMap(String stepName, String originalOutputName) {
-        return OutputName2Alias.get(stepName + "." + originalOutputName);
+    public void addToMandatoryInputsList(SingleFlowIOData mandatoryInput){
+        freeInputs.add(mandatoryInput);
     }
     @Override
-    public Map<String, DataDefinitions> getName2DDMap() { return name2DataDefinition;}
-    @Override
-    public Map<String, String> getAlias2StepNameMap() {
-        return MapAlias2StepName;
-    }
-    @Override
-    public Map<String, String> getInputName2aliasMap() {
-        return InputName2Alias;
-    }
-    @Override
-    public Map<String, String> getOutputName2aliasMap() {
-        return OutputName2Alias;
-    }
-    @Override
-    public List<SingleFlowIOData> getIOlist() {
-        return IOlist;
-    }
-    @Override
-    public void addElementToIoList(SingleFlowIOData IOElement) {
-        IOlist.add(IOElement);
+    public boolean checkIfFlowIsReadOnly() {
+        return steps.stream().anyMatch(step -> !(step.getStepDefinition().isReadonly()));
     }
     @Override
     public boolean stepExist(String stepName) {
@@ -171,6 +195,7 @@ public class FlowDefinitionImpl implements FlowDefinition {
         }
         return true;
     }
+
     @Override
     public void validateIfOutputsHaveSameName() {
         boolean isPresent =
@@ -195,7 +220,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
             }
         }
     }
-
     @Override
     public void freeInputsWithSameNameAndDifferentType() {
         for (SingleFlowIOData currData :  freeInputs) {
@@ -210,6 +234,7 @@ public class FlowDefinitionImpl implements FlowDefinition {
             }
         }
     }
+
     @Override
     public void mandatoryInputsIsUserFriendly() {
         boolean isPresent =
@@ -220,16 +245,6 @@ public class FlowDefinitionImpl implements FlowDefinition {
         if (isPresent) {
             String exception = "Invalid. There are mandatory inputs that is not user friendly.";
         }
-    }
-
-    @Override
-    public SingleFlowIOData getElementFromIOList(String stepName, String dataName) {
-        for (SingleFlowIOData obj : IOlist) {
-            if (obj.getStepName().equals(stepName) && obj.getFinalName().equals(dataName)) {
-                return obj;
-            }
-        }
-        return null;
     }
     @Override
     public boolean doesSourceStepBeforeTargetStep(String sourceStepName, String targetStepName){
@@ -249,39 +264,11 @@ public class FlowDefinitionImpl implements FlowDefinition {
        }
        return true;
     }
-
-    @Override
-    public List<CustomMapping> getCustomMappingList(){
-        return customMapping;
-    }
-    @Override
-    public void addToCustomMapping(CustomMapping obj){
-        customMapping.add(obj);
-    }
-    @Override
-    public void addToMandatoryInputsList(SingleFlowIOData mandatoryInput){
-        freeInputs.add(mandatoryInput);
-    }
-    @Override
-    public List<SingleFlowIOData> getMandatoryInputsList(){
-        return freeInputs;
-    }
     @Override
     public void initMandatoryInputsList(){
         freeInputs.addAll(getIOlist()
                 .stream()
                 .filter(data -> data.getType().equals(IO.INPUT))
                 .filter(data -> data.getOptionalOutput().isEmpty()).collect(Collectors.toList()));
-    }
-    @Override
-    public List<String> getListOfStepsWithCurrInput(String inputName){
-        List<String> stepsWithCurrInput = new LinkedList<>();
-
-        for(SingleFlowIOData input : freeInputs){
-            if(input.getFinalName() == inputName){
-                stepsWithCurrInput.add(input.getStepName());
-            }
-        }
-        return stepsWithCurrInput;
     }
 }

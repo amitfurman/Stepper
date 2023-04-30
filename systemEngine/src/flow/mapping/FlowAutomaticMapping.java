@@ -10,8 +10,6 @@ import java.util.stream.Collectors;
 public class FlowAutomaticMapping {
     public FlowAutomaticMapping(FlowDefinition flow){
 
-        //List<SingleFlowIOData> optionalOutput = new LinkedList<>();
-
         for (StepUsageDeclaration step : flow.getFlowSteps()) {
             for (DataDefinitionDeclaration input : step.getStepDefinition().inputs()) {
                 flow.addElementToIoList(new SingleFlowIOData(IO.INPUT, input.getName(),
@@ -39,6 +37,5 @@ public class FlowAutomaticMapping {
                 }
             }
         }
-
     }
 }

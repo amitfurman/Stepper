@@ -3,7 +3,6 @@ package dto;
 import flow.execution.StepExecutionData;
 import steps.api.Logger;
 import steps.api.StepResult;
-
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +26,6 @@ public class DTOStepExecutionData {
             loggerList.add(new DTOLogger(logger));
         }
     }
-
     public String getFinalNameStep(){
         return finalName;
     }
@@ -38,5 +36,4 @@ public class DTOStepExecutionData {
     public StepResult getResult() { return result; }
     public String getSummaryLine() { return summaryLine; }
     public List<DTOLogger> getLoggerList() { return loggerList; }
-
 }

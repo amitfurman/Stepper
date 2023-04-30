@@ -25,12 +25,10 @@ public class StepUsageDeclarationImpl implements StepUsageDeclaration {
     public String getFinalStepName() {
         return stepName;
     }
-
     @Override
     public StepDefinition getStepDefinition() {
         return stepDefinition;
     }
-
     @Override
     public boolean skipIfFail() {
         return skipIfFail;

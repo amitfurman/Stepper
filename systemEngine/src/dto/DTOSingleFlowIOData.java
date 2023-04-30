@@ -42,5 +42,4 @@ public class DTOSingleFlowIOData{
     public String getUserString() { return userString; }
     public Object getValue() { return value; }
     public IO getIOType() { return IOType; }
-
 }

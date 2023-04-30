@@ -2,7 +2,6 @@ package dto;
 
 import statistic.FlowAndStepStatisticData;
 import statistic.StatisticData;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,13 +19,10 @@ public class DTOFlowAndStepStatisticData {
             stepsStatisticData.add(new DTOStatisticData(stepStatisticData));
         }
     }
-
     public List<DTOStatisticData> getFlowsStatisticData() {
         return flowsStatisticData;
     }
     public List<DTOStatisticData> getStepsStatisticData() {
         return stepsStatisticData;
     }
-
-
 }

@@ -18,21 +18,17 @@ public class StatisticData {
     public String getName() {
         return name;
     }
-
-    public void incrementTimesRun() {
-        timesRun++;
-    }
-
-    public void addToTotalTime(Duration time) {
-        totalTime = totalTime.plus(time);
-    }
-
     public int getTimesRun() {
         return timesRun;
     }
     public Duration getTotalTime() {return totalTime; }
-
     public double getAverageTime() {
         return timesRun == 0 ? 0 : totalTime.toMillis() / timesRun;
+    }
+    public void incrementTimesRun() {
+        timesRun++;
+    }
+    public void addToTotalTime(Duration time) {
+        totalTime = totalTime.plus(time);
     }
 }

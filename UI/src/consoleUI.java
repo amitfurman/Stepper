@@ -1,12 +1,12 @@
 import dto.*;
-import exceptions.FileIsNotXmlTypeException;
-import exceptions.FileNotExistsException;
+import exceptions.*;
 import flow.api.FlowIO.IO;
 import steps.api.DataNecessity;
 import systemengine.systemengine;
 import systemengine.systemengineImpl;
 import xml.XmlValidator;
-
+import javax.xml.bind.JAXBException;
+import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -17,12 +17,17 @@ public class consoleUI {
     public consoleUI() {
         this.systemEngineInterface = new systemengineImpl();
     }
-
     public static void main(String[] args) {
         consoleUI console = new consoleUI();
         console.menu();
     }
     public void menu() {
+        System.out.println(" _       __     __                             ______         _____ __                            \n" +
+                "| |     / /__  / /________  ____ ___  ___     /_  __/___     / ___// /____  ____  ____  ___  _____\n" +
+                "| | /| / / _ \\/ / ___/ __ \\/ __ `__ \\/ _ \\     / / / __ \\    \\__ \\/ __/ _ \\/ __ \\/ __ \\/ _ \\/ ___/\n" +
+                "| |/ |/ /  __/ / /__/ /_/ / / / / / /  __/    / / / /_/ /   ___/ / /_/  __/ /_/ / /_/ /  __/ /    \n" +
+                "|__/|__/\\___/_/\\___/\\____/_/ /_/ /_/\\___/    /_/  \\____/   /____/\\__/\\___/ .___/ .___/\\___/_/     \n" +
+                "                                                                        /_/   /_/               ");
         int choice = 0;
         boolean systemInfoRead = false;
         Scanner scanner = new Scanner(System.in);
@@ -34,7 +39,7 @@ public class consoleUI {
             System.out.println("4. Displaying full details of past activation");
             System.out.println("5. Statistics");
             System.out.println("6. Exiting the system");
-            choice = readChoice(scanner);
+            choice = readChoice(scanner,6);
 
             if (!systemInfoRead && choice != 1 && choice != 6) {
                 System.out.println("You can't choose this option before you choose option 1 and enter valid file.");
@@ -65,40 +70,41 @@ public class consoleUI {
             }
         } while (choice != 6) ;
     }
-    public int readChoice(Scanner scanner) {
+    public int readChoice(Scanner scanner, int maxChoice) {
         boolean validInput = false;
         int choice = 0;
         do {
             if (scanner.hasNextInt()) {
-                //choice = scanner.nextInt();
                 choice = Integer.parseInt(scanner.nextLine());
-                validInput = true;
+
+                if (choice >= 0 && choice <= maxChoice) {
+                    validInput = true;
+                } else if(choice < 0){
+                    System.out.println("Invalid choice, please enter a positive number");
+                } else {
+                    System.out.println("Invalid choice, please enter a number between 1 to " + maxChoice);
+                }
             } else {
                 System.out.println("Error: You must enter a number, please try again");
                 scanner.nextLine();
             }
         } while (!validInput);
+
         return choice;
     }
-    public String readString(Scanner scanner) {
+    public String readYesNoInput(Scanner scanner) {
         boolean validInput = false;
         String input = null;
         do {
-            if(scanner.hasNextInt() || scanner.hasNextDouble()) {
-                System.out.println("Error: You must enter a string, please try again");
-            }
-            else {
+            input = scanner.nextLine().trim();
+            if (input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("no")) {
                 validInput = true;
+            } else if (input.matches("-?\\d+(\\.\\d+)?") ) {
+                System.out.println("Error: You must enter a string and not a number, please try again");
+            } else {
+                System.out.println("Error: You must enter a 'yes' or 'no' string, please try again");
             }
-            input = scanner.nextLine();
-
         } while (!validInput);
-
-/*        while(scanner.hasNextInt() || scanner.hasNextDouble()) {
-            System.out.println("Please enter a string, not a number.");
-            return null;
-        }
-        return scanner.nextLine();*/
         return input;
     }
     public boolean readingTheSystemInformationFile(Scanner scanner) {
@@ -126,30 +132,36 @@ public class consoleUI {
             }
 
             System.out.println("Do you want to load another file? (yes/no)");
-            userInput = readString(scanner);
-        } while (userInput.equalsIgnoreCase("yes") || userInput.equalsIgnoreCase("y"));
+            userInput = readYesNoInput(scanner);
+        } while (userInput.equalsIgnoreCase("yes"));
 
         if (validFilePath != null) {
-            systemEngineInterface.cratingFlowFromXml(validFilePath);
-            return true;
+            try {
+                systemEngineInterface.cratingFlowFromXml(validFilePath);
+                return true;
+            } catch (JAXBException | FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (DuplicateFlowsNames e) {
+                System.out.printf(e.getMessage());
+            } catch (UnExistsStep e) {
+                System.out.printf(e.getMessage());
+            }
         }
-
         return false;
     }
     public void introduceFlows(Scanner scanner) {
         int flowNumber = choosingWhichFlowToIntroduce(scanner);
+        if(flowNumber == 0){
+            return;
+        }
         IntroduceTheChosenFlow(flowNumber);
     }
     public int choosingWhichFlowToIntroduce(Scanner scanner) {
         DTOFlowsNames names = systemEngineInterface.printFlowsName();
         int flowNumber;
-        boolean isValidChoice;
-        do {
-            System.out.println(names.getFlowName());
-            flowNumber = getFlowChoice(scanner);
-            isValidChoice = validFlowInputChoice(flowNumber, systemEngineInterface.getFlowDefinitionList().size());
-        } while (flowNumber != 0 && !isValidChoice);
-        return flowNumber;
+        System.out.println(names.getFlowName());
+        return flowNumber = getFlowChoice(scanner,systemEngineInterface.getFlowDefinitionList().size());
+
     }
     public void IntroduceTheChosenFlow(int flowNumber) {
         DTOFlowDefinition currFlowDefinition= systemEngineInterface.IntroduceTheChosenFlow(flowNumber);
@@ -164,21 +176,9 @@ public class consoleUI {
 
         System.out.println(flowData);
     }
-    public int getFlowChoice(Scanner scanner) {
+    public int getFlowChoice(Scanner scanner, int maxChoice) {
             System.out.println("Please select the flow number you want us to display its data: (press 0 to return to the main menu)");
-            int userChoice = readChoice(scanner);
-            return userChoice;
-    }
-    public boolean validFlowInputChoice(int choice, int numberOfFlows) {
-        if (choice > numberOfFlows) {
-            System.out.println("Invalid input! \nThe number chosen cannot be greater than the maximum flows that existing in the system." +
-                    " You have to choose a number between 0 to " + numberOfFlows + ".\n");
-        } else if (choice < 0) {
-            System.out.println("Invalid input! The choice flow number must be a positive number. \n");
-        } else {
-            return true;
-        }
-        return false;
+            return readChoice(scanner,maxChoice);
     }
     public StringBuilder printStepsInfo(DTOFlowDefinition flow) {
             AtomicInteger stepsIndex = new AtomicInteger(1);
@@ -189,11 +189,11 @@ public class consoleUI {
                     .stream()
                     .forEach(node -> {
                         stepData.append("Step " + stepsIndex.getAndIncrement() + ": \n");
-                        stepData.append("Original Name: " + node.getOriginalStepName() + '\n');
-                        if (node.getFinalStepName() != node.getOriginalStepName()) {
-                            stepData.append("Final Name: " + Objects.toString(node.getFinalStepName(), "") + "\n");
+                        stepData.append("\tOriginal Name: " + node.getOriginalStepName() + '\n');
+                        if (!(node.getFinalStepName().equals(node.getOriginalStepName()))) {
+                            stepData.append("\tFinal Name: " + Objects.toString(node.getFinalStepName(), "") + "\n");
                     }
-                    stepData.append("Is The Step Read Only? " + node.getIsReadOnly() + "\n\n");
+                    stepData.append("\tIs The Step Read Only? " + node.getIsReadOnly() + "\n\n");
                     });
         return stepData;
     }
@@ -206,10 +206,10 @@ public class consoleUI {
                 .stream()
                 .forEach(node -> {
                     inputData.append("Free Input " + freeInputsIndex.getAndIncrement() + ": \n");
-                    inputData.append("Final Name: " + node.getFinalName() + '\n');
-                    inputData.append("Type: " + node.getType().getName() + '\n');
-                    inputData.append("Connected Steps: " + String.join(", ", flow.getListOfStepsWithCurrInput(node.getFinalName())) + '\n');
-                    inputData.append("Mandatory / Optional: " + node.getNecessity() + "\n\n");
+                    inputData.append("\tFinal Name: " + node.getFinalName() + '\n');
+                    inputData.append("\tType: " + node.getType().getName() + '\n');
+                    inputData.append("\tConnected Steps: " + String.join(", ", flow.getListOfStepsWithCurrInput(node.getFinalName())) + '\n');
+                    inputData.append("\tMandatory / Optional: " + node.getNecessity() + "\n\n");
                 });
         return inputData;
     }
@@ -221,9 +221,9 @@ public class consoleUI {
                 .stream().forEach(node -> {
                     if (flow.getFlowFormalOutputs().stream().anyMatch(output -> output.equals(node.getFinalName()))) {
                         outputData.append("Flow Outputs " + flowOutputsIndex.getAndIncrement() + ": \n");
-                        outputData.append("Final Name: " + node.getFinalName() + '\n');
-                        outputData.append("Type: " + node.getType().getName() + '\n');
-                        outputData.append("Creating Step: " + node.getStepName() + "\n\n");
+                        outputData.append("\tFinal Name: " + node.getFinalName() + '\n');
+                        outputData.append("\tType: " + node.getType().getName() + '\n');
+                        outputData.append("\tCreating Step: " + node.getStepName() + "\n\n");
                     }
                 });
 
@@ -238,7 +238,6 @@ public class consoleUI {
         }
         boolean isActivateFlow = false;
 
-        ////מה הקטע של הWHILE
         while (!isActivateFlow) {
             // check if all mandatory inputs are received
             boolean hasAllMandatoryInputs = systemEngineInterface.hasAllMandatoryInputs(flowNumber, freeInputMap);
@@ -249,15 +248,13 @@ public class consoleUI {
                 System.out.println("1. Continue to activate the flow.");
                 System.out.println("2. Update an input.");
                 System.out.println("3. Return to the main menu.");
-                int option = readChoice(scanner);
+                int option = readChoice(scanner, 3);
                 switch (option) {
                     case 1:
                         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
                         DTOFlowExecution flowExecution = systemEngineInterface.activateFlow(flowNumber, freeInputs);
                         printInformationAboutFlowActivation(flowExecution);
                         isActivateFlow = true;
-
-                        /////delete the map
                         return;
                     case 2:
                         askTheUserForInputValue(flowNumber, freeInputMap, scanner);
@@ -266,14 +263,14 @@ public class consoleUI {
                         return;
                 }
             }
-            // if mandatory inputs are not received, show available inputs to the user
             else {
+                   System.out.println("Not all mandatory inputs have been received.");
                 do {
                     if(askTheUserForInputValue(flowNumber, freeInputMap, scanner)==0){
                         return;
                     }
                     System.out.println("Do you want to continue updating inputs? (yes/no)");
-                    userContinue = readString(scanner);
+                    userContinue = readYesNoInput(scanner);
                 } while (userContinue.equals("yes"));
             }
         }
@@ -282,7 +279,7 @@ public class consoleUI {
         DTOFreeInputsByUserString freeInputsByUserString = systemEngineInterface.printFreeInputsByUserString(flowNumber);
         System.out.println(freeInputsByUserString.getFreeInputsByUserString());
         System.out.println("Please select the input number you want to update: (press 0 to return to the main menu)");
-        int userFreeInputChoice = readChoice(scanner);
+        int userFreeInputChoice = readChoice(scanner, freeInputsMap.size());
         if(userFreeInputChoice == 0){
             return userFreeInputChoice;
         }
@@ -353,12 +350,7 @@ public class consoleUI {
             System.out.println("Flow Start Time: " + flow.getStartTimeFormatted());
             System.out.println("\n");
         }
-        int flowNumber;
-        boolean isValidChoice;
-        do {
-            flowNumber = getFlowChoice(scanner);
-            isValidChoice = validFlowInputChoice(flowNumber, systemEngineInterface.getFlowDefinitionList().size());
-        } while (flowNumber != 0 && !isValidChoice);
+        int flowNumber = getFlowChoice(scanner,flowsExecutionList.getFlowsExecutionNamesList().size());
         if(flowNumber == 0){
             return;
         }
@@ -459,18 +451,8 @@ public class consoleUI {
         System.out.println("Thank you for using our system. See you later (:");
         System.exit(0);
     }
-
+    
 }
 
-
-/*    private boolean hasAllMandatoryInputs(DTOFlowDefinition flow, Map<String, Object> freeInputMap) {
-        for (DTOSingleFlowIOData input : flow.getFlowFreeInputs()) {
-            boolean found = freeInputMap.keySet().stream().anyMatch(key -> key.equals(input.getFinalName()));
-            if(!found){
-                return false;
-            }
-        }
-        return true;
-    }*/
 
 
