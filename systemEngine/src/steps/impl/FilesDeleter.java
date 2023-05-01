@@ -53,7 +53,6 @@ public class FilesDeleter extends AbstractStepDefinition {
         }
         deleteCount = totalFiles - DELETED_LIST.getItems().size();
 
-        //DELETION_STATS.getItems().put(deleteCount , (totalFiles - deleteCount));
         DELETION_STATS.getItems().put(0, deleteCount); // Update value for key 0
         DELETION_STATS.getItems().put(1, (totalFiles - deleteCount)); // Update value for key 1
 

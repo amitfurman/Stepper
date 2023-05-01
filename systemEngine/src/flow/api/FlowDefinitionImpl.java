@@ -8,10 +8,11 @@ import flow.mapping.FlowAutomaticMapping;
 import flow.api.FlowIO.IO;
 import flow.api.FlowIO.SingleFlowIOData;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class FlowDefinitionImpl implements FlowDefinition {
+public class FlowDefinitionImpl implements FlowDefinition, Serializable {
     private final String name;
     private final String description;
     private final List<String> flowOutputs;

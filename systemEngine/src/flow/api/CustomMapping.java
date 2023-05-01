@@ -1,6 +1,8 @@
 package flow.api;
 
-public class CustomMapping {
+import java.io.Serializable;
+
+public class CustomMapping implements Serializable {
     protected String targetStep;
     protected String targetData;
     protected String sourceStep;

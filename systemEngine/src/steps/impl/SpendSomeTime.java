@@ -38,7 +38,6 @@ public class SpendSomeTime extends AbstractStepDefinition {
         // Log after sleeping
         context.storeLogLine("Done sleeping...");
 
-        // Return result
         context.storeSummaryLine("Done sleeping for "+ timeToSpend + "seconds");
         context.storeStepTotalTime(start);
         return StepResult.SUCCESS;

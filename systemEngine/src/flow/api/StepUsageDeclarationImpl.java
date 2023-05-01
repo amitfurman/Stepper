@@ -2,7 +2,9 @@ package flow.api;
 
 import steps.api.StepDefinition;
 
-public class StepUsageDeclarationImpl implements StepUsageDeclaration {
+import java.io.Serializable;
+
+public class StepUsageDeclarationImpl implements StepUsageDeclaration, Serializable {
     private final StepDefinition stepDefinition;
     private final boolean skipIfFail;
     private final String stepName;

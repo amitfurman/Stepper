@@ -43,13 +43,13 @@ public class Properties extends AbstractStepDefinition {
             Map<String, String> rowData = row.getRowData();
             properties.append("\t");
             for (String column : columns) {
-                properties.append("row-").append(i).append(".").append(column).append("="); // append column name
-                properties.append(rowData.get(column)); // append column value
-                properties.append(","); // append comma
+                properties.append("row-").append(i).append(".").append(column).append("=");
+                properties.append(rowData.get(column));
+                properties.append(",");
                 totalProperties++;
             }
             i++;
-            properties.setLength(properties.length() - 1); // remove trailing comma
+            properties.setLength(properties.length() - 1);
             properties.append("\n");
         }
         context.storeLogLine("Extracted total of " + totalProperties);

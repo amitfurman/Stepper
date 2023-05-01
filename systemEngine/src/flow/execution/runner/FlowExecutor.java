@@ -72,7 +72,6 @@ public class FlowExecutor {
         flowStatisticData.addFlowToStatistic(currFlowStatistic);
         currFlowStatistic.incrementTimesRun();
         currFlowStatistic.addToTotalTime(Duration.between(startTime, endTime));
-
-        flowExecution.setDataValues(context.getDataValues());
+        //flowExecution.setDataValues(context.getDataValues());
     }
 }

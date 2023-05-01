@@ -22,5 +22,6 @@ public interface systemengine {
     DTOFlowsExecutionList getFlowsExecutionList();
     DTOFlowExecution getFlowExecutionDetails(int flowExecutionChoice);
     DTOFlowAndStepStatisticData getStatisticData();
-
+    void saveToFile(String path);
+    void loadFromFile(String path);
 }

@@ -49,7 +49,7 @@ public class FilesRenamer extends AbstractStepDefinition {
             context.storeStepTotalTime(start);
             return StepResult.SUCCESS;
         }
-        String failedFiles = null;
+        StringBuilder failedFiles = new StringBuilder();
         int serialNumber = 1;
         for (File file : filesToRename.getItems()) {
             String originalFileName = file.getName();
@@ -71,7 +71,7 @@ public class FilesRenamer extends AbstractStepDefinition {
             } else {
                 relation.addRow(new ArrayList<>(Arrays.asList(String.valueOf(serialNumber), originalFileName, originalFileName)));
                 context.storeLogLine("Problem renaming file " + originalFileName);
-                failedFiles += (originalFileName + '\n');
+                failedFiles.append(originalFileName).append('\n');
             }
         }
         context.storeDataValue("RENAME_RESULT", relation);

@@ -3,10 +3,12 @@ package flow.api.FlowIO;
 import datadefinition.api.DataDefinitions;
 import flow.api.StepUsageDeclaration;
 import steps.api.DataNecessity;
+
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SingleFlowIOData {
+public class SingleFlowIOData implements Serializable {
     private IO type;
     private String originalName;
     private String finalName;

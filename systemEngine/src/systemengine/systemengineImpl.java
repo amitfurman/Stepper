@@ -19,11 +19,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class systemengineImpl implements systemengine{
-
     public List<FlowDefinition> flowDefinitionList;
-
     public LinkedList<FlowExecution> flowExecutionList;
-
     public FlowAndStepStatisticData statisticData;
 
 
@@ -38,7 +35,6 @@ public class systemengineImpl implements systemengine{
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         flowDefinitionList = schema.schemaBasedJAXB(filePath);
     }
-
     @Override
     public DTOFlowsNames printFlowsName() {
         int index = 1;
@@ -50,18 +46,15 @@ public class systemengineImpl implements systemengine{
         }
         return new DTOFlowsNames(flowData);
     }
-
     @Override
     public List<FlowDefinition> getFlowDefinitionList() {
         return flowDefinitionList;
     }
-
     @Override
     public DTOFlowDefinition IntroduceTheChosenFlow(int flowNumber) {
         FlowDefinition flow = flowDefinitionList.get(flowNumber - 1);
         return new DTOFlowDefinition(flow);
     }
-
     @Override
     public boolean hasAllMandatoryInputs(int flowChoice, Map<String, Object> freeInputMap) {
         for (SingleFlowIOData input : flowDefinitionList.get(flowChoice-1).getFlowFreeInputs()) {
@@ -72,7 +65,6 @@ public class systemengineImpl implements systemengine{
         }
         return true;
     }
-
     @Override
     public DTOFlowExecution activateFlow(int flowChoice, DTOFreeInputsFromUser freeInputs) {
         FlowExecutor flowExecutor = new FlowExecutor();
@@ -84,7 +76,6 @@ public class systemengineImpl implements systemengine{
         flowExecutionList.addFirst(flowExecution);
         return new DTOFlowExecution(flowExecution);
     }
-
     @Override
     public DTOFreeInputsByUserString printFreeInputsByUserString(int choice) {
         AtomicInteger freeInputsIndex = new AtomicInteger(1);
@@ -98,7 +89,7 @@ public class systemengineImpl implements systemengine{
                     freeInputsData.append(String.format("Input Name: %s(%s)" ,node.getUserString(), node.getFinalName()));
                     freeInputsData.append("\tMandatory/Optional: " + node.getNecessity() + "\n");
                 });
-        return new DTOFreeInputsByUserString(freeInputsData);
+        return new DTOFreeInputsByUserString(freeInputsData,flowDefinitionList.get(choice-1).getFlowFreeInputs().size());
     }
     @Override
     public DTOSingleFlowIOData getSpecificFreeInput(int flowChoice, int freeInputChoice) {
@@ -114,5 +105,17 @@ public class systemengineImpl implements systemengine{
     }
     @Override
     public DTOFlowAndStepStatisticData getStatisticData(){return new DTOFlowAndStepStatisticData(statisticData);}
+
+    @Override
+    public void saveToFile(String path) {
+        SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
+        schema.saveToFile(path, flowDefinitionList);
+    }
+
+    @Override
+    public void loadFromFile(String path) {
+        SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
+        flowDefinitionList = schema.loadFromFile(path);
+    }
 }
 

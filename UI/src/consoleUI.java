@@ -7,6 +7,8 @@ import systemengine.systemengineImpl;
 import xml.XmlValidator;
 import javax.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -38,10 +40,12 @@ public class consoleUI {
             System.out.println("3. Flow activation (Execution)");
             System.out.println("4. Displaying full details of past activation");
             System.out.println("5. Statistics");
-            System.out.println("6. Exiting the system");
-            choice = readChoice(scanner,6);
+            System.out.println("6. Saving the system information to a file");
+            System.out.println("7. Loading the system information from a file");
+            System.out.println("8. Exiting the system");
+            choice = readChoice(scanner,8);
 
-            if (!systemInfoRead && choice != 1 && choice != 6) {
+            if (!systemInfoRead && choice != 1 && choice != 8) {
                 System.out.println("You can't choose this option before you choose option 1 and enter valid file.");
             } else {
                 switch (choice) {
@@ -61,6 +65,12 @@ public class consoleUI {
                         displayStatistics();
                         break;
                     case 6:
+                        saveToFile(scanner);
+                        break;
+                    case 7:
+                        loadFromFile(scanner);
+                        break;
+                    case 8:
                         exitProgram();
                         break;
                     default:
@@ -68,8 +78,10 @@ public class consoleUI {
                         break;
                 }
             }
-        } while (choice != 6) ;
+        } while (choice != 8) ;
     }
+
+
     public int readChoice(Scanner scanner, int maxChoice) {
         boolean validInput = false;
         int choice = 0;
@@ -279,7 +291,7 @@ public class consoleUI {
         DTOFreeInputsByUserString freeInputsByUserString = systemEngineInterface.printFreeInputsByUserString(flowNumber);
         System.out.println(freeInputsByUserString.getFreeInputsByUserString());
         System.out.println("Please select the input number you want to update: (press 0 to return to the main menu)");
-        int userFreeInputChoice = readChoice(scanner, freeInputsMap.size());
+        int userFreeInputChoice = readChoice(scanner,freeInputsByUserString.getNumberOfFreeInputs());
         if(userFreeInputChoice == 0){
             return userFreeInputChoice;
         }
@@ -446,6 +458,25 @@ public class consoleUI {
             System.out.println("\tAverage Run Time: " + step.getAverageTime());
         }
     }
+
+    public void loadFromFile(Scanner scanner) {
+        System.out.println("Please enter the path of the file you want to load from:");
+        String path = scanner.nextLine();
+        FileOutputStream file = null;
+        try {
+            file = new FileOutputStream(path);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        }
+        systemEngineInterface.loadFromFile(path);
+    }
+
+    public void saveToFile(Scanner scanner) {
+        System.out.println("Please enter the path of the file you want to save to: (including the name of the file but without the extension ");
+        String path = scanner.nextLine();
+        systemEngineInterface.saveToFile(path);
+    }
+
     public void exitProgram() {
         System.out.println("Thank you for using our system. See you later (:");
         System.exit(0);

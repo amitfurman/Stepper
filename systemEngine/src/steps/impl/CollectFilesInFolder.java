@@ -4,14 +4,15 @@ package steps.impl;
 import datadefinition.DataDefinitionRegistry;
 import datadefinition.api.IO_NAMES;
 import datadefinition.impl.list.FileListData;
-import steps.api.*;
 import flow.execution.context.StepExecutionContext;
+import steps.api.AbstractStepDefinition;
+import steps.api.DataDefinitionDeclarationImpl;
+import steps.api.DataNecessity;
+import steps.api.StepResult;
 
 import java.io.File;
 import java.time.Instant;
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.List;
 
 public class CollectFilesInFolder extends AbstractStepDefinition {
 
@@ -71,7 +72,6 @@ public class CollectFilesInFolder extends AbstractStepDefinition {
             }
         }
 
-        Duration totalTime = Duration.between(start, Instant.now());
         context.storeDataValue("FILES_LIST",FILES_LIST);
         context.storeDataValue("TOTAL_FOUND",TotalFound);
 

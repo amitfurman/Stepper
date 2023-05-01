@@ -34,7 +34,6 @@ public class FilesContentExtractor extends AbstractStepDefinition {
         FileListData filesToExtract = context.getDataValue(IO_NAMES.FILES_LIST, FileListData.class);
         int line = context.getDataValue(IO_NAMES.LINE,Integer.class);
 
-        //List<String> columns = new ArrayList<>(Arrays.asList("Serial Number", "Original file's name", "Data file line") );
         List<String> columns = Arrays.asList("Serial Number", "Original file's name", "Data file line");
         RelationData relation = new RelationData(columns);
 
