@@ -1,10 +1,11 @@
 package statistic;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
-public class StatisticData {
+public class StatisticData implements Serializable {
     private String name;
     private int timesRun;
     private Duration totalTime;

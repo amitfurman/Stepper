@@ -1,10 +1,11 @@
 package datadefinition.impl.relation;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RelationData {
+public class RelationData implements Serializable {
     private List<String> columns;
     private List<SingleRow> rows;
 

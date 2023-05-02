@@ -1,9 +1,10 @@
 package steps.api;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class Logger {
+public class Logger implements Serializable {
     private String log;
     private LocalTime logTime;
 

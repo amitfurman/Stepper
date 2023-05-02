@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/DTO/DTO.iml" filepath="$PROJECT_DIR$/DTO/DTO.iml" />
       <module fileurl="file://$PROJECT_DIR$/Stepper.iml" filepath="$PROJECT_DIR$/Stepper.iml" />
       <module fileurl="file://$PROJECT_DIR$/UI/UI.iml" filepath="$PROJECT_DIR$/UI/UI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/systemEngine/src/serialization/serialization.iml" filepath="$PROJECT_DIR$/systemEngine/src/serialization/serialization.iml" />
       <module fileurl="file://$PROJECT_DIR$/systemEngine/systemEngine.iml" filepath="$PROJECT_DIR$/systemEngine/systemEngine.iml" />
     </modules>
   </component>

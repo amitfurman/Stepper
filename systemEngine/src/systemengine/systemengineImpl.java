@@ -12,7 +12,9 @@ import statistic.FlowAndStepStatisticData;
 import steps.api.DataNecessity;
 
 import javax.xml.bind.JAXBException;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -108,14 +110,30 @@ public class systemengineImpl implements systemengine{
 
     @Override
     public void saveToFile(String path) {
-        SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
-        schema.saveToFile(path, flowDefinitionList);
+        try (ObjectOutputStream out =
+                         new ObjectOutputStream(
+                                 Files.newOutputStream(Paths.get(path)))) {
+            out.writeObject(flowDefinitionList);
+            out.writeObject(flowExecutionList);
+            out.writeObject(statisticData);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void loadFromFile(String path) {
-        SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
-        flowDefinitionList = schema.loadFromFile(path);
+        try (ObjectInputStream in =
+                         new ObjectInputStream(
+                                 Files.newInputStream(Paths.get(path)))){
+            flowDefinitionList = (List<FlowDefinition>) in.readObject();
+            flowExecutionList = (LinkedList<FlowExecution>) in.readObject();
+            statisticData = (FlowAndStepStatisticData) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
+
+
 }
 

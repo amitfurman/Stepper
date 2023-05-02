@@ -3,11 +3,12 @@ package flow.execution;
 import flow.api.FlowDefinition;
 import flow.api.FlowIO.SingleFlowIOData;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
-public class FlowExecution {
+public class FlowExecution  implements Serializable {
     private final UUID uniqueId;
     private final FlowDefinition flowDefinition;
     private Duration totalTime;

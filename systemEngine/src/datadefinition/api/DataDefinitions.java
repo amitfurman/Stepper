@@ -1,6 +1,10 @@
 package datadefinition.api;
 
-public interface DataDefinitions {
+import flow.api.FlowDefinition;
+
+import java.io.Serializable;
+
+public interface DataDefinitions  {
 
     String getName();
     boolean isUserFriendly();

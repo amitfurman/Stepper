@@ -68,9 +68,9 @@ public class SchemaBasedJAXBMain {
             }
         }
     }
+}
 
-
-    public void saveToFile(String path, List<FlowDefinition> flowDefinitionList) {
+/*    public void saveToFile(String path, List<FlowDefinition> flowDefinitionList) {
         //help me implement this method using serialization:
 
         try {
@@ -80,9 +80,9 @@ public class SchemaBasedJAXBMain {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
+    }*/
 
-    public List<FlowDefinition> loadFromFile(String path) {
+/*    public List<FlowDefinition> loadFromFile(String path) {
         //help me implement this method using serialization:
 
         try {
@@ -94,4 +94,4 @@ public class SchemaBasedJAXBMain {
             throw new RuntimeException(e);
         }
     }
-}
+}*/

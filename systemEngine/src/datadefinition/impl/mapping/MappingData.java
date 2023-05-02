@@ -1,8 +1,9 @@
 package datadefinition.impl.mapping;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class MappingData<K,V> {
+public class MappingData<K,V> implements Serializable {
     private Map<K,V> map;
 
     public MappingData(Map<K,V> source) {

@@ -1,14 +1,17 @@
 import dto.*;
-import exceptions.*;
+import exceptions.DuplicateFlowsNames;
+import exceptions.FileIsNotXmlTypeException;
+import exceptions.FileNotExistsException;
+import exceptions.UnExistsStep;
 import flow.api.FlowIO.IO;
 import steps.api.DataNecessity;
 import systemengine.systemengine;
 import systemengine.systemengineImpl;
 import xml.XmlValidator;
+
 import javax.xml.bind.JAXBException;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -31,7 +34,6 @@ public class consoleUI {
                 "|__/|__/\\___/_/\\___/\\____/_/ /_/ /_/\\___/    /_/  \\____/   /____/\\__/\\___/ .___/ .___/\\___/_/     \n" +
                 "                                                                        /_/   /_/               ");
         int choice = 0;
-        boolean systemInfoRead = false;
         Scanner scanner = new Scanner(System.in);
         do {
             System.out.println("\nPlease choose an option:");
@@ -45,12 +47,12 @@ public class consoleUI {
             System.out.println("8. Exiting the system");
             choice = readChoice(scanner,8);
 
-            if (!systemInfoRead && choice != 1 && choice != 8) {
-                System.out.println("You can't choose this option before you choose option 1 and enter valid file.");
+            if (choice != 1 && choice != 7 && systemEngineInterface.getFlowDefinitionList().isEmpty()) {
+                System.out.println("You can't choose this option because there isn't activation flow in the system.");
             } else {
                 switch (choice) {
                     case 1:
-                        systemInfoRead = readingTheSystemInformationFile(scanner);
+                        readingTheSystemInformationFile(scanner);
                         break;
                     case 2:
                         introduceFlows(scanner);
@@ -111,7 +113,7 @@ public class consoleUI {
             input = scanner.nextLine().trim();
             if (input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("no")) {
                 validInput = true;
-            } else if (input.matches("-?\\d+(\\.\\d+)?") ) {
+            } else if (input.matches("-?\\d+(\\.\\d+)?")) {
                 System.out.println("Error: You must enter a string and not a number, please try again");
             } else {
                 System.out.println("Error: You must enter a 'yes' or 'no' string, please try again");
@@ -119,7 +121,7 @@ public class consoleUI {
         } while (!validInput);
         return input;
     }
-    public boolean readingTheSystemInformationFile(Scanner scanner) {
+    public void readingTheSystemInformationFile(Scanner scanner) {
         XmlValidator validator = new XmlValidator();
         boolean isFileValid = false;
         String filePath, validFilePath = null, userInput;
@@ -132,7 +134,8 @@ public class consoleUI {
             try {
                 validator.isXmlFileValid(filePath);
                 isFileValid = true;
-                System.out.println("XML file is valid");
+                System.out.println();
+                System.out.println("The path of the file is valid");
             } catch (FileNotExistsException e) {
                 System.out.println(e.getMessage() + "Please provide a valid XML file.");
             } catch (FileIsNotXmlTypeException e) {
@@ -143,23 +146,23 @@ public class consoleUI {
                 validFilePath = filePath;
             }
 
+            if (validFilePath != null) {
+                try {
+                    systemEngineInterface.cratingFlowFromXml(validFilePath);
+                } catch (JAXBException | FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (DuplicateFlowsNames e) {
+                    System.out.println(e.getMessage());
+                } catch (UnExistsStep e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
             System.out.println("Do you want to load another file? (yes/no)");
             userInput = readYesNoInput(scanner);
         } while (userInput.equalsIgnoreCase("yes"));
 
-        if (validFilePath != null) {
-            try {
-                systemEngineInterface.cratingFlowFromXml(validFilePath);
-                return true;
-            } catch (JAXBException | FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (DuplicateFlowsNames e) {
-                System.out.printf(e.getMessage());
-            } catch (UnExistsStep e) {
-                System.out.printf(e.getMessage());
-            }
-        }
-        return false;
+
     }
     public void introduceFlows(Scanner scanner) {
         int flowNumber = choosingWhichFlowToIntroduce(scanner);
@@ -459,14 +462,15 @@ public class consoleUI {
         }
     }
 
-    public void loadFromFile(Scanner scanner) {
+    public void loadFromFile(Scanner scanner)  {
         System.out.println("Please enter the path of the file you want to load from:");
         String path = scanner.nextLine();
-        FileOutputStream file = null;
+        FileInputStream file = null;
         try {
-            file = new FileOutputStream(path);
+            file = new FileInputStream(path);
         } catch (FileNotFoundException e) {
-            System.out.println("File not found");
+            System.out.println("Error: File not found at " + path);
+            return;
         }
         systemEngineInterface.loadFromFile(path);
     }

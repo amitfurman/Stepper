@@ -2,7 +2,9 @@ package steps.api;
 
 import datadefinition.api.DataDefinitions;
 
-public class DataDefinitionDeclarationImpl implements DataDefinitionDeclaration {
+import java.io.Serializable;
+
+public class DataDefinitionDeclarationImpl implements DataDefinitionDeclaration , Serializable {
 
     private final String name;
     private final DataNecessity necessity;

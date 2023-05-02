@@ -2,12 +2,14 @@ package flow.execution;
 
 import steps.api.Logger;
 import steps.api.StepResult;
+
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class StepExecutionData {
+public class StepExecutionData  implements Serializable {
     private String finalName;
     private String originalName;
     private Duration totalStepTime;

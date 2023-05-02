@@ -42,8 +42,7 @@ public class StepExecutionContextImpl implements StepExecutionContext {
             if (aValue != null) {
                 return expectedDataType.cast(aValue);
             } else {
-                return null;
-               //throw new NullPointerException("Data value for " + dataName + " is null.");
+                return null; //for the optional inputs that are not provided
             }
         }
         else {

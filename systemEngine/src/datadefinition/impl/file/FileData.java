@@ -1,8 +1,9 @@
 package datadefinition.impl.file;
 
 import java.io.File;
+import java.io.Serializable;
 
-public class FileData {
+public class FileData implements Serializable {
     private String filePath;
     private File file;
 

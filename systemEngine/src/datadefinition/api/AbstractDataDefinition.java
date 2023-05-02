@@ -1,6 +1,8 @@
 package datadefinition.api;
 
-public abstract class AbstractDataDefinition implements DataDefinitions {
+import java.io.Serializable;
+
+public abstract class AbstractDataDefinition implements DataDefinitions , Serializable {
 
     private final String name;
     private final boolean userFriendly;
