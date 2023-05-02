@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class Stepper2Flows {
     private LinkedList<FlowDefinition> allFlows;
-    public Stepper2Flows(STStepper stepper) throws OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsStep, UnExistsData, SourceStepBeforeTargetStep, TheSameDD {
+    public Stepper2Flows(STStepper stepper) throws OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsStep, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType {
         allFlows = new LinkedList<>();
         int numberOfFlows = stepper.getSTFlows().getSTFlow().size();
         FlowDefinition flow;
@@ -91,9 +91,6 @@ public class Stepper2Flows {
                     .map(String::trim)
                     .collect(Collectors.toList());
             flow.getFlowFormalOutputs().addAll(names);
-            flow.validateIfOutputsHaveSameName();
-            flow.flowOutputsIsNotExists();
-
 
             //Custom Mapping
             if(currFlow.getSTCustomMappings() != null) {
@@ -105,6 +102,8 @@ public class Stepper2Flows {
             FlowAutomaticMapping automaticMapping = new FlowAutomaticMapping(flow);
             FlowCustomMapping customMapping = new FlowCustomMapping(flow);
 
+            flow.validateIfOutputsHaveSameName();
+            flow.flowOutputsIsNotExists();
             flow.initMandatoryInputsList();
             flow.freeInputsWithSameNameAndDifferentType();
             flow.mandatoryInputsIsUserFriendly();

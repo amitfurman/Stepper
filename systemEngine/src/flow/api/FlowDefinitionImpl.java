@@ -1,9 +1,7 @@
 package flow.api;
 
 import datadefinition.api.DataDefinitions;
-import exceptions.MandatoryInputsIsntUserFriendly;
-import exceptions.OutputsWithSameName;
-import exceptions.UnExistsStep;
+import exceptions.*;
 import flow.mapping.FlowCustomMapping;
 import statistic.StatisticData;
 import steps.api.DataDefinitionDeclaration;
@@ -211,19 +209,19 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
         }
     }
     @Override
-    public void flowOutputsIsNotExists() {
+    public void flowOutputsIsNotExists() throws UnExistsOutput {
         for (String output : getFlowFormalOutputs()) {
             boolean isPresent = getIOlist()
                     .stream()
                     .anyMatch(data -> data.getFinalName().equals(output));
 
             if (!isPresent) {
-                String exception = "Invalid. There is at least one flow output that is not exists.";
+                throw new UnExistsOutput();
             }
         }
     }
     @Override
-    public void freeInputsWithSameNameAndDifferentType() {
+    public void freeInputsWithSameNameAndDifferentType() throws FreeInputsWithSameNameAndDifferentType{
         for (SingleFlowIOData currData :  freeInputs) {
             boolean isPresent =
                     freeInputs
@@ -232,7 +230,7 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
                             .anyMatch(data -> !data.getDD().equals(currData.getDD()));
 
             if (isPresent) {
-                String exception = "Invalid. There are mandatory inputs with the same name but different type.";
+               throw new FreeInputsWithSameNameAndDifferentType();
             }
         }
     }

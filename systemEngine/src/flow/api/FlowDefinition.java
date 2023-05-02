@@ -1,8 +1,10 @@
 package flow.api;
 
 import datadefinition.api.DataDefinitions;
+import exceptions.FreeInputsWithSameNameAndDifferentType;
 import exceptions.MandatoryInputsIsntUserFriendly;
 import exceptions.OutputsWithSameName;
+import exceptions.UnExistsOutput;
 import flow.api.FlowIO.SingleFlowIOData;
 
 import java.util.List;
@@ -38,8 +40,8 @@ public interface FlowDefinition {
     boolean dataExist(String stepName, String dataName);
     void validateIfOutputsHaveSameName() throws OutputsWithSameName;
     void mandatoryInputsIsUserFriendly() throws MandatoryInputsIsntUserFriendly;
-    void flowOutputsIsNotExists();
-    void freeInputsWithSameNameAndDifferentType();
+    void flowOutputsIsNotExists() throws UnExistsOutput;
+    void freeInputsWithSameNameAndDifferentType()throws FreeInputsWithSameNameAndDifferentType;
     boolean doesSourceStepBeforeTargetStep(String sourceStepName, String targetStepName);
     boolean isTheSameDD (String sourceName, String targetStepName);
     void initMandatoryInputsList();

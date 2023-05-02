@@ -44,7 +44,7 @@ public class consoleUI {
             System.out.println("8. Exiting the system");
             choice = readChoice(scanner,8);
 
-            if (choice != 1 && choice != 7 && systemEngineInterface.getFlowDefinitionList().isEmpty()) {
+            if (choice != 1 && choice != 7 && choice != 8 && systemEngineInterface.getFlowDefinitionList().isEmpty()) {
                 System.out.println("You can't choose this option because there isn't activation flow in the system.");
             } else {
                 switch (choice) {
@@ -162,7 +162,12 @@ public class consoleUI {
                     System.out.println(e.getMessage());
                 } catch (TheSameDD e) {
                     System.out.println(e.getMessage());
+                } catch (UnExistsOutput e) {
+                    System.out.println(e.getMessage());
+                } catch (FreeInputsWithSameNameAndDifferentType e) {
+                    System.out.println(e.getMessage());
                 }
+
             }
 
             System.out.println("Do you want to load another file? (yes/no)");

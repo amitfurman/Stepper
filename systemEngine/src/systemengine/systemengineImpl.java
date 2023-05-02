@@ -32,7 +32,7 @@ public class systemengineImpl implements systemengine{
     }
 
     @Override
-    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD {
+    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType {
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         flowDefinitionList = schema.schemaBasedJAXB(filePath);
     }
