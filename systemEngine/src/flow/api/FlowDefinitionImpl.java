@@ -1,6 +1,9 @@
 package flow.api;
 
 import datadefinition.api.DataDefinitions;
+import exceptions.MandatoryInputsIsntUserFriendly;
+import exceptions.OutputsWithSameName;
+import exceptions.UnExistsStep;
 import flow.mapping.FlowCustomMapping;
 import statistic.StatisticData;
 import steps.api.DataDefinitionDeclaration;
@@ -164,15 +167,14 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
         return steps.stream().anyMatch(step -> !(step.getStepDefinition().isReadonly()));
     }
     @Override
-    public boolean stepExist(String stepName) {
+    public boolean stepExist(String stepName){
         boolean isPresent =
                 getFlowSteps()
                         .stream()
                         .anyMatch(name -> name.getFinalStepName().equals(stepName));
 
         if (!isPresent) {
-            String warning = "The step" + stepName + "does not exists in the current flow.";
-            return false;
+          return false;
         }
         return true;
     }
@@ -191,14 +193,13 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
         boolean isPresentInOutput = outputs.values().stream().anyMatch(data -> data.equals(dataName));
 
         if (!isPresentInInput && !isPresentInOutput) {
-            String warning = "The data" + dataName + "does not exists in the current flow.";
             return false;
         }
         return true;
     }
 
     @Override
-    public void validateIfOutputsHaveSameName() {
+    public void validateIfOutputsHaveSameName() throws OutputsWithSameName{
         boolean isPresent =
                 flowOutputs
                         .stream()
@@ -206,7 +207,7 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
                                 .frequency(flowOutputs, name) > 1);
 
         if (isPresent) {
-            String exception = "Invalid. There are 2 or more outputs with the same name.";
+            throw new OutputsWithSameName();
         }
     }
     @Override
@@ -237,30 +238,39 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
     }
 
     @Override
-    public void mandatoryInputsIsUserFriendly() {
+    public void mandatoryInputsIsUserFriendly() throws MandatoryInputsIsntUserFriendly {
         boolean isPresent =
                 freeInputs
                         .stream()
                         .anyMatch(data -> !data.getDD().isUserFriendly());
 
         if (isPresent) {
-            String exception = "Invalid. There are mandatory inputs that is not user friendly.";
+            throw new MandatoryInputsIsntUserFriendly();
         }
     }
     @Override
     public boolean doesSourceStepBeforeTargetStep(String sourceStepName, String targetStepName){
-        int sourceIndex = steps.indexOf(sourceStepName);
-        int targetIndex = steps.indexOf(targetStepName);
+        int sourceIndex=0;
+        int targetIndex=0;
+        for (int i = 0; i < steps.size(); i++) {
+            if (steps.get(i).getFinalStepName().equals(sourceStepName)) {
+                sourceIndex = i;
+            }
+        }
+        for (int i = 0; i < steps.size(); i++) {
+            if (steps.get(i).getFinalStepName().equals(targetStepName)) {
+                targetIndex = i;
+            }
+        }
         if (sourceIndex > targetIndex) {
-            String log = "Warning! the target step is before the source step.";
             return false;
         }
         return true;
     }
+
     @Override
     public boolean isTheSameDD (String sourceDataName, String targetDataName) {
        if(!name2DataDefinition.get(sourceDataName).equals(name2DataDefinition.get(targetDataName))){
-           String log = "Warning! the source data is not the same data definition as target data.";
            return false;
        }
        return true;

@@ -1,8 +1,5 @@
 import dto.*;
-import exceptions.DuplicateFlowsNames;
-import exceptions.FileIsNotXmlTypeException;
-import exceptions.FileNotExistsException;
-import exceptions.UnExistsStep;
+import exceptions.*;
 import flow.api.FlowIO.IO;
 import steps.api.DataNecessity;
 import systemengine.systemengine;
@@ -154,6 +151,16 @@ public class consoleUI {
                 } catch (DuplicateFlowsNames e) {
                     System.out.println(e.getMessage());
                 } catch (UnExistsStep e) {
+                    System.out.println(e.getMessage());
+                } catch (OutputsWithSameName e){
+                    System.out.println(e.getMessage());
+                } catch (MandatoryInputsIsntUserFriendly e){
+                    System.out.println(e.getMessage());
+                } catch (UnExistsData e) {
+                    System.out.println(e.getMessage());
+                } catch (SourceStepBeforeTargetStep e) {
+                    System.out.println(e.getMessage());
+                } catch (TheSameDD e) {
                     System.out.println(e.getMessage());
                 }
             }

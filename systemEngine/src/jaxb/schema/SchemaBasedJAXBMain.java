@@ -1,8 +1,7 @@
 package jaxb.schema;
 
 import dto.DTOAllStepperFlows;
-import exceptions.DuplicateFlowsNames;
-import exceptions.UnExistsStep;
+import exceptions.*;
 import flow.api.FlowDefinition;
 import flow.impl.Stepper2Flows;
 import jaxb.schema.generated.STFlow;
@@ -21,7 +20,7 @@ import java.util.List;
 public class SchemaBasedJAXBMain {
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "jaxb.schema.generated";
 
-    public LinkedList<FlowDefinition> schemaBasedJAXB(String filePath) throws JAXBException, FileNotFoundException, DuplicateFlowsNames, UnExistsStep {
+    public LinkedList<FlowDefinition> schemaBasedJAXB(String filePath) throws JAXBException, FileNotFoundException, DuplicateFlowsNames, UnExistsStep, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD {
         InputStream inputStream = new FileInputStream(new File(filePath));
         STStepper stepper = deserializeFrom(inputStream);
         verifyIfExistsFlowsWithDuplicateNames(stepper);

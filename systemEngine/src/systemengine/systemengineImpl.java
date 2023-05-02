@@ -1,8 +1,7 @@
 package systemengine;
 
 import dto.*;
-import exceptions.DuplicateFlowsNames;
-import exceptions.UnExistsStep;
+import exceptions.*;
 import flow.api.FlowDefinition;
 import flow.api.FlowIO.SingleFlowIOData;
 import flow.execution.FlowExecution;
@@ -33,7 +32,7 @@ public class systemengineImpl implements systemengine{
     }
 
     @Override
-    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException {
+    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD {
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         flowDefinitionList = schema.schemaBasedJAXB(filePath);
     }

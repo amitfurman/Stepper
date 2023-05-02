@@ -1,6 +1,7 @@
 package flow.impl;
 
 import datadefinition.api.DataDefinitions;
+import exceptions.*;
 import flow.api.CustomMapping;
 import flow.mapping.FlowAutomaticMapping;
 import flow.mapping.FlowCustomMapping;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class Stepper2Flows {
     private LinkedList<FlowDefinition> allFlows;
-    public Stepper2Flows(STStepper stepper) {
+    public Stepper2Flows(STStepper stepper) throws OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsStep, UnExistsData, SourceStepBeforeTargetStep, TheSameDD {
         allFlows = new LinkedList<>();
         int numberOfFlows = stepper.getSTFlows().getSTFlow().size();
         FlowDefinition flow;
@@ -67,7 +68,12 @@ public class Stepper2Flows {
             //FlowLevelAliasing
             if(currFlow.getSTFlowLevelAliasing()!=null) {
                 for (STFlowLevelAlias flowLevelAlias : currFlow.getSTFlowLevelAliasing().getSTFlowLevelAlias()) {
-                    if (flow.stepExist(flowLevelAlias.getStep()) && flow.dataExist(flowLevelAlias.getStep(), flowLevelAlias.getSourceDataName())) {
+                    if (!flow.stepExist(flowLevelAlias.getStep())){
+                        throw new UnExistsStep();
+                    }
+                    else if(!flow.dataExist(flowLevelAlias.getStep(), flowLevelAlias.getSourceDataName())){
+                        throw new UnExistsData();
+                    }else{
                         DataDefinitions data = flow.getDDFromMap(flowLevelAlias.getSourceDataName());
                         flow.addToName2DDMap(flowLevelAlias.getAlias(), data);
                         if ((flow.getInputName2aliasMap().get(flowLevelAlias.getStep() + "." + flowLevelAlias.getSourceDataName())) != null) {

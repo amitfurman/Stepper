@@ -1,8 +1,7 @@
 package systemengine;
 
 import dto.*;
-import exceptions.DuplicateFlowsNames;
-import exceptions.UnExistsStep;
+import exceptions.*;
 import flow.api.FlowDefinition;
 
 import javax.xml.bind.JAXBException;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface systemengine {
-    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException;
+    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD;
 
     DTOFlowsNames printFlowsName();
 
