@@ -17,7 +17,7 @@ public class FlowCustomMapping {
                 throw new UnExistsData();
             }else if(!(flow.doesSourceStepBeforeTargetStep(currCustom.getSourceStep(), currCustom.getTargetStep()))){
                 throw new SourceStepBeforeTargetStep();
-            }else if(!(flow.isTheSameDD(currCustom.getSourceData(), currCustom.getTargetData()))) {
+            }else if(!(flow.isTheSameDD(currCustom.getSourceStep(), currCustom.getSourceData(), currCustom.getTargetStep(), currCustom.getTargetData()))) {
                 throw new TheSameDD();
             }
             else {

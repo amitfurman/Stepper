@@ -17,7 +17,7 @@ public interface FlowDefinition {
     List<String> getFlowFormalOutputs();
     List<SingleFlowIOData> getFlowFreeInputs();
     List<SingleFlowIOData> getIOlist();
-    DataDefinitions getDDFromMap(String InputName);
+    DataDefinitions getDDFromMap(String stepName, String InputName);
     String getInputAliasFromMap(String stepName ,String originalInputName);
     String getOutputAliasFromMap(String stepName ,String originalOutputName);
     Map<String, DataDefinitions> getName2DDMap();
@@ -29,7 +29,7 @@ public interface FlowDefinition {
     List<SingleFlowIOData> getMandatoryInputsList();
     boolean getFlowReadOnly();
     void addStepToFlow(StepUsageDeclaration stepUsageDeclaration);
-    void addToName2DDMap(String Name, DataDefinitions DD);
+    void  addToName2DDMap(String stepName,String inputName ,DataDefinitions DD);
     void addToInputName2AliasMap(String stepName, String inputName, String alias);
     void addToOutputName2AliasMap(String stepName, String outputName, String alias);
     void addElementToIoList(SingleFlowIOData IOElement);
@@ -43,7 +43,7 @@ public interface FlowDefinition {
     void flowOutputsIsNotExists() throws UnExistsOutput;
     void freeInputsWithSameNameAndDifferentType()throws FreeInputsWithSameNameAndDifferentType;
     boolean doesSourceStepBeforeTargetStep(String sourceStepName, String targetStepName);
-    boolean isTheSameDD (String sourceName, String targetStepName);
+    boolean isTheSameDD (String sourceStepName, String sourceDataName,String targetStepName, String targetDataName);
     void initMandatoryInputsList();
     void setFlowReadOnly();
     boolean checkIfFlowIsReadOnly();

@@ -9,9 +9,10 @@ public class IO_NAMES {
    public final static String TIME_TO_SPEND = "TIME_TO_SPEND";
    public final static String FOLDER_NAME = "FOLDER_NAME";
    public final static String FILTER = "FILTER";
+
    public final static String FILES_LIST = "FILES_LIST";
    public final static String TOTAL_FOUND = "TOTAL_FOUND";
-   public final static String DELETED_FILES = "DELETED_FILES";
+   public final static String DELETED_LIST = "DELETED_LIST";
    public final static String DELETION_STATS = "DELETION_STATS";
    public final static String FILES_TO_RENAME = "FILES_TO_RENAME";
    public final static String PREFIX = "PREFIX";
@@ -28,11 +29,11 @@ public class IO_NAMES {
     name2DataDefinition.put(TIME_TO_SPEND, DataDefinitionRegistry.NUMBER);
     name2DataDefinition.put(FOLDER_NAME, DataDefinitionRegistry.STRING);
     name2DataDefinition.put(FILTER, DataDefinitionRegistry.STRING);
-    name2DataDefinition.put(FILES_LIST, DataDefinitionRegistry.LIST);
+    name2DataDefinition.put(FILES_LIST, DataDefinitionRegistry.FILE_LIST);
     name2DataDefinition.put(TOTAL_FOUND, DataDefinitionRegistry.NUMBER);
-    name2DataDefinition.put(DELETED_FILES, DataDefinitionRegistry.LIST);
-    name2DataDefinition.put(DELETION_STATS, DataDefinitionRegistry.MAPPING);
-    name2DataDefinition.put(FILES_TO_RENAME, DataDefinitionRegistry.LIST);
+    name2DataDefinition.put(DELETED_LIST, DataDefinitionRegistry.STRING_LIST);
+    name2DataDefinition.put(DELETION_STATS, DataDefinitionRegistry.MAPPING2NUMBERS);
+    name2DataDefinition.put(FILES_TO_RENAME, DataDefinitionRegistry.FILE_LIST);
     name2DataDefinition.put(PREFIX, DataDefinitionRegistry.STRING);
     name2DataDefinition.put(SUFFIX, DataDefinitionRegistry.STRING);
     name2DataDefinition.put(RENAME_RESULT, DataDefinitionRegistry.RELATION);
@@ -43,4 +44,8 @@ public class IO_NAMES {
     name2DataDefinition.put(LINE, DataDefinitionRegistry.NUMBER);
     name2DataDefinition.put(DATA, DataDefinitionRegistry.RELATION);
    }
+
+    public static DataDefinitions getDataDefinition(String name) {
+         return name2DataDefinition.get(name);
+    }
 }

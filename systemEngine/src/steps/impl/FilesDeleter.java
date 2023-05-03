@@ -33,15 +33,19 @@ public class FilesDeleter extends AbstractStepDefinition {
         Instant start = Instant.now();
         FileListData filesToDelete = context.getDataValue(IO_NAMES.FILES_LIST, FileListData.class);
         StringListData DELETED_LIST = new StringListData(new ArrayList<String>());
-        NumberMappingData DELETION_STATS = new NumberMappingData(new HashMap<Number, Number>());
+        NumberMappingData DELETION_STATS = new NumberMappingData(new HashMap<>());
+        DELETION_STATS.setItems(new HashMap<Number, Number>()); // initialize to empty map
+        DELETION_STATS.getItems().put(0, 0);
+        DELETION_STATS.getItems().put(1, 0);
         int totalFiles = filesToDelete.getItems().size(), deleteCount = 0;
-        DELETION_STATS.getItems().put(0,0); //initialize
 
         context.storeLogLine("About to start delete " + totalFiles + " files");
 
         if (totalFiles == 0) {
             context.storeLogLineAndSummaryLine("The list of files to delete is empty, so there are no files to delete.");
             context.storeStepTotalTime(start);
+            context.storeDataValue("DELETED_LIST",DELETED_LIST);
+            context.storeDataValue("DELETION_STATS",DELETION_STATS);
             return StepResult.SUCCESS;
         }
 

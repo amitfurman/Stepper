@@ -13,6 +13,8 @@ public class MappingData<K,V> implements Serializable {
         return map;
     }
 
+    public void setItems(Map<K,V> items) { this.map = items;}
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("car:" + map.get(0).toString() + System.lineSeparator());

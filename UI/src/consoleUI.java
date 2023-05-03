@@ -210,7 +210,7 @@ public class consoleUI {
     public StringBuilder printStepsInfo(DTOFlowDefinition flow) {
             AtomicInteger stepIndex = new AtomicInteger(1);
             StringBuilder stepData = new StringBuilder();
-            stepData.append("*The information for the steps in the current flow: *\n");
+            stepData.append("*The information about the steps in the current flow: *\n");
             flow
                     .getFlowStepsData()
                     .stream()
@@ -244,21 +244,20 @@ public class consoleUI {
         AtomicInteger flowOutputIndex = new AtomicInteger(1);
         StringBuilder outputData = new StringBuilder();
         outputData.append("*The information about the flow outputs: *\n");
-        flow.getIOlist()
-                .stream().forEach(node -> {
-                    if (flow.getFlowFormalOutputs().stream().anyMatch(output -> output.equals(node.getFinalName()))) {
-                        outputData.append("Flow Outputs " + flowOutputIndex.getAndIncrement() + ": \n");
-                        outputData.append("\tFinal Name: " + node.getFinalName() + '\n');
-                        outputData.append("\tType: " + node.getType().getName() + '\n');
-                        outputData.append("\tCreating Step: " + node.getStepName() + "\n\n");
-                    }
-                });
+        List<DTOSingleFlowIOData> outputs = flow.getIOlist().stream().filter(io -> io.getIOType().equals(IO.OUTPUT)).collect(Collectors.toList());
+        for(DTOSingleFlowIOData output: outputs) {
+            outputData.append("Flow Outputs " + flowOutputIndex.getAndIncrement() + ": \n");
+            outputData.append("\tFinal Name: " + output.getFinalName() + '\n');
+            outputData.append("\tType: " + output.getType().getName() + '\n');
+            outputData.append("\tCreating Step: " + output.getStepName() + "\n");
 
+        }
         return outputData;
     }
     public void executeFlow(Scanner scanner) {
         Map<String, Object> freeInputMap = new HashMap<>();
         String userContinue;
+        System.out.println("Please select the flow number you want to execute");
         int flowNumber = choosingWhichFlowToIntroduce(scanner);
         if(flowNumber == 0){
             return;

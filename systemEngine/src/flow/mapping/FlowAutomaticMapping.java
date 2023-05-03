@@ -13,11 +13,11 @@ public class FlowAutomaticMapping {
         for (StepUsageDeclaration step : flow.getFlowSteps()) {
             for (DataDefinitionDeclaration input : step.getStepDefinition().inputs()) {
                 flow.addElementToIoList(new SingleFlowIOData(IO.INPUT, input.getName(),
-                        flow.getInputAliasFromMap(step.getFinalStepName(), input.getName()),flow.getDDFromMap(input.getName()),input.userString(), input.necessity(), step));
+                        flow.getInputAliasFromMap(step.getFinalStepName(), input.getName()),flow.getDDFromMap(step.getFinalStepName(), input.getName()),input.userString(), input.necessity(), step));
             }
             for (DataDefinitionDeclaration output : step.getStepDefinition().outputs()) {
                 flow.addElementToIoList(new SingleFlowIOData(IO.OUTPUT, output.getName(),
-                        flow.getOutputAliasFromMap(step.getFinalStepName() ,output.getName()),flow.getDDFromMap(output.getName()),output.userString(), output.necessity(), step));
+                        flow.getOutputAliasFromMap(step.getFinalStepName() ,output.getName()),flow.getDDFromMap(step.getFinalStepName(),output.getName()),output.userString(), output.necessity(), step));
             }
         }
 

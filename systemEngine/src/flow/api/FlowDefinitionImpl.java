@@ -58,7 +58,7 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
     public List<StepUsageDeclaration> getFlowSteps() { return steps;}
     @Override
     public boolean getFlowReadOnly() {
-        return this.isFlowReadOnly;
+        return steps.stream().noneMatch(step ->(!step.getStepDefinition().isReadonly()));
     }
     @Override
     public Map<String, DataDefinitions> getName2DDMap() { return name2DataDefinition;}
@@ -71,7 +71,9 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
         return OutputName2Alias.get(stepName + "." + originalOutputName);
     }
     @Override
-    public DataDefinitions getDDFromMap(String InputName) { return name2DataDefinition.get(InputName);}
+    public DataDefinitions getDDFromMap(String stepName, String InputName) {
+        String key = stepName  + "." + InputName;
+        return name2DataDefinition.get(key);}
     @Override
     public Map<String, String> getAlias2StepNameMap() {
         return MapAlias2StepName;
@@ -135,8 +137,9 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
         flowOutputs.add(outputName);
     }
     @Override
-    public void addToName2DDMap(String name, DataDefinitions DD) {
-        name2DataDefinition.put(name, DD);
+    public void addToName2DDMap(String stepName,String inputName ,DataDefinitions DD) {
+        String result = stepName + "." + inputName;
+        name2DataDefinition.put(result, DD);
     }
     @Override
     public void addToInputName2AliasMap(String stepName, String inputName, String alias) {
@@ -210,13 +213,15 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
     }
     @Override
     public void flowOutputsIsNotExists() throws UnExistsOutput {
-        for (String output : getFlowFormalOutputs()) {
-            boolean isPresent = getIOlist()
-                    .stream()
-                    .anyMatch(data -> data.getFinalName().equals(output));
 
-            if (!isPresent) {
-                throw new UnExistsOutput();
+        if(!(getFlowFormalOutputs().get(0).equals(""))) {
+            for (String output : getFlowFormalOutputs()) {
+                boolean isPresent = getIOlist()
+                        .stream()
+                        .anyMatch(data -> data.getFinalName().equals(output));
+                if (!isPresent) {
+                    throw new UnExistsOutput();
+                }
             }
         }
     }
@@ -267,8 +272,10 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
     }
 
     @Override
-    public boolean isTheSameDD (String sourceDataName, String targetDataName) {
-       if(!name2DataDefinition.get(sourceDataName).equals(name2DataDefinition.get(targetDataName))){
+    public boolean isTheSameDD (String sourceStepName, String sourceDataName,String targetStepName, String targetDataName ) {
+        String sourceKey = sourceStepName + "." + sourceDataName;
+        String targetKey = targetStepName + "." + targetDataName;
+        if(!(name2DataDefinition.get(sourceKey).equals(name2DataDefinition.get(targetKey)))){
            return false;
        }
        return true;

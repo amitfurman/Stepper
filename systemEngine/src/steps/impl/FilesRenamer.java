@@ -37,6 +37,7 @@ public class FilesRenamer extends AbstractStepDefinition {
         FileListData filesToRename = context.getDataValue(IO_NAMES.FILES_TO_RENAME, FileListData.class);
         String prefix = context.getDataValue(IO_NAMES.PREFIX, String.class);
         String suffix = context.getDataValue(IO_NAMES.SUFFIX, String.class);
+        boolean failedToDeleteFile = false;
 
         List<String> columns = new ArrayList<>(Arrays.asList("Serial Number", "Original file's name", "file's name after change"));
         RelationData relation = new RelationData(columns);
@@ -72,11 +73,12 @@ public class FilesRenamer extends AbstractStepDefinition {
                 relation.addRow(new ArrayList<>(Arrays.asList(String.valueOf(serialNumber), originalFileName, originalFileName)));
                 context.storeLogLine("Problem renaming file " + originalFileName);
                 failedFiles.append(originalFileName).append('\n');
+                failedToDeleteFile = true;
             }
         }
         context.storeDataValue("RENAME_RESULT", relation);
 
-        if(relation.numOfRows() != filesToRename.getItems().size()) {
+        if(failedToDeleteFile) {
             context.storeSummaryLine("There was a failure in converting the names of the following files: " + failedFiles + "\nThat's why the step ends with a warning");
             context.storeStepTotalTime(start);
             return StepResult.WARNING;

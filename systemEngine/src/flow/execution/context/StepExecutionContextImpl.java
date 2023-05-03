@@ -1,6 +1,7 @@
 package flow.execution.context;
 
 import datadefinition.api.DataDefinitions;
+import datadefinition.api.IO_NAMES;
 import flow.execution.StepExecutionData;
 import steps.api.Logger;
 import steps.api.StepResult;
@@ -18,6 +19,7 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     private final Map<String, String> stepName2alias;//key - step name after alias, value - original step name
     private final List<StepExecutionData> StepExecutionList;
     private StepExecutionData currInvokingStep;
+    private IO_NAMES ioName;
 
 
     public StepExecutionContextImpl(Map<String, DataDefinitions> originalDDMap, Map<String,String> originalOutputAliasMap, Map<String, String> originalStepName2alias) {
@@ -26,6 +28,7 @@ public class StepExecutionContextImpl implements StepExecutionContext {
         outputName2alias = new HashMap<>(originalOutputAliasMap);
         stepName2alias = new HashMap<>(originalStepName2alias);
         StepExecutionList = new LinkedList<>();
+        ioName = new IO_NAMES();
     }
     @Override
     public void setCurrInvokingStep(String finalStepName, String originalStepName) {
@@ -35,7 +38,7 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     public StepExecutionData getCurrInvokingStep(){ return this.currInvokingStep; }
     @Override
     public <T> T getDataValue(String dataName, Class<T> expectedDataType) {
-        DataDefinitions theExpectedDataDefinition = name2DD.get(dataName);
+        DataDefinitions theExpectedDataDefinition =IO_NAMES.getDataDefinition(dataName);
 
         if (expectedDataType.isAssignableFrom(theExpectedDataDefinition.getType())) {
             Object aValue = dataValues.get(dataName);
@@ -51,7 +54,7 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     }
     @Override
     public boolean storeDataValue(String dataName, Object value) {
-        DataDefinitions theData = name2DD.get(dataName);
+        DataDefinitions theData =IO_NAMES.getDataDefinition(dataName);
 
         if (theData.getType().isAssignableFrom(value.getClass())) {
             String stepName,outputAlias = dataName;
