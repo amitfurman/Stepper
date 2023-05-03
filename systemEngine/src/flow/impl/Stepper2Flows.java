@@ -44,21 +44,24 @@ public class Stepper2Flows {
 
                 List<DataDefinitionDeclaration> stepInputs = myEnum.getStepDefinition().inputs();
                 for (DataDefinitionDeclaration input : stepInputs) {
+                    flow.addToName2DDMap(input.getName(), input.dataDefinition());
                     if (step.getAlias() != null) {
-                        flow.addToName2DDMap(step.getAlias(), input.getName(), input.dataDefinition());
+                        flow.addToStepAndIOName2DDMap(step.getAlias(), input.getName(), input.dataDefinition());
+
                         flow.addToInputName2AliasMap(step.getAlias(), input.getName(), input.getName());
                     } else {
-                        flow.addToName2DDMap(step.getName(), input.getName(), input.dataDefinition());
+                        flow.addToStepAndIOName2DDMap(step.getName(), input.getName(), input.dataDefinition());
                         flow.addToInputName2AliasMap(step.getName(), input.getName(), input.getName());
                     }
                 }
                 List<DataDefinitionDeclaration> stepOutputs = myEnum.getStepDefinition().outputs();
                 for (DataDefinitionDeclaration output : stepOutputs) {
+                    flow.addToName2DDMap(output.getName(), output.dataDefinition());
                     if (step.getAlias() != null) {
-                        flow.addToName2DDMap(step.getAlias(),output.getName(), output.dataDefinition());
+                        flow.addToStepAndIOName2DDMap(step.getAlias(),output.getName(), output.dataDefinition());
                         flow.addToOutputName2AliasMap(step.getAlias(), output.getName(), output.getName());
                     } else {
-                        flow.addToName2DDMap(step.getName(),output.getName(), output.dataDefinition());
+                        flow.addToStepAndIOName2DDMap(step.getName(),output.getName(), output.dataDefinition());
                         flow.addToOutputName2AliasMap(step.getName(), output.getName(), output.getName());
                     }
                 }
@@ -77,7 +80,8 @@ public class Stepper2Flows {
                         throw new UnExistsData();
                     }else{
                         DataDefinitions data = flow.getDDFromMap(flowLevelAlias.getStep(),flowLevelAlias.getSourceDataName());
-                        flow.addToName2DDMap(flowLevelAlias.getStep(),flowLevelAlias.getAlias(), data);
+                        flow.addToStepAndIOName2DDMap(flowLevelAlias.getStep(),flowLevelAlias.getAlias(), data);
+                        flow.addToName2DDMap(flowLevelAlias.getAlias(), data);
                         if ((flow.getInputName2aliasMap().get(flowLevelAlias.getStep() + "." + flowLevelAlias.getSourceDataName())) != null) {
                             flow.addToInputName2AliasMap(flowLevelAlias.getStep(), flowLevelAlias.getSourceDataName(), flowLevelAlias.getAlias());
                         } else {

@@ -19,7 +19,8 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
     private final List<String> flowOutputs;
     private final List<StepUsageDeclaration> steps;
     private boolean isFlowReadOnly;
-    private final Map<String, DataDefinitions> name2DataDefinition;
+    private final Map<String, DataDefinitions> stepAndIOName2DD;
+    private final Map<String, DataDefinitions> name2DD;
     private final Map<String, String> InputName2Alias;
     private final Map<String, String> OutputName2Alias;
     private final Map<String, String> MapAlias2StepName;
@@ -34,7 +35,8 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
         this.flowOutputs = new ArrayList<>();
         this.isFlowReadOnly = true;
         this.steps = new LinkedList<>();
-        this.name2DataDefinition = new HashMap<>();
+        this.stepAndIOName2DD = new HashMap<>();
+        this.name2DD = new HashMap<>();
         this.IOlist = new ArrayList<>();
         this.MapAlias2StepName = new HashMap<>();
         this.InputName2Alias = new HashMap<>();
@@ -61,7 +63,11 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
         return steps.stream().noneMatch(step ->(!step.getStepDefinition().isReadonly()));
     }
     @Override
-    public Map<String, DataDefinitions> getName2DDMap() { return name2DataDefinition;}
+    public Map<String, DataDefinitions> getStepAndIOName2DDMap() { return stepAndIOName2DD;}
+
+    //newwwwwwwwwwwwww
+    @Override
+    public Map<String, DataDefinitions> getName2DDMap() { return name2DD;}
     @Override
     public String getInputAliasFromMap(String stepName, String originalInputName) {
         return InputName2Alias.get(stepName + "." + originalInputName);
@@ -73,7 +79,7 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
     @Override
     public DataDefinitions getDDFromMap(String stepName, String InputName) {
         String key = stepName  + "." + InputName;
-        return name2DataDefinition.get(key);}
+        return stepAndIOName2DD.get(key);}
     @Override
     public Map<String, String> getAlias2StepNameMap() {
         return MapAlias2StepName;
@@ -137,10 +143,16 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
         flowOutputs.add(outputName);
     }
     @Override
-    public void addToName2DDMap(String stepName,String inputName ,DataDefinitions DD) {
+    public void addToStepAndIOName2DDMap(String stepName,String inputName ,DataDefinitions DD) {
         String result = stepName + "." + inputName;
-        name2DataDefinition.put(result, DD);
+        stepAndIOName2DD.put(result, DD);
     }
+    //newwwwwwwwwww
+    @Override
+    public void addToName2DDMap(String inputName ,DataDefinitions DD) {
+       name2DD.put(inputName, DD);
+    }
+
     @Override
     public void addToInputName2AliasMap(String stepName, String inputName, String alias) {
         String result = stepName + "." + inputName;
@@ -275,7 +287,7 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
     public boolean isTheSameDD (String sourceStepName, String sourceDataName,String targetStepName, String targetDataName ) {
         String sourceKey = sourceStepName + "." + sourceDataName;
         String targetKey = targetStepName + "." + targetDataName;
-        if(!(name2DataDefinition.get(sourceKey).equals(name2DataDefinition.get(targetKey)))){
+        if(!(stepAndIOName2DD.get(sourceKey).equals(stepAndIOName2DD.get(targetKey)))){
            return false;
        }
        return true;

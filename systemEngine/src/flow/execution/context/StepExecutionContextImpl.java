@@ -2,6 +2,7 @@ package flow.execution.context;
 
 import datadefinition.api.DataDefinitions;
 import datadefinition.api.IO_NAMES;
+import flow.api.FlowIO.SingleFlowIOData;
 import flow.execution.StepExecutionData;
 import steps.api.Logger;
 import steps.api.StepResult;
@@ -14,21 +15,28 @@ import java.util.stream.Collectors;
 public class StepExecutionContextImpl implements StepExecutionContext {
 
     private final Map<String, Object> dataValues;
+    private final Map<String, DataDefinitions> stepAndIOName2DD;
     private final Map<String, DataDefinitions> name2DD;
     private final Map<String, String> outputName2alias;
     private final Map<String, String> stepName2alias;//key - step name after alias, value - original step name
     private final List<StepExecutionData> StepExecutionList;
     private StepExecutionData currInvokingStep;
     private IO_NAMES ioName;
+    private List<SingleFlowIOData> IOlist;///למחוקקקקקק
 
 
-    public StepExecutionContextImpl(Map<String, DataDefinitions> originalDDMap, Map<String,String> originalOutputAliasMap, Map<String, String> originalStepName2alias) {
+
+
+    public StepExecutionContextImpl(Map<String, DataDefinitions> originalDDMap, Map<String,String> originalOutputAliasMap, Map<String, String> originalStepName2alias,
+                                    List<SingleFlowIOData> originalIOlist,Map<String, DataDefinitions>  originalname2DD ) {
         dataValues = new HashMap<>();
-        name2DD = new HashMap<>(originalDDMap);
+        stepAndIOName2DD = new HashMap<>(originalDDMap);
+        name2DD = new HashMap<>(originalname2DD);
         outputName2alias = new HashMap<>(originalOutputAliasMap);
         stepName2alias = new HashMap<>(originalStepName2alias);
         StepExecutionList = new LinkedList<>();
         ioName = new IO_NAMES();
+        IOlist = new ArrayList<>(originalIOlist);
     }
     @Override
     public void setCurrInvokingStep(String finalStepName, String originalStepName) {
@@ -38,7 +46,13 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     public StepExecutionData getCurrInvokingStep(){ return this.currInvokingStep; }
     @Override
     public <T> T getDataValue(String dataName, Class<T> expectedDataType) {
-        DataDefinitions theExpectedDataDefinition =IO_NAMES.getDataDefinition(dataName);
+        DataDefinitions theExpectedDataDefinition =name2DD.get(dataName);
+        /*DataDefinitions theExpectedDataDefinition =IO_NAMES.getDataDefinition(dataName);
+        if(theExpectedDataDefinition==null){
+            String originalName = IOlist.stream().filter(io -> io.getFinalName().equals(dataName)).findFirst().get().getName();
+            theExpectedDataDefinition = IO_NAMES.getDataDefinition(originalName);
+        }*/
+
 
         if (expectedDataType.isAssignableFrom(theExpectedDataDefinition.getType())) {
             Object aValue = dataValues.get(dataName);
@@ -54,7 +68,12 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     }
     @Override
     public boolean storeDataValue(String dataName, Object value) {
-        DataDefinitions theData =IO_NAMES.getDataDefinition(dataName);
+       DataDefinitions theData = name2DD.get(dataName);
+        /*DataDefinitions theData =IO_NAMES.getDataDefinition(dataName);
+       if(theData==null){
+           String originalName = IOlist.stream().filter(io -> io.getFinalName().equals(dataName)).findFirst().get().getName();
+           theData = IO_NAMES.getDataDefinition(originalName);
+       }*/
 
         if (theData.getType().isAssignableFrom(value.getClass())) {
             String stepName,outputAlias = dataName;

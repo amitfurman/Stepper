@@ -20,7 +20,8 @@ public interface FlowDefinition {
     DataDefinitions getDDFromMap(String stepName, String InputName);
     String getInputAliasFromMap(String stepName ,String originalInputName);
     String getOutputAliasFromMap(String stepName ,String originalOutputName);
-    Map<String, DataDefinitions> getName2DDMap();
+    Map<String, DataDefinitions> getStepAndIOName2DDMap();
+    Map<String, DataDefinitions> getName2DDMap();//newwwwwwwwwwwwww
     Map<String, String> getInputName2aliasMap();
     Map<String, String> getOutputName2aliasMap();
     Map<String,String> getAlias2StepNameMap();
@@ -29,7 +30,9 @@ public interface FlowDefinition {
     List<SingleFlowIOData> getMandatoryInputsList();
     boolean getFlowReadOnly();
     void addStepToFlow(StepUsageDeclaration stepUsageDeclaration);
-    void  addToName2DDMap(String stepName,String inputName ,DataDefinitions DD);
+    void  addToStepAndIOName2DDMap(String stepName,String inputName ,DataDefinitions DD);
+    void addToName2DDMap(String inputName ,DataDefinitions DD);//newwwwwwwwwwww
+
     void addToInputName2AliasMap(String stepName, String inputName, String alias);
     void addToOutputName2AliasMap(String stepName, String outputName, String alias);
     void addElementToIoList(SingleFlowIOData IOElement);
