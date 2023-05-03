@@ -51,9 +51,7 @@ public class FlowExecutor {
                 StatisticData stepStatistic = new StatisticData(flowExecution.getFlowDefinition().getFlowSteps().get(i).getStepDefinition().name());
                 stepStatistic.incrementTimesRun();
                 stepStatistic.addToTotalTime(context.getCurrInvokingStep().getTotalStepTime());
-                if(!flowStatisticData.getStepsStatisticData().contains(stepStatistic)) {
-                    flowStatisticData.addStepToStatistic(stepStatistic);
-                }
+                updateStepStatisticData(flowStatisticData ,stepStatistic);
             }
             context.setStepResultToCurrInvokingStep(stepResult);
             context.addCurrInvokingStepToStepExecutionList();
@@ -69,9 +67,40 @@ public class FlowExecutor {
         flowExecution.setTotalTime(Duration.ofMillis(totalTimeMillis));
 
         StatisticData currFlowStatistic = new StatisticData(flowExecution.getFlowDefinition().getName());
-        flowStatisticData.addFlowToStatistic(currFlowStatistic);
-        currFlowStatistic.incrementTimesRun();
-        currFlowStatistic.addToTotalTime(Duration.between(startTime, endTime));
-        //flowExecution.setDataValues(context.getDataValues());
+        updateFlowStatisticData(flowStatisticData , currFlowStatistic,startTime ,endTime);
+    }
+
+
+    void updateStepStatisticData(FlowAndStepStatisticData flowStatisticData ,StatisticData stepStatistic){
+        if(!(flowStatisticData.getStepsStatisticData().stream().anyMatch(step->step.getName().equals(stepStatistic.getName())))) {
+            flowStatisticData.addStepToStatistic(stepStatistic);
+        }else{
+            flowStatisticData.getStepsStatisticData().stream()
+                    .filter(step->step.getName().equals(stepStatistic.getName()))
+                    .findFirst()
+                    .get()
+                    .incrementTimesRun();
+            flowStatisticData.getStepsStatisticData().stream()
+                    .filter(step->step.getName().equals(stepStatistic.getName()))
+                    .findFirst()
+                    .get()
+                    .addToTotalTime(stepStatistic.getTotalTime());
+        }
+    }
+    void updateFlowStatisticData(FlowAndStepStatisticData flowStatisticData ,StatisticData currFlowStatistic, Instant startTime ,Instant endTime) {
+        if(!(flowStatisticData.getFlowsStatisticData().stream().anyMatch(flow->flow.getName().equals(currFlowStatistic.getName())))) {
+            flowStatisticData.addFlowToStatistic(currFlowStatistic);
+        }else{
+            flowStatisticData.getFlowsStatisticData().stream()
+                    .filter(step->step.getName().equals(currFlowStatistic.getName()))
+                    .findFirst()
+                    .get()
+                    .incrementTimesRun();
+            flowStatisticData.getFlowsStatisticData().stream()
+                    .filter(step->step.getName().equals(currFlowStatistic.getName()))
+                    .findFirst()
+                    .get()
+                    .addToTotalTime(Duration.between(startTime, endTime));
+        }
     }
 }
