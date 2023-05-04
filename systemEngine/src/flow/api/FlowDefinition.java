@@ -22,6 +22,7 @@ public interface FlowDefinition {
     String getOutputAliasFromMap(String stepName ,String originalOutputName);
     Map<String, DataDefinitions> getStepAndIOName2DDMap();
     Map<String, DataDefinitions> getName2DDMap();//newwwwwwwwwwwwww
+    Map<String, String> getName2AliasMap();
     Map<String, String> getInputName2aliasMap();
     Map<String, String> getOutputName2aliasMap();
     Map<String,String> getAlias2StepNameMap();
@@ -32,7 +33,7 @@ public interface FlowDefinition {
     void addStepToFlow(StepUsageDeclaration stepUsageDeclaration);
     void  addToStepAndIOName2DDMap(String stepName,String inputName ,DataDefinitions DD);
     void addToName2DDMap(String inputName ,DataDefinitions DD);//newwwwwwwwwwww
-
+    void addToName2AliasMap(String inputName ,String alias);
     void addToInputName2AliasMap(String stepName, String inputName, String alias);
     void addToOutputName2AliasMap(String stepName, String outputName, String alias);
     void addElementToIoList(SingleFlowIOData IOElement);

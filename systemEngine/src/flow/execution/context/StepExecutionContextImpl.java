@@ -22,13 +22,14 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     private final List<StepExecutionData> StepExecutionList;
     private StepExecutionData currInvokingStep;
     private IO_NAMES ioName;
-    private List<SingleFlowIOData> IOlist;///למחוקקקקקק
+    private List<SingleFlowIOData> IOlist;
 
+    private final Map<String, String> name2Alias;
 
 
 
     public StepExecutionContextImpl(Map<String, DataDefinitions> originalDDMap, Map<String,String> originalOutputAliasMap, Map<String, String> originalStepName2alias,
-                                    List<SingleFlowIOData> originalIOlist,Map<String, DataDefinitions>  originalname2DD ) {
+                                    List<SingleFlowIOData> originalIOlist,Map<String, DataDefinitions>  originalname2DD,Map<String, String> originalname2Alias) {
         dataValues = new HashMap<>();
         stepAndIOName2DD = new HashMap<>(originalDDMap);
         name2DD = new HashMap<>(originalname2DD);
@@ -37,6 +38,8 @@ public class StepExecutionContextImpl implements StepExecutionContext {
         StepExecutionList = new LinkedList<>();
         ioName = new IO_NAMES();
         IOlist = new ArrayList<>(originalIOlist);
+        name2Alias = new HashMap<>(originalname2Alias);
+
     }
     @Override
     public void setCurrInvokingStep(String finalStepName, String originalStepName) {
@@ -46,17 +49,20 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     public StepExecutionData getCurrInvokingStep(){ return this.currInvokingStep; }
     @Override
     public <T> T getDataValue(String dataName, Class<T> expectedDataType) {
-        DataDefinitions theExpectedDataDefinition =name2DD.get(dataName);
         /*DataDefinitions theExpectedDataDefinition =IO_NAMES.getDataDefinition(dataName);
         if(theExpectedDataDefinition==null){
             String originalName = IOlist.stream().filter(io -> io.getFinalName().equals(dataName)).findFirst().get().getName();
             theExpectedDataDefinition = IO_NAMES.getDataDefinition(originalName);
         }*/
-
+        DataDefinitions theExpectedDataDefinition =name2DD.get(dataName);
+        String nameAfterAlias= name2Alias.get(dataName);
 
         if (expectedDataType.isAssignableFrom(theExpectedDataDefinition.getType())) {
-            Object aValue = dataValues.get(dataName);
+           Object aValue = dataValues.get(nameAfterAlias);
             if (aValue != null) {
+                return expectedDataType.cast(aValue);
+            }else if(!(IOlist.stream().filter(io -> io.getName().equals(dataName)).findFirst().get().getOptionalOutput().isEmpty())){
+                aValue = dataValues.get(IOlist.stream().filter(io -> io.getName().equals(dataName)).findFirst().get().getOptionalOutput().get(0).getFinalName());
                 return expectedDataType.cast(aValue);
             } else {
                 return null; //for the optional inputs that are not provided
@@ -65,15 +71,16 @@ public class StepExecutionContextImpl implements StepExecutionContext {
         else {
             throw new IllegalArgumentException("Data definition for " + dataName + " is not found or expected data type is not compatible.");
         }
+
     }
     @Override
     public boolean storeDataValue(String dataName, Object value) {
-       DataDefinitions theData = name2DD.get(dataName);
         /*DataDefinitions theData =IO_NAMES.getDataDefinition(dataName);
        if(theData==null){
            String originalName = IOlist.stream().filter(io -> io.getFinalName().equals(dataName)).findFirst().get().getName();
            theData = IO_NAMES.getDataDefinition(originalName);
        }*/
+        DataDefinitions theData = name2DD.get(dataName);
 
         if (theData.getType().isAssignableFrom(value.getClass())) {
             String stepName,outputAlias = dataName;

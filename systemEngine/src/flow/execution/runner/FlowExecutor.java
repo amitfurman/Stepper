@@ -24,7 +24,8 @@ public class FlowExecutor {
 
         StepExecutionContext context = new StepExecutionContextImpl
                 (flowExecution.getFlowDefinition().getStepAndIOName2DDMap(),flowExecution.getFlowDefinition().getOutputName2aliasMap(),
-                        flowExecution.getFlowDefinition().getAlias2StepNameMap(), flowExecution.getIOlist(), flowExecution.getFlowDefinition().getName2DDMap());
+                        flowExecution.getFlowDefinition().getAlias2StepNameMap(),
+                        flowExecution.getIOlist(), flowExecution.getFlowDefinition().getName2DDMap(), flowExecution.getFlowDefinition().getName2AliasMap());
 
         for (Map.Entry<String, Object> entry : freeInputs.getFreeInputMap().entrySet()) {
             context.storeDataValue(entry.getKey(), entry.getValue());
