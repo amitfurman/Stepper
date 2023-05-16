@@ -27,13 +27,15 @@ public class Controller {
 
         if (selectedFile != null) {
             filePath = selectedFile.getAbsolutePath();
+            viewChosenXmlFilePath(event);
         }
+
     }
 
     @FXML
     void viewChosenXmlFilePath(ActionEvent event) {
-        chosenXmlFilePath.setText(filePath);
 
+        chosenXmlFilePath.setText(filePath.toString());
     }
 
 }
