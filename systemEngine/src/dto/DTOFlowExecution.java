@@ -47,7 +47,7 @@ public class DTOFlowExecution {
         this.freeInputsValues = new HashMap<>(flowExecution.getFreeInputsValues());
         this.freeInputsList = new LinkedList<>();
         for (SingleFlowIOData freeInput :flowExecution.getFreeInputsList()) {
-            freeInputsList.add(new DTOSingleFlowIOData(freeInput, freeInputsValues.get(freeInput.getFinalName())));
+            freeInputsList.add(new DTOSingleFlowIOData(freeInput, freeInputsValues.get(freeInput.getStepName() + "." + freeInput.getFinalName())));
         }
         this.IOlist = new LinkedList<>();
         for (SingleFlowIOData IO :flowExecution.getIOlist()) {

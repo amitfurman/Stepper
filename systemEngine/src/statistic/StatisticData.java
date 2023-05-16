@@ -11,9 +11,15 @@ public class StatisticData implements Serializable {
     private Duration totalTime;
 
     public StatisticData(String name) {
-        this.name = name;
-        this.timesRun = 0 ;
+        this.name = null;
+        this.timesRun = 1 ;
         this.totalTime = Duration.ZERO;
+    }
+
+    public StatisticData(String name , Duration totalTime) {
+        this.name = name;
+        this.timesRun = 1 ;
+        this.totalTime = totalTime;
     }
 
     public String getName() {

@@ -317,7 +317,7 @@ public class consoleUI {
            newValue = readObject(scanner);
            isSameType = validFreeInputValue(newValue, chosenInput);
        }while(!isSameType);
-        freeInputsMap.put(chosenInput.getFinalName(), newValue);
+        freeInputsMap.put(chosenInput.getStepName() +"." + chosenInput.getOriginalName(), newValue);
         System.out.println("The new value for the input: " + chosenInput.getUserString() + " is: " + newValue);
         return userFreeInputChoice;
     }
@@ -370,9 +370,9 @@ public class consoleUI {
         System.out.println("Flows executed:");
         for (DTOFlowExecution flow: flowsExecutionList.getFlowsExecutionNamesList()) {
             System.out.println("Flow " + flowIndex.getAndIncrement() + ": ");
-            System.out.println("Flow Name: " + flow.getFlowName());
-            System.out.println("Flow ID: " + flow.getUniqueId());
-            System.out.println("Flow Start Time: " + flow.getStartTimeFormatted());
+            System.out.println("\tFlow Name: " + flow.getFlowName());
+            System.out.println("\tFlow ID: " + flow.getUniqueId());
+            System.out.println("\tFlow Start Time: " + flow.getStartTimeFormatted());
             System.out.println("\n");
         }
         int flowNumber = getFlowChoice(scanner,flowsExecutionList.getFlowsExecutionNamesList().size());
@@ -448,9 +448,9 @@ public class consoleUI {
             System.out.println("\tStep's Logs:");
             AtomicInteger logIndex = new AtomicInteger(1);
             step.getLoggerList().forEach(log -> {
-                System.out.println("\tLog " + logIndex.getAndIncrement() + ":");
-                System.out.println("\t\tLog Time: " + log.getLogTime());
-                System.out.println("\t\tLog Message: " + log.getLog());
+                System.out.println("\t\tLog " + logIndex.getAndIncrement() + ":");
+                System.out.println("\t\t\tLog Time: " + log.getLogTime());
+                System.out.println("\t\t\tLog Message: " + log.getLog());
             });
         });
     }

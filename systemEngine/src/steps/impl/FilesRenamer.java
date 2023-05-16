@@ -65,8 +65,7 @@ public class FilesRenamer extends AbstractStepDefinition {
                 } else { fileNameAfterChange += suffix;}
             }
 
-            boolean renamed = file.renameTo(new File(file.getParent(), fileNameAfterChange)); ////check the data's file
-            serialNumber++;
+            boolean renamed= file.renameTo(new File(file.getParent(), fileNameAfterChange)); ////check the data's file
             if (renamed) {
                 relation.addRow(new ArrayList<>(Arrays.asList(String.valueOf(serialNumber), originalFileName, fileNameAfterChange)));
             } else {
@@ -74,7 +73,9 @@ public class FilesRenamer extends AbstractStepDefinition {
                 context.storeLogLine("Problem renaming file " + originalFileName);
                 failedFiles.append(originalFileName).append('\n');
                 failedToDeleteFile = true;
+
             }
+            serialNumber++;
         }
         context.storeDataValue("RENAME_RESULT", relation);
 

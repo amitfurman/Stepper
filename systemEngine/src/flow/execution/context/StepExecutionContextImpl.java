@@ -17,6 +17,8 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     private final Map<String, Object> dataValues;
     private final Map<String, DataDefinitions> stepAndIOName2DD;
     private final Map<String, DataDefinitions> name2DD;
+    private final Map<String, String> inputName2alias;
+
     private final Map<String, String> outputName2alias;
     private final Map<String, String> stepName2alias;//key - step name after alias, value - original step name
     private final List<StepExecutionData> StepExecutionList;
@@ -28,12 +30,13 @@ public class StepExecutionContextImpl implements StepExecutionContext {
 
 
 
-    public StepExecutionContextImpl(Map<String, DataDefinitions> originalDDMap, Map<String,String> originalOutputAliasMap, Map<String, String> originalStepName2alias,
+    public StepExecutionContextImpl(Map<String, DataDefinitions> originalDDMap, Map<String,String> originalOutputAliasMap, Map<String,String> originalInputAliasMap, Map<String, String> originalStepName2alias,
                                     List<SingleFlowIOData> originalIOlist,Map<String, DataDefinitions>  originalname2DD,Map<String, String> originalname2Alias) {
         dataValues = new HashMap<>();
         stepAndIOName2DD = new HashMap<>(originalDDMap);
         name2DD = new HashMap<>(originalname2DD);
         outputName2alias = new HashMap<>(originalOutputAliasMap);
+        inputName2alias = new HashMap<>(originalInputAliasMap);
         stepName2alias = new HashMap<>(originalStepName2alias);
         StepExecutionList = new LinkedList<>();
         ioName = new IO_NAMES();
@@ -47,13 +50,45 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     }
     @Override
     public StepExecutionData getCurrInvokingStep(){ return this.currInvokingStep; }
+
     @Override
     public <T> T getDataValue(String dataName, Class<T> expectedDataType) {
-        /*DataDefinitions theExpectedDataDefinition =IO_NAMES.getDataDefinition(dataName);
-        if(theExpectedDataDefinition==null){
-            String originalName = IOlist.stream().filter(io -> io.getFinalName().equals(dataName)).findFirst().get().getName();
-            theExpectedDataDefinition = IO_NAMES.getDataDefinition(originalName);
-        }*/
+        String ioAlias;
+        DataDefinitions theExpectedDataDefinition;
+        if(currInvokingStep != null){
+            ioAlias = inputName2alias.get(currInvokingStep.getFinalNameStep()+"."+dataName);
+            if (ioAlias == null) {
+                ioAlias = outputName2alias.get(currInvokingStep.getFinalNameStep()+"."+dataName);
+            }
+            theExpectedDataDefinition = stepAndIOName2DD.get(currInvokingStep.getFinalNameStep()+"."+ioAlias);
+        }
+        else {
+            ioAlias = inputName2alias.get(dataName);
+            if (ioAlias == null) {
+                ioAlias = outputName2alias.get(dataName);
+            }
+            theExpectedDataDefinition = stepAndIOName2DD.get(dataName);
+        }
+
+        if (expectedDataType.isAssignableFrom(theExpectedDataDefinition.getType())) {
+            Object aValue = dataValues.get(ioAlias);
+            if (aValue != null) {
+                return expectedDataType.cast(aValue);
+            }else if(!(IOlist.stream().filter(io -> io.getName().equals(dataName)).findFirst().get().getOptionalOutput().isEmpty())){
+                aValue = dataValues.get(IOlist.stream().filter(io -> io.getName().equals(dataName)).findFirst().get().getOptionalOutput().get(0).getFinalName());
+                return expectedDataType.cast(aValue);
+            } else {
+                return null; //for the optional inputs that are not provided
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Data definition for " + dataName + " is not found or expected data type is not compatible.");
+        }
+    }
+/*    @Override
+    public <T> T getDataValue(String dataName, Class<T> expectedDataType) {
+        *//*DataDefinitions theExpectedDataDefinition =IO_NAMES.getDataDefinition(dataName);
+        }*//*
         DataDefinitions theExpectedDataDefinition =name2DD.get(dataName);
         String nameAfterAlias= name2Alias.get(dataName);
 
@@ -72,26 +107,29 @@ public class StepExecutionContextImpl implements StepExecutionContext {
             throw new IllegalArgumentException("Data definition for " + dataName + " is not found or expected data type is not compatible.");
         }
 
-    }
+    }*/
+
     @Override
     public boolean storeDataValue(String dataName, Object value) {
-        /*DataDefinitions theData =IO_NAMES.getDataDefinition(dataName);
-       if(theData==null){
-           String originalName = IOlist.stream().filter(io -> io.getFinalName().equals(dataName)).findFirst().get().getName();
-           theData = IO_NAMES.getDataDefinition(originalName);
-       }*/
-        DataDefinitions theData = name2DD.get(dataName);
+        String ioAlias;
+        DataDefinitions theData;
+        if(currInvokingStep != null){
+            ioAlias = inputName2alias.get(currInvokingStep.getFinalNameStep()+"."+dataName);
+            if (ioAlias == null) {
+                ioAlias = outputName2alias.get(currInvokingStep.getFinalNameStep()+"."+dataName);
+            }
+            theData = stepAndIOName2DD.get(currInvokingStep.getFinalNameStep()+"."+ioAlias);
+        }
+        else {
+            ioAlias = inputName2alias.get(dataName);
+            if (ioAlias == null) {
+                ioAlias = outputName2alias.get(dataName);
+            }
+            theData = stepAndIOName2DD.get(dataName);
+        }
 
         if (theData.getType().isAssignableFrom(value.getClass())) {
-            String stepName,outputAlias = dataName;
-            for (String key : outputName2alias.keySet()) {
-                if (key.endsWith("." + dataName)) {
-                    stepName = key.substring(0, key.lastIndexOf("."));
-                    outputAlias = outputName2alias.get(key);
-                    break;
-                }
-            }
-            dataValues.put(outputAlias, value);
+            dataValues.put(ioAlias, value);
         } else {
             throw new IllegalArgumentException("Data definition for " + dataName + " is not found or expected data type is not compatible.");
         }

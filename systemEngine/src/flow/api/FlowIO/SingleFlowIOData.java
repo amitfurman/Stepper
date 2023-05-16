@@ -51,6 +51,7 @@ public class SingleFlowIOData implements Serializable {
         return this.outputThatCanBringDataToCurrInput;
     }
     public IO getIOType() {return this.type;}
+    public String getOriginalName() {return this.originalName;}
     public String getFinalName() {return this.finalName;}
     public DataDefinitions getDD()
     {

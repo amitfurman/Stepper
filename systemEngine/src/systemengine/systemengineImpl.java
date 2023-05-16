@@ -59,7 +59,7 @@ public class systemengineImpl implements systemengine{
     @Override
     public boolean hasAllMandatoryInputs(int flowChoice, Map<String, Object> freeInputMap) {
         for (SingleFlowIOData input : flowDefinitionList.get(flowChoice-1).getFlowFreeInputs()) {
-            boolean found = freeInputMap.keySet().stream().anyMatch(key -> key.equals(input.getFinalName()));
+            boolean found = freeInputMap.keySet().stream().anyMatch(key -> key.equals(input.getStepName() +"." +input.getOriginalName()));
             if(!found && input.getNecessity().equals(DataNecessity.MANDATORY)){
                 return false;
             }

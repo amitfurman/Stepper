@@ -7,6 +7,7 @@ import steps.api.DataNecessity;
 
 public class DTOSingleFlowIOData{
     private IO IOType;
+    private String originalName;
     private String finalName;
     private DataDefinitions type;
     private String MyStep;
@@ -17,6 +18,7 @@ public class DTOSingleFlowIOData{
     public DTOSingleFlowIOData(SingleFlowIOData IOData)
     {
         this.IOType = IOData.getIOType();
+        this.originalName = IOData.getOriginalName();
         this.finalName = IOData.getFinalName();
         this.type = IOData.getDD();
         this.MyStep = IOData.getStepName();
@@ -37,6 +39,7 @@ public class DTOSingleFlowIOData{
 
     public DataDefinitions getType() { return this.type; }
     public String getFinalName() { return this.finalName; }
+    public String getOriginalName() { return this.originalName; }
     public String getStepName() { return this.MyStep; }
     public DataNecessity getNecessity() { return necessity;}
     public String getUserString() { return userString; }
