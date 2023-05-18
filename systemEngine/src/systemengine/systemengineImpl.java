@@ -20,10 +20,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class systemengineImpl implements systemengine{
-    public List<FlowDefinition> flowDefinitionList;
+    public LinkedList<FlowDefinition> flowDefinitionList;
     public LinkedList<FlowExecution> flowExecutionList;
     public FlowAndStepStatisticData statisticData;
-
 
     public systemengineImpl() {
         this.flowDefinitionList = new LinkedList<>();
@@ -31,11 +30,18 @@ public class systemengineImpl implements systemengine{
         this.statisticData = new FlowAndStepStatisticData();
     }
 
+
     @Override
     public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType {
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         flowDefinitionList = schema.schemaBasedJAXB(filePath);
     }
+
+    @Override
+    public DTOAllStepperFlows getAllFlows(){
+        return new DTOAllStepperFlows(flowDefinitionList);
+    }
+
     @Override
     public DTOFlowsNames printFlowsName() {
         int index = 1;
@@ -125,14 +131,12 @@ public class systemengineImpl implements systemengine{
         try (ObjectInputStream in =
                          new ObjectInputStream(
                                  Files.newInputStream(Paths.get(path)))){
-            flowDefinitionList = (List<FlowDefinition>) in.readObject();
+            flowDefinitionList = (LinkedList<FlowDefinition>) in.readObject();
             flowExecutionList = (LinkedList<FlowExecution>) in.readObject();
             statisticData = (FlowAndStepStatisticData) in.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
-
-
 }
 

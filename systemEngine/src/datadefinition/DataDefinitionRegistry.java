@@ -1,6 +1,7 @@
 package datadefinition;
 
 import datadefinition.api.DataDefinitions;
+import datadefinition.impl.enumerator.EnumeratorDataDefinition;
 import datadefinition.impl.list.FileListDataDefinition;
 import datadefinition.impl.list.StringListDataDefinition;
 import datadefinition.impl.mapping.NumberMappingDataDefinition;
@@ -22,7 +23,8 @@ public enum DataDefinitionRegistry implements DataDefinitions {
     FILE_LIST(new FileListDataDefinition()),
     STRING_LIST(new StringListDataDefinition()),
     MAPPING(new MappingDataDefinition()),
-    MAPPING2NUMBERS(new NumberMappingDataDefinition())
+    MAPPING2NUMBERS(new NumberMappingDataDefinition()),
+    ENUMERATOR(new EnumeratorDataDefinition())
     ;
 
     private final DataDefinitions dataDefinition;

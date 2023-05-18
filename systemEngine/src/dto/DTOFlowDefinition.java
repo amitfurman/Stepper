@@ -67,4 +67,13 @@ public class DTOFlowDefinition {
     public List<DTOSingleFlowIOData> getFlowFreeInputs() {
         return this.freeInputs;
     }
+
+    public int getNumberOfSteps() {
+        return this.steps.size();
+    }
+
+    public int getNumberOfFreeInputs() {
+        return this.freeInputs.size();
+    }
 }
+
