@@ -9,6 +9,7 @@ import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -34,7 +35,7 @@ public class Controller {
     @FXML
     private Button chooseXMLFileButton;
     @FXML
-    private TextField chosenXmlFilePath;
+    private TextArea chosenXmlFilePath;
     @FXML
     private Label errorMessageLabel;
     @FXML
@@ -42,7 +43,9 @@ public class Controller {
     @FXML
     private TextArea flowDetails;
     @FXML
-    private Label stepperTitle;
+    private ScrollPane scrollPane;
+
+
 
     private boolean isErrorMessageShown = false;
 
@@ -55,14 +58,28 @@ public class Controller {
 //        Font.loadFont(getClass().getResourceAsStream("baguet_script.ttf"), 12);
 //        stepperTitle.setFont(Font.font("Baguet Script", 24));
         chosenXmlFilePath.setEditable(false);
-        chosenXmlFilePath.setMouseTransparent(true);
+        //    chosenXmlFilePath.setMouseTransparent(true);
         flowDetails.setEditable(false);
         flowDetails.setMouseTransparent(true);
         flowDetails.setScrollTop(ScrollPane.ScrollBarPolicy.ALWAYS.ordinal());
+        double threshold = 600; // Set your threshold value here
 
+        scrollPane.widthProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.doubleValue() <= threshold) {
+                scrollPane.setFitToWidth(false);
+            } else {
+                scrollPane.setFitToWidth(true);
+            }
+        });
 
+        scrollPane.heightProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.doubleValue() <= threshold) {
+                scrollPane.setFitToHeight(false);
+            } else {
+                scrollPane.setFitToHeight(true);
+            }
+        });
     }
-
     @FXML
     void clickToChooseXMLFileButton(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -79,13 +96,13 @@ public class Controller {
             isErrorMessageShown = false;
             systemEngineInterface.cratingFlowFromXml(filePath);
             hideError();
-            if (!isErrorMessageShown) {
-                showFlowsTree();
-            }
+            showFlowsTree();
+            flowsTree.setVisible(true);
         } catch (DuplicateFlowsNames | UnExistsStep | OutputsWithSameName | MandatoryInputsIsntUserFriendly |
                  UnExistsData | SourceStepBeforeTargetStep | TheSameDD | UnExistsOutput |
                  FreeInputsWithSameNameAndDifferentType | FileNotFoundException | JAXBException e) {
             showError(e.getMessage());
+            flowsTree.setVisible(false);
         }
     }
 
@@ -124,8 +141,8 @@ public class Controller {
     }
 
     private void showFlowsTree() {
-         TreeItem<String> rootItem = new TreeItem<>("Flows");
-
+        TreeItem<String> rootItem = new TreeItem<>("Flows");
+        rootItem.setExpanded(true); // Set the root item to be initially expanded
         DTOAllStepperFlows allStepperFlows = systemEngineInterface.getAllFlows();
 
         for (int i = 0; i < allStepperFlows.getNumberOfFlows(); i++) {
