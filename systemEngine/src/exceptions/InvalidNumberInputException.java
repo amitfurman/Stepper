@@ -7,7 +7,7 @@ public class InvalidNumberInputException extends Exception{
 
     */
 
-    private final String EXCEPTION_MESSAGE = "Error: You must enter a number, please try again.\n";
+    private final String EXCEPTION_MESSAGE = "Error: You must enter a number, please try again\n";
     @Override
     public String getMessage() {
         return EXCEPTION_MESSAGE;

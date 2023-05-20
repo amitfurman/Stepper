@@ -9,6 +9,7 @@ import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -40,6 +41,8 @@ public class Controller {
     private TreeView<String> flowsTree;
     @FXML
     private TextArea flowDetails;
+    @FXML
+    private Label stepperTitle;
 
     private boolean isErrorMessageShown = false;
 
@@ -49,10 +52,14 @@ public class Controller {
 
     @FXML
     public void initialize() {
+//        Font.loadFont(getClass().getResourceAsStream("baguet_script.ttf"), 12);
+//        stepperTitle.setFont(Font.font("Baguet Script", 24));
         chosenXmlFilePath.setEditable(false);
         chosenXmlFilePath.setMouseTransparent(true);
         flowDetails.setEditable(false);
         flowDetails.setMouseTransparent(true);
+        flowDetails.setScrollTop(ScrollPane.ScrollBarPolicy.ALWAYS.ordinal());
+
 
     }
 
@@ -72,7 +79,9 @@ public class Controller {
             isErrorMessageShown = false;
             systemEngineInterface.cratingFlowFromXml(filePath);
             hideError();
-            showFlowsTree();
+            if (!isErrorMessageShown) {
+                showFlowsTree();
+            }
         } catch (DuplicateFlowsNames | UnExistsStep | OutputsWithSameName | MandatoryInputsIsntUserFriendly |
                  UnExistsData | SourceStepBeforeTargetStep | TheSameDD | UnExistsOutput |
                  FreeInputsWithSameNameAndDifferentType | FileNotFoundException | JAXBException e) {
@@ -89,9 +98,10 @@ public class Controller {
         if (!isErrorMessageShown) {
             isErrorMessageShown = true;
             errorMessageLabel.setText(message);
+            errorMessageLabel.getStyleClass().add("errors"); // Apply the CSS class to the label
             FadeTransition animation = new FadeTransition();
             animation.setNode(errorMessageLabel);
-            animation.setDuration(Duration.seconds(0.3));
+            animation.setDuration(Duration.seconds(0.5));
             animation.setFromValue(0.0);
             animation.setToValue(1.0);
             animation.play();
@@ -102,7 +112,7 @@ public class Controller {
     private void hideError() {
         FadeTransition animation = new FadeTransition();
         animation.setNode(errorMessageLabel);
-        animation.setDuration(Duration.seconds(0.3));
+        animation.setDuration(Duration.seconds(0.5));
         animation.setFromValue(1.0);
         animation.setToValue(0.0);
         animation.play();

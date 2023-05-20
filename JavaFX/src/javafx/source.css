@@ -1,0 +1,70 @@
+#stepperTitle {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffeaec;
+    -fx-text-alignment: center;
+
+    -fx-font-family: "Courier New";
+    /*
+    -fx-font-family: "Cooper Black";
+    */
+
+
+    -fx-effect: dropshadow( gaussian , rgb(54, 69, 79), 0,0,2,1 );
+    -fx-effect-radius: 5px; /* Adjust the blur radius as desired */
+
+
+}
+
+#chosenXmlFilePath {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #36454f;
+    -fx-background-color: #fdfff7;
+    -fx-border-color: #36454f;
+    -fx-border-radius: 5px;
+
+}
+
+#chooseXMLFileButton {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #36454f;
+    -fx-background-color: #ffeaec;
+    -fx-border-color: #36454f;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+
+}
+
+#header-grid{
+    -fx-background-color: #9b9a9a;
+    -fx-border-color: #36454f;
+
+}
+
+.errors {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff316e;
+}
+
+.tabs:selected {
+    -fx-background-color: #fcd9dc;
+    -fx-text-fill: #36454f;
+    -fx-opacity: 0.8;
+}
+
+.tab-pane .tab:selected .focus-indicator {
+    -fx-border-color: transparent; /* Replace with your desired color */
+    -fx-border-width: 1px;
+    -fx-padding: 0;
+}
+
+.tabs {
+    -fx-background-color: #fdfff7;
+    -fx-text-fill: #36454f;
+}
+/*#tabs-pane {
+    -fx-background-color: #fdfff7;
+}*/
