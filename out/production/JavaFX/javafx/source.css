@@ -63,6 +63,16 @@
     -fx-background-color: #fdfff7;
     -fx-text-fill: #36454f;
 }
+
+#execute-button {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #36454f;
+    -fx-background-color: #ffeaec;
+    -fx-border-color: #36454f;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
 /*#tabs-pane {
     -fx-background-color: #fdfff7;
 }*/

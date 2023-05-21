@@ -18,14 +18,12 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     private final Map<String, DataDefinitions> stepAndIOName2DD;
     private final Map<String, DataDefinitions> name2DD;
     private final Map<String, String> inputName2alias;
-
     private final Map<String, String> outputName2alias;
     private final Map<String, String> stepName2alias;//key - step name after alias, value - original step name
     private final List<StepExecutionData> StepExecutionList;
     private StepExecutionData currInvokingStep;
     private IO_NAMES ioName;
     private List<SingleFlowIOData> IOlist;
-
     private final Map<String, String> name2Alias;
 
 

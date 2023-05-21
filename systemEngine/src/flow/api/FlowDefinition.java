@@ -1,10 +1,7 @@
 package flow.api;
 
 import datadefinition.api.DataDefinitions;
-import exceptions.FreeInputsWithSameNameAndDifferentType;
-import exceptions.MandatoryInputsIsntUserFriendly;
-import exceptions.OutputsWithSameName;
-import exceptions.UnExistsOutput;
+import exceptions.*;
 import flow.api.FlowIO.SingleFlowIOData;
 
 import java.util.List;
@@ -29,6 +26,7 @@ public interface FlowDefinition {
     SingleFlowIOData getElementFromIOList(String stepName, String dataName );
     List<CustomMapping> getCustomMappingList();
     List<SingleFlowIOData> getMandatoryInputsList();
+    Map<String, Object> getInitialInputMap();
     boolean getFlowReadOnly();
     void addStepToFlow(StepUsageDeclaration stepUsageDeclaration);
     void  addToStepAndIOName2DDMap(String stepName,String inputName ,DataDefinitions DD);
@@ -40,6 +38,7 @@ public interface FlowDefinition {
     void addToAlias2StepNameMap(String stepName, String alias);
     void addToCustomMapping(CustomMapping obj);
     void addToMandatoryInputsList(SingleFlowIOData mandatoryInput);
+    void addToInitialInputMap(String inputName, Object value);
     boolean stepExist(String stepName);
     boolean dataExist(String stepName, String dataName);
     void validateIfOutputsHaveSameName() throws OutputsWithSameName;
@@ -51,6 +50,8 @@ public interface FlowDefinition {
     void initMandatoryInputsList();
     void setFlowReadOnly();
     boolean checkIfFlowIsReadOnly();
+    boolean checkIfInitialInputIsFreeInput(String inputName) throws InitialInputIsNotFreeInput;
     List<String> getListOfStepsWithCurrInput(String inputName);
     void addFlowOutput(String outputName);
+
     }

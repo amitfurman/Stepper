@@ -12,14 +12,14 @@ import flow.api.FlowDefinitionImpl;
 import flow.api.StepUsageDeclarationImpl;
 import jaxb.schema.generated.*;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Stepper2Flows {
     private LinkedList<FlowDefinition> allFlows;
-    public Stepper2Flows(STStepper stepper) throws OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsStep, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType {
+    public Stepper2Flows(STStepper stepper) throws OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsStep, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotFreeInput {
+        int numberOfThreads = stepper.getSTThreadPool();
+
         allFlows = new LinkedList<>();
         int numberOfFlows = stepper.getSTFlows().getSTFlow().size();
         FlowDefinition flow;
@@ -115,6 +115,14 @@ public class Stepper2Flows {
             flow.initMandatoryInputsList();
             flow.freeInputsWithSameNameAndDifferentType();
             flow.mandatoryInputsIsUserFriendly();
+
+            if(currFlow.getSTInitialInputValues() != null) {
+                for(STInitialInputValue initValue : currFlow.getSTInitialInputValues().getSTInitialInputValue()) {
+                    if (flow.checkIfInitialInputIsFreeInput(initValue.getInputName())) {
+                        flow.addToInitialInputMap(initValue.getInputName(), initValue.getInitialValue());
+                    }
+                }
+            }
 
             allFlows.add(flow);
         }

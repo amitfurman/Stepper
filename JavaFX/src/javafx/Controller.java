@@ -100,7 +100,7 @@ public class Controller {
             flowsTree.setVisible(true);
         } catch (DuplicateFlowsNames | UnExistsStep | OutputsWithSameName | MandatoryInputsIsntUserFriendly |
                  UnExistsData | SourceStepBeforeTargetStep | TheSameDD | UnExistsOutput |
-                 FreeInputsWithSameNameAndDifferentType | FileNotFoundException | JAXBException e) {
+                 FreeInputsWithSameNameAndDifferentType | InitialInputIsNotFreeInput | FileNotFoundException | JAXBException e) {
             showError(e.getMessage());
             flowsTree.setVisible(false);
         }

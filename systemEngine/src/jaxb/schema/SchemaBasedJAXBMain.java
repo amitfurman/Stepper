@@ -20,7 +20,7 @@ import java.util.List;
 public class SchemaBasedJAXBMain {
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "jaxb.schema.generated";
 
-    public LinkedList<FlowDefinition> schemaBasedJAXB(String filePath) throws JAXBException, FileNotFoundException, DuplicateFlowsNames, UnExistsStep, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType {
+    public LinkedList<FlowDefinition> schemaBasedJAXB(String filePath) throws JAXBException, FileNotFoundException, DuplicateFlowsNames, UnExistsStep, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotFreeInput {
         InputStream inputStream = new FileInputStream(new File(filePath));
         STStepper stepper = deserializeFrom(inputStream);
         verifyIfExistsFlowsWithDuplicateNames(stepper);
