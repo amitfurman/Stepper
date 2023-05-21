@@ -24,8 +24,9 @@ public class IO_NAMES {
    public final static String FILE_NAME = "FILE_NAME";
    public final static String LINE = "LINE";
    public final static String DATA = "DATA";
-    public final static String COMMAND = "COMMAND";
-    public final static String ARGUMENTS = "ARGUMENTS";
+   public final static String COMMAND = "COMMAND";
+   public final static String ARGUMENTS = "ARGUMENTS";
+   public final static String OPERATION = "OPERATION";
 
    static {
     name2DataDefinition.put(TIME_TO_SPEND, DataDefinitionRegistry.NUMBER);
@@ -40,6 +41,7 @@ public class IO_NAMES {
     name2DataDefinition.put(SUFFIX, DataDefinitionRegistry.STRING);
     name2DataDefinition.put(RENAME_RESULT, DataDefinitionRegistry.RELATION);
     name2DataDefinition.put(SOURCE, DataDefinitionRegistry.RELATION);
+    name2DataDefinition.put(SOURCE, DataDefinitionRegistry.STRING);
     name2DataDefinition.put(RESULT, DataDefinitionRegistry.STRING);
     name2DataDefinition.put(CONTENT, DataDefinitionRegistry.STRING);
     name2DataDefinition.put(FILE_NAME, DataDefinitionRegistry.STRING);
@@ -47,9 +49,8 @@ public class IO_NAMES {
     name2DataDefinition.put(DATA, DataDefinitionRegistry.RELATION);
     name2DataDefinition.put(COMMAND, DataDefinitionRegistry.STRING);
     name2DataDefinition.put(ARGUMENTS, DataDefinitionRegistry.STRING);
+    name2DataDefinition.put(OPERATION, DataDefinitionRegistry.STRING);
    }
 
-    public static DataDefinitions getDataDefinition(String name) {
-         return name2DataDefinition.get(name);
-    }
+    //  public static DataDefinitions getDataDefinition(String name) {return name2DataDefinition.get(name);}
 }

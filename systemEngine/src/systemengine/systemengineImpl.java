@@ -32,7 +32,7 @@ public class systemengineImpl implements systemengine{
 
 
     @Override
-    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType {
+    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotFreeInput {
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         flowDefinitionList = schema.schemaBasedJAXB(filePath);
     }
@@ -79,18 +79,21 @@ public class systemengineImpl implements systemengine{
 
         FlowExecution flowExecution = new FlowExecution(currFlow);
         flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
-        flowExecutor.executeFlow(flowExecution, freeInputs, statisticData);
+        flowExecutor.executeFlow(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData);
         flowExecutionList.addFirst(flowExecution);
         return new DTOFlowExecution(flowExecution);
     }
+    //////check!!!!!!!!!
     @Override
     public DTOFreeInputsByUserString printFreeInputsByUserString(int choice) {
         AtomicInteger freeInputsIndex = new AtomicInteger(1);
         StringBuilder freeInputsData = new StringBuilder();
         freeInputsData.append("*The free inputs in the current flow: *\n");
-        flowDefinitionList.get(choice-1)
+        FlowDefinition currFlow = flowDefinitionList.get(choice-1);
+        currFlow
                 .getFlowFreeInputs()
                 .stream()
+                .filter(node -> currFlow.getInitialInputMap().keySet().stream().noneMatch(name -> (name.equals(node.getFinalName()))))
                 .forEach(node -> {
                     freeInputsData.append("Free Input " + freeInputsIndex.getAndIncrement() + ": ");
                     freeInputsData.append(String.format("Input Name: %s(%s)" ,node.getUserString(), node.getFinalName()));

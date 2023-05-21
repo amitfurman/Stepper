@@ -29,6 +29,7 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
     private final List<CustomMapping> customMapping;
     private final List<SingleFlowIOData> freeInputs;
     private final StatisticData flowStatisticData;
+    private final Map<String, Object> initialInputMap;
 
     public FlowDefinitionImpl(String name, String description) {
         this.name = name;
@@ -46,6 +47,7 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
         this.customMapping = new ArrayList<>();
         this.freeInputs = new LinkedList<>();
         this.flowStatisticData = new StatisticData(name); ///maybe without name
+        this.initialInputMap = new HashMap<>();
     }
 
     @Override
@@ -66,11 +68,8 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
     }
     @Override
     public Map<String, DataDefinitions> getStepAndIOName2DDMap() { return stepAndIOName2DD;}
-
-    //newwwwwwwwwwwwww
     @Override
     public Map<String, DataDefinitions> getName2DDMap() { return name2DD;}
-
     @Override
     public Map<String, String> getName2AliasMap() { return name2Alias;}
     @Override
@@ -136,6 +135,10 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
         return null;
     }
     @Override
+    public Map<String, Object> getInitialInputMap(){
+        return initialInputMap;
+    }
+    @Override
     public void setFlowReadOnly() {
         this.isFlowReadOnly = checkIfFlowIsReadOnly();
     }
@@ -152,7 +155,6 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
         String result = stepName + "." + inputName;
         stepAndIOName2DD.put(result, DD);
     }
-    //newwwwwwwwwww
     @Override
     public void addToName2DDMap(String inputName ,DataDefinitions DD) {
        name2DD.put(inputName, DD);
@@ -161,7 +163,6 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
     public void addToName2AliasMap(String inputName ,String alias) {
         name2Alias.put(inputName,alias);
     }
-
     @Override
     public void addToInputName2AliasMap(String stepName, String inputName, String alias) {
         String result = stepName + "." + inputName;
@@ -184,6 +185,12 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
     public void addToMandatoryInputsList(SingleFlowIOData mandatoryInput){
         freeInputs.add(mandatoryInput);
     }
+
+    @Override
+    public void addToInitialInputMap(String inputName, Object value){
+        initialInputMap.put(inputName, value);
+    }
+
     @Override
     public boolean checkIfFlowIsReadOnly() {
         return steps.stream().anyMatch(step -> !(step.getStepDefinition().isReadonly()));
@@ -219,7 +226,6 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
         }
         return true;
     }
-
     @Override
     public void validateIfOutputsHaveSameName() throws OutputsWithSameName{
         boolean isPresent =
@@ -260,7 +266,6 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
             }
         }
     }
-
     @Override
     public void mandatoryInputsIsUserFriendly() throws MandatoryInputsIsntUserFriendly {
         boolean isPresent =
@@ -291,7 +296,6 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
         }
         return true;
     }
-
     @Override
     public boolean isTheSameDD (String sourceStepName, String sourceDataName,String targetStepName, String targetDataName ) {
         String sourceKey = sourceStepName + "." + sourceDataName;
@@ -307,5 +311,17 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
                 .stream()
                 .filter(data -> data.getType().equals(IO.INPUT))
                 .filter(data -> data.getOptionalOutput().isEmpty()).collect(Collectors.toList()));
+    }
+    @Override
+    public boolean checkIfInitialInputIsFreeInput(String inputName) throws InitialInputIsNotFreeInput {
+        boolean isPresent =
+                freeInputs
+                        .stream()
+                        .anyMatch(data -> data.getFinalName().equals(inputName));
+
+        if (!isPresent) {
+            throw new InitialInputIsNotFreeInput();
+        }
+        return isPresent;
     }
 }

@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class FlowExecutor {
 
-    public void executeFlow(FlowExecution flowExecution, DTOFreeInputsFromUser freeInputs, FlowAndStepStatisticData flowStatisticData) {
+    public void executeFlow(FlowExecution flowExecution, DTOFreeInputsFromUser freeInputs,Map<String, Object> initialInputs, FlowAndStepStatisticData flowStatisticData) {
         System.out.println("Starting execution of flow " + flowExecution.getFlowDefinition().getName() + " [ID: " + flowExecution.getUniqueId() + "]");
         Instant startTime = Instant.now();
         flowExecution.setStartTime(startTime);
@@ -28,6 +28,9 @@ public class FlowExecutor {
                         flowExecution.getIOlist(), flowExecution.getFlowDefinition().getName2DDMap(), flowExecution.getFlowDefinition().getName2AliasMap());
 
         for (Map.Entry<String, Object> entry : freeInputs.getFreeInputMap().entrySet()) {
+            context.storeDataValue(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<String, Object> entry : initialInputs.entrySet()) {
             context.storeDataValue(entry.getKey(), entry.getValue());
         }
 
