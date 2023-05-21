@@ -4,10 +4,8 @@
     -fx-text-fill: #ffeaec;
     -fx-text-alignment: center;
 
-    -fx-font-family: "Courier New";
-    /*
+    /*-fx-font-family: "Courier New";*/
     -fx-font-family: "Cooper Black";
-    */
 
 
     -fx-effect: dropshadow( gaussian , rgb(54, 69, 79), 0,0,2,1 );
