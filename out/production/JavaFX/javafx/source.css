@@ -3,13 +3,13 @@
     -fx-font-weight: bold;
     -fx-text-fill: #ffeaec;
     -fx-text-alignment: center;
+
+    -fx-font-family: "Courier New";
     /*
-    -fx-font-family: "Agency FB";
+    -fx-font-family: "Cooper Black";
     */
-    /*
-    -fx-font-family: "Book Antiqua";
-        -fx-font-family: "Courier New";
-    */
+
+
     -fx-effect: dropshadow( gaussian , rgb(54, 69, 79), 0,0,2,1 );
     -fx-effect-radius: 5px; /* Adjust the blur radius as desired */
 
