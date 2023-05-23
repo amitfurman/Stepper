@@ -3,66 +3,45 @@ package javafx;
 import dto.DTOAllStepperFlows;
 import dto.DTOFlowDefinition;
 import dto.DTOSingleFlowIOData;
-import exceptions.*;
 import flow.api.FlowIO.IO;
-import javafx.animation.FadeTransition;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.header.HeaderController;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.text.Font;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.util.Duration;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import systemengine.systemengine;
 import systemengine.systemengineImpl;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 
-import javax.xml.bind.JAXBException;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class Controller {
     private final systemengine systemEngineInterface ;
-
-    private String filePath;
-    @FXML
-    private Button chooseXMLFileButton;
-    @FXML
-    private TextArea chosenXmlFilePath;
-    @FXML
-    private Label errorMessageLabel;
     @FXML
     private TreeView<String> flowsTree;
-    @FXML
-    private TextArea flowDetails;
+
     @FXML
     private ScrollPane scrollPane;
 
+    @FXML
+    private TreeView<String> flowDetailsTree;
 
-
-    private boolean isErrorMessageShown = false;
+    @FXML private HeaderController headerComponentController;
+    @FXML private GridPane headerComponent;
 
     public Controller() {
         this.systemEngineInterface = new systemengineImpl();
     }
 
+    public TreeView<String> getFlowsTree(){
+        return flowsTree;
+    }
+
     @FXML
     public void initialize() {
-//        Font.loadFont(getClass().getResourceAsStream("baguet_script.ttf"), 12);
-//        stepperTitle.setFont(Font.font("Baguet Script", 24));
-        chosenXmlFilePath.setEditable(false);
-        //    chosenXmlFilePath.setMouseTransparent(true);
-        flowDetails.setEditable(false);
-        flowDetails.setMouseTransparent(true);
-        flowDetails.setScrollTop(ScrollPane.ScrollBarPolicy.ALWAYS.ordinal());
-        double threshold = 600; // Set your threshold value here
+        double threshold = 500; // Set your threshold value here
 
         scrollPane.widthProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.doubleValue() <= threshold) {
@@ -79,188 +58,169 @@ public class Controller {
                 scrollPane.setFitToHeight(true);
             }
         });
-    }
-    @FXML
-    void clickToChooseXMLFileButton(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choose XML File");
 
-        Stage stage = (Stage) chooseXMLFileButton.getScene().getWindow();
-        File selectedFile = fileChooser.showOpenDialog(stage);
-
-        if (selectedFile != null) {
-            filePath = selectedFile.getAbsolutePath();
-            viewChosenXmlFilePath(event);
-        }
-        try {
-            isErrorMessageShown = false;
-            systemEngineInterface.cratingFlowFromXml(filePath);
-            hideError();
-            showFlowsTree();
-            flowsTree.setVisible(true);
-        } catch (DuplicateFlowsNames | UnExistsStep | OutputsWithSameName | MandatoryInputsIsntUserFriendly |
-                 UnExistsData | SourceStepBeforeTargetStep | TheSameDD | UnExistsOutput |
-                 FreeInputsWithSameNameAndDifferentType | InitialInputIsNotFreeInput | FileNotFoundException | JAXBException e) {
-            showError(e.getMessage());
-            flowsTree.setVisible(false);
-        }
     }
 
-    @FXML
-    void viewChosenXmlFilePath(ActionEvent event) {
-        chosenXmlFilePath.setText(filePath.toString());
-    }
-
-    private void showError(String message) {
-        if (!isErrorMessageShown) {
-            isErrorMessageShown = true;
-            errorMessageLabel.setText(message);
-            errorMessageLabel.getStyleClass().add("errors"); // Apply the CSS class to the label
-            FadeTransition animation = new FadeTransition();
-            animation.setNode(errorMessageLabel);
-            animation.setDuration(Duration.seconds(0.5));
-            animation.setFromValue(0.0);
-            animation.setToValue(1.0);
-            animation.play();
-        }
-        //set activeFlow - false
-    }
-
-    private void hideError() {
-        FadeTransition animation = new FadeTransition();
-        animation.setNode(errorMessageLabel);
-        animation.setDuration(Duration.seconds(0.5));
-        animation.setFromValue(1.0);
-        animation.setToValue(0.0);
-        animation.play();
-
-        isErrorMessageShown = false;
-        errorMessageLabel.textProperty().setValue("");
-
-        //set activeFlow - false
-    }
-
-    private void showFlowsTree() {
+    public void showFlowsTree() {
         TreeItem<String> rootItem = new TreeItem<>("Flows");
         rootItem.setExpanded(true); // Set the root item to be initially expanded
         DTOAllStepperFlows allStepperFlows = systemEngineInterface.getAllFlows();
 
         for (int i = 0; i < allStepperFlows.getNumberOfFlows(); i++) {
-            TreeItem<String> branchItem = new TreeItem<>( allStepperFlows.getFlow(i).getName());
-            TreeItem<String> leafItem1 = new TreeItem<>("Description: " +allStepperFlows.getFlow(i).getDescription());
-            TreeItem<String> leafItem2 = new TreeItem<>("Number of steps: " + Integer.toString(allStepperFlows.getFlow(i).getNumberOfSteps()));
-            TreeItem<String> leafItem3 = new TreeItem<>("Number of free inputs: "+ Integer.toString(allStepperFlows.getFlow(i).getNumberOfFreeInputs()));
-            //TreeItem<String> leafItem4 = new TreeItem<>("video2");
-            branchItem.getChildren().addAll(leafItem1, leafItem2, leafItem3);
+            DTOFlowDefinition flowDefinition = allStepperFlows.getFlow(i);
+            TreeItem<String> branchItem = createBranchItem(flowDefinition);
             rootItem.getChildren().add(branchItem);
-            flowsTree.setRoot(rootItem);
-
-            showChosenFlow(allStepperFlows);
         }
 
-        //treeView.setShowRoot(false);
+        flowsTree.setRoot(rootItem);
     }
-    public void showChosenFlow(DTOAllStepperFlows allStepperFlows){
-     flowsTree.setOnMouseClicked(event -> {
-         TreeItem<String> selectedItem = flowsTree.getSelectionModel().getSelectedItem();
+    public TreeItem<String> createBranchItem(DTOFlowDefinition flowDefinition) {
+        TreeItem<String> branchItem = new TreeItem<>(flowDefinition.getName());
+        TreeItem<String> leafItem1 = new TreeItem<>("Description: " + flowDefinition.getDescription());
+        TreeItem<String> leafItem2 = new TreeItem<>("Number of steps: " + Integer.toString(flowDefinition.getNumberOfSteps()));
+        TreeItem<String> leafItem3 = new TreeItem<>("Number of free inputs: " + Integer.toString(flowDefinition.getNumberOfFreeInputs()));
 
-         if (selectedItem != null && selectedItem.getParent() != null) {
-             if (event.getClickCount() == 2 && !selectedItem.isLeaf() ) {
-                 int index = IntStream.range(0, allStepperFlows.getAllFlows().size())
-                         .filter(ind -> allStepperFlows.getAllFlows().get(ind).getName().equals(selectedItem.getValue()))
-                         .findFirst()
-                         .orElse(-1);
-                 //String flowName =   selectedItem.getValue();
-                 DTOFlowDefinition currFlowDefinition= systemEngineInterface.IntroduceTheChosenFlow(index+1);
-                 StringBuilder flowData = new StringBuilder();
-                 flowData.append("Flow Name: " + currFlowDefinition.getName() + "\n");
-                 flowData.append("Flow Description: " + currFlowDefinition.getDescription() + '\n');
-                 flowData.append("Flow Formal Outputs: " + String.join(", ", currFlowDefinition.getFlowFormalOutputs()) + '\n');
-                 flowData.append("Is The Flow Read Only? " + currFlowDefinition.getFlowReadOnly() + "\n\n");
-                 flowData.append(printStepsInfo(currFlowDefinition));
-                 flowData.append(printFreeInputsInfo(currFlowDefinition));
-                 flowData.append(printFlowOutputs(currFlowDefinition));
-                 flowDetails.setText(flowData.toString());
-             }
-         }
-     });
+        Button pressToSeeFullDetailsButton = new Button("Press to see full details");
+        pressToSeeFullDetailsButton.setId("pressToSeeFullDetailsButton");
+
+        pressToSeeFullDetailsButton.setOnAction(event -> {
+            showChosenFlow(flowDefinition);
+        });
+        TreeItem<String> buttonItem = new TreeItem<>(" ");
+        buttonItem.setGraphic(pressToSeeFullDetailsButton);
+
+        branchItem.getChildren().addAll(leafItem1, leafItem2, leafItem3, buttonItem);
+
+        return branchItem;
     }
-    public StringBuilder printStepsInfo(DTOFlowDefinition flow) {
+    public void showChosenFlow(DTOFlowDefinition flowDefinition) {
+        TreeItem<String> rootItem = new TreeItem<>("Chosen Flow Details - " + flowDefinition.getName());
+        rootItem.setExpanded(true); // Set the root item to be initially expanded
+        DTOAllStepperFlows allStepperFlows = systemEngineInterface.getAllFlows();
+
+        TreeItem<String> branchName = new TreeItem<>("Flow Name");
+        TreeItem<String> nameItem = new TreeItem<>(flowDefinition.getName());
+        branchName.getChildren().addAll(nameItem);
+
+        TreeItem<String> branchDescription = new TreeItem<>("Flow Description");
+        TreeItem<String> descriptionItem = new TreeItem<>(flowDefinition.getDescription());
+        branchDescription.getChildren().addAll(descriptionItem);
+
+        TreeItem<String> branchFormalOutputs = new TreeItem<>("Flow Formal Outputs");
+        for (int i = 0; i < flowDefinition.getFlowFormalOutputs().size(); i++) {
+            TreeItem<String> formalOutputItem = new TreeItem<>(flowDefinition.getFlowFormalOutputs().get(i));
+            branchFormalOutputs.getChildren().add(formalOutputItem);
+        }
+/*
+        TreeItem<String> branchReadOnly = new TreeItem<>("Is The Flow Read Only?");
+        TreeItem<String> readOnlyItem = new TreeItem<>(Boolean.toString(flowDefinition.getFlowReadOnly()));
+        branchReadOnly.getChildren().addAll(readOnlyItem);*/
+
+        TreeItem<String> branchReadOnly = new TreeItem<>("Is The Flow Read Only?");
+        TreeItem<String> readOnlyItem = new TreeItem<>(Boolean.toString(flowDefinition.getFlowReadOnly()));
+        branchReadOnly.getChildren().addAll(readOnlyItem);
+
+        // Add the green "V" or red "X" graphic
+        Label statusLabel = new Label(flowDefinition.getFlowReadOnly() ? "V" : "X");
+        statusLabel.setTextFill(flowDefinition.getFlowReadOnly() ? javafx.scene.paint.Color.GREEN : Color.RED);
+        readOnlyItem.setGraphic(statusLabel);
+
+
         AtomicInteger stepIndex = new AtomicInteger(1);
-        StringBuilder stepData = new StringBuilder();
-        stepData.append("*The information about the steps in the current flow: *\n");
-        flow
+        TreeItem<String> branchSteps = new TreeItem<>("Steps in the current flow");
+        flowDefinition
                 .getFlowStepsData()
                 .stream()
                 .forEach(node -> {
-                    stepData.append("Step " + stepIndex.getAndIncrement() + ": \n");
-                    stepData.append("\tOriginal Name: " + node.getOriginalStepName() + '\n');
+                    TreeItem<String> branchStep = new TreeItem<>("Step " + stepIndex.getAndIncrement());
+                    TreeItem<String> OriginalName = new TreeItem<>("Original Name");
+                    TreeItem<String> OriginalNameItem = new TreeItem<>(node.getOriginalStepName());
+                    OriginalName.getChildren().addAll(OriginalNameItem);
+
+                    TreeItem<String> FinalName = null;
                     if (!(node.getFinalStepName().equals(node.getOriginalStepName()))) {
-                        stepData.append("\tFinal Name: " + Objects.toString(node.getFinalStepName(), "") + "\n");
+                        FinalName = new TreeItem<>("Final Name");
+                        TreeItem<String> FinalNameItem = new TreeItem<>(Objects.toString(node.getFinalStepName()));
+                        FinalName.getChildren().addAll(FinalNameItem);
                     }
-                    stepData.append("\tIs The Step Read Only? " + node.getIsReadOnly() + "\n\n");
+                    TreeItem<String> StepReadOnly = new TreeItem<>("Is The Step Read Only?");
+                    TreeItem<String> StepReadOnlyItem = new TreeItem<>(Boolean.toString(node.getIsReadOnly()));
+                    StepReadOnly.getChildren().addAll(StepReadOnlyItem);
+
+                    // Add the green "V" or red "X" graphic
+                    Label status = new Label(node.getIsReadOnly() ? "V" : "X");
+                    status.setTextFill(node.getIsReadOnly() ? javafx.scene.paint.Color.GREEN : Color.RED);
+                    StepReadOnlyItem.setGraphic(status);
+
+
+                    branchStep.getChildren().addAll(OriginalName);
+                    if (!(node.getFinalStepName().equals(node.getOriginalStepName()))) {
+                        branchStep.getChildren().addAll(FinalName);
+                    }
+                    branchStep.getChildren().addAll(StepReadOnly);
+                    branchSteps.getChildren().addAll(branchStep);
+
+
                 });
-        return stepData;
-    }
-    public StringBuilder printFreeInputsInfo(DTOFlowDefinition flow) {
+
         AtomicInteger freeInputIndex = new AtomicInteger(1);
-        StringBuilder inputData = new StringBuilder();
-        inputData.append("*The information about free inputs in the current flow: *\n");
-        flow
+        TreeItem<String> branchFreeInputs = new TreeItem<>("Free inputs in the current flow");
+
+        flowDefinition
                 .getFlowFreeInputs()
                 .stream()
                 .forEach(node -> {
-                    inputData.append("Free Input " + freeInputIndex.getAndIncrement() + ": \n");
-                    inputData.append("\tFinal Name: " + node.getFinalName() + '\n');
-                    inputData.append("\tType: " + node.getType().getName() + '\n');
-                    inputData.append("\tConnected Steps: " + String.join(", ", flow.getListOfStepsWithCurrInput(node.getFinalName())) + '\n');
-                    inputData.append("\tMandatory / Optional: " + node.getNecessity() + "\n\n");
+                    TreeItem<String> branchFreeInput = new TreeItem<>("Free Input " + freeInputIndex.getAndIncrement());
+
+                    TreeItem<String> FinalName = new TreeItem<>("Final Name");
+                    TreeItem<String> FinalNameItem = new TreeItem<>(node.getFinalName());
+                    FinalName.getChildren().addAll(FinalNameItem);
+
+                    TreeItem<String> Type = new TreeItem<>("Type");
+                    TreeItem<String> TypeItem = new TreeItem<>(node.getType().getName());
+                    Type.getChildren().addAll(TypeItem);
+
+                    TreeItem<String> ConnectedSteps = new TreeItem<>("Connected Steps");
+                    flowDefinition.getListOfStepsWithCurrInput(node.getFinalName()).stream().forEach(step -> {
+                        TreeItem<String> ConnectedStepsItem = new TreeItem<>(step);
+                        ConnectedSteps.getChildren().addAll(ConnectedStepsItem);
+                    });
+
+                    TreeItem<String> Necessity = new TreeItem<>("Necessity");
+                    TreeItem<String> NecessityItem = new TreeItem<>(node.getNecessity().toString());
+                    Necessity.getChildren().addAll(NecessityItem);
+
+                    branchFreeInput.getChildren().addAll(FinalName, Type, ConnectedSteps, Necessity);
+                    branchFreeInputs.getChildren().addAll(branchFreeInput);
                 });
-        return inputData;
-    }
-    public StringBuilder printFlowOutputs(DTOFlowDefinition flow) {
+
         AtomicInteger flowOutputIndex = new AtomicInteger(1);
-        StringBuilder outputData = new StringBuilder();
-        outputData.append("*The information about the flow outputs: *\n");
-        List<DTOSingleFlowIOData> outputs = flow.getIOlist().stream().filter(io -> io.getIOType().equals(IO.OUTPUT)).collect(Collectors.toList());
+        TreeItem<String> branchFlowOutputs = new TreeItem<>("Flow Outputs");
+        List<DTOSingleFlowIOData> outputs = flowDefinition.getIOlist().stream().filter(io -> io.getIOType().equals(IO.OUTPUT)).collect(Collectors.toList());
         for(DTOSingleFlowIOData output: outputs) {
-            outputData.append("Flow Outputs " + flowOutputIndex.getAndIncrement() + ": \n");
-            outputData.append("\tFinal Name: " + output.getFinalName() + '\n');
-            outputData.append("\tType: " + output.getType().getName() + '\n');
-            outputData.append("\tCreating Step: " + output.getStepName() + "\n");
+            TreeItem<String> branchFlowOutput = new TreeItem<>("Flow Output " + flowOutputIndex.getAndIncrement());
 
+            TreeItem<String> FinalName = new TreeItem<>("Final Name");
+            TreeItem<String> FinalNameItem = new TreeItem<>(output.getFinalName());
+            FinalName.getChildren().addAll(FinalNameItem);
+
+            TreeItem<String> Type = new TreeItem<>("Type");
+            TreeItem<String> TypeItem = new TreeItem<>(output.getType().getName());
+            Type.getChildren().addAll(TypeItem);
+
+            TreeItem<String> CreatedStep = new TreeItem<>("Creating Step");
+            TreeItem<String> CreatedStepItem = new TreeItem<>(output.getStepName());
+            CreatedStep.getChildren().addAll(CreatedStepItem);
+
+            branchFlowOutput.getChildren().addAll(FinalName, Type, CreatedStep);
+            branchFlowOutputs.getChildren().addAll(branchFlowOutput);
         }
-        return outputData;
+
+        rootItem.getChildren().addAll(branchName, branchDescription, branchFormalOutputs, branchReadOnly, branchSteps, branchFreeInputs, branchFlowOutputs);
+
+
+
+        flowDetailsTree.setRoot(rootItem);
     }
-
-
-/*
-    @Override
-    public TreeCell<TreeData> call(TreeView<TreeData> param) {
-        // Handle click events on the cell
-        cell.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 1) {
-                TreeData selectedData = cell.getItem();
-                System.out.println("Arrow Info: " + selectedData.getArrowInfo());
-            } else if (event.getClickCount() == 2) {
-                TreeData selectedData = cell.getItem();
-                System.out.println("Text Info: " + selectedData.getTextInfo());
-            }
-        });
-    }
-
- */
-
-/*
-    public void selectItem() {
-
-        TreeItem<String> item = flowsTree.getSelectionModel().getSelectedItem();
-
-        if(item != null) {
-  //          System.out.println(item.getValue());
-        }
-    }
-*/
-
 
 }

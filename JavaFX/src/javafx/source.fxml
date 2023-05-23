@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -17,15 +14,15 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javafx.Controller">
+<ScrollPane id="main-scroll-pane" fx:id="scrollPane" fitToHeight="true" fitToWidth="true" prefHeight="374.0" prefWidth="593.0" style="-fx-background-color: BLACK;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javafx.Controller">
    <content>
-      <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="600.0" stylesheets="@source.css">
+      <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="372.0" prefWidth="607.0" stylesheets="@source.css">
          <center>
             <TabPane id="tabs-pane" prefHeight="287.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
               <tabs>
                 <Tab styleClass="tabs" text="Flow Definition">
                   <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="296.0" prefWidth="582.0">
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="249.0" prefWidth="571.0">
                            <children>
                               <GridPane alignment="CENTER" layoutX="-3.0" layoutY="23.0" prefHeight="267.0" prefWidth="594.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="10.0">
                                 <columnConstraints>
@@ -41,21 +38,24 @@
                                           <TreeView fx:id="flowsTree" prefHeight="386.0" prefWidth="162.0" VBox.vgrow="SOMETIMES" />
                                        </children>
                                     </VBox>
-                                    <GridPane prefHeight="314.0" prefWidth="312.0" GridPane.columnIndex="1">
+                                    <GridPane prefHeight="233.0" prefWidth="282.0" GridPane.columnIndex="1">
                                       <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
                                       </columnConstraints>
                                       <rowConstraints>
-                                        <RowConstraints maxHeight="269.0" minHeight="10.0" prefHeight="211.00003051757812" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="128.0" minHeight="0.0" prefHeight="55.999969482421875" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="269.0" minHeight="10.0" percentHeight="90.0" prefHeight="211.00003051757812" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="128.0" minHeight="0.0" percentHeight="10.0" prefHeight="55.999969482421875" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Button id="execute-button" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" text="Execute Flow!" GridPane.rowIndex="1">
+                                          <HBox alignment="CENTER_RIGHT" GridPane.rowIndex="1">
                                              <GridPane.margin>
-                                                <Insets left="200.0" />
+                                                <Insets left="160.0" top="25.0" />
                                              </GridPane.margin>
-                                          </Button>
-                                          <TextArea fx:id="flowDetails" prefHeight="200.0" prefWidth="200.0" />
+                                             <children>
+                                                <Button id="execute-button" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="133.0" text="Execute Flow!" />
+                                             </children>
+                                          </HBox>
+                                          <TreeView fx:id="flowDetailsTree" prefHeight="197.0" prefWidth="282.0" />
                                        </children>
                                     </GridPane>
                                  </children>
@@ -85,48 +85,6 @@
                </BorderPane.margin>
             </TabPane>
          </center>
-         <top>
-            <GridPane id="header-grid" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="91.0" prefWidth="600.0" stylesheets="@source.css">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints maxHeight="26.666656494140625" minHeight="10.0" prefHeight="26.666656494140625" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="38.333343505859375" minHeight="10.0" prefHeight="25.333343505859375" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="22.333328247070312" minHeight="6.666656494140625" prefHeight="14.666656494140625" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <HBox fx:id="hbox" alignment="CENTER" fillHeight="false" minWidth="-Infinity" prefHeight="0.0" prefWidth="420.0" spacing="10.0">
-                     <children>
-                        <Button fx:id="chooseXMLFileButton" mnemonicParsing="false" onAction="#clickToChooseXMLFileButton" prefHeight="35.0" prefWidth="108.0" stylesheets="@source.css" text="Load File Button" HBox.hgrow="NEVER">
-                           <HBox.margin>
-                              <Insets left="25.0" top="75.0" />
-                           </HBox.margin>
-                        </Button>
-                        <TextArea fx:id="chosenXmlFilePath" maxWidth="400.0" minHeight="-Infinity" minWidth="100.0" prefColumnCount="20" prefHeight="37.0" prefWidth="400.0">
-                           <HBox.margin>
-                              <Insets left="20.0" top="75.0" />
-                           </HBox.margin>
-                        </TextArea>
-                     </children>
-                  </HBox>
-                  <VBox alignment="CENTER" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0">
-                     <children>
-                        <Label fx:id="stepperTitle" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="600.0" stylesheets="@source.css" text="Stepper" textOverrun="CENTER_WORD_ELLIPSIS" wrapText="true">
-                           <cursor>
-                              <Cursor fx:constant="NONE" />
-                           </cursor>
-                        </Label>
-                     </children>
-                  </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
-                     <children>
-                        <Label fx:id="errorMessageLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="12.0" prefWidth="667.0" styleClass="errors" stylesheets="@source.css" textOverrun="CENTER_WORD_ELLIPSIS" />
-                     </children>
-                  </VBox>
-               </children>
-            </GridPane>
-         </top>
       </BorderPane>
    </content>
 </ScrollPane>
