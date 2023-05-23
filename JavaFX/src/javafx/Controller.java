@@ -36,6 +36,9 @@ public class Controller {
         this.systemEngineInterface = new systemengineImpl();
     }
 
+    public systemengine getSystemEngineInterface(){
+        return systemEngineInterface;
+    }
     public TreeView<String> getFlowsTree(){
         return flowsTree;
     }
@@ -142,7 +145,7 @@ public class Controller {
                 .getFlowStepsData()
                 .stream()
                 .forEach(node -> {
-                    TreeItem<String> branchStep = new TreeItem<>("Step " + stepIndex.getAndIncrement());
+                    TreeItem<String> branchStep = new TreeItem<>("Step " + stepIndex.getAndIncrement() + " - " + node.getFinalStepName());
                     TreeItem<String> OriginalName = new TreeItem<>("Original Name");
                     TreeItem<String> OriginalNameItem = new TreeItem<>(node.getOriginalStepName());
                     OriginalName.getChildren().addAll(OriginalNameItem);
