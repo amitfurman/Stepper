@@ -23,8 +23,9 @@ public class HeaderController {
 
     private Controller mainController;
     private final systemengine systemEngineInterface ;
-
     private String filePath;
+    private boolean isErrorMessageShown = false;
+
     @FXML
     private Button chooseXMLFileButton;
     @FXML
@@ -32,7 +33,6 @@ public class HeaderController {
     @FXML
     private Label errorMessageLabel;
 
-    private boolean isErrorMessageShown = false;
 
     public HeaderController() {
         this.systemEngineInterface = new systemengineImpl();

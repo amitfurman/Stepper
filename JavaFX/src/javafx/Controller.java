@@ -29,6 +29,7 @@ public class Controller {
     private TreeView<String> flowDetailsTree;
 
     @FXML private HeaderController headerComponentController;
+
     @FXML private GridPane headerComponent;
 
     public Controller() {
@@ -93,6 +94,7 @@ public class Controller {
 
         return branchItem;
     }
+
     public void showChosenFlow(DTOFlowDefinition flowDefinition) {
         TreeItem<String> rootItem = new TreeItem<>("Chosen Flow Details - " + flowDefinition.getName());
         rootItem.setExpanded(true); // Set the root item to be initially expanded
@@ -111,10 +113,6 @@ public class Controller {
             TreeItem<String> formalOutputItem = new TreeItem<>(flowDefinition.getFlowFormalOutputs().get(i));
             branchFormalOutputs.getChildren().add(formalOutputItem);
         }
-/*
-        TreeItem<String> branchReadOnly = new TreeItem<>("Is The Flow Read Only?");
-        TreeItem<String> readOnlyItem = new TreeItem<>(Boolean.toString(flowDefinition.getFlowReadOnly()));
-        branchReadOnly.getChildren().addAll(readOnlyItem);*/
 
         TreeItem<String> branchReadOnly = new TreeItem<>("Is The Flow Read Only?");
         TreeItem<String> readOnlyItem = new TreeItem<>(Boolean.toString(flowDefinition.getFlowReadOnly()));
@@ -125,7 +123,15 @@ public class Controller {
         statusLabel.setTextFill(flowDefinition.getFlowReadOnly() ? javafx.scene.paint.Color.GREEN : Color.RED);
         readOnlyItem.setGraphic(statusLabel);
 
+        TreeItem<String> branchSteps = showStepsOfChosenFlow(flowDefinition);
+        TreeItem<String> branchFreeInputs = showFreeInputsOfChosenFlow(flowDefinition);
+        TreeItem<String> branchFlowOutputs = showFlowOutputsOfChosenFlow(flowDefinition);
 
+        rootItem.getChildren().addAll(branchName, branchDescription, branchFormalOutputs, branchReadOnly, branchSteps, branchFreeInputs, branchFlowOutputs);
+        flowDetailsTree.setRoot(rootItem);
+    }
+
+    public TreeItem<String> showStepsOfChosenFlow(DTOFlowDefinition flowDefinition){
         AtomicInteger stepIndex = new AtomicInteger(1);
         TreeItem<String> branchSteps = new TreeItem<>("Steps in the current flow");
         flowDefinition
@@ -136,7 +142,6 @@ public class Controller {
                     TreeItem<String> OriginalName = new TreeItem<>("Original Name");
                     TreeItem<String> OriginalNameItem = new TreeItem<>(node.getOriginalStepName());
                     OriginalName.getChildren().addAll(OriginalNameItem);
-
                     TreeItem<String> FinalName = null;
                     if (!(node.getFinalStepName().equals(node.getOriginalStepName()))) {
                         FinalName = new TreeItem<>("Final Name");
@@ -152,20 +157,19 @@ public class Controller {
                     status.setTextFill(node.getIsReadOnly() ? javafx.scene.paint.Color.GREEN : Color.RED);
                     StepReadOnlyItem.setGraphic(status);
 
-
                     branchStep.getChildren().addAll(OriginalName);
                     if (!(node.getFinalStepName().equals(node.getOriginalStepName()))) {
                         branchStep.getChildren().addAll(FinalName);
                     }
                     branchStep.getChildren().addAll(StepReadOnly);
                     branchSteps.getChildren().addAll(branchStep);
-
-
                 });
+        return branchSteps;
+    }
 
+    public TreeItem<String> showFreeInputsOfChosenFlow(DTOFlowDefinition flowDefinition){
         AtomicInteger freeInputIndex = new AtomicInteger(1);
         TreeItem<String> branchFreeInputs = new TreeItem<>("Free inputs in the current flow");
-
         flowDefinition
                 .getFlowFreeInputs()
                 .stream()
@@ -193,7 +197,10 @@ public class Controller {
                     branchFreeInput.getChildren().addAll(FinalName, Type, ConnectedSteps, Necessity);
                     branchFreeInputs.getChildren().addAll(branchFreeInput);
                 });
+        return branchFreeInputs;
+    }
 
+    public TreeItem<String> showFlowOutputsOfChosenFlow(DTOFlowDefinition flowDefinition){
         AtomicInteger flowOutputIndex = new AtomicInteger(1);
         TreeItem<String> branchFlowOutputs = new TreeItem<>("Flow Outputs");
         List<DTOSingleFlowIOData> outputs = flowDefinition.getIOlist().stream().filter(io -> io.getIOType().equals(IO.OUTPUT)).collect(Collectors.toList());
@@ -215,12 +222,8 @@ public class Controller {
             branchFlowOutput.getChildren().addAll(FinalName, Type, CreatedStep);
             branchFlowOutputs.getChildren().addAll(branchFlowOutput);
         }
-
-        rootItem.getChildren().addAll(branchName, branchDescription, branchFormalOutputs, branchReadOnly, branchSteps, branchFreeInputs, branchFlowOutputs);
-
-
-
-        flowDetailsTree.setRoot(rootItem);
+        return branchFlowOutputs;
     }
+
 
 }
