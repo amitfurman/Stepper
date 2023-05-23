@@ -22,7 +22,7 @@ import java.io.FileNotFoundException;
 public class HeaderController {
 
     private Controller mainController;
-    private final systemengine systemEngineInterface ;
+    // private final systemengine systemEngineInterface ;
     private String filePath;
     private boolean isErrorMessageShown = false;
 
@@ -34,9 +34,11 @@ public class HeaderController {
     private Label errorMessageLabel;
 
 
+/*
     public HeaderController() {
         this.systemEngineInterface = new systemengineImpl();
     }
+*/
 
     @FXML
     private void initialize() {
@@ -63,7 +65,7 @@ public class HeaderController {
         }
         try {
             isErrorMessageShown = false;
-            systemEngineInterface.cratingFlowFromXml(filePath);
+            mainController.getSystemEngineInterface().cratingFlowFromXml(filePath);
             hideError();
             mainController.showFlowsTree();
             mainController.getFlowsTree().setVisible(true);
