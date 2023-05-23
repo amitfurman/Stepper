@@ -42,6 +42,10 @@ public class Controller {
 
     @FXML
     public void initialize() {
+
+        if(headerComponentController!=null){
+            headerComponentController.setMainController(this);
+        }
         double threshold = 500; // Set your threshold value here
 
         scrollPane.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -225,5 +229,9 @@ public class Controller {
         return branchFlowOutputs;
     }
 
+    public void setHeaderComponentController(HeaderController headerComponentController) {
+        this.headerComponentController = headerComponentController;
+        headerComponentController.setMainController(this);
+    }
 
 }
