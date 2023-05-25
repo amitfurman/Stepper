@@ -2,6 +2,7 @@ package steps.impl;
 
 import datadefinition.DataDefinitionRegistry;
 import datadefinition.api.IO_NAMES;
+import datadefinition.impl.enumerator.ZipEnumeratorData;
 import flow.execution.context.StepExecutionContext;
 import steps.api.AbstractStepDefinition;
 import steps.api.DataDefinitionDeclarationImpl;
@@ -34,7 +35,7 @@ public class Zipper extends AbstractStepDefinition {
     public StepResult invoke(StepExecutionContext context) {
         Instant start = Instant.now();
         String source = context.getDataValue(IO_NAMES.SOURCE, String.class);
-        String operation = context.getDataValue(IO_NAMES.OPERATION, String.class);
+        ZipEnumeratorData operation = context.getDataValue(IO_NAMES.OPERATION, ZipEnumeratorData.class);
 
         context.storeLogLine("About to perform operation " + operation + " on source " + source);
 
@@ -45,9 +46,9 @@ public class Zipper extends AbstractStepDefinition {
             return StepResult.FAILURE;
         }
 
-        if (operation.equalsIgnoreCase("ZIP")) {
+        if (operation.getValue().equalsIgnoreCase("ZIP")) {
             return zip(source, context, start);
-        } else if (operation.equalsIgnoreCase("UNZIP")) {
+        } else if (operation.getValue().equalsIgnoreCase("UNZIP")) {
             return unzip(source, context, start);
         } else {
             context.storeLogLineAndSummaryLine("Invalid operation type.");

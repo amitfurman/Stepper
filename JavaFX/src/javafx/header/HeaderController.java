@@ -25,7 +25,6 @@ public class HeaderController {
     // private final systemengine systemEngineInterface ;
     private String filePath;
     private boolean isErrorMessageShown = false;
-
     @FXML
     private Button chooseXMLFileButton;
     @FXML

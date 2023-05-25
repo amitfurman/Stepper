@@ -1,79 +1,42 @@
-package javafx;
+package javafx.flowDefinitionTab;
 
-import javafx.flowDefinitionTab.FlowDefinitionTabController;
+import dto.DTOAllStepperFlows;
+import dto.DTOFlowDefinition;
+import dto.DTOSingleFlowIOData;
+import flow.api.FlowIO.IO;
+import javafx.Controller;
 import javafx.fxml.FXML;
-import javafx.header.HeaderController;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TreeView;
-import javafx.scene.layout.GridPane;
-import systemengine.systemengine;
-import systemengine.systemengineImpl;
+import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 
-public class Controller {
-    private final systemengine systemEngineInterface ;
-    @FXML
-    private ScrollPane scrollPane;
-    @FXML private HeaderController headerComponentController;
-    @FXML private FlowDefinitionTabController flowDefinitionTabController;
-    @FXML private GridPane headerComponent;
-/*
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+public class FlowDefinitionTabController {
+
     private Controller mainController;
     @FXML
     private TreeView<String> flowsTree;
     @FXML
     private TreeView<String> flowDetailsTree;
-*/
 
+
+    public TreeView<String> getFlowsTree(){
+        return flowsTree;
+    }
 
     @FXML
     public void initialize() {
 
-        if(headerComponentController!=null){
-            headerComponentController.setMainController(this);
-        }
-       /* if(flowDefinitionTabController!=null){
-            flowDefinitionTabController.setMainController(this);
-        }*/
-        double threshold = 500; // Set your threshold value here
-
-        scrollPane.widthProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.doubleValue() <= threshold) {
-                scrollPane.setFitToWidth(false);
-            } else {
-                scrollPane.setFitToWidth(true);
-            }
-        });
-
-        scrollPane.heightProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.doubleValue() <= threshold) {
-                scrollPane.setFitToHeight(false);
-            } else {
-                scrollPane.setFitToHeight(true);
-            }
-        });
-
     }
 
-    public Controller() {
-        this.systemEngineInterface = new systemengineImpl();
-    }
-
-    public systemengine getSystemEngineInterface(){
-        return systemEngineInterface;
+    public void setMainController(Controller mainController) {
+        this.mainController = mainController;
     }
 
     public void showFlowsTree() {
-        flowDefinitionTabController.showFlowsTree();
-    }
-
-    public TreeView<String> getFlowsTree(){
-        return flowDefinitionTabController.getFlowsTree();
-    }
-/*
- public TreeView<String> getFlowsTree(){
-        return flowDefinitionTabController.getFlowsTree();
-    }
-   public void showFlowsTree() {
         TreeItem<String> rootItem = new TreeItem<>("Flows");
         rootItem.setExpanded(true); // Set the root item to be initially expanded
         DTOAllStepperFlows allStepperFlows =  mainController.getSystemEngineInterface().getAllFlows();
@@ -110,7 +73,7 @@ public class Controller {
     public void showChosenFlow(DTOFlowDefinition flowDefinition) {
         TreeItem<String> rootItem = new TreeItem<>("Chosen Flow Details - " + flowDefinition.getName());
         rootItem.setExpanded(true); // Set the root item to be initially expanded
-        DTOAllStepperFlows allStepperFlows = systemEngineInterface.getAllFlows();
+        DTOAllStepperFlows allStepperFlows =  mainController.getSystemEngineInterface().getAllFlows();
 
         TreeItem<String> branchName = new TreeItem<>("Flow Name");
         TreeItem<String> nameItem = new TreeItem<>(flowDefinition.getName());
@@ -235,16 +198,6 @@ public class Controller {
             branchFlowOutputs.getChildren().addAll(branchFlowOutput);
         }
         return branchFlowOutputs;
-    }
-*/
-    public void setHeaderComponentController(HeaderController headerComponentController) {
-        this.headerComponentController = headerComponentController;
-        headerComponentController.setMainController(this);
-    }
-
-    public void setFlowDefinitionTabController(FlowDefinitionTabController flowDefinitionTabComponentController) {
-        this.flowDefinitionTabController = flowDefinitionTabComponentController;
-        flowDefinitionTabController.setMainController(this);
     }
 
 
