@@ -27,4 +27,13 @@ public class DTOAllStepperFlows {
         return allFlowsList.get(index);
     }
 
+    public DTOFlowDefinition getFlowByName(String name){
+        for (DTOFlowDefinition flow: allFlowsList) {
+            if(flow.getName().equals(name)){
+                return flow;
+            }
+        }
+        return null;
+    }
+
 }

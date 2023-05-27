@@ -22,7 +22,7 @@ import java.io.FileNotFoundException;
 public class HeaderController {
 
     private Controller mainController;
-    // private final systemengine systemEngineInterface ;
+    // private final systemengine systemEngineInterface;
     private String filePath;
     private boolean isErrorMessageShown = false;
     @FXML
@@ -52,6 +52,7 @@ public class HeaderController {
 
     @FXML
     void clickToChooseXMLFileButton(ActionEvent event) {
+        mainController.setFlowDetailsTree();
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose XML File");
 

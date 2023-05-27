@@ -21,19 +21,26 @@ public class FlowDefinitionTabController {
     private TreeView<String> flowsTree;
     @FXML
     private TreeView<String> flowDetailsTree;
-
-
-    public TreeView<String> getFlowsTree(){
-        return flowsTree;
-    }
+    @FXML
+    private Button ExecuteFlowButton;
+    private String ChosenFlowName;
 
     @FXML
     public void initialize() {
 
     }
 
+    @FXML
+    public void setPressOnExecuteFlowButton() {
+        mainController.goToFlowExecutionTab(ChosenFlowName);
+    }
+
     public void setMainController(Controller mainController) {
         this.mainController = mainController;
+    }
+
+    public TreeView<String> getFlowsTree(){
+        return flowsTree;
     }
 
     public void showFlowsTree() {
@@ -76,7 +83,8 @@ public class FlowDefinitionTabController {
         DTOAllStepperFlows allStepperFlows =  mainController.getSystemEngineInterface().getAllFlows();
 
         TreeItem<String> branchName = new TreeItem<>("Flow Name");
-        TreeItem<String> nameItem = new TreeItem<>(flowDefinition.getName());
+        ChosenFlowName = flowDefinition.getName();
+        TreeItem<String> nameItem = new TreeItem<>(ChosenFlowName);
         branchName.getChildren().addAll(nameItem);
 
         TreeItem<String> branchDescription = new TreeItem<>("Flow Description");
@@ -200,5 +208,9 @@ public class FlowDefinitionTabController {
         return branchFlowOutputs;
     }
 
+    public void setFlowDetailsTree(){
+        TreeItem<String> rootItem = new TreeItem<>();
+        flowDetailsTree.setRoot(rootItem);
+    }
 
 }

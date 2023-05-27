@@ -43,7 +43,7 @@
                               <Insets left="160.0" top="25.0" />
                            </GridPane.margin>
                            <children>
-                              <Button id="execute-button" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="133.0" text="Execute Flow!" />
+                              <Button id="execute-button" fx:id="ExecuteFlowButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#setPressOnExecuteFlowButton" prefHeight="26.0" prefWidth="133.0" text="Execute Flow!" />
                            </children>
                         </HBox>
                         <TreeView fx:id="flowDetailsTree" prefHeight="197.0" prefWidth="282.0" />

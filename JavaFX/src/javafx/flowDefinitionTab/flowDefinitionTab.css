@@ -5,32 +5,6 @@
 
 }
 
-.tabs:selected {
-    -fx-background-color: #fcd9dc;
-    -fx-text-fill: #36454f;
-    -fx-opacity: 0.8;
-}
-
-.tab-pane .tab:selected .focus-indicator {
-    -fx-border-color: transparent; /* Replace with your desired color */
-    -fx-border-width: 1px;
-    -fx-padding: 0;
-}
-
-.tabs {
-    -fx-font-size: 14px;
-    -fx-background-color: #fdfff7;
-    -fx-text-fill: #36454f;
-    -fx-background-radius: 5px; /* Set the border radius of the tab header */
-}
-
-.tab-content-area {
-    -fx-background-color: #f6f6f6; /* Set the background color of the tab content area */
-    -fx-background-radius: 5px; /* Set the border radius of the tab content area */
-    -fx-padding: 10px; /* Set the padding of the tab content area */
-}
-
-
 #execute-button {
     -fx-font-size: 13px;
     -fx-font-weight: bold;
