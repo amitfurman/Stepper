@@ -1,11 +1,12 @@
-/*.table-view {
+.table-view {
     -fx-background-color: #f0f0f0;
-}*/
+    -fx-table-cell-border-color: transparent;
+    -fx-padding: 0; /* Added */
+    -fx-pref-width: 100%; /* Added */
+}
 
 .table-view .column-header-background {
     -fx-background-color: #fcd9dc;
-
-
 }
 
 .table-view {
@@ -22,13 +23,11 @@
     -fx-alignment: CENTER;
 }
 
-
 .table-view .table-cell {
     -fx-alignment: CENTER;
     -fx-border-color: #fdfff7;
     -fx-text-fill: #36454f;
     -fx-alignment: CENTER;
-
 }
 
 .text-field {

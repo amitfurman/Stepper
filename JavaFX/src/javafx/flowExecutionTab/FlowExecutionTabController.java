@@ -44,7 +44,7 @@ public class FlowExecutionTabController {
 
         nameColumn.prefWidthProperty().bind(hbox.widthProperty().multiply(0.3));
         necessityColumn.prefWidthProperty().bind(hbox.widthProperty().multiply(0.2));
-        valueColumn.prefWidthProperty().bind(hbox.widthProperty().multiply(0.5));
+        valueColumn.prefWidthProperty().bind(hbox.widthProperty().multiply(0.49));
 
         // Resize TextField with column width
         valueColumn.setCellFactory(column -> {
