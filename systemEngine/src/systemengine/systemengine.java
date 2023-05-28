@@ -22,8 +22,11 @@ public interface systemengine {
     DTOFlowDefinition IntroduceTheChosenFlow(int flowNumber);
 
     boolean hasAllMandatoryInputs(int flowChoice, Map<String, Object> freeInputMap);
+    //boolean hasAllMandatoryInputsByFlowName(int flowChoice, Map<String, Object> freeInputMap);
 
     DTOFlowExecution activateFlow(int flowChoice, DTOFreeInputsFromUser freeInputs);
+
+    DTOFlowExecution activateFlowByName(String flowName, DTOFreeInputsFromUser freeInputs);
 
     DTOFreeInputsByUserString printFreeInputsByUserString(int choice);
 

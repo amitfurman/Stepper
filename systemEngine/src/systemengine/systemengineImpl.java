@@ -3,6 +3,7 @@ package systemengine;
 import dto.*;
 import exceptions.*;
 import flow.api.FlowDefinition;
+import flow.api.FlowDefinitionImpl;
 import flow.api.FlowIO.SingleFlowIOData;
 import flow.execution.FlowExecution;
 import flow.execution.runner.FlowExecutor;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class systemengineImpl implements systemengine{
+public class systemengineImpl implements systemengine {
     public LinkedList<FlowDefinition> flowDefinitionList;
     public LinkedList<FlowExecution> flowExecutionList;
     public FlowAndStepStatisticData statisticData;
@@ -32,13 +33,13 @@ public class systemengineImpl implements systemengine{
 
 
     @Override
-    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotFreeInput {
+    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType, InitialInputIsNotFreeInput {
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         flowDefinitionList = schema.schemaBasedJAXB(filePath);
     }
 
     @Override
-    public DTOAllStepperFlows getAllFlows(){
+    public DTOAllStepperFlows getAllFlows() {
         return new DTOAllStepperFlows(flowDefinitionList);
     }
 
@@ -53,29 +54,35 @@ public class systemengineImpl implements systemengine{
         }
         return new DTOFlowsNames(flowData);
     }
+
     @Override
     public List<FlowDefinition> getFlowDefinitionList() {
         return flowDefinitionList;
     }
+
     @Override
     public DTOFlowDefinition IntroduceTheChosenFlow(int flowNumber) {
         FlowDefinition flow = flowDefinitionList.get(flowNumber - 1);
         return new DTOFlowDefinition(flow);
     }
+
     @Override
     public boolean hasAllMandatoryInputs(int flowChoice, Map<String, Object> freeInputMap) {
-        for (SingleFlowIOData input : flowDefinitionList.get(flowChoice-1).getFlowFreeInputs()) {
-            boolean found = freeInputMap.keySet().stream().anyMatch(key -> key.equals(input.getStepName() +"." +input.getOriginalName()));
-            if(!found && input.getNecessity().equals(DataNecessity.MANDATORY)){
+        for (SingleFlowIOData input : flowDefinitionList.get(flowChoice - 1).getFlowFreeInputs()) {
+            boolean found = freeInputMap.keySet().stream().anyMatch(key -> key.equals(input.getStepName() + "." + input.getOriginalName()));
+            if (!found && input.getNecessity().equals(DataNecessity.MANDATORY)) {
                 return false;
             }
         }
         return true;
     }
+
+
+
     @Override
     public DTOFlowExecution activateFlow(int flowChoice, DTOFreeInputsFromUser freeInputs) {
         FlowExecutor flowExecutor = new FlowExecutor();
-        FlowDefinition currFlow = flowDefinitionList.get(flowChoice-1);
+        FlowDefinition currFlow = flowDefinitionList.get(flowChoice - 1);
 
         FlowExecution flowExecution = new FlowExecution(currFlow);
         flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
@@ -83,44 +90,64 @@ public class systemengineImpl implements systemengine{
         flowExecutionList.addFirst(flowExecution);
         return new DTOFlowExecution(flowExecution);
     }
+
+    @Override
+    public DTOFlowExecution activateFlowByName(String flowName, DTOFreeInputsFromUser freeInputs) {
+        FlowExecutor flowExecutor = new FlowExecutor();
+        FlowDefinition currFlow = flowDefinitionList.stream().filter(flow -> flow.getName().equals(flowName)).findFirst().get();
+
+        FlowExecution flowExecution = new FlowExecution(currFlow);
+        flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
+        flowExecutor.executeFlow(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData);
+        flowExecutionList.addFirst(flowExecution);
+        return new DTOFlowExecution(flowExecution);
+    }
+
+
     //////check!!!!!!!!!
     @Override
     public DTOFreeInputsByUserString printFreeInputsByUserString(int choice) {
         AtomicInteger freeInputsIndex = new AtomicInteger(1);
         StringBuilder freeInputsData = new StringBuilder();
         freeInputsData.append("*The free inputs in the current flow: *\n");
-        FlowDefinition currFlow = flowDefinitionList.get(choice-1);
+        FlowDefinition currFlow = flowDefinitionList.get(choice - 1);
         currFlow
                 .getFlowFreeInputs()
                 .stream()
                 .filter(node -> currFlow.getInitialInputMap().keySet().stream().noneMatch(name -> (name.equals(node.getFinalName()))))
                 .forEach(node -> {
                     freeInputsData.append("Free Input " + freeInputsIndex.getAndIncrement() + ": ");
-                    freeInputsData.append(String.format("Input Name: %s(%s)" ,node.getUserString(), node.getFinalName()));
+                    freeInputsData.append(String.format("Input Name: %s(%s)", node.getUserString(), node.getFinalName()));
                     freeInputsData.append("\tMandatory/Optional: " + node.getNecessity() + "\n");
                 });
-        return new DTOFreeInputsByUserString(freeInputsData,flowDefinitionList.get(choice-1).getFlowFreeInputs().size());
+        return new DTOFreeInputsByUserString(freeInputsData, flowDefinitionList.get(choice - 1).getFlowFreeInputs().size());
     }
+
     @Override
     public DTOSingleFlowIOData getSpecificFreeInput(int flowChoice, int freeInputChoice) {
-        return new DTOSingleFlowIOData(flowDefinitionList.get(flowChoice-1).getFlowFreeInputs().get(freeInputChoice-1));
+        return new DTOSingleFlowIOData(flowDefinitionList.get(flowChoice - 1).getFlowFreeInputs().get(freeInputChoice - 1));
     }
+
     @Override
     public DTOFlowsExecutionList getFlowsExecutionList() {
         return new DTOFlowsExecutionList(flowExecutionList);
     }
+
     @Override
     public DTOFlowExecution getFlowExecutionDetails(int flowExecutionChoice) {
-        return new DTOFlowExecution(flowExecutionList.get(flowExecutionChoice-1));
+        return new DTOFlowExecution(flowExecutionList.get(flowExecutionChoice - 1));
     }
+
     @Override
-    public DTOFlowAndStepStatisticData getStatisticData(){return new DTOFlowAndStepStatisticData(statisticData);}
+    public DTOFlowAndStepStatisticData getStatisticData() {
+        return new DTOFlowAndStepStatisticData(statisticData);
+    }
 
     @Override
     public void saveToFile(String path) {
         try (ObjectOutputStream out =
-                         new ObjectOutputStream(
-                                 Files.newOutputStream(Paths.get(path)))) {
+                     new ObjectOutputStream(
+                             Files.newOutputStream(Paths.get(path)))) {
             out.writeObject(flowDefinitionList);
             out.writeObject(flowExecutionList);
             out.writeObject(statisticData);
@@ -132,8 +159,8 @@ public class systemengineImpl implements systemengine{
     @Override
     public void loadFromFile(String path) {
         try (ObjectInputStream in =
-                         new ObjectInputStream(
-                                 Files.newInputStream(Paths.get(path)))){
+                     new ObjectInputStream(
+                             Files.newInputStream(Paths.get(path)))) {
             flowDefinitionList = (LinkedList<FlowDefinition>) in.readObject();
             flowExecutionList = (LinkedList<FlowExecution>) in.readObject();
             statisticData = (FlowAndStepStatisticData) in.readObject();
@@ -141,5 +168,6 @@ public class systemengineImpl implements systemengine{
             throw new RuntimeException(e);
         }
     }
+
 }
 

@@ -1,5 +1,6 @@
 package javafx;
 
+import javafx.StatisticsTab.StatisticsTabController;
 import javafx.application.Application;
 import javafx.flowDefinitionTab.FlowDefinitionTabController;
 import javafx.flowExecutionTab.FlowExecutionTabController;
@@ -52,13 +53,19 @@ public class desktopUI extends Application {
         Tab flowExecutionTabComponent = fxmlLoader.load(url.openStream());
         FlowExecutionTabController flowExecutionTabController =  fxmlLoader.getController();
 
-        TabPane tabPane = (TabPane) borderPane.getCenter();
-        tabPane.getTabs().addAll(flowDefinitionTabComponent,flowExecutionTabComponent);
+        fxmlLoader = new FXMLLoader();
+        url = getClass().getResource("StatisticsTab/StatisticsTab.fxml");
+        fxmlLoader.setLocation(url);
+        Tab StatisticsTabComponent = fxmlLoader.load(url.openStream());
+        StatisticsTabController StatisticsTabController =  fxmlLoader.getController();
 
+        TabPane tabPane = (TabPane) borderPane.getCenter();
+        tabPane.getTabs().addAll(flowDefinitionTabComponent,flowExecutionTabComponent, StatisticsTabComponent);
 
         mainController.setHeaderComponentController(headerController);
         mainController.setFlowDefinitionTabController(flowDefinitionTabController);
         mainController.setFlowExecutionTabController(flowExecutionTabController);
+        mainController.setStatisticsTabController(StatisticsTabController);
         Scene scene = new Scene(mainComponent, 600, 400);
         primaryStage.setScene(scene);
         primaryStage.show();

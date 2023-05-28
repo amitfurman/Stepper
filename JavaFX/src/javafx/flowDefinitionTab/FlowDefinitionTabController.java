@@ -23,11 +23,12 @@ public class FlowDefinitionTabController {
     private TreeView<String> flowDetailsTree;
     @FXML
     private Button ExecuteFlowButton;
+
     private String ChosenFlowName;
 
     @FXML
     public void initialize() {
-
+        ExecuteFlowButton.setDisable(true);
     }
 
     @FXML
@@ -112,6 +113,9 @@ public class FlowDefinitionTabController {
 
         rootItem.getChildren().addAll(branchName, branchDescription, branchFormalOutputs, branchReadOnly, branchSteps, branchFreeInputs, branchFlowOutputs);
         flowDetailsTree.setRoot(rootItem);
+
+        boolean isEmptyFlowDetailsTree = (flowDetailsTree.getRoot() == null || flowDetailsTree.getRoot().getChildren().isEmpty());
+        ExecuteFlowButton.setDisable(isEmptyFlowDetailsTree);
     }
 
     public TreeItem<String> showStepsOfChosenFlow(DTOFlowDefinition flowDefinition){
@@ -148,6 +152,7 @@ public class FlowDefinitionTabController {
                     branchSteps.getChildren().addAll(branchStep);
                 });
         return branchSteps;
+
     }
 
     public TreeItem<String> showFreeInputsOfChosenFlow(DTOFlowDefinition flowDefinition){
@@ -211,6 +216,8 @@ public class FlowDefinitionTabController {
     public void setFlowDetailsTree(){
         TreeItem<String> rootItem = new TreeItem<>();
         flowDetailsTree.setRoot(rootItem);
+        ExecuteFlowButton.setDisable(true);
+
     }
 
 }

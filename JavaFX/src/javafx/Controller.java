@@ -1,11 +1,16 @@
 package javafx;
 
+import dto.DTOFlowAndStepStatisticData;
 import dto.DTOSingleFlowIOData;
+import dto.DTOStatisticData;
+import javafx.StatisticsTab.StatisticsTabController;
 import javafx.flowDefinitionTab.FlowDefinitionTabController;
 import javafx.flowExecutionTab.FlowExecutionTabController;
 import javafx.fxml.FXML;
 import javafx.header.HeaderController;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.GridPane;
 import steps.api.DataNecessity;
@@ -17,26 +22,38 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Controller {
-    private final systemengine systemEngineInterface ;
+    private final systemengine systemEngineInterface;
     @FXML
     private ScrollPane scrollPane;
-    @FXML private HeaderController headerComponentController;
-    @FXML private FlowDefinitionTabController flowDefinitionTabController;
-    @FXML private FlowExecutionTabController flowExecutionTabController;
-    @FXML private GridPane headerComponent;
+    @FXML
+    private HeaderController headerComponentController;
+    @FXML
+    private FlowDefinitionTabController flowDefinitionTabController;
+    @FXML
+    private FlowExecutionTabController flowExecutionTabController;
+    @FXML
+    private StatisticsTabController statisticsTabController;
+    @FXML
+    private GridPane headerComponent;
+    @FXML
+    private TabPane tabPane;
+
+    String flowName;
 
 
     @FXML
     public void initialize() {
-        if(headerComponentController!=null){
+        if (headerComponentController != null) {
             headerComponentController.setMainController(this);
         }
-       if(flowDefinitionTabController!=null){
+        if (flowDefinitionTabController != null) {
             flowDefinitionTabController.setMainController(this);
         }
-
-        if(flowExecutionTabController!=null){
+        if (flowExecutionTabController != null) {
             flowExecutionTabController.setMainController(this);
+        }
+        if (statisticsTabController != null) {
+            statisticsTabController.setMainController(this);
         }
         double threshold = 500; // Set your threshold value here
 
@@ -62,7 +79,7 @@ public class Controller {
         this.systemEngineInterface = new systemengineImpl();
     }
 
-    public systemengine getSystemEngineInterface(){
+    public systemengine getSystemEngineInterface() {
         return systemEngineInterface;
     }
 
@@ -70,7 +87,7 @@ public class Controller {
         flowDefinitionTabController.showFlowsTree();
     }
 
-    public TreeView<String> getFlowsTree(){
+    public TreeView<String> getFlowsTree() {
         return flowDefinitionTabController.getFlowsTree();
     }
 
@@ -89,17 +106,42 @@ public class Controller {
         flowExecutionTabController.setMainController(this);
     }
 
-    public void setFlowDetailsTree(){
+    public void setStatisticsTabController(StatisticsTabController statisticsTabComponentController) {
+        this.statisticsTabController = statisticsTabComponentController;
+        statisticsTabController.setMainController(this);
+    }
+
+    public void setFlowDetailsTree() {
         flowDefinitionTabController.setFlowDetailsTree();
     }
 
-    public void goToFlowExecutionTab(String ChosenFlowName){
-        List<DTOSingleFlowIOData> freeInputs =  systemEngineInterface.getAllFlows().getFlowByName(ChosenFlowName).getFlowFreeInputs();
+    public void goToFlowExecutionTab(String chosenFlowName) {
+        flowName = chosenFlowName;
 
+        Tab flowExecutionTab = tabPane.getTabs().stream()
+                .filter(tab -> tab.getId().equals("flowExecutionTab"))
+                .findFirst()
+                .orElse(null);
+
+        if (flowExecutionTab != null) {
+            tabPane.getSelectionModel().select(flowExecutionTab);
+        }
+
+        List<DTOSingleFlowIOData> freeInputs = systemEngineInterface.getAllFlows().getFlowByName(chosenFlowName).getFlowFreeInputs();
         List<DTOSingleFlowIOData> sortedList = freeInputs.stream()
                 .sorted(Comparator.comparing(obj -> obj.getNecessity().equals(DataNecessity.MANDATORY) ? 0 : 1))
                 .collect(Collectors.toList());
         flowExecutionTabController.initInputsTable(sortedList);
     }
 
+    public void goToStatisticsTab() {
+        Tab StatisticsTab = tabPane.getTabs().stream()
+                .filter(tab -> tab.getId().equals("StatisticsTab"))
+                .findFirst()
+                .orElse(null);
+        DTOFlowAndStepStatisticData statisticData = systemEngineInterface.getStatisticData();
+        statisticsTabController.initCharts(statisticData);
+    }
+
+    public String getFlowName() { return flowName; }
 }

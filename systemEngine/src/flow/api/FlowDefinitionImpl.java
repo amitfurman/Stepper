@@ -2,10 +2,7 @@ package flow.api;
 
 import datadefinition.api.DataDefinitions;
 import exceptions.*;
-import flow.mapping.FlowCustomMapping;
 import statistic.StatisticData;
-import steps.api.DataDefinitionDeclaration;
-import flow.mapping.FlowAutomaticMapping;
 import flow.api.FlowIO.IO;
 import flow.api.FlowIO.SingleFlowIOData;
 

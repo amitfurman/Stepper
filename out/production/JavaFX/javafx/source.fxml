@@ -11,16 +11,11 @@
    <content>
       <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="372.0" prefWidth="607.0" stylesheets="@source.css">
          <center>
-            <TabPane id="tabs-pane" prefHeight="287.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+            <TabPane id="tabs-pane" fx:id="tabPane" prefHeight="287.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
               <tabs>
-                  <Tab styleClass="tabs" text="Execution History">
+                  <Tab fx:id="ExecutionHistoryTab" styleClass="tabs" text="Execution History">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" visible="false" />
-                    </content>
-                  </Tab>
-                  <Tab styleClass="tabs" text="Statistics">
-                    <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                     </content>
                   </Tab>
               </tabs>
