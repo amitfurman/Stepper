@@ -47,7 +47,7 @@
                         </HBox>
                         <VBox alignment="BOTTOM_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="28.0" prefWidth="302.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
                            <children>
-                              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Start!">
+                              <Button fx:id="executeButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#StartExecuteFlowButton" text="Start!">
                                  <VBox.margin>
                                     <Insets right="20.0" />
                                  </VBox.margin>
