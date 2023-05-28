@@ -84,13 +84,33 @@ public class FlowExecutionTabController {
                         // Spinner setup
                         spinner.setEditable(true);
                         spinner.getEditor().setAlignment(Pos.CENTER_RIGHT);
-                        spinner.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+/*                        spinner.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
                             if (!newValue.matches("-?\\d*")) {
                                 spinner.getEditor().setText(oldValue);
                             }
-                        });
+                        });*/
 
                         spinner.setOnMouseClicked(event -> {
+                            if (spinner.isEditable()) {
+                                spinner.increment(0); // Increment by 0 to trigger commitEdit
+                            }
+                        });
+
+                        spinner.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                            if (!isNowFocused && spinner.isEditable()) {
+                                spinner.increment(0); // Increment by 0 to trigger commitEdit
+                            }
+                        });
+
+                        spinner.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                            if (!isNowFocused && spinner.isEditable()) {
+                                commitEdit(spinner.getValue());
+                            }
+                        });
+
+
+
+/*                        spinner.setOnMouseClicked(event -> {
                             if (spinner.isEditable()) {
                                 commitEdit(spinner.getValue());
                             }
@@ -100,7 +120,7 @@ public class FlowExecutionTabController {
                             if (!isNowFocused && spinner.isEditable()) {
                                 commitEdit(spinner.getValue());
                             }
-                        });
+                        });*/
                     }
 
                     @Override
