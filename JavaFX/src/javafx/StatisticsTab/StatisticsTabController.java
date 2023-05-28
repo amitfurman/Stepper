@@ -8,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.text.Font;
 
 import java.util.List;
 
@@ -49,18 +51,24 @@ public class StatisticsTabController {
             double barWidth = 0.3; // Set the desired width for a single bar
             for (XYChart.Data<String, Number> data : (ObservableList<XYChart.Data<String, Number>>) series1.getData()) {
                 Node bar = data.getNode();
-                bar.setStyle("-fx-bar-fill: #ffeaec;");
-
+                bar.setStyle("-fx-bar-fill: #ffeaec");
             }
         }
+      /*  // Get the axes from the chart
+        NumberAxis xAxis = (NumberAxis) FlowNumberOfRunsChart.getXAxis();
+        NumberAxis yAxis = (NumberAxis) FlowNumberOfRunsChart.getYAxis();
 
-
+        // Adjust the font size of the axis labels
+        xAxis.setTickLabelFont(Font.font("Arial", 10));
+        yAxis.setTickLabelFont(Font.font("Arial", 10));
+*/
 
         XYChart.Series series2 = new XYChart.Series();
         flowsStatisticData.stream().forEach(flowStatisticData -> {
             series2.getData().add(new XYChart.Data(flowStatisticData.getName(), flowStatisticData.getAverageTime()));
         });
         AverageFlowsRunTimeChart.getData().add(series2);
+
 
     }
 
@@ -80,6 +88,7 @@ public class StatisticsTabController {
                 series2.getData().add(new XYChart.Data(stepStatisticData.getName(), stepStatisticData.getAverageTime()));
             });
             AverageStepsRunTimeChart.getData().add(series2);
+
 
         }
 }
