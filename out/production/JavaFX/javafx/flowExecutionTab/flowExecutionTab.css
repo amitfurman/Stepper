@@ -35,3 +35,20 @@
     -fx-border-color: pink;
     -fx-border-width: 2px;
 }
+
+#executeFlowButton {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+    -fx-background-color: #ffa6c5;
+    -fx-border-color: #000000;
+    -fx-border-width: 1px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+}
+
+#executeFlowButton:hover {
+    -fx-background-color: #ffa6c5;
+    -fx-text-fill: #000000;
+    -fx-opacity: 0.8;
+}
