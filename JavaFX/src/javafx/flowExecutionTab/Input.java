@@ -12,7 +12,7 @@ public class Input {
     private final StringProperty originalName = new SimpleStringProperty();
     private final StringProperty stepName = new SimpleStringProperty();
     private final StringProperty mandatory = new SimpleStringProperty();
-    private final ObjectProperty<Object> value = new SimpleObjectProperty<>();
+    private  Object value ;//= new SimpleObjectProperty<>();
     private DataDefinitions type;
 
     public StringProperty finalNameProperty() {
@@ -60,13 +60,21 @@ public class Input {
     public void setMandatory(String mandatory) {
         this.mandatory.set(mandatory);
     }
-
+/*
     public ObjectProperty<Object> valueProperty() {
         return value;
     }
 
     public Object getValue() {
         return value.get();
+    } */
+
+    public Object getValue() {
+       return this.value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
     }
 
     public DataDefinitions getType() {
