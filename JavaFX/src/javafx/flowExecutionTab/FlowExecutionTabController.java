@@ -5,27 +5,19 @@ import dto.DTOFlowExecution;
 import dto.DTOFreeInputsFromUser;
 import dto.DTOSingleFlowIOData;
 import javafx.Controller;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
+import java.util.Optional;
 
 public class FlowExecutionTabController {
     private Controller mainController;
@@ -41,7 +33,255 @@ public class FlowExecutionTabController {
     @FXML
     private Button executeButton;
 
-    Map<String, Object> freeInputMap = new HashMap<>();
+    private Map<String, Object> freeInputMap;
+
+    private ObservableList<Input> inputList = FXCollections.observableArrayList();
+
+
+    @FXML
+    public void initialize() {
+        freeInputMap = new HashMap<>();
+        executeButton.setDisable(true);
+        AnchorPane.setTopAnchor(borderPane, 0.0);
+        AnchorPane.setBottomAnchor(borderPane, 0.0);
+        AnchorPane.setLeftAnchor(borderPane, 0.0);
+        AnchorPane.setRightAnchor(borderPane, 0.0);
+    }
+
+    public void setMainController(Controller mainController) {
+        this.mainController = mainController;
+    }
+
+
+
+    public void initInputsTable(List<DTOSingleFlowIOData> freeInputs) {
+        inputValuesHBox.getChildren().clear();
+
+/*        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(inputValuesHBox);
+        scrollPane.setFitToWidth(true);*/
+
+        // Populate inputList from freeInputs
+        freeInputs.forEach(freeInput -> {
+            Input input = new Input();
+            input.setFinalName(freeInput.getFinalName());
+            input.setOriginalName(freeInput.getOriginalName());
+            input.setStepName(freeInput.getStepName());
+            input.setMandatory(freeInput.getNecessity().toString());
+            input.setType(freeInput.getType());
+            inputList.add(input);
+
+            // Create label for the node
+            Label label = new Label(input.getFinalName() + " (" + input.getMandatory() + ")");
+            label.setWrapText(true);
+            label.setAlignment(Pos.CENTER_LEFT);
+            label.setTextAlignment(TextAlignment.LEFT);
+            label.setTextOverrun(OverrunStyle.CLIP); // Clip the text if it exceeds the label width
+
+            String simpleName = input.getType().getType().getSimpleName();
+
+            VBox vbox = new VBox();
+            vbox.setAlignment(Pos.CENTER_LEFT);
+            vbox.setSpacing(10);
+
+            vbox.setVgrow(label, Priority.ALWAYS);
+
+            Spinner<Integer> spinner;
+            TextField textField;
+            if (simpleName.equals("String")) {
+                textField = new TextField();
+                textField.getStyleClass().add("text-field");
+                textField.setOnAction(event -> {
+                    commitEdit(textField.getText(), input);
+                });
+                textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                    if (!isNowFocused) {
+                        commitEdit(textField.getText(), input);
+                    }
+                });
+
+                vbox.getChildren().addAll(label, textField);
+                vbox.setVgrow(textField, Priority.ALWAYS);
+
+            }
+            else {
+                spinner = new Spinner<>();
+                SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
+                spinner.setEditable(true);
+                spinner.getEditor().setAlignment(Pos.CENTER_RIGHT);
+
+                spinner.setOnMouseClicked(event -> {
+                    if (spinner.isEditable()) {
+                        spinner.increment(0);
+                    }
+                });
+                spinner.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                    if (!isNowFocused && spinner.isEditable()) {
+                        String text = spinner.getEditor().getText();
+                        if (text.isEmpty()) {
+                            spinner.getValueFactory().setValue(0);
+                        } else {
+                            spinner.increment(0); // Increment by 0 to trigger commitEdit
+                        }
+                    }
+                });
+
+                spinner.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                    if (!isNowFocused && spinner.isEditable()) {
+                        String text = spinner.getEditor().getText();
+                        int newValue = text.isEmpty() ? 0 : Integer.parseInt(text);
+                        commitEdit(newValue, input);
+                    }
+                });
+
+                spinner.setValueFactory(valueFactory);
+                vbox.setVgrow(spinner, Priority.ALWAYS);
+                vbox.getChildren().addAll(label, spinner);
+            }
+
+            inputValuesHBox.getChildren().add(vbox);
+            inputValuesHBox.setSpacing(50);
+        });
+    }
+
+
+
+    private void commitEdit(Object newValue, Input input) {
+        input.setValue(newValue);
+        updateFreeInputMap(input, newValue);
+        boolean hasAllMandatoryInputs = hasAllMandatoryInputs(freeInputMap);
+        executeButton.setDisable(!hasAllMandatoryInputs);
+    }
+
+    private void updateFreeInputMap(Input input, Object newValue) {
+        freeInputMap.put(input.getStepName() + "." + input.getOriginalName(), newValue);
+    }
+
+    private boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
+        for (Node node : inputValuesHBox.getChildren()) {
+            VBox vbox = (VBox) node;
+            Label label = (Label) vbox.getChildren().get(0);
+            String labelText = label.getText();
+            int endIndex = labelText.lastIndexOf(" (");
+            String finalName = labelText.substring(0, endIndex);
+            String mandatoryValue = labelText.substring(endIndex + 2, labelText.length() - 1);
+            if (mandatoryValue.equals("MANDATORY")) {
+                Optional<Input> optionalInput = inputList.stream().filter(input1 -> input1.getFinalName().equals(finalName)).findFirst();
+                if (optionalInput.isPresent()) {
+                    Input input = optionalInput.get();
+                    String key = input.getStepName() + "." + input.getOriginalName();
+                    if (!freeInputMap.containsKey(key) || freeInputMap.get(key).equals("")) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    @FXML
+    void StartExecuteFlowButton(ActionEvent event) {
+        System.out.println(freeInputMap);
+        DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
+        DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
+        freeInputMap = new HashMap<>();
+        System.out.println(freeInputMap);
+        mainController.goToStatisticsTab();
+
+    }
+
+}
+
+
+/*    public void initInputsTable(List<DTOSingleFlowIOData> freeInputs) {
+        inputValuesHBox.getChildren().clear();
+        ObservableList<Input> inputList = FXCollections.observableArrayList();
+
+        // Populate inputList from freeInputs
+        freeInputs.forEach(freeInput -> {
+            Input input = new Input();
+            input.setFinalName(freeInput.getFinalName());
+            input.setOriginalName(freeInput.getOriginalName());
+            input.setStepName(freeInput.getStepName());
+            input.setMandatory(freeInput.getNecessity().toString());
+            input.setType(freeInput.getType());
+            inputList.add(input);
+        });
+
+        for (int i = 0; i < inputList.size(); i++) {
+            Input input = inputList.get(i);
+
+            // Create label for the node
+            Spinner<Integer> spinner;
+            TextField textField;
+
+            Label label = new Label(input.getFinalName() + " (" + input.getMandatory() + ")");
+            label.setAlignment(Pos.CENTER_LEFT);
+            label.setTextAlignment(TextAlignment.LEFT);
+            label.setTextOverrun(OverrunStyle.CLIP); // Clip the text if it exceeds the label width
+
+            String simpleName = input.getType().getType().getSimpleName();
+
+            VBox vbox = new VBox();
+            vbox.setAlignment(Pos.CENTER_LEFT);
+            vbox.setSpacing(10);
+
+            // Create text field for the node
+            if (simpleName.equals("String")) {
+                spinner = null;
+                textField = new TextField();
+                vbox.getChildren().addAll(label, textField);
+            } else {
+                textField = null;
+                if (simpleName.equals("Integer")) {
+                    spinner = new Spinner<>(0, Integer.MAX_VALUE, 0);
+                    vbox.getChildren().addAll(label, spinner);
+                } else {
+                    spinner = null;
+                }
+            }
+
+            // TextField setup
+            textField.getStyleClass().add("text-field");
+
+            textField.setOnAction(event -> {
+                commitEdit(textField.getText(), input);
+            });
+
+           */
+    /* textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                if (!isNowFocused) {
+                    commitEdit(textField.getText(), input);
+                }
+            });*//*
+
+            // Spinner setup
+          *//*  spinner.setEditable(true);
+            spinner.getEditor().setAlignment(Pos.CENTER_RIGHT);
+
+            spinner.setOnMouseClicked(event -> {
+                if (spinner.isEditable()) {
+                    spinner.increment(0);
+                }
+            });
+
+            spinner.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                if (!isNowFocused && spinner.isEditable()) {
+                    spinner.increment(0); // Increment by 0 to trigger commitEdit
+                }
+            });
+
+            spinner.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                if (!isNowFocused && spinner.isEditable()) {
+                    commitEdit(spinner.getValue().toString(), input);
+                }
+            });*//*
+
+            inputValuesHBox.getChildren().add(vbox);
+            inputValuesHBox.setSpacing(50);
+        }
+    }*/
+
 
 /*    @FXML
     TableView<Input> freeInputsTable;
@@ -59,14 +299,6 @@ public class FlowExecutionTabController {
     private BorderPane borderPane;
      */
 
-
-    @FXML
-    public void initialize() {
-        executeButton.setDisable(true);
-         AnchorPane.setTopAnchor(borderPane, 0.0);
-        AnchorPane.setBottomAnchor(borderPane, 0.0);
-        AnchorPane.setLeftAnchor(borderPane, 0.0);
-        AnchorPane.setRightAnchor(borderPane, 0.0);
 /*
         hbox.setPrefWidth(400); // Set an initial width for the HBox
         freeInputsTable.prefWidthProperty().bind(hbox.widthProperty());
@@ -180,92 +412,3 @@ public class FlowExecutionTabController {
             };
         });
 */
-    }
-
-    public void setMainController(Controller mainController) {
-        this.mainController = mainController;
-    }
-
-    public void initInputsTable(List<DTOSingleFlowIOData> freeInputs) {
-        ObservableList<Input> inputList = FXCollections.observableArrayList();
-
-        // Populate inputList from freeInputs
-        freeInputs.forEach(freeInput -> {
-            Input input = new Input();
-            input.setFinalName(freeInput.getFinalName());
-            input.setOriginalName(freeInput.getOriginalName());
-            input.setStepName(freeInput.getStepName());
-            input.setMandatory(freeInput.getNecessity().toString());
-            input.setType(freeInput.getType());
-            inputList.add(input);
-        });
-
-        for (int i = 0; i < inputList.size(); i++) {
-            Input input = inputList.get(i);
-
-            // Create label for the node
-            Label label = new Label(input.getFinalName() + " (" + input.getMandatory() +")");
-            label.setAlignment(Pos.CENTER_LEFT);
-            label.setTextAlignment(TextAlignment.LEFT);
-            label.setTextOverrun(OverrunStyle.CLIP); // Clip the text if it exceeds the label width
-
-            // Create text field for the node
-            TextField textField = new TextField();
-
-            VBox vbox = new VBox();
-            vbox.setAlignment(Pos.CENTER_LEFT);
-            vbox.setSpacing(10);
-            vbox.getChildren().addAll(label, textField);
-
-            inputValuesHBox.getChildren().add(vbox);
-            inputValuesHBox.setSpacing(50);
-        }
-        gridPane.add(inputValuesHBox, 0, 0);
-        gridPane.setHgap(10); // Adjust the horizontal spacing between columns
-
-       /* nameColumn.setCellValueFactory(new PropertyValueFactory<>("finalName"));
-        necessityColumn.setCellValueFactory(new PropertyValueFactory<>("mandatory"));
-        valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
-
-        freeInputs.forEach(freeInput -> {
-            Input input = new Input();
-            input.setFinalName(freeInput.getFinalName());
-            input.setOriginalName(freeInput.getOriginalName());
-            input.setStepName(freeInput.getStepName());
-            input.setMandatory(freeInput.getNecessity().toString());
-            input.setType(freeInput.getType());
-            inputList.add(input);
-        });
-
-        System.out.println(inputList);
-
-        freeInputsTable.setEditable(true);
-        freeInputsTable.setItems(inputList);*/
-    }
-
-    private boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
-       /* for (Input input : freeInputsTable.getItems()) {
-            if (input.getMandatory().equals("MANDATORY")) {
-                String key = input.getStepName() + "." + input.getOriginalName();
-                if (!freeInputMap.containsKey(key) || freeInputMap.get(key).equals("")) {
-                    return false;
-                }
-            }
-        }*/
-        return true;
-    }
-
-    @FXML
-    void StartExecuteFlowButton(ActionEvent event) {
-        DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
-        DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
-        mainController.goToStatisticsTab();
-
-        /*        System.out.println(freeInputMap);
-        System.out.println(flowExecution.getFlowName());
-        System.out.println(flowExecution.getFlowExecutionResult());
-        System.out.println(flowExecution.getFreeInputsList());
-        System.out.println(flowExecution.getStepExecutionDataList());*/
-    }
-
-}

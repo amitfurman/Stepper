@@ -76,8 +76,8 @@ public class StatisticsTabController {
     }
 
     public void initFlowsChart(List<DTOStatisticData> flowsStatisticData) {
-        //FlowNumberOfRunsChart.getData().clear();
-       // AverageFlowsRunTimeChart.getData().clear();
+        FlowNumberOfRunsChart.getData().clear();
+       AverageFlowsRunTimeChart.getData().clear();
 
         //  setMaxBarWidth(FlowNumberOfRunsChart, 40, 10);
         //  setMaxBarWidth(AverageFlowsRunTimeChart, 40, 10);
@@ -98,8 +98,8 @@ public class StatisticsTabController {
     }
 
     public void initStepsChart (List < DTOStatisticData > stepsStatisticData) {
-       // StepNumberOfRunsChart.getData().clear();
-       // AverageStepsRunTimeChart.getData().clear();
+       StepNumberOfRunsChart.getData().clear();
+       AverageStepsRunTimeChart.getData().clear();
 
         XYChart.Series series1 = new XYChart.Series();
         stepsStatisticData.stream().forEach(stepStatisticData -> {
