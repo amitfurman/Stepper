@@ -43,15 +43,15 @@ public class StatisticsTabController {
         CategoryAxis AverageStepsRunTimeChartcategoryAxis = (CategoryAxis) AverageStepsRunTimeChart.getXAxis();
         Node label4 = AverageStepsRunTimeChartcategoryAxis.lookup(".axis-label");
         label4.setTranslateY(10);
-
+/*
         FlowNumberOfRunsChart.widthProperty().addListener((obs,b,b1)->{
             Platform.runLater(()->setMaxBarWidth(FlowNumberOfRunsChart ,40, 10));
         });
 
         StepNumberOfRunsChart.widthProperty().addListener((obs,b,b1)->{
             Platform.runLater(()->setMaxBarWidth(StepNumberOfRunsChart ,40, 10));
-        });
-
+        });*/
+/*
         AverageFlowsRunTimeChart.widthProperty().addListener((obs,b,b1)->{
             Platform.runLater(()->setMaxBarWidth(AverageFlowsRunTimeChart ,40, 10));
         });
@@ -59,7 +59,7 @@ public class StatisticsTabController {
         AverageStepsRunTimeChart.widthProperty().addListener((obs,b,b1)->{
             Platform.runLater(()->setMaxBarWidth(AverageStepsRunTimeChart ,40, 10));
         });
-
+*/
 
     }
 
@@ -76,8 +76,8 @@ public class StatisticsTabController {
     }
 
     public void initFlowsChart(List<DTOStatisticData> flowsStatisticData) {
-        FlowNumberOfRunsChart.getData().clear();
-        AverageFlowsRunTimeChart.getData().clear();
+        //FlowNumberOfRunsChart.getData().clear();
+       // AverageFlowsRunTimeChart.getData().clear();
 
         //  setMaxBarWidth(FlowNumberOfRunsChart, 40, 10);
         //  setMaxBarWidth(AverageFlowsRunTimeChart, 40, 10);
@@ -98,8 +98,8 @@ public class StatisticsTabController {
     }
 
     public void initStepsChart (List < DTOStatisticData > stepsStatisticData) {
-        StepNumberOfRunsChart.getData().clear();
-        AverageStepsRunTimeChart.getData().clear();
+       // StepNumberOfRunsChart.getData().clear();
+       // AverageStepsRunTimeChart.getData().clear();
 
         XYChart.Series series1 = new XYChart.Series();
         stepsStatisticData.stream().forEach(stepStatisticData -> {
