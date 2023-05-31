@@ -12,6 +12,7 @@ public enum StepDefinitionRegistry {
     CSV_EXPORTER(new CSVExporter()),
     PROPERTIES_EXPORTER(new Properties()),
     FILE_DUMPER(new FileDumper()),
+    ZIPPER(new Zipper()),
     COMMAND_LINE(new CommandLine())
     ;
 

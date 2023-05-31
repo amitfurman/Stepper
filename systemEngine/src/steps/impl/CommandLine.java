@@ -21,7 +21,7 @@ import java.util.List;
 public class CommandLine  extends AbstractStepDefinition {
 
     public CommandLine() {
-        super("CommandLine", false);
+        super("Command Line", false);
 
         // step inputs
         addInput(new DataDefinitionDeclarationImpl("COMMAND", DataNecessity.MANDATORY, "Command", DataDefinitionRegistry.STRING));

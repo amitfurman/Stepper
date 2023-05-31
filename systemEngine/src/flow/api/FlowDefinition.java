@@ -50,8 +50,9 @@ public interface FlowDefinition {
     void initMandatoryInputsList();
     void setFlowReadOnly();
     boolean checkIfFlowIsReadOnly();
-    boolean checkIfInitialInputIsFreeInput(String inputName) throws InitialInputIsNotFreeInput;
+    // boolean checkIfInitialInputIsFreeInput(String inputName) throws InitialInputIsNotFreeInput;
     List<String> getListOfStepsWithCurrInput(String inputName);
     void addFlowOutput(String outputName);
+    void removeOptionalOutputsFromInitialInputs();
 
     }

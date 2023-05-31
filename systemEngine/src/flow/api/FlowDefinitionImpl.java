@@ -194,6 +194,8 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
     }
     @Override
     public boolean stepExist(String stepName){
+        System.out.println(steps.size());
+        steps.forEach(step -> System.out.println(step.getFinalStepName()));
         boolean isPresent =
                 getFlowSteps()
                         .stream()
@@ -302,14 +304,38 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
        }
        return true;
     }
+
+
     @Override
     public void initMandatoryInputsList(){
+        Set<String> uniqueInputs = new HashSet<>();
+
         freeInputs.addAll(getIOlist()
                 .stream()
                 .filter(data -> data.getType().equals(IO.INPUT))
-                .filter(data -> data.getOptionalOutput().isEmpty()).collect(Collectors.toList()));
+                .filter(data -> data.getOptionalOutput().isEmpty())
+                .filter(data -> !initialInputMap.containsKey(data.getFinalName()))
+                .filter(data -> uniqueInputs.add(data.getFinalName() + data.getDD()))
+                .collect(Collectors.toList()));
     }
+
     @Override
+    public void removeOptionalOutputsFromInitialInputs() {
+        IOlist.stream()
+                .filter(io -> initialInputMap.containsKey(io.getFinalName()))
+                .collect(Collectors.toList())
+                .forEach( io->
+                {
+                    if(!io.getOptionalOutput().isEmpty()) {//go to this output and remove the conection
+                        SingleFlowIOData output = io.getOptionalOutput().get(0);
+                        output.getOptionalInputs().remove(io);////check if remove
+                        io.getOptionalOutput().clear();// Clear the list of the current IO
+                    }
+                }
+        );
+    }
+
+/*    @Override
     public boolean checkIfInitialInputIsFreeInput(String inputName) throws InitialInputIsNotFreeInput {
         boolean isPresent =
                 freeInputs
@@ -320,5 +346,5 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
             throw new InitialInputIsNotFreeInput();
         }
         return isPresent;
-    }
+    }*/
 }

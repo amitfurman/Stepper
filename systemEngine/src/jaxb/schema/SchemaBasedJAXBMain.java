@@ -20,7 +20,7 @@ import java.util.List;
 public class SchemaBasedJAXBMain {
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "jaxb.schema.generated";
 
-    public LinkedList<FlowDefinition> schemaBasedJAXB(String filePath) throws JAXBException, FileNotFoundException, DuplicateFlowsNames, UnExistsStep, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotFreeInput {
+    public LinkedList<FlowDefinition> schemaBasedJAXB(String filePath) throws JAXBException, FileNotFoundException, DuplicateFlowsNames, UnExistsStep, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotExist {
         InputStream inputStream = new FileInputStream(new File(filePath));
         STStepper stepper = deserializeFrom(inputStream);
         verifyIfExistsFlowsWithDuplicateNames(stepper);
@@ -53,7 +53,7 @@ public class SchemaBasedJAXBMain {
 
     public void ReferenceToUnExistsStep(STStepper stepper) throws UnExistsStep {
         List<STFlow> stFlows = stepper.getSTFlows().getSTFlow();
-        List<String> stepsNames = new ArrayList<>(Arrays.asList("Spend Some Time", "Collect Files In Folder", "Files Deleter", "Files Renamer", "Files Content Extractor", "CSV Exporter", "Properties Exporter", "File Dumper"));
+        List<String> stepsNames = new ArrayList<>(Arrays.asList("Spend Some Time", "Collect Files In Folder", "Files Deleter", "Files Renamer", "Files Content Extractor", "CSV Exporter", "Properties Exporter", "File Dumper", "Zipper", "Command Line"));
 
         for (STFlow flow : stFlows) {
             List<STStepInFlow> stStepFlow = flow.getSTStepsInFlow().getSTStepInFlow();

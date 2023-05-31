@@ -99,6 +99,10 @@ public class FlowExecutionTabController {
                         commitEdit(textField.getText(), input);
                     }
                 });
+/*                ScrollPane scrollPane = new ScrollPane(textField);
+                scrollPane.setFitToWidth(true);
+                scrollPane.setPrefHeight(TextField.USE_COMPUTED_SIZE);
+                scrollPane.setMinHeight(TextField.USE_PREF_SIZE);*/
 
                 vbox.getChildren().addAll(label, textField);
                 vbox.setVgrow(textField, Priority.ALWAYS);
@@ -137,6 +141,7 @@ public class FlowExecutionTabController {
                 spinner.setValueFactory(valueFactory);
                 vbox.setVgrow(spinner, Priority.ALWAYS);
                 vbox.getChildren().addAll(label, spinner);
+
             }
 
             inputValuesHBox.getChildren().add(vbox);
