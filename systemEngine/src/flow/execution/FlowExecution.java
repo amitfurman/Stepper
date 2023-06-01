@@ -34,6 +34,7 @@ public class FlowExecution  implements Serializable {
     public UUID getUniqueId() {
         return uniqueId;
     }
+    public UUID getUniqueIdByUUID() { return uniqueId; }
     public FlowDefinition getFlowDefinition() {
         return flowDefinition;
     }

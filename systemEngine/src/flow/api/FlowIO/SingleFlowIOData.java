@@ -62,9 +62,5 @@ public class SingleFlowIOData implements Serializable {
     public String getStepName() {
         return this.MyStep.getFinalStepName();
     }
-    public String getName()
-    {
-        return this.originalName;
-    }
     public IO getType(){ return this.type; }
 }

@@ -13,11 +13,13 @@ import flow.api.StepUsageDeclarationImpl;
 import jaxb.schema.generated.*;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class Stepper2Flows {
     private LinkedList<FlowDefinition> allFlows;
-    public Stepper2Flows(STStepper stepper) throws OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsStep, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotFreeInput {
+    public Stepper2Flows(STStepper stepper) throws OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsStep, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotExist {
         int numberOfThreads = stepper.getSTThreadPool();
 
         allFlows = new LinkedList<>();
@@ -29,9 +31,9 @@ public class Stepper2Flows {
             flow = new FlowDefinitionImpl(currFlow.getName(), currFlow.getSTFlowDescription());
 
             //add steps to flow
-            for (STStepInFlow step : currFlow.getSTStepsInFlow().getSTStepInFlow()) {
+            for (STStepInFlow step : currFlow.getSTStepsInFlow().getSTStepInFlow()) {;
                 StepDefinitionRegistry myEnum = StepDefinitionRegistry.valueOf(step.getName().toUpperCase().replace(" ", "_"));
-                if (step.getAlias() != null && step.isContinueIfFailing()) {
+                if (step.getAlias() != null && step.isContinueIfFailing()!=null) {
                     flow.addStepToFlow(new StepUsageDeclarationImpl(myEnum.getStepDefinition(), step.isContinueIfFailing(), step.getAlias()));
                     flow.addToAlias2StepNameMap(step.getAlias(), step.getName());
                 } else if (step.getAlias() != null) {
@@ -110,19 +112,20 @@ public class Stepper2Flows {
             FlowAutomaticMapping automaticMapping = new FlowAutomaticMapping(flow);
             FlowCustomMapping customMapping = new FlowCustomMapping(flow);
 
+            if(currFlow.getSTInitialInputValues() != null) {
+                for(STInitialInputValue initValue : currFlow.getSTInitialInputValues().getSTInitialInputValue()) {
+                    if(!flow.getIOlist().stream().anyMatch(io -> io.getFinalName().equals(initValue.getInputName())))
+                        throw new InitialInputIsNotExist();
+                    flow.addToInitialInputMap(initValue.getInputName(), initValue.getInitialValue());
+                }
+                flow.removeOptionalOutputsFromInitialInputs();
+            }
+
             flow.validateIfOutputsHaveSameName();
             flow.flowOutputsIsNotExists();
             flow.initMandatoryInputsList();
             flow.freeInputsWithSameNameAndDifferentType();
             flow.mandatoryInputsIsUserFriendly();
-
-            if(currFlow.getSTInitialInputValues() != null) {
-                for(STInitialInputValue initValue : currFlow.getSTInitialInputValues().getSTInitialInputValue()) {
-                    if (flow.checkIfInitialInputIsFreeInput(initValue.getInputName())) {
-                        flow.addToInitialInputMap(initValue.getInputName(), initValue.getInitialValue());
-                    }
-                }
-            }
 
             allFlows.add(flow);
         }

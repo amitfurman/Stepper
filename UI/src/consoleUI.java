@@ -166,7 +166,7 @@ public class consoleUI {
                     System.out.println(e.getMessage());
                 } catch (FreeInputsWithSameNameAndDifferentType e) {
                     System.out.println(e.getMessage());
-                } catch (InitialInputIsNotFreeInput e) {
+                } catch (InitialInputIsNotExist e) {
                     System.out.println(e.getMessage());
                 }
 

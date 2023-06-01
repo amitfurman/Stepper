@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,8 @@ public class FlowDefinitionTabController {
     @FXML
     private Button ExecuteFlowButton;
 
-    private String ChosenFlowName;
+    private String chosenFlowName;
+
 
     @FXML
     public void initialize() {
@@ -33,7 +35,7 @@ public class FlowDefinitionTabController {
 
     @FXML
     public void setPressOnExecuteFlowButton() {
-        mainController.goToFlowExecutionTab(ChosenFlowName);
+        mainController.goToFlowExecutionTab(chosenFlowName);
     }
 
     public void setMainController(Controller mainController) {
@@ -84,8 +86,8 @@ public class FlowDefinitionTabController {
         DTOAllStepperFlows allStepperFlows =  mainController.getSystemEngineInterface().getAllFlows();
 
         TreeItem<String> branchName = new TreeItem<>("Flow Name");
-        ChosenFlowName = flowDefinition.getName();
-        TreeItem<String> nameItem = new TreeItem<>(ChosenFlowName);
+        chosenFlowName = flowDefinition.getName();
+        TreeItem<String> nameItem = new TreeItem<>(chosenFlowName);
         branchName.getChildren().addAll(nameItem);
 
         TreeItem<String> branchDescription = new TreeItem<>("Flow Description");

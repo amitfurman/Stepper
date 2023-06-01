@@ -10,7 +10,6 @@ import steps.api.StepResult;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class StepExecutionContextImpl implements StepExecutionContext {
 
@@ -44,7 +43,7 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     }
     @Override
     public void setCurrInvokingStep(String finalStepName, String originalStepName) {
-        this.currInvokingStep = new StepExecutionData(finalStepName, originalStepName);
+        this.currInvokingStep = new StepExecutionData(finalStepName, originalStepName, true);
     }
     @Override
     public StepExecutionData getCurrInvokingStep(){ return this.currInvokingStep; }
@@ -72,8 +71,8 @@ public class StepExecutionContextImpl implements StepExecutionContext {
             Object aValue = dataValues.get(ioAlias);
             if (aValue != null) {
                 return expectedDataType.cast(aValue);
-            }else if(!(IOlist.stream().filter(io -> io.getName().equals(dataName)).findFirst().get().getOptionalOutput().isEmpty())){
-                aValue = dataValues.get(IOlist.stream().filter(io -> io.getName().equals(dataName)).findFirst().get().getOptionalOutput().get(0).getFinalName());
+            }else if(!(IOlist.stream().filter(io -> io.getOriginalName().equals(dataName)).findFirst().get().getOptionalOutput().isEmpty())){
+                aValue = dataValues.get(IOlist.stream().filter(io -> io.getOriginalName().equals(dataName)).findFirst().get().getOptionalOutput().get(0).getFinalName());
                 return expectedDataType.cast(aValue);
             } else {
                 return null; //for the optional inputs that are not provided

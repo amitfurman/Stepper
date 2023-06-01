@@ -14,6 +14,7 @@ public class DTOStepExecutionData {
     private StepResult result;
     private String summaryLine;
     private List<DTOLogger> loggerList;
+    private boolean isExecuted;
 
     public DTOStepExecutionData(StepExecutionData stepExecutionData){
         this.finalName = stepExecutionData.getFinalNameStep();
@@ -21,6 +22,7 @@ public class DTOStepExecutionData {
         this.totalStepTime = stepExecutionData.getTotalStepTime();
         this.result = stepExecutionData.getResult();
         this.summaryLine= stepExecutionData.getSummaryLine();
+        this.isExecuted = stepExecutionData.isExecuted(); // Assign the value from StepExecutionData
         this.loggerList = new LinkedList<>();
         for (Logger logger : stepExecutionData.getLoggerList()) {
             loggerList.add(new DTOLogger(logger));
@@ -36,4 +38,5 @@ public class DTOStepExecutionData {
     public StepResult getResult() { return result; }
     public String getSummaryLine() { return summaryLine; }
     public List<DTOLogger> getLoggerList() { return loggerList; }
+    public boolean isExecuted() { return isExecuted;}
 }

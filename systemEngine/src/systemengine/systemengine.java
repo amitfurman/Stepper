@@ -9,9 +9,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public interface systemengine {
-    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotFreeInput;
+    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotExist;
 
     DTOAllStepperFlows getAllFlows();
 
@@ -37,6 +38,8 @@ public interface systemengine {
     DTOFlowExecution getFlowExecutionDetails(int flowExecutionChoice);
 
     DTOFlowAndStepStatisticData getStatisticData();
+
+    DTOFlowExecution getFlowExecutionStatus(UUID flowSessionId);
 
     void saveToFile(String path);
 
