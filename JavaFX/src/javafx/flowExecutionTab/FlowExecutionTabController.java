@@ -97,14 +97,11 @@ public class FlowExecutionTabController {
 
             Spinner<Integer> spinner = new Spinner<>();
             TextField textField = new TextField();;
-            if(){
+            if(simpleName.equals("String")) {
                 setTextFieldSetting(textField, input);
-                openFileChooser(textField);
-                vbox.getChildren().addAll(label, textField);
-                vbox.setVgrow(textField, Priority.ALWAYS);
-            }
-            else if(simpleName.equals("String")) {
-                setTextFieldSetting(textField, input);
+                if(simpleName.equals("FOLDER_NAME") || simpleName.equals("FILE_NAME")){
+                    openFileChooser(textField);
+                }
                 vbox.getChildren().addAll(label, textField);
                 vbox.setVgrow(textField, Priority.ALWAYS);
             } else {
