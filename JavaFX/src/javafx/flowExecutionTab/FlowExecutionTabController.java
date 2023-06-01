@@ -21,6 +21,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -86,7 +87,7 @@ public class FlowExecutionTabController {
             inputList.add(input);
 
             // Create label for the node
-            Label label = new Label(input.getFinalName() + " (" + input.getMandatory() + ")");
+            Label label = new Label((input.getFinalName().equals("TIME_TO_SPEND") ? input.getFinalName() + " (sec)" : input.getFinalName() ) + " (" + input.getMandatory() + ")");
             setLabelSetting(label);
 
             String simpleName = input.getType().getType().getSimpleName();
@@ -96,15 +97,18 @@ public class FlowExecutionTabController {
             setVBoxSetting(vbox, label);
 
             Spinner<Integer> spinner = new Spinner<>();
-            TextField textField = new TextField();;
-            if(){
+            TextField textField = new TextField();
+
+
+
+            if(simpleName.equals("String")) {
+
                 setTextFieldSetting(textField, input);
-                openFileChooser(textField);
-                vbox.getChildren().addAll(label, textField);
-                vbox.setVgrow(textField, Priority.ALWAYS);
-            }
-            else if(simpleName.equals("String")) {
-                setTextFieldSetting(textField, input);
+                if(input.getOriginalName().equals("FILE_NAME") || input.getOriginalName().equals("SOURCE")){
+                    openFileChooser(textField);
+                }else if(input.getOriginalName().equals("FOLDER_NAME")){
+                    openDirectoryChooser(textField);
+                }
                 vbox.getChildren().addAll(label, textField);
                 vbox.setVgrow(textField, Priority.ALWAYS);
             } else {
@@ -112,6 +116,11 @@ public class FlowExecutionTabController {
                 vbox.setVgrow(spinner, Priority.ALWAYS);
                 vbox.getChildren().addAll(label, spinner);
             }
+            Tooltip tooltip1 = new Tooltip(textField.getText().toString());
+            textField.setTooltip(tooltip1);
+            textField.textProperty().addListener((observable, oldValue, newValue) -> {
+                tooltip1.setText(newValue);
+            });
             inputValuesHBox.getChildren().add(vbox);
             inputValuesHBox.setSpacing(50);
         });
@@ -122,6 +131,22 @@ public class FlowExecutionTabController {
         input.setStepName(freeInput.getStepName());
         input.setMandatory(freeInput.getNecessity().toString());
         input.setType(freeInput.getType());
+    }
+
+    public void openDirectoryChooser(TextField textField) {
+        textField.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 1) {
+                DirectoryChooser directoryChooser = new DirectoryChooser();
+                directoryChooser.setTitle("Choose Directory");
+
+                Stage stage = (Stage) textField.getScene().getWindow();
+                File selectedDirectory = directoryChooser.showDialog(stage);
+
+                if (selectedDirectory != null) {
+                    textField.setText(selectedDirectory.getAbsolutePath());
+                }
+            }
+        });
     }
     public void openFileChooser(TextField textField){
         textField.setOnMouseClicked(e -> {
@@ -138,6 +163,7 @@ public class FlowExecutionTabController {
             }
         });
     }
+
     public void setLabelSetting(Label label){
        label.setWrapText(true);
        label.setAlignment(Pos.CENTER_LEFT);
