@@ -43,7 +43,7 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     }
     @Override
     public void setCurrInvokingStep(String finalStepName, String originalStepName) {
-        this.currInvokingStep = new StepExecutionData(finalStepName, originalStepName);
+        this.currInvokingStep = new StepExecutionData(finalStepName, originalStepName, true);
     }
     @Override
     public StepExecutionData getCurrInvokingStep(){ return this.currInvokingStep; }

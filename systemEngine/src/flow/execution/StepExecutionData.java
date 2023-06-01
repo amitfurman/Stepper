@@ -9,21 +9,23 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class StepExecutionData  implements Serializable {
+public class StepExecutionData implements Serializable {
     private String finalName;
     private String originalName;
     private Duration totalStepTime;
     private StepResult result;
     private String summaryLine;
     private List<Logger> loggerList;
+    private boolean isExecuted;
 
-    public StepExecutionData(String finalName, String originalName){
+    public StepExecutionData(String finalName, String originalName, boolean executed){
         this.finalName = finalName;
         this.originalName = originalName;
         this.loggerList = new LinkedList<>();
         this.summaryLine= "";
         this.totalStepTime = Duration.ZERO;
         this.result = null;
+        this.isExecuted = executed;
     }
 
     public String getFinalNameStep(){
@@ -40,4 +42,7 @@ public class StepExecutionData  implements Serializable {
     public void setSummaryLine(String summaryLine) { this.summaryLine = summaryLine; }
     public void setTotalTime(Duration totalTime) { this.totalStepTime = totalTime;}
     public void setResult(StepResult result) { this.result = result; }
+    public boolean isExecuted() {return isExecuted;}
+    public void setExecuted(boolean executed) {isExecuted = executed;}
 }
+

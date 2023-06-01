@@ -18,6 +18,7 @@ public class DTOFlowDefinition {
 
     public DTOFlowDefinition(FlowDefinition flow) {
         this.name = flow.getName();
+
         this.description = flow.getDescription();
         this.isFlowReadOnly = flow.getFlowReadOnly();
         this.flowOutputs = new ArrayList<>(flow.getFlowFormalOutputs());

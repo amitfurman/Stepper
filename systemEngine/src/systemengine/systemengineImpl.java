@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class systemengineImpl implements systemengine {
@@ -167,6 +168,12 @@ public class systemengineImpl implements systemengine {
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public DTOFlowExecution getFlowExecutionStatus(UUID flowSessionId){
+        FlowExecution flowExecution = flowExecutionList.stream().filter(flow -> flow.getUniqueId().equals(flowSessionId)).findFirst().get();
+        return new DTOFlowExecution(flowExecution);
     }
 
 }

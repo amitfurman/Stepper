@@ -60,6 +60,7 @@ public class DTOFlowExecution {
 
     }
     public String getUniqueId() { return uniqueId.toString(); }
+    public UUID getUniqueIdByUUID() { return uniqueId; }
     public String getFlowName() { return flowName; }
     public List<DTOFlowOutputExecution> getFlowOutputExecutionList() { return flowOutputExecutionList; }
     public FlowExecutionResult getFlowExecutionResult() {return flowExecutionResult;}
@@ -76,4 +77,14 @@ public class DTOFlowExecution {
     public List<DTOSingleFlowIOData> getFreeInputsList() { return freeInputsList; }
     public List<DTOSingleFlowIOData> getIOlist(){return IOlist;};
     public List<DTOStepExecutionData>getStepExecutionDataList(){return stepExecutionDataList;}
+    public boolean isComplete() {
+        for (DTOStepExecutionData stepExecutionData : stepExecutionDataList) {
+            if (!stepExecutionData.isExecuted()) {
+                return false;
+            }
+        }
+        return flowExecutionResult != null;
+    }
+
+
 }
