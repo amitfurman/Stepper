@@ -1,5 +1,6 @@
 package flow.execution;
 
+import dto.DTOStepExecutionData;
 import flow.api.FlowDefinition;
 import flow.api.FlowIO.SingleFlowIOData;
 
@@ -10,6 +11,7 @@ import java.util.*;
 
 public class FlowExecution  implements Serializable {
     private final UUID uniqueId;
+    private String flowName;
     private final FlowDefinition flowDefinition;
     private Duration totalTime;
     private Instant startTime;
@@ -21,8 +23,11 @@ public class FlowExecution  implements Serializable {
     private List<SingleFlowIOData> freeInputsList;
     private final List<SingleFlowIOData> IOlist;
 
+
+
     public FlowExecution(FlowDefinition flowDefinition) {
         this.uniqueId = UUID.randomUUID();
+        this.flowName = flowDefinition.getName();
         this.flowDefinition = flowDefinition;
         this.dataValues = new HashMap<>();
         this.stepExecutionDataList = new LinkedList<>();
@@ -33,6 +38,9 @@ public class FlowExecution  implements Serializable {
 
     public UUID getUniqueId() {
         return uniqueId;
+    }
+    public String getFlowName() {
+        return flowName;
     }
     public UUID getUniqueIdByUUID() { return uniqueId; }
     public FlowDefinition getFlowDefinition() {
@@ -55,4 +63,13 @@ public class FlowExecution  implements Serializable {
     public void setFreeInputsValues(Map<String, Object> freeInputs) { this.freeInputsValues = freeInputs; }
     public List<SingleFlowIOData> getFreeInputsList() { return freeInputsList; }
     public List<SingleFlowIOData> getIOlist() { return IOlist; }
+
+    public boolean isComplete() {
+        for (StepExecutionData stepExecutionData : stepExecutionDataList) {
+            if (!stepExecutionData.isExecuted()) {
+                return false;
+            }
+        }
+        return flowExecutionResult != null;
+    }
 }

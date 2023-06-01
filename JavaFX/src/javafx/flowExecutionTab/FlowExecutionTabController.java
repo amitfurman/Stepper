@@ -21,8 +21,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -44,15 +47,15 @@ public class FlowExecutionTabController {
 
     private ObservableList<Input> inputList = FXCollections.observableArrayList();
 
-    private ExecutorService executorService;
-    private List<FlowExecutionTask> flowExecutionTasks;
+   // private ExecutorService executorService;
 
-    private Timeline progressTimeline;
+   // private List<FlowExecutionTask> flowExecutionTasks;
 
-    private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-    ;
-    private final long EXECUTE_CHECK_INTERVAL = 200; // Check interval in milliseconds
+   // private Timeline progressTimeline;
 
+   // private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+
+  // private final long EXECUTE_CHECK_INTERVAL = 200; // Check interval in milliseconds
 
 
     @FXML
@@ -64,9 +67,9 @@ public class FlowExecutionTabController {
         AnchorPane.setLeftAnchor(borderPane, 0.0);
         AnchorPane.setRightAnchor(borderPane, 0.0);
 
-        int numThreads = 5; // Set the desired number of threads
-        executorService = Executors.newFixedThreadPool(numThreads);
-        flowExecutionTasks = new ArrayList<>();
+         // int numThreads = 5; // Set the desired number of threads
+        //executorService = Executors.newFixedThreadPool(numThreads);
+       // flowExecutionTasks = new ArrayList<>();
 
     }
 
@@ -77,103 +80,128 @@ public class FlowExecutionTabController {
     public void initInputsTable(List<DTOSingleFlowIOData> freeInputs) {
         executeButton.setDisable(true);
         inputValuesHBox.getChildren().clear();
-
-        // Populate inputList from freeInputs
-        freeInputs.forEach(freeInput -> {
+        freeInputs.forEach(freeInput -> {// Populate inputList from freeInputs
             Input input = new Input();
-            input.setFinalName(freeInput.getFinalName());
-            input.setOriginalName(freeInput.getOriginalName());
-            input.setStepName(freeInput.getStepName());
-            input.setMandatory(freeInput.getNecessity().toString());
-            input.setType(freeInput.getType());
+            setInputValues(input, freeInput);
             inputList.add(input);
 
             // Create label for the node
             Label label = new Label(input.getFinalName() + " (" + input.getMandatory() + ")");
-            label.setWrapText(true);
-            label.setAlignment(Pos.CENTER_LEFT);
-            label.setTextAlignment(TextAlignment.LEFT);
-            label.setTextOverrun(OverrunStyle.CLIP); // Clip the text if it exceeds the label width
+            setLabelSetting(label);
 
             String simpleName = input.getType().getType().getSimpleName();
+            System.out.println(input.getType().getName());
 
             VBox vbox = new VBox();
-            vbox.setAlignment(Pos.CENTER_LEFT);
-            vbox.setSpacing(10);
+            setVBoxSetting(vbox, label);
 
-            vbox.setVgrow(label, Priority.ALWAYS);
-
-            Spinner<Integer> spinner;
-            TextField textField;
-            if (simpleName.equals("String")) {
-                textField = new TextField();
-                textField.getStyleClass().add("text-field");
-                textField.setOnAction(event -> {
-                    commitEdit(textField.getText(), input);
-                });
-                textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-                    if (!isNowFocused) {
-                        commitEdit(textField.getText(), input);
-                    }
-                });
-
+            Spinner<Integer> spinner = new Spinner<>();
+            TextField textField = new TextField();;
+            if(){
+                setTextFieldSetting(textField, input);
+                openFileChooser(textField);
                 vbox.getChildren().addAll(label, textField);
                 vbox.setVgrow(textField, Priority.ALWAYS);
-
             }
-            else {
-                spinner = new Spinner<>();
-                SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
-                spinner.setEditable(true);
-                spinner.getEditor().setAlignment(Pos.CENTER_RIGHT);
-
-                spinner.setOnMouseClicked(event -> {
-                    if (spinner.isEditable()) {
-                        spinner.increment(0);
-                    }
-                });
-                spinner.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-                    if (!isNowFocused && spinner.isEditable()) {
-                        String text = spinner.getEditor().getText();
-                        if (text.isEmpty()) {
-                            spinner.getValueFactory().setValue(0);
-                        } else {
-                            spinner.increment(0); // Increment by 0 to trigger commitEdit
-                        }
-                    }
-                });
-
-                spinner.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-                    if (!isNowFocused && spinner.isEditable()) {
-                        String text = spinner.getEditor().getText();
-                        int newValue = text.isEmpty() ? 0 : Integer.parseInt(text);
-                        commitEdit(newValue, input);
-                    }
-                });
-
-                spinner.setValueFactory(valueFactory);
+            else if(simpleName.equals("String")) {
+                setTextFieldSetting(textField, input);
+                vbox.getChildren().addAll(label, textField);
+                vbox.setVgrow(textField, Priority.ALWAYS);
+            } else {
+                setSpinnerSetting(spinner, input);
                 vbox.setVgrow(spinner, Priority.ALWAYS);
                 vbox.getChildren().addAll(label, spinner);
-
             }
-
             inputValuesHBox.getChildren().add(vbox);
             inputValuesHBox.setSpacing(50);
         });
     }
+    public void setInputValues(Input input, DTOSingleFlowIOData freeInput){
+        input.setFinalName(freeInput.getFinalName());
+        input.setOriginalName(freeInput.getOriginalName());
+        input.setStepName(freeInput.getStepName());
+        input.setMandatory(freeInput.getNecessity().toString());
+        input.setType(freeInput.getType());
+    }
+    public void openFileChooser(TextField textField){
+        textField.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 1) {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Choose File");
 
-    private void commitEdit(Object newValue, Input input) {
+                Stage stage = (Stage) textField.getScene().getWindow();
+                File selectedFile = fileChooser.showOpenDialog(stage);
+
+                if (selectedFile != null) {
+                    textField.setText(selectedFile.getAbsolutePath());
+                }
+            }
+        });
+    }
+    public void setLabelSetting(Label label){
+       label.setWrapText(true);
+       label.setAlignment(Pos.CENTER_LEFT);
+       label.setTextAlignment(TextAlignment.LEFT);
+       label.setTextOverrun(OverrunStyle.CLIP); // Clip the text if it exceeds the label width
+   }
+    public void setVBoxSetting(VBox vbox,Label label){
+        vbox.setAlignment(Pos.CENTER_LEFT);
+        vbox.setSpacing(10);
+        vbox.setVgrow(label, Priority.ALWAYS);
+    }
+    public void setTextFieldSetting(TextField textField, Input input){
+        textField.getStyleClass().add("text-field");
+        textField.setOnAction(event -> {
+            commitEdit(textField.getText(), input);
+        });
+        textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                commitEdit(textField.getText(), input);
+            }
+        });
+
+    }
+    public void setSpinnerSetting(Spinner spinner, Input input){
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
+        spinner.setEditable(true);
+        spinner.getEditor().setAlignment(Pos.CENTER_RIGHT);
+
+        spinner.setOnMouseClicked(event -> {
+            if (spinner.isEditable()) {
+                spinner.increment(0);
+            }
+        });
+        spinner.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused && spinner.isEditable()) {
+                String text = spinner.getEditor().getText();
+                if (text.isEmpty()) {
+                    spinner.getValueFactory().setValue(0);
+                } else {
+                    spinner.increment(0); // Increment by 0 to trigger commitEdit
+                }
+            }
+        });
+        spinner.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused && spinner.isEditable()) {
+                String text = spinner.getEditor().getText();
+                int newValue = text.isEmpty() ? 0 : Integer.parseInt(text);
+                commitEdit(newValue, input);
+            }
+        });
+        spinner.setValueFactory(valueFactory);
+    }
+    public void commitEdit(Object newValue, Input input) {
         input.setValue(newValue);
         updateFreeInputMap(input, newValue);
         boolean hasAllMandatoryInputs = hasAllMandatoryInputs(freeInputMap);
         executeButton.setDisable(!hasAllMandatoryInputs);
     }
 
-    private void updateFreeInputMap(Input input, Object newValue) {
+    public void updateFreeInputMap(Input input, Object newValue) {
         freeInputMap.put(input.getStepName() + "." + input.getOriginalName(), newValue);
     }
 
-    private boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
+    public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
         for (Node node : inputValuesHBox.getChildren()) {
             VBox vbox = (VBox) node;
             Label label = (Label) vbox.getChildren().get(0);
@@ -196,6 +224,47 @@ public class FlowExecutionTabController {
     }
 
     @FXML
+    void StartExecuteFlowButton(ActionEvent event){
+        System.out.println(freeInputMap);
+
+        DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
+        DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
+        //  createTask();
+
+        mainController.goToStatisticsTab();
+
+    }
+
+    protected Task<Void> createTask() {
+        return new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                boolean isDone = false;
+                while (!isDone) {//maybe instead of name need to do with id
+                     isDone = mainController.getSystemEngineInterface().isCurrFlowExecutionDone(mainController.getFlowName());
+                    if (!isDone) {
+                        Thread.sleep(200);
+                        continue;
+                    }
+                    // If done is true, get the DTO object
+                   // DTOFlowExecution dto = mainController.getSystemEngineInterface().getItem();
+
+                    // Update UI if needed
+                    Platform.runLater(() -> {
+                        // Update UI components with the DTO object
+                        // For example, update a label with DTO properties
+                    });
+
+                    // Sleep for 200ms before the next iteration
+                    //Thread.sleep(200);
+                }
+                return null;
+            }
+        };
+    }
+
+/*
+    @FXML
     void StartExecuteFlowButton(ActionEvent event) throws ExecutionException, InterruptedException {
         System.out.println(freeInputMap);
         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
@@ -215,6 +284,7 @@ public class FlowExecutionTabController {
         freeInputMap = new HashMap<>();
         System.out.println(freeInputMap);
     }
+
 
     private void startExecuteButtonCheckThread(UUID flowSessionId) {
         scheduledExecutorService.scheduleAtFixedRate(() -> {
@@ -310,208 +380,6 @@ public class FlowExecutionTabController {
 
     }
 
+ */
+
 }
-/*    @FXML
-    void StartExecuteFlowButton(ActionEvent event) {
-        System.out.println(freeInputMap);
-        CustomTask flowExecutionTask = new CustomTask();
-
-        flowExecutionTask.setOnSucceeded(taskEvent -> {
-            DTOFlowExecution flowExecution = flowExecutionTask.getDtoFlowExecution();
-
-            // Process the flowExecution or perform any other necessary actions
-            // Stop the progress update mechanism
-            stopProgressUpdates();
-            mainController.goToStatisticsTab();
-        });
-
-        flowExecutionTask.setOnFailed(taskEvent -> {
-            Throwable exception = flowExecutionTask.getException();
-            stopProgressUpdates();
-        });
-
-        executorService.submit(flowExecutionTask);
-
-        System.out.println(flowExecutionTask.getDtoFlowExecution().getUniqueId());
-        System.out.println(flowExecutionTask.getDtoFlowExecution().getFlowName());
-        startProgressUpdates(flowExecutionTask.getDtoFlowExecution().getUniqueIdByUUID());
-
-        freeInputMap = new HashMap<>();
-        System.out.println(freeInputMap);
-    }
-
-    // Custom Task subclass with the getter method
-    private class CustomTask extends Task<DTOFlowExecution> {
-        private DTOFlowExecution dtoFlowExecution;
-
-        @Override
-        protected DTOFlowExecution call() throws Exception {
-            DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
-            dtoFlowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
-            return dtoFlowExecution;
-        }
-
-        public DTOFlowExecution getDtoFlowExecution() {
-            return dtoFlowExecution;
-        }
-    }*/
-
-    /*
-       @FXML
-    void StartExecuteFlowButton(ActionEvent event) {
-        System.out.println(freeInputMap);
-        DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
-
-           class FlowExecutionTask extends Task<DTOFlowExecution> {
-               private DTOFlowExecution dtoFlowExecution;
-               private UUID flowSessionId;
-
-               @Override
-               protected DTOFlowExecution call() throws Exception {
-                   dtoFlowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
-                   flowSessionId = dtoFlowExecution.getUniqueIdByUUID();
-                   startProgressUpdates(flowSessionId);
-                   return dtoFlowExecution;
-               }
-
-               public UUID getFlowSessionId() {
-                   return flowSessionId;
-               }
-           }
-
-           FlowExecutionTask flowExecutionTask = new FlowExecutionTask();
-
-           flowExecutionTask.setOnSucceeded(taskEvent -> {
-               DTOFlowExecution flowExecution = flowExecutionTask.getValue();
-               stopProgressUpdates();
-               mainController.goToStatisticsTab();
-           });
-
-           flowExecutionTask.setOnFailed(taskEvent -> {
-               Throwable exception = flowExecutionTask.getException();
-               stopProgressUpdates();
-           });
-
-           System.out.println("submitting task");
-           executorService.submit(flowExecutionTask);
-
-           flowExecutionTask.valueProperty().addListener((observable, oldValue, newValue) -> {
-               if (newValue != null) {
-                   System.out.println("in update");
-                   DTOFlowExecution intermediateFlowExecution = newValue;
-                   // Call a method to handle the intermediate flowExecution or update the UI
-                   //updateUIWithProgressDetails(intermediateFlowExecution);
-               }
-           });
-
-           Timeline updateTimeline = new Timeline(new KeyFrame(Duration.millis(200), exeEvent -> {
-               updateProgressDetails(flowSessionId);
-           }));
-           updateTimeline.setCycleCount(Timeline.INDEFINITE);
-           updateTimeline.play();
-
-        freeInputMap = new HashMap<>();
-        System.out.println(freeInputMap);
-    }
-*/
-
-/*
-    private void startProgressUpdates(UUID flowSessionId) {
-        Duration updateInterval = Duration.millis(200);
-        progressTimeline = new Timeline(new KeyFrame(updateInterval, event -> {
-            updateProgressDetails(flowSessionId);
-        }));
-        progressTimeline.setCycleCount(Timeline.INDEFINITE);
-        progressTimeline.play();
-    }
-
-    private void stopProgressUpdates() {
-        if (progressTimeline != null) {
-            progressTimeline.stop();
-        }
-    }
-
-    private void updateProgressDetails(UUID flowSessionId) {
-        DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().getFlowExecutionStatus(flowSessionId);
-
-        if (flowExecution.isComplete()) {
-            stopProgressUpdates();
-            mainController.goToStatisticsTab();
-        } else {
-            // Flow execution is still in progress
-            // Update the UI with the latest progress details
-            // ...
-        }
-    }*/
-
-
-   /* private void startProgressUpdates(UUID flowSessionId) {
-        System.out.println("startProgressUpdates");
-        Duration updateInterval = Duration.millis(100);
-        progressTimeline = new Timeline(new KeyFrame(updateInterval, event -> {
-            //updateGeneralInfo(flowExecution);
-            updateProgressDetails(flowSessionId);
-            // Check if the flow execution is complete
-    *//*        if (flowExecution.isComplete()) {
-                progressTimeline.stop();
-                System.out.println("flow is complete" + flowExecution.getFlowName());
-               // handleFlowCompletion(flowExecution);
-            }*//*
-        }));
-        progressTimeline.setCycleCount(Timeline.INDEFINITE);
-        progressTimeline.play();
-    }
-
-    private void stopProgressUpdates() {
-        System.out.println("stopProgressUpdates");
-        if (progressTimeline != null) {
-            progressTimeline.stop();
-        }
-    }
-
-    private void updateProgressDetails(UUID flowSessionId) {
-        System.out.println("updateProgressDetails");
-        DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().getFlowExecutionStatus(flowSessionId);
-        System.out.println(flowExecution.getFlowName());
-        System.out.println(flowExecution.isComplete());
-
-        if (flowExecution.isComplete()) {
-            progressTimeline.stop();
-            System.out.println("flow is complete" + flowExecution.getFlowName());
-        }
-        else {
-            System.out.println("flow is not complete" + flowExecution.getFlowName());
-        }
-
-
-  *//*      // Query the execution status and progress
-
-        // Extract the necessary progress details from the flowExecution object
-        int stepsTaken = flowExecution.getStepsTaken();
-        int totalSteps = flowExecution.getTotalSteps();
-        double completionPercentage = (double) stepsTaken / totalSteps * 100;
-
-        // Update the UI with the latest progress details
-        Platform.runLater(() -> {
-            // Update labels, progress bars, or any other UI elements
-            stepsTakenLabel.setText(String.valueOf(stepsTaken));
-            totalStepsLabel.setText(String.valueOf(totalSteps));
-            completionPercentageLabel.setText(String.format("%.2f%%", completionPercentage));
-            progressBar.setProgress(completionPercentage / 100);
-        });*//*
-    }*/
-
-    /*    private void startProgressUpdates() {
-        Duration updateInterval = Duration.millis(100);
-        progressTimeline = new Timeline(new KeyFrame(updateInterval, event -> {
-            // Query the execution status and progress
-            // Update the UI with the latest progress details
-            updateProgressDetails();
-        }));
-        progressTimeline.setCycleCount(Timeline.INDEFINITE);
-        progressTimeline.play();
-    }*/
-
-
-//}
-

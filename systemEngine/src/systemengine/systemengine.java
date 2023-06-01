@@ -39,10 +39,15 @@ public interface systemengine {
 
     DTOFlowAndStepStatisticData getStatisticData();
 
-    DTOFlowExecution getFlowExecutionStatus(UUID flowSessionId);
+
 
     void saveToFile(String path);
 
     void loadFromFile(String path);
+
+
+
+    Boolean isCurrFlowExecutionDone(String currFlowName);
+    DTOFlowExecution getFlowExecutionStatus(UUID flowSessionId);
 
 }
