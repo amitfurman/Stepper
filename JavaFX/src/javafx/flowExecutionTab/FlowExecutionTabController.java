@@ -4,18 +4,19 @@ package javafx.flowExecutionTab;
 import dto.DTOFlowExecution;
 import dto.DTOFreeInputsFromUser;
 import dto.DTOSingleFlowIOData;
-import exceptions.TaskIsCanceledException;
+import dto.DTOStepExecutionData;
 import javafx.Controller;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.flowExecutionTab.MasterDetail.MasterDetailController;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -24,12 +25,13 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Duration;
+import org.controlsfx.control.MasterDetailPane;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.*;
-import java.util.concurrent.*;
 
 public class FlowExecutionTabController {
     private Controller mainController;
@@ -48,6 +50,9 @@ public class FlowExecutionTabController {
     private Map<String, Object> freeInputMap;
 
     private ObservableList<Input> inputList = FXCollections.observableArrayList();
+    private MasterDetailController masterDetailController;
+    private MasterDetailPane masterDetailPane;
+
 
    // private ExecutorService executorService;
 
@@ -61,7 +66,7 @@ public class FlowExecutionTabController {
 
 
     @FXML
-    public void initialize() {
+    public void initialize() throws IOException {
         freeInputMap = new HashMap<>();
         executeButton.setDisable(true);
         AnchorPane.setTopAnchor(borderPane, 0.0);
@@ -69,10 +74,27 @@ public class FlowExecutionTabController {
         AnchorPane.setLeftAnchor(borderPane, 0.0);
         AnchorPane.setRightAnchor(borderPane, 0.0);
 
-         // int numThreads = 5; // Set the desired number of threads
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = getClass().getResource("MasterDetail/masterDetails.fxml");
+        fxmlLoader.setLocation(url);
+        MasterDetailPane MasterDetailComponent = fxmlLoader.load(url.openStream());
+        MasterDetailController masterDetailController = fxmlLoader.getController();
+        this.setMasterDetailsController(masterDetailController);
+        this.masterDetailPane = MasterDetailComponent;
+        if (masterDetailController != null) {
+            masterDetailController.setFlowExecutionTabController(this);
+        }
+        VBox masterDetailPaneVbox = new VBox(MasterDetailComponent);
+        borderPane.setCenter(masterDetailPaneVbox);
+        //MasterDetailComponent.setDetailNode()// int numThreads = 5; // Set the desired number of threads
         //executorService = Executors.newFixedThreadPool(numThreads);
        // flowExecutionTasks = new ArrayList<>();
 
+    }
+
+    public void setMasterDetailsController(MasterDetailController masterDetailComponentController) {
+        this.masterDetailController = masterDetailComponentController;
+        masterDetailComponentController.setFlowExecutionTabController(this);
     }
 
     public void setMainController(Controller mainController) {
@@ -92,24 +114,29 @@ public class FlowExecutionTabController {
             setLabelSetting(label);
 
             String simpleName = input.getType().getType().getSimpleName();
-            System.out.println(input.getType().getName());
-
             VBox vbox = new VBox();
             setVBoxSetting(vbox, label);
 
             Spinner<Integer> spinner = new Spinner<>();
             TextField textField = new TextField();
 
+            System.out.println(input.getOriginalName());
 
             if(simpleName.equals("String")) {
                 setTextFieldSetting(textField, input);
                 if(input.getOriginalName().equals("FILE_NAME")){
                     openFileChooser(textField);
+                    textField.setCursor(Cursor.HAND);
+
                 }else if(input.getOriginalName().equals("FOLDER_NAME")){
                     openDirectoryChooser(textField);
+                    textField.setCursor(Cursor.HAND);
+
                 }
                 else if(input.getOriginalName().equals("SOURCE")){
                     openChooseDialog(textField);
+                    textField.setCursor(Cursor.HAND);
+
                 }
                 vbox.getChildren().addAll(label, textField);
                 vbox.setVgrow(textField, Priority.ALWAYS);
@@ -278,10 +305,69 @@ public class FlowExecutionTabController {
         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
         DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
         //  createTask();
-
+        initMasterDetailComponent(flowExecution);
         mainController.goToStatisticsTab();
 
     }
+
+    public void initMasterDetailComponent(DTOFlowExecution flowExecution) {
+
+        // Create the detail content
+        VBox detailPane = new VBox();
+        detailPane.setPadding(new Insets(10));
+        detailPane.setSpacing(5);
+
+        Label FlowdetailLabel = createDetailLabel(flowExecution.getFlowName(), masterDetailPane, true);
+        detailPane.getChildren().add(FlowdetailLabel);
+
+        int counter = 1;
+        for (DTOStepExecutionData stepExecution: flowExecution.getStepExecutionDataList()) {
+            Label detailLabel = createDetailLabel("Step " + counter++ + ": " + stepExecution.getFinalNameStep(), masterDetailPane, false);
+            detailPane.getChildren().add(detailLabel);
+        }
+
+        ScrollPane scrollPane = new ScrollPane(detailPane);
+        scrollPane.setFitToWidth(true);
+        masterDetailPane.setDetailNode(scrollPane);
+        masterDetailPane.setDividerPosition(0.3);
+
+
+        Label masterLabel = new Label("Master");
+        StackPane masterPane = new StackPane(masterLabel);
+
+        masterDetailPane.setMasterNode(masterPane);
+    }
+
+    private Label createDetailLabel(String text, MasterDetailPane masterDetailPane, boolean isFirstLabel) {
+        Label detailLabel = new Label(text);
+
+        // Add an event handler to the detail label
+        detailLabel.setOnMouseClicked(event -> {
+            // Set the full details in the master section
+            masterDetailPane.setMasterNode(new Label("Full Details: " + text));
+            masterDetailPane.setDividerPosition(0.3);
+
+        });
+
+        // Add a style class to the first label
+        if (isFirstLabel) {
+            detailLabel.getStyleClass().add("first-label");
+        } else {
+            detailLabel.getStyleClass().add("detail-label");
+        }
+
+        // Apply visual cues for interactivity
+        detailLabel.setCursor(Cursor.HAND);
+        detailLabel.setOnMouseEntered(event -> {
+            detailLabel.setUnderline(true);
+        });
+        detailLabel.setOnMouseExited(event -> {
+            detailLabel.setUnderline(false);
+        });
+
+        return detailLabel;
+    }
+
 
     protected Task<Void> createTask() {
         return new Task<Void>() {
