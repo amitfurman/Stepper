@@ -26,6 +26,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
@@ -100,14 +101,15 @@ public class FlowExecutionTabController {
             TextField textField = new TextField();
 
 
-
             if(simpleName.equals("String")) {
-
                 setTextFieldSetting(textField, input);
-                if(input.getOriginalName().equals("FILE_NAME") || input.getOriginalName().equals("SOURCE")){
+                if(input.getOriginalName().equals("FILE_NAME")){
                     openFileChooser(textField);
                 }else if(input.getOriginalName().equals("FOLDER_NAME")){
                     openDirectoryChooser(textField);
+                }
+                else if(input.getOriginalName().equals("SOURCE")){
+                    openChooseDialog(textField);
                 }
                 vbox.getChildren().addAll(label, textField);
                 vbox.setVgrow(textField, Priority.ALWAYS);
@@ -132,6 +134,26 @@ public class FlowExecutionTabController {
         input.setMandatory(freeInput.getNecessity().toString());
         input.setType(freeInput.getType());
     }
+
+    public void openChooseDialog(TextField textField) {
+        textField.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 1) {
+                JFileChooser chooser = new JFileChooser(".");
+                chooser.setMultiSelectionEnabled(true);
+                chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                int ret = chooser.showOpenDialog(null);
+
+                if(ret == JFileChooser.APPROVE_OPTION) {
+                    File[] selectedDirectory = chooser.getSelectedFiles();
+                    for (File file : selectedDirectory) {
+                        textField.setText(file.getAbsolutePath());
+                    }
+                }
+            }
+        });
+
+    }
+
 
     public void openDirectoryChooser(TextField textField) {
         textField.setOnMouseClicked(e -> {
