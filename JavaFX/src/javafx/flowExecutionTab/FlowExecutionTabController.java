@@ -19,16 +19,17 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-
-import javafx.scene.text.TextFlow;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.MasterDetailPane;
+import steps.api.StepResult;
 
 import javax.swing.*;
 import java.io.File;
@@ -40,22 +41,16 @@ public class FlowExecutionTabController {
     private Controller mainController;
     @FXML
     private BorderPane borderPane;
-
     @FXML
     private GridPane gridPane;
-
     @FXML
     private HBox inputValuesHBox;
-
     @FXML
     private Button executeButton;
-
     private Map<String, Object> freeInputMap;
-
     private ObservableList<Input> inputList = FXCollections.observableArrayList();
     private MasterDetailController masterDetailController;
     private MasterDetailPane masterDetailPane;
-
     @FXML
     private Label MandatoryLabel;
 
@@ -345,68 +340,13 @@ public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
         DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
         freeInputMap = new HashMap<>();
         //  createTask();
-        initMasterDetailComponent(flowExecution);
+        masterDetailController.initMasterDetailComponent(flowExecution);
         mainController.goToStatisticsTab();
 
     }
 
-    public void initMasterDetailComponent(DTOFlowExecution flowExecution) {
-
-        // Create the detail content
-        VBox detailPane = new VBox();
-        detailPane.setPadding(new Insets(10));
-        detailPane.setSpacing(5);
-
-        Label FlowdetailLabel = createDetailLabel(flowExecution.getFlowName(), masterDetailPane, true);
-        detailPane.getChildren().add(FlowdetailLabel);
-
-        int counter = 1;
-        for (DTOStepExecutionData stepExecution: flowExecution.getStepExecutionDataList()) {
-            Label detailLabel = createDetailLabel("Step " + counter++ + ": " + stepExecution.getFinalNameStep(), masterDetailPane, false);
-            detailPane.getChildren().add(detailLabel);
-        }
-
-        ScrollPane scrollPane = new ScrollPane(detailPane);
-        scrollPane.setFitToWidth(true);
-        masterDetailPane.setDetailNode(scrollPane);
-        masterDetailPane.setDividerPosition(0.3);
 
 
-        Label masterLabel = new Label("Master");
-        StackPane masterPane = new StackPane(masterLabel);
-
-        masterDetailPane.setMasterNode(masterPane);
-    }
-
-    private Label createDetailLabel(String text, MasterDetailPane masterDetailPane, boolean isFirstLabel) {
-        Label detailLabel = new Label(text);
-
-        // Add an event handler to the detail label
-        detailLabel.setOnMouseClicked(event -> {
-            // Set the full details in the master section
-            masterDetailPane.setMasterNode(new Label("Full Details: " + text));
-            masterDetailPane.setDividerPosition(0.3);
-
-        });
-
-        // Add a style class to the first label
-        if (isFirstLabel) {
-            detailLabel.getStyleClass().add("first-label");
-        } else {
-            detailLabel.getStyleClass().add("detail-label");
-        }
-
-        // Apply visual cues for interactivity
-        detailLabel.setCursor(Cursor.HAND);
-        detailLabel.setOnMouseEntered(event -> {
-            detailLabel.setUnderline(true);
-        });
-        detailLabel.setOnMouseExited(event -> {
-            detailLabel.setUnderline(false);
-        });
-
-        return detailLabel;
-    }
 
 
     protected Task<Void> createTask() {
