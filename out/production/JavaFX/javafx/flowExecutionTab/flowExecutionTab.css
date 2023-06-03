@@ -25,3 +25,22 @@
     -fx-text-fill: #000000;
     -fx-opacity: 0.8;
 }
+
+.first-label {
+    -fx-background-color: #ffa6c5;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.detail-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+.master-detail-pane .master-detail-pane-detail {
+    -fx-background-color: #ffeaec;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #36454f;
+
+
+}

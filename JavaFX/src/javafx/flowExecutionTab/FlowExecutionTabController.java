@@ -4,50 +4,56 @@ package javafx.flowExecutionTab;
 import dto.DTOFlowExecution;
 import dto.DTOFreeInputsFromUser;
 import dto.DTOSingleFlowIOData;
-import exceptions.TaskIsCanceledException;
+import dto.DTOStepExecutionData;
 import javafx.Controller;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.flowExecutionTab.MasterDetail.MasterDetailController;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Duration;
+import org.controlsfx.control.MasterDetailPane;
+import steps.api.StepResult;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.*;
-import java.util.concurrent.*;
 
 public class FlowExecutionTabController {
     private Controller mainController;
     @FXML
     private BorderPane borderPane;
-
     @FXML
     private GridPane gridPane;
-
     @FXML
     private HBox inputValuesHBox;
-
     @FXML
     private Button executeButton;
-
     private Map<String, Object> freeInputMap;
-
     private ObservableList<Input> inputList = FXCollections.observableArrayList();
+    private MasterDetailController masterDetailController;
+    private MasterDetailPane masterDetailPane;
+    @FXML
+    private Label MandatoryLabel;
+
 
    // private ExecutorService executorService;
 
@@ -61,7 +67,7 @@ public class FlowExecutionTabController {
 
 
     @FXML
-    public void initialize() {
+    public void initialize() throws IOException {
         freeInputMap = new HashMap<>();
         executeButton.setDisable(true);
         AnchorPane.setTopAnchor(borderPane, 0.0);
@@ -69,10 +75,31 @@ public class FlowExecutionTabController {
         AnchorPane.setLeftAnchor(borderPane, 0.0);
         AnchorPane.setRightAnchor(borderPane, 0.0);
 
-         // int numThreads = 5; // Set the desired number of threads
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = getClass().getResource("MasterDetail/masterDetails.fxml");
+        fxmlLoader.setLocation(url);
+        MasterDetailPane MasterDetailComponent = fxmlLoader.load(url.openStream());
+        MasterDetailController masterDetailController = fxmlLoader.getController();
+        this.setMasterDetailsController(masterDetailController);
+        this.masterDetailPane = MasterDetailComponent;
+        if (masterDetailController != null) {
+            masterDetailController.setFlowExecutionTabController(this);
+        }
+        VBox masterDetailPaneVbox = new VBox(MasterDetailComponent);
+        borderPane.setCenter(masterDetailPaneVbox);
+
+        Text asterisk1 = new Text("*");
+        asterisk1.setFill(Color.RED);
+        MandatoryLabel.setGraphic(asterisk1);
+        //MasterDetailComponent.setDetailNode()// int numThreads = 5; // Set the desired number of threads
         //executorService = Executors.newFixedThreadPool(numThreads);
        // flowExecutionTasks = new ArrayList<>();
 
+    }
+
+    public void setMasterDetailsController(MasterDetailController masterDetailComponentController) {
+        this.masterDetailController = masterDetailComponentController;
+        masterDetailComponentController.setFlowExecutionTabController(this);
     }
 
     public void setMainController(Controller mainController) {
@@ -82,34 +109,47 @@ public class FlowExecutionTabController {
     public void initInputsTable(List<DTOSingleFlowIOData> freeInputs) {
         executeButton.setDisable(true);
         inputValuesHBox.getChildren().clear();
+
         freeInputs.forEach(freeInput -> {// Populate inputList from freeInputs
             Input input = new Input();
             setInputValues(input, freeInput);
             inputList.add(input);
 
-            // Create label for the node
-            Label label = new Label((input.getFinalName().equals("TIME_TO_SPEND") ? input.getFinalName() + " (sec)" : input.getFinalName() ) + " (" + input.getMandatory() + ")");
+
+            Label label = new Label((input.getFinalName().equals("TIME_TO_SPEND") ? input.getFinalName() + " (sec)" : input.getFinalName()));
             setLabelSetting(label);
 
-            String simpleName = input.getType().getType().getSimpleName();
-            System.out.println(input.getType().getName());
+            // Check if input.getMandatory() is "MANDATORY"
+            if (input.getMandatory().equals("MANDATORY")) {
+                Text asterisk1 = new Text("*");
+                asterisk1.setFill(Color.RED);
+                label.setGraphic(asterisk1);
+            }
 
+            String simpleName = input.getType().getType().getSimpleName();
             VBox vbox = new VBox();
             setVBoxSetting(vbox, label);
 
             Spinner<Integer> spinner = new Spinner<>();
             TextField textField = new TextField();
 
+            System.out.println(input.getOriginalName());
 
             if(simpleName.equals("String")) {
                 setTextFieldSetting(textField, input);
                 if(input.getOriginalName().equals("FILE_NAME")){
                     openFileChooser(textField);
+                    textField.setCursor(Cursor.HAND);
+
                 }else if(input.getOriginalName().equals("FOLDER_NAME")){
                     openDirectoryChooser(textField);
+                    textField.setCursor(Cursor.HAND);
+
                 }
                 else if(input.getOriginalName().equals("SOURCE")){
                     openChooseDialog(textField);
+                    textField.setCursor(Cursor.HAND);
+
                 }
                 vbox.getChildren().addAll(label, textField);
                 vbox.setVgrow(textField, Priority.ALWAYS);
@@ -241,6 +281,7 @@ public class FlowExecutionTabController {
     public void commitEdit(Object newValue, Input input) {
         input.setValue(newValue);
         updateFreeInputMap(input, newValue);
+        System.out.println(freeInputMap);
         boolean hasAllMandatoryInputs = hasAllMandatoryInputs(freeInputMap);
         executeButton.setDisable(!hasAllMandatoryInputs);
     }
@@ -249,39 +290,64 @@ public class FlowExecutionTabController {
         freeInputMap.put(input.getStepName() + "." + input.getOriginalName(), newValue);
     }
 
-    public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
-        for (Node node : inputValuesHBox.getChildren()) {
-            VBox vbox = (VBox) node;
-            Label label = (Label) vbox.getChildren().get(0);
-            String labelText = label.getText();
-            int endIndex = labelText.lastIndexOf(" (");
-            String finalName = labelText.substring(0, endIndex);
-            String mandatoryValue = labelText.substring(endIndex + 2, labelText.length() - 1);
-            if (mandatoryValue.equals("MANDATORY")) {
-                Optional<Input> optionalInput = inputList.stream().filter(input1 -> input1.getFinalName().equals(finalName)).findFirst();
-                if (optionalInput.isPresent()) {
-                    Input input = optionalInput.get();
-                    String key = input.getStepName() + "." + input.getOriginalName();
-                    if (!freeInputMap.containsKey(key) || freeInputMap.get(key).equals("")) {
-                        return false;
-                    }
+public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
+    for (Node node : inputValuesHBox.getChildren()) {
+        VBox vbox = (VBox) node;
+        Label label = (Label) vbox.getChildren().get(0);
+        String finalName;
+
+        String labelText = label.getText();
+        boolean startsWithAsterisk = false;
+        Node graphic = label.getGraphic();
+        if (graphic instanceof Text) {
+            Text asterisk = (Text) graphic;
+            startsWithAsterisk = asterisk.getText().equals("*");
+        }
+
+        finalName = labelText;
+
+        int endIndex = finalName.lastIndexOf(" (");
+        if (endIndex != -1) {
+            finalName = finalName.substring(0, endIndex);
+        }
+
+        System.out.println(finalName);
+        System.out.println("Starts with asterisk: " + startsWithAsterisk); // Print if label starts with asterisk
+
+        if (startsWithAsterisk) {
+            String finalName1 = finalName;
+            Optional<Input> optionalInput = inputList.stream().filter(input1 -> input1.getFinalName().equals(finalName1)).findFirst();
+            System.out.println(optionalInput);
+            if (optionalInput.isPresent()) {
+                Input input = optionalInput.get();
+                String key = input.getStepName() + "." + input.getOriginalName();
+                if (!freeInputMap.containsKey(key) || freeInputMap.get(key).equals("")) {
+                    return false;
                 }
             }
         }
-        return true;
     }
+    return true;
+}
+
 
     @FXML
     void StartExecuteFlowButton(ActionEvent event){
         System.out.println(freeInputMap);
 
         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
+        System.out.println(freeInputs);
         DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
+        freeInputMap = new HashMap<>();
         //  createTask();
-
+        masterDetailController.initMasterDetailComponent(flowExecution);
         mainController.goToStatisticsTab();
 
     }
+
+
+
+
 
     protected Task<Void> createTask() {
         return new Task<Void>() {
