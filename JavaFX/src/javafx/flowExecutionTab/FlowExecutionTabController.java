@@ -154,7 +154,6 @@ public class FlowExecutionTabController {
 
     }
 
-
     public void openDirectoryChooser(TextField textField) {
         textField.setOnMouseClicked(e -> {
             if (e.getClickCount() == 1) {
@@ -170,6 +169,7 @@ public class FlowExecutionTabController {
             }
         });
     }
+
     public void openFileChooser(TextField textField){
         textField.setOnMouseClicked(e -> {
             if (e.getClickCount() == 1) {
