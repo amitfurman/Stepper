@@ -1,4 +1,6 @@
 package javafx.flowExecutionTab.MasterDetail;
+import datadefinition.impl.list.FileListData;
+import datadefinition.impl.list.StringListData;
 import datadefinition.impl.relation.RelationData;
 import dto.DTOFlowExecution;
 import dto.DTOSingleFlowIOData;
@@ -29,6 +31,7 @@ import org.controlsfx.control.MasterDetailPane;
 import steps.api.DataNecessity;
 import steps.api.StepResult;
 
+import java.io.File;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +51,9 @@ public class MasterDetailController {
     public void initialize() {
         FlowMasterDetails.setDetailSide(Side.LEFT);
         FlowMasterDetails.setDividerPosition(0.3);
+
     }
+
 
     public void setFlowExecutionTabController(FlowExecutionTabController flowExecutionTabController) {
         this.flowExecutionTabController = flowExecutionTabController;
@@ -127,9 +132,6 @@ public class MasterDetailController {
                 //steps method
             }
             StackPane stackPane = new StackPane();
-/*            ScrollPane scrollPane = new ScrollPane(treeView);
-            scrollPane.setFitToWidth(true);
-            scrollPane.setFitToHeight(true);*/
 
             stackPane.getChildren().addAll(textArea, treeView);
 
@@ -216,7 +218,9 @@ public class MasterDetailController {
             outputItem.getChildren().addAll(
                     new TreeItem<>("Final Name: " + output.getFinalName()),
                     new TreeItem<>("Type: " + output.getType().toString()),
-                    new TreeItem<>(showOutputValue(output))
+                    output.getType().toString().equals("RELATION") ||output.getType().toString().equals("STRING_LIST")
+                            || output.getType().toString().equals("FILE_LIST") || output.getType().toString().equals("NUMBERS2MAPPING")
+                            ?  new TreeItem<>(showOutputValue(output)) : new TreeItem<>(output.getValue().toString())
             );
         }
 
@@ -226,213 +230,80 @@ public class MasterDetailController {
         return treeView;
     }
 
-
     public Hyperlink showOutputValue(DTOSingleFlowIOData output) {
-        System.out.println("Output Type: " + output.getType().toString());
-        if (output.getType().toString().equals("RELATION")) {
-            Hyperlink viewDataLink = new Hyperlink("View Data");
-            viewDataLink.setOnAction(event -> {
 
-                Stage popupwindow = new Stage();
-                popupwindow.initModality(Modality.APPLICATION_MODAL);
-                popupwindow.setTitle("This is a pop up window");
-                Label label1 = new Label("Pop up window now displayed");
-
-                TableView table = new TableView();
-                table.setEditable(false);
-
-                for (String column : ((RelationData) output.getValue()).getColumns()) {
-                    TableColumn<Map<String, String>, String> tableColumn = new TableColumn<>(column);
-                    tableColumn.setPrefWidth(100);
-                    tableColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(column)));
-                    table.getColumns().add(tableColumn);
-                }
-
-                ObservableList<Map<String, String>> data = FXCollections.observableArrayList();
-                for (RelationData.SingleRow singleRow : ((RelationData) output.getValue()).getRows()) {
-                    Map<String, String> row = singleRow.getRowData();
-                    data.add(row);
-                }
-
-/*                for (String column :((RelationData)output.getValue()).getColumns()) {
-                    TableColumn<String, String> tableColumn = new TableColumn<>(column);
-                    tableColumn.setPrefWidth(100);
-                    table.getColumns().add(tableColumn);
-                }
-
-                for (RelationData.SingleRow singleRow :((RelationData)output.getValue()).getRows()) {
-                    TableRow<String> tableROW = new TableRow<>()
-                    Map<String, String> row = singleRow.getRowData();
-
-                }*/
-
-               // table.getItems().addAll(((RelationData)output.getValue()).getRows());
-
-                VBox layout = new VBox(10);
+        Hyperlink viewDataLink = new Hyperlink("View Data");
+        viewDataLink.setOnAction(event -> {
+            Stage popupwindow = new Stage();
+            popupwindow.initModality(Modality.APPLICATION_MODAL);
+            popupwindow.setTitle("This is a pop up window");
+            Label label1 = new Label("Pop up window now displayed");
+            VBox layout = new VBox(10);
+            
+            if (output.getType().toString().equals("RELATION")) {
+                TableView table = showRelationData(output);
                 layout.getChildren().addAll(label1, table);
-                layout.setAlignment(Pos.CENTER);
-                Scene scene1 = new Scene(layout, 300, 250);
-
-                popupwindow.setScene(scene1);
-                popupwindow.showAndWait();
-            });
-
-            return viewDataLink;
-        }
-        return null;
+            }
+            else if(output.getType().toString().equals("STRING_LIST") || output.getType().toString().equals("FILE_LIST")){
+                ListView<String> list = showListData(output);
+                layout.getChildren().addAll(label1, list);
+            }else if(output.getType().toString().equals("NUMBERS2MAPPING")){
+                //////check if need
+            }
+            layout.setAlignment(Pos.CENTER);
+            Scene scene1 = new Scene(layout, 300, 250);
+            popupwindow.setScene(scene1);
+            popupwindow.showAndWait();
+        });
+        return  viewDataLink;
     }
+
+    public ListView<String> showListData(DTOSingleFlowIOData output){
+        ListView<String> list = new ListView<>();
+
+        ObservableList<String> items = FXCollections.observableArrayList();
+        int index =1;
+        if(output.getType().toString().equals("FILE_LIST")) {
+            for (File value :((FileListData) output.getValue()).getItems()) {
+                String name = index +". " + value.getAbsolutePath();
+                index++;
+                items.add(name);
+            }
+        }else {//////////////////check in step 3
+            for (String value : ((StringListData) output.getValue()).getItems()) {
+                String name = index +". " + value;
+                index++;
+                items.add(value);
+            }
+        }
+
+        list.setItems(items);
+
+        return list;
+    }
+
+    public TableView showRelationData(DTOSingleFlowIOData output) {
+            TableView table = new TableView();
+            table.setEditable(false);
+
+            for (String column : ((RelationData) output.getValue()).getColumns()) {
+                TableColumn<Map<String, String>, String> tableColumn = new TableColumn<>(column);
+                tableColumn.setPrefWidth(100);
+                tableColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(column)));
+                table.getColumns().add(tableColumn);
+            }
+
+            ObservableList<Map<String, String>> data = FXCollections.observableArrayList();
+            for (RelationData.SingleRow singleRow : ((RelationData) output.getValue()).getRows()) {
+                Map<String, String> row = singleRow.getRowData();
+                data.add(row);
+                table.setItems(data);
+            }
+            
+           return table;
+    }
+
+
+
 }
 
-
-
-
-/*
-    TextFlow cratingGeneralFlowExecutionDetail(){
-        TextFlow textFlow = new TextFlow();
-
-        textFlow.getChildren().addAll(
-                createTextFlow("Flow Name: ", flowExecution.getFlowName()),
-                new Text("\n"),
-                createTextFlow("Flow ID: ", flowExecution.getUniqueId()),
-                new Text("\n"),
-                createTextFlow("Flow Result: ", flowExecution.getFlowExecutionResult().toString()),
-                new Text("\n"),
-                createTextFlow("Start Time: ", flowExecution.getStartTimeFormatted()),
-                new Text("\n"),
-                createTextFlow("Total Running Time: ", String.format("%d ms", flowExecution.getTotalTime().toMillis())),
-                new Text("\n\n"),
-                createTextFlow("Flow's Free Inputs: ", ""),
-                new Text("\n")
-        );
-
-        AtomicInteger freeInputIndex = new AtomicInteger(1);
-        List<DTOSingleFlowIOData> sortedList = flowExecution.getFreeInputsList().stream()
-                .sorted(Comparator.comparing(obj -> obj.getNecessity().equals(DataNecessity.MANDATORY) ? 0 : 1))
-                .collect(Collectors.toList());
-
-        sortedList.forEach(input -> {
-            textFlow.getChildren().addAll(
-                    createTextFlow("Free Input " + freeInputIndex.getAndIncrement() + ":", ""),
-                    new Text("\n"),
-                    createTextFlow("\tFinal Name: ", input.getFinalName()),
-                    new Text("\n"),
-                    createTextFlow("\tType: ", input.getType().toString()),
-                    new Text("\n"),
-                    input.getValue() != null ? createTextFlow("\tValue: ", input.getValue().toString()) :
-                            createTextFlow("\tValue: N/A", ""),
-                    new Text("\n"),
-                    createTextFlow("\tIs Mandatory / Optional: ", input.getNecessity().toString()),
-                    new Text("\n")
-            );
-        });
-
-        AtomicInteger outputIndex = new AtomicInteger(1);
-        List<DTOSingleFlowIOData> outputs = flowExecution.getIOlist().stream().filter(io -> io.getIOType().equals(IO.OUTPUT)).collect(Collectors.toList());
-
-        textFlow.getChildren().addAll(
-                new Text("\n"),
-                createTextFlow("Flow's Outputs ", ""),
-                new Text("\n"));
-
-        for(DTOSingleFlowIOData output: outputs) {
-        textFlow.getChildren().addAll(
-            createTextFlow("Output " ,outputIndex.getAndIncrement() + ":"),
-            new Text("\n"),
-            createTextFlow("\tFinal Name: " , output.getFinalName()),
-            new Text("\n"),
-            createTextFlow("\tType: " , output.getType().toString()),
-            new Text("\n"),
-            output.getValue() != null ? createTextFlow("\tValue: ", output.getValue().toString()) :  createTextFlow("\tValue: Not created due to failure in flow", ""),
-            new Text("\n")
-        );};
-        return textFlow;
-
-        //textFlow.getChildren().addAll( showOutputValue());
-    }
-*/
-
-
-
-
-
-
-
-
-    // {
-/*
-        TextArea textArea = new TextArea();
-        textArea.setEditable(false);
-        textArea.setWrapText(true);
-
-        TextFlow textFlow = new TextFlow();
-        textFlow.setLineSpacing(5);
-
-        Text boldText = new Text("This is bold text");
-        boldText.setFont(Font.font("Arial", FontWeight.BOLD, 12));
-
-        Text regularText = new Text("This is regular text");
-
-        textFlow.getChildren().addAll(boldText, regularText);
-
-        textArea.setText(""); // Clear the existing text
-        textArea.setPrefRowCount(10); // Set the desired number of rows
-        textArea.setFont(Font.font("Arial", 12)); // Set the desired font
-
-        // Add the TextFlow as the graphic of the TextArea
-        textArea.setGraphic(textFlow);*/
-/*
-
-        TextFlow textFlow = new TextFlow();
-        Text labelText = new Text("Flow Name: ");
-        labelText.setFont(Font.font("Arial", FontWeight.BOLD, 12));
-
-        Text flowNameText = new Text(flowExecution.getFlowName());
-        flowNameText.setFont(Font.font("Arial", FontWeight.NORMAL, 10));
-*/
-
-/*// Add the texts to the TextFlow
-        textFlow.getChildren().addAll(labelText, flowNameText);
-        System.out.println("Flow ID: " + flowExecution.getUniqueId());
-        System.out.println();
-            System.out.println(String.format("Total Running Time: %d ms", flowExecution.getTotalTime().toMillis()));
-            System.out.print("\n");
-        public void printFreeInputData(DTOFlowExecution flowExecution){
-            AtomicInteger freeInputIndex = new AtomicInteger(1);
-            System.out.println("Flow's Free Inputs: ");
-            List<DTOSingleFlowIOData> sortedList = flowExecution.getFreeInputsList().stream()
-                    .sorted(Comparator.comparing(obj -> obj.getNecessity().equals(DataNecessity.MANDATORY) ? 0 : 1))
-                    .collect(Collectors.toList());
-
-            sortedList.stream().forEach(input -> {
-                System.out.println("Free Input " + freeInputIndex.getAndIncrement() + ":" );
-                System.out.println("\tFinal Name:" + input.getFinalName());
-                System.out.println("\tType:" + input.getType());
-                if (input.getValue() != null) {
-                    System.out.println("\tValue: " + input.getValue().toString());
-                } else {
-                    System.out.println("\tValue: N/A");
-                }
-                System.out.println("\tIs Mandatory / Optional: " + input.getNecessity());
-            });
-            System.out.print("\n");
-        }
-       // detailText.setFont(Font.font("Arial", bold ? FontWeight.BOLD : FontWeight.NORMAL, 12));
-        textFlow.getChildren().add(detailText);*/
-
-       // return textFlow;
-    //}
-
-
-/*
-        TextFlow cratingFlowExecutionDetail(DTOFlowExecution flowExecution) {
-        TextFlow textFlow = new TextFlow();
-        Text detailText = new Text();
-       // detailText.setFont(Font.font("Arial", bold ? FontWeight.BOLD : FontWeight.NORMAL, 12));
-        textFlow.getChildren().add(detailText);
-
-        return textFlow;
-    }
-*/
-
-
-//}

@@ -91,6 +91,7 @@ public class FlowExecutionTabController {
         Text asterisk1 = new Text("*");
         asterisk1.setFill(Color.RED);
         MandatoryLabel.setGraphic(asterisk1);
+
         //MasterDetailComponent.setDetailNode()// int numThreads = 5; // Set the desired number of threads
         //executorService = Executors.newFixedThreadPool(numThreads);
        // flowExecutionTasks = new ArrayList<>();

@@ -37,11 +37,12 @@ public class FilesContentExtractor extends AbstractStepDefinition {
         List<String> columns = Arrays.asList("Serial Number", "Original file's name", "Data file line");
         RelationData relation = new RelationData(columns);
 
+        int serialNumber = 1;
         if (filesToExtract.getItems().isEmpty()) {
+            relation.addRow(new ArrayList<>(Arrays.asList(String.valueOf(serialNumber), "N/A" ,"File not found")));
             context.storeLogLineAndSummaryLine("The list of files to extract is empty, so there are no files to rename.");
         }
         else {
-            int serialNumber = 1;
             for (File file : filesToExtract.getItems()) {
                 context.storeLogLine("About to start work on file " + file.getName());
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));) {

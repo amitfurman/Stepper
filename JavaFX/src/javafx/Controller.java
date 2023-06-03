@@ -129,6 +129,7 @@ public class Controller {
             tabPane.getSelectionModel().select(flowExecutionTab);
         }
 
+
         List<DTOSingleFlowIOData> freeInputs = systemEngineInterface.getAllFlows().getFlowByName(chosenFlowName).getFlowFreeInputs();
         List<DTOSingleFlowIOData> sortedList = freeInputs.stream()
                 .sorted(Comparator.comparing(obj -> obj.getNecessity().equals(DataNecessity.MANDATORY) ? 0 : 1))
