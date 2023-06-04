@@ -96,19 +96,21 @@ public class FlowExecutionTabController {
         //executorService = Executors.newFixedThreadPool(numThreads);
        // flowExecutionTasks = new ArrayList<>();
     }
-
-    public void initFlowExecutionTab() {
+    public void initDataInFlowExecutionTab() {
         masterDetailController.initMasterDetailPaneController();
     }
+    public void initInputsInFlowExecutionTab() {
+        executeButton.setDisable(true);
+        inputValuesHBox.getChildren().clear();
+    }
+
     public void setMasterDetailsController(MasterDetailController masterDetailComponentController) {
         this.masterDetailController = masterDetailComponentController;
         masterDetailComponentController.setFlowExecutionTabController(this);
     }
-
     public void setMainController(Controller mainController) {
         this.mainController = mainController;
     }
-
     public void initInputsTable(List<DTOSingleFlowIOData> freeInputs) {
         executeButton.setDisable(true);
         inputValuesHBox.getChildren().clear();
@@ -177,7 +179,6 @@ public class FlowExecutionTabController {
         input.setMandatory(freeInput.getNecessity().toString());
         input.setType(freeInput.getType());
     }
-
     public void openChooseDialog(TextField textField) {
         textField.setOnMouseClicked(e -> {
             if (e.getClickCount() == 1) {
@@ -196,7 +197,6 @@ public class FlowExecutionTabController {
         });
 
     }
-
     public void openDirectoryChooser(TextField textField) {
         textField.setOnMouseClicked(e -> {
             if (e.getClickCount() == 1) {
@@ -212,7 +212,6 @@ public class FlowExecutionTabController {
             }
         });
     }
-
     public void openFileChooser(TextField textField){
         textField.setOnMouseClicked(e -> {
             if (e.getClickCount() == 1) {
@@ -228,7 +227,6 @@ public class FlowExecutionTabController {
             }
         });
     }
-
     public void setLabelSetting(Label label){
        label.setWrapText(true);
        label.setAlignment(Pos.CENTER_LEFT);
@@ -288,12 +286,10 @@ public class FlowExecutionTabController {
         boolean hasAllMandatoryInputs = hasAllMandatoryInputs(freeInputMap);
         executeButton.setDisable(!hasAllMandatoryInputs);
     }
-
     public void updateFreeInputMap(Input input, Object newValue) {
         freeInputMap.put(input.getStepName() + "." + input.getOriginalName(), newValue);
     }
-
-public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
+    public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
     for (Node node : inputValuesHBox.getChildren()) {
         VBox vbox = (VBox) node;
         Label label = (Label) vbox.getChildren().get(0);
@@ -332,7 +328,6 @@ public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
     }
     return true;
 }
-
 
     @FXML
     void StartExecuteFlowButton(ActionEvent event){

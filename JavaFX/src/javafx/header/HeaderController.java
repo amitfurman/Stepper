@@ -52,7 +52,8 @@ public class HeaderController {
 
     @FXML
     void clickToChooseXMLFileButton(ActionEvent event) {
-        mainController.initFlowExecutionTab();
+        mainController.initDataInFlowExecutionTab();
+        mainController.initInputsInFlowExecutionTab();
 
         mainController.setFlowDetailsTree();
         FileChooser fileChooser = new FileChooser();

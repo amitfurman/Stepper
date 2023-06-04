@@ -147,8 +147,11 @@ public class Controller {
 
     public String getFlowName() { return flowName; }
 
-    public void initFlowExecutionTab() {
-        flowExecutionTabController.initFlowExecutionTab();
+    public void initDataInFlowExecutionTab() {
+        flowExecutionTabController.initDataInFlowExecutionTab();
+    }
+    public void initInputsInFlowExecutionTab() {
+        flowExecutionTabController.initInputsInFlowExecutionTab();
     }
 
 }
