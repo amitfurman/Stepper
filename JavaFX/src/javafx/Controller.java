@@ -76,7 +76,6 @@ public class Controller {
         });
 
     }
-
     public Controller() {
         this.systemEngineInterface = new systemengineImpl();
     }
@@ -147,5 +146,9 @@ public class Controller {
     }
 
     public String getFlowName() { return flowName; }
+
+    public void initFlowExecutionTab() {
+        flowExecutionTabController.initFlowExecutionTab();
+    }
 
 }

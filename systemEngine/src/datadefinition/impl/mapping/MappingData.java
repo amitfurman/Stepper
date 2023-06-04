@@ -9,6 +9,7 @@ public class MappingData<K,V> implements Serializable {
     public MappingData(Map<K,V> source) {
         this.map = source;
     }
+
     public Map<K,V> getItems() {
         return map;
     }

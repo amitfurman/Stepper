@@ -95,9 +95,11 @@ public class FlowExecutionTabController {
         //MasterDetailComponent.setDetailNode()// int numThreads = 5; // Set the desired number of threads
         //executorService = Executors.newFixedThreadPool(numThreads);
        // flowExecutionTasks = new ArrayList<>();
-
     }
 
+    public void initFlowExecutionTab() {
+        masterDetailController.initMasterDetailPaneController();
+    }
     public void setMasterDetailsController(MasterDetailController masterDetailComponentController) {
         this.masterDetailController = masterDetailComponentController;
         masterDetailComponentController.setFlowExecutionTabController(this);

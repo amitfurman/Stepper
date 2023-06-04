@@ -1,11 +1,14 @@
 package javafx.flowExecutionTab.MasterDetail;
 import datadefinition.impl.list.FileListData;
 import datadefinition.impl.list.StringListData;
+import datadefinition.impl.mapping.MappingData;
+import datadefinition.impl.mapping.NumberMappingData;
 import datadefinition.impl.relation.RelationData;
 import dto.DTOFlowExecution;
 import dto.DTOSingleFlowIOData;
 import dto.DTOStepExecutionData;
 import flow.api.FlowIO.IO;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,6 +22,7 @@ import javafx.geometry.Side;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -54,13 +58,21 @@ public class MasterDetailController {
 
     }
 
-
     public void setFlowExecutionTabController(FlowExecutionTabController flowExecutionTabController) {
         this.flowExecutionTabController = flowExecutionTabController;
     }
 
     public MasterDetailPane getMasterDetailsComponent() {
         return FlowMasterDetails;
+    }
+
+    public void initMasterDetailPaneController(){
+        ScrollPane scrollPane = new ScrollPane();
+        FlowMasterDetails.setDetailNode(scrollPane);
+        scrollPane.setFitToWidth(true);
+        StackPane stackPane = new StackPane();
+        FlowMasterDetails.setMasterNode(stackPane);
+
     }
 
     public void initMasterDetailComponent(DTOFlowExecution FlowExecution) {
@@ -129,7 +141,7 @@ public class MasterDetailController {
             if (isFirstLabel) {
                 treeView = cratingGeneralFlowExecutionDetail();
             } else {
-                //steps method
+                treeView = cratingStepsExecutionDetail(text);
             }
             StackPane stackPane = new StackPane();
 
@@ -157,6 +169,57 @@ public class MasterDetailController {
         return detailLabel;
     }
 
+    TreeView<Object> cratingStepsExecutionDetail(String dataName) {
+        TreeItem<Object> rootItem = new TreeItem<>("Step Details");
+        rootItem.setExpanded(true);
+
+        int colonIndex = dataName.indexOf(":"); // Find the index of the colon
+        String stepFinalName;
+        if (colonIndex != -1) {
+            stepFinalName= dataName.substring(colonIndex + 1).trim(); // Extract the substring after the colon and trim any leading/trailing spaces
+            System.out.println(stepFinalName); // Output: "Spend Some Time
+        } else {
+            stepFinalName = null;
+        }
+        DTOStepExecutionData step = flowExecution.getStepExecutionDataList().stream().filter(data -> data.getFinalNameStep().equals(stepFinalName)).findFirst().get();
+        System.out.println(step);
+        TreeItem<Object> flowNameItem;
+        if (step.getFinalNameStep().equals(step.getOriginalName())) {
+            flowNameItem = new TreeItem<>("Step Name: " + step.getFinalNameStep());
+        } else {
+            flowNameItem = new TreeItem<>("Step Name:" + step.getOriginalName() + " (renamed to " + step.getFinalNameStep() + ")");
+        }
+        rootItem.getChildren().add(flowNameItem);
+
+        TreeItem<Object> totalTimeItem = new TreeItem<>("Total Running Time: " + step.getTotalStepTime().toMillis() + " ms");
+        rootItem.getChildren().add(totalTimeItem);
+
+        TreeItem<Object> resultItem = new TreeItem<>("Step Result: " + step.getResult());
+        rootItem.getChildren().add(resultItem);
+
+        TreeItem<Object> summaryItem = new TreeItem<>("Step Summery Line: " + step.getSummaryLine());
+        rootItem.getChildren().add(summaryItem);
+
+
+        TreeItem<Object> logsItem = new TreeItem<>("Step's Logs:");
+        rootItem.getChildren().add(logsItem);
+        logsItem.setExpanded(true);
+
+        AtomicInteger logsIndex = new AtomicInteger(1);
+        step.getLoggerList().forEach(log -> {
+            TreeItem<Object> logItem = new TreeItem<>("Log " + logsIndex.getAndIncrement());
+            logsItem.getChildren().add(logItem);
+            logItem.getChildren().addAll(
+                    new TreeItem<>("Log Time: " + log.getLogTime()),
+                    new TreeItem<>("Log Message: " + log.getLog())
+                    );
+        });
+
+        TreeView<Object> treeView = new TreeView<>(rootItem);
+        treeView.setShowRoot(false);
+
+        return treeView;
+    }
 
     TreeView<Object> cratingGeneralFlowExecutionDetail() {
         TreeItem<Object> rootItem = new TreeItem<>("Flow Details");
@@ -219,7 +282,7 @@ public class MasterDetailController {
                     new TreeItem<>("Final Name: " + output.getFinalName()),
                     new TreeItem<>("Type: " + output.getType().toString()),
                     output.getType().toString().equals("RELATION") ||output.getType().toString().equals("STRING_LIST")
-                            || output.getType().toString().equals("FILE_LIST") || output.getType().toString().equals("NUMBERS2MAPPING")
+                            || output.getType().toString().equals("FILE_LIST") || output.getType().toString().equals("MAPPING2NUMBERS")
                             ?  new TreeItem<>(showOutputValue(output)) : new TreeItem<>(output.getValue().toString())
             );
         }
@@ -243,12 +306,12 @@ public class MasterDetailController {
             if (output.getType().toString().equals("RELATION")) {
                 TableView table = showRelationData(output);
                 layout.getChildren().addAll(label1, table);
-            }
-            else if(output.getType().toString().equals("STRING_LIST") || output.getType().toString().equals("FILE_LIST")){
+            }else if(output.getType().toString().equals("STRING_LIST") || output.getType().toString().equals("FILE_LIST")){
                 ListView<String> list = showListData(output);
                 layout.getChildren().addAll(label1, list);
-            }else if(output.getType().toString().equals("NUMBERS2MAPPING")){
-                //////check if need
+            }else if(output.getType().toString().equals("MAPPING2NUMBERS")){
+                TableView table = showMappingData(output);
+                layout.getChildren().addAll(label1, table);
             }
             layout.setAlignment(Pos.CENTER);
             Scene scene1 = new Scene(layout, 300, 250);
@@ -256,6 +319,29 @@ public class MasterDetailController {
             popupwindow.showAndWait();
         });
         return  viewDataLink;
+    }
+
+    public TableView showMappingData(DTOSingleFlowIOData output) {
+        TableView<Map.Entry<Number, Number>> table = new TableView<>();
+        table.setEditable(false);
+
+        TableColumn<Map.Entry<Number, Number>, String> keyCol = new TableColumn<>("Key");
+        keyCol.setCellValueFactory(cellData -> {
+            Number key = cellData.getValue().getKey();
+            String displayValue = key.equals(0) ? "car" : "cdr";
+            return new SimpleStringProperty(displayValue);
+        });
+
+        TableColumn<Map.Entry<Number, Number>, Number> valueCol = new TableColumn<>("Value");
+        valueCol.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getValue()));
+
+        table.getColumns().addAll(keyCol, valueCol);
+
+        ObservableList<Map.Entry<Number, Number>> items = FXCollections.observableArrayList();
+        items.addAll(((NumberMappingData) output.getValue()).getItems().entrySet());
+
+        table.setItems(items);
+        return table;
     }
 
     public ListView<String> showListData(DTOSingleFlowIOData output){
@@ -283,27 +369,25 @@ public class MasterDetailController {
     }
 
     public TableView showRelationData(DTOSingleFlowIOData output) {
-            TableView table = new TableView();
-            table.setEditable(false);
+        TableView table = new TableView();
+        table.setEditable(false);
 
-            for (String column : ((RelationData) output.getValue()).getColumns()) {
-                TableColumn<Map<String, String>, String> tableColumn = new TableColumn<>(column);
-                tableColumn.setPrefWidth(100);
-                tableColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(column)));
-                table.getColumns().add(tableColumn);
-            }
+        for (String column : ((RelationData) output.getValue()).getColumns()) {
+            TableColumn<Map<String, String>, String> tableColumn = new TableColumn<>(column);
+            tableColumn.setPrefWidth(100);
+            tableColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(column)));
+            table.getColumns().add(tableColumn);
+        }
 
-            ObservableList<Map<String, String>> data = FXCollections.observableArrayList();
-            for (RelationData.SingleRow singleRow : ((RelationData) output.getValue()).getRows()) {
-                Map<String, String> row = singleRow.getRowData();
-                data.add(row);
-                table.setItems(data);
-            }
-            
-           return table;
+        ObservableList<Map<String, String>> data = FXCollections.observableArrayList();
+        for (RelationData.SingleRow singleRow : ((RelationData) output.getValue()).getRows()) {
+            Map<String, String> row = singleRow.getRowData();
+            data.add(row);
+            table.setItems(data);
+        }
+
+       return table;
     }
-
-
 
 }
 
