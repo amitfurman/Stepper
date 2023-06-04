@@ -17,9 +17,11 @@ import javafx.event.EventHandler;
 import javafx.flowExecutionTab.FlowExecutionTabController;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -81,12 +83,12 @@ public class MasterDetailController {
         detailPane.setPadding(new Insets(10));
         detailPane.setSpacing(5);
 
-        Label FlowdetailLabel = createDetailLabel(flowExecution.getFlowName(), FlowMasterDetails, true);
+        Label FlowdetailLabel = createDetailLabel(flowExecution.getFlowName(), FlowMasterDetails, true, detailPane);
         detailPane.getChildren().add(FlowdetailLabel);
 
         int counter = 1;
         for (DTOStepExecutionData stepExecution : flowExecution.getStepExecutionDataList()) {
-            Label detailLabel = createDetailLabel("Step " + counter++ + ": " + stepExecution.getFinalNameStep(), FlowMasterDetails, false);
+            Label detailLabel = createDetailLabel("Step " + counter++ + ": " + stepExecution.getFinalNameStep(), FlowMasterDetails, false, detailPane);
             ImageView statusImage = new ImageView();
             if (stepExecution.getResult().equals(StepResult.FAILURE)) {
                 statusImage.setImage(new Image(getClass().getResource("icons8-close-16.png").toString()));
@@ -107,46 +109,38 @@ public class MasterDetailController {
         FlowMasterDetails.setDividerPosition(0.3);
     }
 
-    private TextFlow createTextFlow(String label, String value) {
-        Text labelText = new Text(label);
-        labelText.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 12));
 
-        Text valueText = new Text(value);
-        valueText.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
-
-        TextFlow textFlow = new TextFlow(labelText, valueText);
-        return textFlow;
-    }
-
-    private TextFlow createTextFlow(String label, Void value) {
-        Text labelText = new Text(label);
-        labelText.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 12));
-
-        Text valueText = new Text(value.toString());
-        valueText.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
-
-        TextFlow textFlow = new TextFlow(labelText, valueText);
-        return textFlow;
-    }
-
-    private Label createDetailLabel(String text, MasterDetailPane masterDetailPane, boolean isFirstLabel) {
+    private Label createDetailLabel(String text, MasterDetailPane masterDetailPane, boolean isFirstLabel, VBox detailPane) {
         Label detailLabel = new Label(text);
         detailLabel.setOnMouseClicked(event -> {
             TextArea textArea = new TextArea();
             textArea.setWrapText(true);  // Enable text wrapping
             textArea.setEditable(false); // Make the text area read-only
+            detailLabel.getStyleClass().add("label-selected");
 
-            TextFlow textFlow = null;
+            // Remove highlight from previously selected labels
+            for (Node child : detailPane.getChildren()) {
+                if (child instanceof Label) {
+                    Label label = (Label) child;
+                    if (!label.equals(detailLabel)) {
+                        label.getStyleClass().remove("label-selected");
+                    }
+                }
+            }
+
             TreeView treeView = null;
+
             if (isFirstLabel) {
                 treeView = cratingGeneralFlowExecutionDetail();
             } else {
                 treeView = cratingStepsExecutionDetail(text);
             }
+
+           treeView.getStyleClass().add("tree-view-style");
+
             StackPane stackPane = new StackPane();
 
             stackPane.getChildren().addAll(textArea, treeView);
-
 
             FlowMasterDetails.setMasterNode(stackPane);
             masterDetailPane.setDividerPosition(0.3);
@@ -189,6 +183,7 @@ public class MasterDetailController {
         } else {
             flowNameItem = new TreeItem<>("Step Name:" + step.getOriginalName() + " (renamed to " + step.getFinalNameStep() + ")");
         }
+
         rootItem.getChildren().add(flowNameItem);
 
         TreeItem<Object> totalTimeItem = new TreeItem<>("Total Running Time: " + step.getTotalStepTime().toMillis() + " ms");
@@ -217,6 +212,8 @@ public class MasterDetailController {
 
         TreeView<Object> treeView = new TreeView<>(rootItem);
         treeView.setShowRoot(false);
+        treeView.getStyleClass().add("tree-view-style");
+
 
         return treeView;
     }
@@ -283,12 +280,15 @@ public class MasterDetailController {
                     new TreeItem<>("Type: " + output.getType().toString()),
                     output.getType().toString().equals("RELATION") ||output.getType().toString().equals("STRING_LIST")
                             || output.getType().toString().equals("FILE_LIST") || output.getType().toString().equals("MAPPING2NUMBERS")
-                            ?  new TreeItem<>(showOutputValue(output)) : new TreeItem<>(output.getValue().toString())
+                            ?  new TreeItem<>(showOutputValue(output)) : new TreeItem<>("Value: " + output.getValue().toString())
             );
         }
 
         TreeView<Object> treeView = new TreeView<>(rootItem);
         treeView.setShowRoot(false);
+
+        treeView.getStyleClass().add("tree-view-style");
+
 
         return treeView;
     }
@@ -298,8 +298,9 @@ public class MasterDetailController {
         Hyperlink viewDataLink = new Hyperlink("View Data");
         viewDataLink.setOnAction(event -> {
             Stage popupwindow = new Stage();
+
             popupwindow.initModality(Modality.APPLICATION_MODAL);
-            popupwindow.setTitle("This is a pop up window");
+            popupwindow.setTitle("Data Values");
             Label label1 = new Label("Pop up window now displayed");
             VBox layout = new VBox(10);
             
@@ -315,6 +316,8 @@ public class MasterDetailController {
             }
             layout.setAlignment(Pos.CENTER);
             Scene scene1 = new Scene(layout, 300, 250);
+            scene1.getStylesheets().add(getClass().getResource("MasterDetail.css").toExternalForm());
+
             popupwindow.setScene(scene1);
             popupwindow.showAndWait();
         });
@@ -339,6 +342,8 @@ public class MasterDetailController {
 
         ObservableList<Map.Entry<Number, Number>> items = FXCollections.observableArrayList();
         items.addAll(((NumberMappingData) output.getValue()).getItems().entrySet());
+
+        table.getStyleClass().add("table-view-style");
 
         table.setItems(items);
         return table;
@@ -367,8 +372,44 @@ public class MasterDetailController {
 
         return list;
     }
-
     public TableView showRelationData(DTOSingleFlowIOData output) {
+        TableView<Map<String, String>> table = new TableView<>();
+        table.setEditable(false);
+        table.setSelectionModel(null);
+
+        double tableWidth = 1.0; // Total width of the table, set to 1.0 for simplicity
+
+        // Calculate column widths based on percentages
+        double firstColumnWidth = tableWidth * 0.15;
+        double remainingColumnsWidth = (tableWidth - firstColumnWidth) / 2;
+
+        for (String column : ((RelationData) output.getValue()).getColumns()) {
+            TableColumn<Map<String, String>, String> tableColumn = new TableColumn<>(column);
+
+            // Set the preferred width for the columns
+            if (column.equals(((RelationData) output.getValue()).getColumns().get(0))) {
+                tableColumn.prefWidthProperty().bind(table.widthProperty().multiply(firstColumnWidth));
+            } else {
+                tableColumn.prefWidthProperty().bind(table.widthProperty().multiply(remainingColumnsWidth));
+            }
+
+            tableColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(column)));
+            table.getColumns().add(tableColumn);
+        }
+
+        ObservableList<Map<String, String>> data = FXCollections.observableArrayList();
+        for (RelationData.SingleRow singleRow : ((RelationData) output.getValue()).getRows()) {
+            Map<String, String> row = singleRow.getRowData();
+            data.add(row);
+            table.setItems(data);
+        }
+        table.getStyleClass().add("table-view-style");
+
+        return table;
+    }
+
+
+/*    public TableView showRelationData(DTOSingleFlowIOData output) {
         TableView table = new TableView();
         table.setEditable(false);
 
@@ -387,7 +428,28 @@ public class MasterDetailController {
         }
 
        return table;
-    }
+    }*/
 
 }
 
+/* private TextFlow createTextFlow(String label, String value) {
+        Text labelText = new Text(label);
+        labelText.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 12));
+
+        Text valueText = new Text(value);
+        valueText.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
+
+        TextFlow textFlow = new TextFlow(labelText, valueText);
+        return textFlow;
+    }
+
+    private TextFlow createTextFlow(String label, Void value) {
+        Text labelText = new Text(label);
+        labelText.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 12));
+
+        Text valueText = new Text(value.toString());
+        valueText.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
+
+        TextFlow textFlow = new TextFlow(labelText, valueText);
+        return textFlow;
+    }*/

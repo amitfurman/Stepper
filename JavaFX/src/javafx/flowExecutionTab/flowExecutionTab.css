@@ -27,10 +27,15 @@
 }
 
 .first-label {
-    -fx-background-color: #ffa6c5;
-    -fx-font-size: 15px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
+    -fx-underline: true;
 }
+
+.label-selected {
+    -fx-background-color: #ffeaec;
+}
+
 
 .detail-label {
     -fx-font-size: 13px;
@@ -41,6 +46,8 @@
     -fx-font-size: 13px;
     -fx-font-weight: bold;
     -fx-text-fill: #36454f;
+}
 
-
+.tree-view-style {
+    -fx-font-size: 14px;
 }
