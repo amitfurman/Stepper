@@ -195,6 +195,59 @@ public class MasterDetailController {
         TreeItem<Object> summaryItem = new TreeItem<>("Step Summery Line: " + step.getSummaryLine());
         rootItem.getChildren().add(summaryItem);
 
+        TreeItem<Object> ioItem = new TreeItem<>("Step IO:");
+        rootItem.getChildren().add(ioItem);
+        ioItem.setExpanded(true);
+
+        TreeItem<Object> inputItem = new TreeItem<>("Inputs:");
+        ioItem.getChildren().add(inputItem);
+
+        TreeItem<Object> outputItem = new TreeItem<>("Outputs:");
+        ioItem.getChildren().add(outputItem);
+
+        AtomicInteger inputIndex = new AtomicInteger(1);
+        AtomicInteger outputIndex = new AtomicInteger(1);
+
+
+        flowExecution.getIOlist().stream()
+                .filter(io1 -> io1.getStepName().equals(step.getFinalNameStep()))
+                .forEach(io -> {
+                    if(io.getIOType().equals(IO.INPUT)) {
+                        TreeItem<Object> input = new TreeItem<>("Input " + inputIndex.getAndIncrement());
+                        inputItem.getChildren().add(input);
+                        input.getChildren().add(new TreeItem<>("Final Name: " + io.getFinalName()));
+                        System.out.println(io.getFinalName());
+                        System.out.println(io.getType().toString());
+                        if (io.getType().toString().equals("RELATION") || io.getType().toString().equals("STRING_LIST")
+                                || io.getType().toString().equals("FILE_LIST") || io.getType().toString().equals("MAPPING2NUMBERS")) {
+                            input.getChildren().add(new TreeItem<>(showOutputValue(io)));
+                        } else {
+                            if (io.getValue() != null) {
+                                input.getChildren().add(new TreeItem<>("Value: " + io.getValue().toString()));
+                            } else {
+                                input.getChildren().add(new TreeItem<>("Value: N/A"));
+                            }
+                        }
+                    }
+
+                    if(io.getIOType().equals(IO.OUTPUT)) {
+                        TreeItem<Object> output = new TreeItem<>("Output " + outputIndex.getAndIncrement());
+                        outputItem.getChildren().add(output);
+
+                        output.getChildren().add(new TreeItem<>("Final Name: " + io.getFinalName()));
+                        if (io.getType().toString().equals("RELATION") || io.getType().toString().equals("STRING_LIST")
+                                || io.getType().toString().equals("FILE_LIST") || io.getType().toString().equals("MAPPING2NUMBERS")) {
+                            output.getChildren().add(new TreeItem<>(showOutputValue(io)));
+                        } else {
+                            if (io.getValue() != null) {
+                                output.getChildren().add(new TreeItem<>("Value: " + io.getValue().toString()));
+                            } else {
+                                output.getChildren().add(new TreeItem<>("Value: Not created due to failure in flow"));
+                            }
+                        }
+                    }
+                });
+
 
         TreeItem<Object> logsItem = new TreeItem<>("Step's Logs:");
         rootItem.getChildren().add(logsItem);
@@ -289,7 +342,6 @@ public class MasterDetailController {
 
         treeView.getStyleClass().add("tree-view-style");
 
-
         return treeView;
     }
 
@@ -301,7 +353,8 @@ public class MasterDetailController {
 
             popupwindow.initModality(Modality.APPLICATION_MODAL);
             popupwindow.setTitle("Data Values");
-            Label label1 = new Label("Pop up window now displayed");
+            Label label1 = new Label("Data Values");
+            label1.getStyleClass().add("data-values-label");
             VBox layout = new VBox(10);
             
             if (output.getType().toString().equals("RELATION")) {
@@ -315,7 +368,7 @@ public class MasterDetailController {
                 layout.getChildren().addAll(label1, table);
             }
             layout.setAlignment(Pos.CENTER);
-            Scene scene1 = new Scene(layout, 300, 250);
+            Scene scene1 = new Scene(layout, 700, 400);
             scene1.getStylesheets().add(getClass().getResource("MasterDetail.css").toExternalForm());
 
             popupwindow.setScene(scene1);
@@ -338,6 +391,12 @@ public class MasterDetailController {
         TableColumn<Map.Entry<Number, Number>, Number> valueCol = new TableColumn<>("Value");
         valueCol.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getValue()));
 
+        double tableWidth = 1.0; // Total width of the table, set to 1.0 for simplicity
+        double columnWidth = tableWidth / 2;
+
+        keyCol.prefWidthProperty().bind(table.widthProperty().multiply(columnWidth));
+        valueCol.prefWidthProperty().bind(table.widthProperty().multiply(columnWidth));
+
         table.getColumns().addAll(keyCol, valueCol);
 
         ObservableList<Map.Entry<Number, Number>> items = FXCollections.observableArrayList();
@@ -348,6 +407,7 @@ public class MasterDetailController {
         table.setItems(items);
         return table;
     }
+
 
     public ListView<String> showListData(DTOSingleFlowIOData output){
         ListView<String> list = new ListView<>();
@@ -368,6 +428,8 @@ public class MasterDetailController {
             }
         }
 
+        list.getStyleClass().add("list-view-style");
+
         list.setItems(items);
 
         return list;
@@ -379,7 +441,6 @@ public class MasterDetailController {
 
         double tableWidth = 1.0; // Total width of the table, set to 1.0 for simplicity
 
-        // Calculate column widths based on percentages
         double firstColumnWidth = tableWidth * 0.15;
         double remainingColumnsWidth = (tableWidth - firstColumnWidth) / 2;
 
