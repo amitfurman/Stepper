@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface systemengine {
+
     public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotExist;
 
     DTOAllStepperFlows getAllFlows();
@@ -49,5 +50,6 @@ public interface systemengine {
 
     Boolean isCurrFlowExecutionDone(String currFlowName);
     DTOFlowExecution getFlowExecutionStatus(UUID flowSessionId);
+    DTOFlowExecution getDTOFlowExecution(UUID flowId);
 
 }

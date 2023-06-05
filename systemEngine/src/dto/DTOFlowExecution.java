@@ -77,13 +77,13 @@ public class DTOFlowExecution {
     public List<DTOSingleFlowIOData> getFreeInputsList() { return freeInputsList; }
     public List<DTOSingleFlowIOData> getIOlist(){return IOlist;};
     public List<DTOStepExecutionData>getStepExecutionDataList(){return stepExecutionDataList;}
-    public boolean isComplete() {
-        for (DTOStepExecutionData stepExecutionData : stepExecutionDataList) {
+    public FlowExecutionResult isComplete() {
+/*        for (DTOStepExecutionData stepExecutionData : stepExecutionDataList) {
             if (!stepExecutionData.isExecuted()) {
                 return false;
             }
-        }
-        return flowExecutionResult != null;
+        }*/
+        return flowExecutionResult != null ? flowExecutionResult : null;
     }
 
 

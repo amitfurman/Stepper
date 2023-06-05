@@ -68,9 +68,6 @@ public class StatisticsTabController {
     }
 
     public void initCharts(DTOFlowAndStepStatisticData statisticData) {
-        System.out.println(statisticData.getFlowsStatisticData().size());
-        System.out.println(statisticData.getStepsStatisticData().size());
-
         initFlowsChart(statisticData.getFlowsStatisticData());
         initStepsChart(statisticData.getStepsStatisticData());
     }
