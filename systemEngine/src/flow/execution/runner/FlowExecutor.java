@@ -15,10 +15,22 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 
-public class FlowExecutor {
+public class FlowExecutor implements Runnable {
+    private FlowExecution flowExecution;
+    private DTOFreeInputsFromUser freeInputs;
+    private Map<String, Object> initialInputs;
+    private FlowAndStepStatisticData flowStatisticData;
 
-    public void executeFlow(FlowExecution flowExecution, DTOFreeInputsFromUser freeInputs,Map<String, Object> initialInputs, FlowAndStepStatisticData flowStatisticData) {
-        System.out.println("Starting execution of flow " + flowExecution.getFlowDefinition().getName() + " [ID: " + flowExecution.getUniqueId() + "]");
+    public FlowExecutor(FlowExecution flowExecution, DTOFreeInputsFromUser freeInputs, Map<String, Object> initialInputs, FlowAndStepStatisticData flowStatisticData) {
+        this.flowExecution = flowExecution;
+        this.freeInputs = freeInputs;
+        this.initialInputs = initialInputs;
+        this.flowStatisticData = flowStatisticData;
+    }
+
+    @Override
+    public void run() {
+        //System.out.println("Starting execution of flow " + flowExecution.getFlowDefinition().getName() + " [ID: " + flowExecution.getUniqueId() + "]");
         Instant startTime = Instant.now();
         flowExecution.setStartTime(startTime);
 

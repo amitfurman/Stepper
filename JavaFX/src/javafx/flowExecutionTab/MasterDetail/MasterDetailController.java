@@ -1,37 +1,33 @@
 package javafx.flowExecutionTab.MasterDetail;
+
 import datadefinition.impl.list.FileListData;
 import datadefinition.impl.list.StringListData;
-import datadefinition.impl.mapping.MappingData;
 import datadefinition.impl.mapping.NumberMappingData;
 import datadefinition.impl.relation.RelationData;
 import dto.DTOFlowExecution;
 import dto.DTOSingleFlowIOData;
 import dto.DTOStepExecutionData;
 import flow.api.FlowIO.IO;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.flowExecutionTab.FlowExecutionTabController;
+import javafx.flowExecutionTab.Logic;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.*;
 import javafx.stage.Modality;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import org.controlsfx.control.MasterDetailPane;
 import steps.api.DataNecessity;
@@ -41,6 +37,7 @@ import java.io.File;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -52,6 +49,17 @@ public class MasterDetailController {
     FlowExecutionTabController flowExecutionTabController;
 
     DTOFlowExecution flowExecution;
+
+    private final Logic logic;
+
+    private final SimpleBooleanProperty isTaskFinished;
+
+    private boolean isActive;
+
+    public MasterDetailController() {
+        logic = new Logic(this);
+        this.isTaskFinished = new SimpleBooleanProperty(false);
+    }
 
     @FXML
     public void initialize() {
@@ -77,36 +85,64 @@ public class MasterDetailController {
 
     }
 
-    public void initMasterDetailComponent(DTOFlowExecution FlowExecution) {
-        flowExecution = FlowExecution;
+/*    public void initMasterDetailPaneController(DTOFlowExecution flowExecution) {
+        this.isTaskFinished.set(false);
+        initMasterDetailComponent(flowExecution);
+
+    }*/
+
+    public void initMasterDetailComponent(DTOFlowExecution flowExecution) {
+        this.flowExecution = flowExecution;
+
         VBox detailPane = new VBox();
         detailPane.setPadding(new Insets(10));
         detailPane.setSpacing(5);
 
-        Label FlowdetailLabel = createDetailLabel(flowExecution.getFlowName(), FlowMasterDetails, true, detailPane);
-        detailPane.getChildren().add(FlowdetailLabel);
+        this.isTaskFinished.set(false);
 
-        int counter = 1;
-        for (DTOStepExecutionData stepExecution : flowExecution.getStepExecutionDataList()) {
-            Label detailLabel = createDetailLabel("Step " + counter++ + ": " + stepExecution.getFinalNameStep(), FlowMasterDetails, false, detailPane);
-            ImageView statusImage = new ImageView();
-            if (stepExecution.getResult().equals(StepResult.FAILURE)) {
-                statusImage.setImage(new Image(getClass().getResource("icons8-close-16.png").toString()));
-                detailLabel.setGraphic(statusImage);
-            } else if (stepExecution.getResult().equals(StepResult.SUCCESS)) {
-                statusImage.setImage(new Image(getClass().getResource("icons8-checkmark-16.png").toString()));
-                detailLabel.setGraphic(statusImage);
-            } else {
-                statusImage.setImage(new Image(getClass().getResource("icons8-error-16.png").toString()));
-                detailLabel.setGraphic(statusImage);
+        logic.fetchData(flowExecution.getUniqueIdByUUID(),
+                this,flowExecution.getUniqueId(), isTaskFinished);
+
+        System.out.println(flowExecution);
+        if (flowExecution.isComplete() == null) {
+            Label flowDetailLabel = createDetailLabel(flowExecution.getFlowName(), FlowMasterDetails, true, detailPane);
+            detailPane.getChildren().add(flowDetailLabel);
+            System.out.println(flowExecution.getFlowName());
+            System.out.println(flowExecution.isComplete());
+            System.out.println(flowExecution.getStepExecutionDataList());
+
+            int counter = 1;
+            for (DTOStepExecutionData stepExecution : flowExecution.getStepExecutionDataList()) {
+                System.out.println(stepExecution.getFinalNameStep());
+                System.out.println(stepExecution.isExecuted());
+                if (stepExecution.isExecuted()) { // Check if step is executed
+                    Label detailLabel = createDetailLabel("Step " + counter++ + ": " + stepExecution.getFinalNameStep(), FlowMasterDetails, false, detailPane);
+                    ImageView statusImage = new ImageView();
+                    if (stepExecution.getResult().equals(StepResult.FAILURE)) {
+                        statusImage.setImage(new Image(getClass().getResource("icons8-close-16.png").toString()));
+                        detailLabel.setGraphic(statusImage);
+                    } else if (stepExecution.getResult().equals(StepResult.SUCCESS)) {
+                        statusImage.setImage(new Image(getClass().getResource("icons8-checkmark-16.png").toString()));
+                        detailLabel.setGraphic(statusImage);
+                    } else {
+                        statusImage.setImage(new Image(getClass().getResource("icons8-error-16.png").toString()));
+                        detailLabel.setGraphic(statusImage);
+                    }
+                    detailPane.getChildren().add(detailLabel);
+                }
             }
-            detailPane.getChildren().add(detailLabel);
+
+            ScrollPane scrollPane = new ScrollPane(detailPane);
+            scrollPane.setFitToWidth(true);
+            FlowMasterDetails.setDetailNode(scrollPane);
+            FlowMasterDetails.setDividerPosition(0.3);
+
+
         }
 
-        ScrollPane scrollPane = new ScrollPane(detailPane);
-        scrollPane.setFitToWidth(true);
-        FlowMasterDetails.setDetailNode(scrollPane);
-        FlowMasterDetails.setDividerPosition(0.3);
+
+        ////UPDATE HISTORY
+
     }
 
 
@@ -136,14 +172,16 @@ public class MasterDetailController {
                 treeView = cratingStepsExecutionDetail(text);
             }
 
-           treeView.getStyleClass().add("tree-view-style");
+            if (treeView != null) {
+                treeView.getStyleClass().add("tree-view-style");
+                StackPane stackPane = new StackPane();
 
-            StackPane stackPane = new StackPane();
+                stackPane.getChildren().addAll(textArea, treeView);
 
-            stackPane.getChildren().addAll(textArea, treeView);
+                FlowMasterDetails.setMasterNode(stackPane);
+                masterDetailPane.setDividerPosition(0.3);
 
-            FlowMasterDetails.setMasterNode(stackPane);
-            masterDetailPane.setDividerPosition(0.3);
+            }
         });
 
         if (isFirstLabel) {
@@ -171,12 +209,10 @@ public class MasterDetailController {
         String stepFinalName;
         if (colonIndex != -1) {
             stepFinalName= dataName.substring(colonIndex + 1).trim(); // Extract the substring after the colon and trim any leading/trailing spaces
-            System.out.println(stepFinalName); // Output: "Spend Some Time
         } else {
             stepFinalName = null;
         }
         DTOStepExecutionData step = flowExecution.getStepExecutionDataList().stream().filter(data -> data.getFinalNameStep().equals(stepFinalName)).findFirst().get();
-        System.out.println(step);
         TreeItem<Object> flowNameItem;
         if (step.getFinalNameStep().equals(step.getOriginalName())) {
             flowNameItem = new TreeItem<>("Step Name: " + step.getFinalNameStep());
@@ -216,8 +252,6 @@ public class MasterDetailController {
                         TreeItem<Object> input = new TreeItem<>("Input " + inputIndex.getAndIncrement());
                         inputItem.getChildren().add(input);
                         input.getChildren().add(new TreeItem<>("Final Name: " + io.getFinalName()));
-                        System.out.println(io.getFinalName());
-                        System.out.println(io.getType().toString());
                         if (io.getType().toString().equals("RELATION") || io.getType().toString().equals("STRING_LIST")
                                 || io.getType().toString().equals("FILE_LIST") || io.getType().toString().equals("MAPPING2NUMBERS")) {
                             input.getChildren().add(new TreeItem<>(showOutputValue(io)));
@@ -275,74 +309,76 @@ public class MasterDetailController {
         TreeItem<Object> rootItem = new TreeItem<>("Flow Details");
         rootItem.setExpanded(true);
 
-        // Add Flow Name
-        TreeItem<Object> flowNameItem = new TreeItem<>("Flow Name: " + flowExecution.getFlowName());
-        rootItem.getChildren().add(flowNameItem);
+        if(flowExecution.isComplete() != null)
+        { TreeItem<Object> flowNameItem = new TreeItem<>("Flow Name: " + flowExecution.getFlowName());
+            rootItem.getChildren().add(flowNameItem);
 
-        // Add Flow ID
-        TreeItem<Object> flowIdItem = new TreeItem<>("Flow ID: " + flowExecution.getUniqueId());
-        rootItem.getChildren().add(flowIdItem);
+            // Add Flow ID
+            TreeItem<Object> flowIdItem = new TreeItem<>("Flow ID: " + flowExecution.getUniqueId());
+            rootItem.getChildren().add(flowIdItem);
 
-        // Add Flow Result
-        TreeItem<Object> flowResultItem = new TreeItem<>("Flow Result: " + flowExecution.getFlowExecutionResult().toString());
-        rootItem.getChildren().add(flowResultItem);
+            // Add Flow Result
+            TreeItem<Object> flowResultItem = new TreeItem<>("Flow Result: " + flowExecution.getFlowExecutionResult().toString());
+            rootItem.getChildren().add(flowResultItem);
 
-        // Add Start Time
-        TreeItem<Object> startTimeItem = new TreeItem<>("Start Time: " + flowExecution.getStartTimeFormatted());
-        rootItem.getChildren().add(startTimeItem);
+            // Add Start Time
+            TreeItem<Object> startTimeItem = new TreeItem<>("Start Time: " + flowExecution.getStartTimeFormatted());
+            rootItem.getChildren().add(startTimeItem);
 
-        // Add Total Running Time
-        TreeItem<Object> totalTimeItem = new TreeItem<>("Total Running Time: " + String.format("%d ms", flowExecution.getTotalTime().toMillis()));
-        rootItem.getChildren().add(totalTimeItem);
+            // Add Total Running Time
+            TreeItem<Object> totalTimeItem = new TreeItem<>("Total Running Time: " + String.format("%d ms", flowExecution.getTotalTime().toMillis()));
+            rootItem.getChildren().add(totalTimeItem);
 
-        // Add Flow's Free Inputs
-        TreeItem<Object> freeInputsItem = new TreeItem<>("Flow's Free Inputs");
-        rootItem.getChildren().add(freeInputsItem);
-        freeInputsItem.setExpanded(true);
+            // Add Flow's Free Inputs
+            TreeItem<Object> freeInputsItem = new TreeItem<>("Flow's Free Inputs");
+            rootItem.getChildren().add(freeInputsItem);
+            freeInputsItem.setExpanded(true);
 
-        AtomicInteger freeInputIndex = new AtomicInteger(1);
-        List<DTOSingleFlowIOData> sortedList = flowExecution.getFreeInputsList().stream()
-                .sorted(Comparator.comparing(obj -> obj.getNecessity().equals(DataNecessity.MANDATORY) ? 0 : 1))
-                .collect(Collectors.toList());
+            AtomicInteger freeInputIndex = new AtomicInteger(1);
+            List<DTOSingleFlowIOData> sortedList = flowExecution.getFreeInputsList().stream()
+                    .sorted(Comparator.comparing(obj -> obj.getNecessity().equals(DataNecessity.MANDATORY) ? 0 : 1))
+                    .collect(Collectors.toList());
 
-        sortedList.forEach(input -> {
-            TreeItem<Object> inputItem = new TreeItem<>("Free Input " + freeInputIndex.getAndIncrement());
-            freeInputsItem.getChildren().add(inputItem);
-            inputItem.getChildren().addAll(
-                    new TreeItem<>("Final Name: " + input.getFinalName()),
-                    new TreeItem<>("Type: " + input.getType().toString()),
-                    input.getValue() != null ? new TreeItem<>("Value: " + input.getValue().toString()) :
-                            new TreeItem<>("Value: N/A"),
-                    new TreeItem<>("Is Mandatory / Optional: " + input.getNecessity().toString())
-            );
-        });
+            sortedList.forEach(input -> {
+                TreeItem<Object> inputItem = new TreeItem<>("Free Input " + freeInputIndex.getAndIncrement());
+                freeInputsItem.getChildren().add(inputItem);
+                inputItem.getChildren().addAll(
+                        new TreeItem<>("Final Name: " + input.getFinalName()),
+                        new TreeItem<>("Type: " + input.getType().toString()),
+                        input.getValue() != null ? new TreeItem<>("Value: " + input.getValue().toString()) :
+                                new TreeItem<>("Value: N/A"),
+                        new TreeItem<>("Is Mandatory / Optional: " + input.getNecessity().toString())
+                );
+            });
 
-        // Add Flow's Outputs
-        TreeItem<Object> outputsItem = new TreeItem<>("Flow's Outputs");
-        rootItem.getChildren().add(outputsItem);
-        outputsItem.setExpanded(true);
+            // Add Flow's Outputs
+            TreeItem<Object> outputsItem = new TreeItem<>("Flow's Outputs");
+            rootItem.getChildren().add(outputsItem);
+            outputsItem.setExpanded(true);
 
-        AtomicInteger outputIndex = new AtomicInteger(1);
-        List<DTOSingleFlowIOData> outputs = flowExecution.getIOlist().stream().filter(io -> io.getIOType().equals(IO.OUTPUT)).collect(Collectors.toList());
+            AtomicInteger outputIndex = new AtomicInteger(1);
+            List<DTOSingleFlowIOData> outputs = flowExecution.getIOlist().stream().filter(io -> io.getIOType().equals(IO.OUTPUT)).collect(Collectors.toList());
 
-        for (DTOSingleFlowIOData output : outputs) {
-            TreeItem<Object> outputItem = new TreeItem<>("Output " + outputIndex.getAndIncrement());
-            outputsItem.getChildren().add(outputItem);
-            outputItem.getChildren().addAll(
-                    new TreeItem<>("Final Name: " + output.getFinalName()),
-                    new TreeItem<>("Type: " + output.getType().toString()),
-                    output.getType().toString().equals("RELATION") ||output.getType().toString().equals("STRING_LIST")
-                            || output.getType().toString().equals("FILE_LIST") || output.getType().toString().equals("MAPPING2NUMBERS")
-                            ?  new TreeItem<>(showOutputValue(output)) : new TreeItem<>("Value: " + output.getValue().toString())
-            );
+            for (DTOSingleFlowIOData output : outputs) {
+                TreeItem<Object> outputItem = new TreeItem<>("Output " + outputIndex.getAndIncrement());
+                outputsItem.getChildren().add(outputItem);
+                outputItem.getChildren().addAll(
+                        new TreeItem<>("Final Name: " + output.getFinalName()),
+                        new TreeItem<>("Type: " + output.getType().toString()),
+                        output.getType().toString().equals("RELATION") ||output.getType().toString().equals("STRING_LIST")
+                                || output.getType().toString().equals("FILE_LIST") || output.getType().toString().equals("MAPPING2NUMBERS")
+                                ?  new TreeItem<>(showOutputValue(output)) : new TreeItem<>("Value: " + output.getValue().toString())
+                );
+            }
+
+            TreeView<Object> treeView = new TreeView<>(rootItem);
+            treeView.setShowRoot(false);
+
+            treeView.getStyleClass().add("tree-view-style");
+
+            return treeView;
         }
-
-        TreeView<Object> treeView = new TreeView<>(rootItem);
-        treeView.setShowRoot(false);
-
-        treeView.getStyleClass().add("tree-view-style");
-
-        return treeView;
+        return null;
     }
 
     public Hyperlink showOutputValue(DTOSingleFlowIOData output) {

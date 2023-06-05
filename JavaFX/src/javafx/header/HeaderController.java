@@ -11,9 +11,6 @@ import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import systemengine.systemengine;
-import systemengine.systemengineImpl;
-
 
 import javax.xml.bind.JAXBException;
 import java.io.File;

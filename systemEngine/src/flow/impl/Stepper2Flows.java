@@ -19,8 +19,11 @@ import java.util.stream.Collectors;
 
 public class Stepper2Flows {
     private LinkedList<FlowDefinition> allFlows;
+    private int numberOfThreads;
+
     public Stepper2Flows(STStepper stepper) throws OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsStep, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotExist {
-        int numberOfThreads = stepper.getSTThreadPool();
+         this.numberOfThreads = stepper.getSTThreadPool();
+        //System.out.println("number of threads: " + numberOfThreads);
 
         allFlows = new LinkedList<>();
         int numberOfFlows = stepper.getSTFlows().getSTFlow().size();
@@ -132,5 +135,8 @@ public class Stepper2Flows {
     }
     public LinkedList<FlowDefinition> getAllFlows() {
         return allFlows;
+    }
+    public int getNumberOfThreads() {
+        return numberOfThreads;
     }
 }

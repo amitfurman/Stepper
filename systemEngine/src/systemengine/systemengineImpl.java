@@ -7,6 +7,7 @@ import flow.api.FlowDefinitionImpl;
 import flow.api.FlowIO.SingleFlowIOData;
 import flow.execution.FlowExecution;
 import flow.execution.runner.FlowExecutor;
+import flow.impl.FlowsManager;
 import jaxb.schema.SchemaBasedJAXBMain;
 import statistic.FlowAndStepStatisticData;
 import steps.api.DataNecessity;
@@ -24,12 +25,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class systemengineImpl implements systemengine {
+    private static systemengineImpl instance;
     public LinkedList<FlowDefinition> flowDefinitionList;
     public LinkedList<FlowExecution> flowExecutionList;
     public FlowAndStepStatisticData statisticData;
+    public ExecutorService threadPool;
+    public int numberOfThreads;
 
-    public ExecutorService threadPool  = Executors.newFixedThreadPool(6);
 
+    static public systemengine getInstance() {
+        if (instance == null) {
+            instance = new systemengineImpl();
+        }
+        return instance;
+    }
     @Override
     public Boolean isCurrFlowExecutionDone(String currFlowName){
         FlowExecution currFlow = flowExecutionList.stream().filter(flow -> flow.getFlowName().equals(currFlowName)).findFirst().get();
@@ -40,16 +49,28 @@ public class systemengineImpl implements systemengine {
         FlowExecution flowExecution = flowExecutionList.stream().filter(flow -> flow.getUniqueId().equals(flowSessionId)).findFirst().get();
         return new DTOFlowExecution(flowExecution);
     }
+
+    /////need synchronized?
     @Override
-    public DTOFlowExecution activateFlowByName(String flowName, DTOFreeInputsFromUser freeInputs) {
-        FlowExecutor flowExecutor = new FlowExecutor();
+    synchronized public DTOFlowExecution activateFlowByName(String flowName, DTOFreeInputsFromUser freeInputs) {
         FlowDefinition currFlow = flowDefinitionList.stream().filter(flow -> flow.getName().equals(flowName)).findFirst().get();
 
         FlowExecution flowExecution = new FlowExecution(currFlow);
         flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
-        flowExecutor.executeFlow(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData);
+        threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
         flowExecutionList.addFirst(flowExecution);
 
+        return new DTOFlowExecution(flowExecution);
+    }
+
+/////need synchronized?
+    @Override
+    synchronized public DTOFlowExecution activateFlow(int flowChoice, DTOFreeInputsFromUser freeInputs) {
+        FlowDefinition currFlow = flowDefinitionList.get(flowChoice - 1);
+        FlowExecution flowExecution = new FlowExecution(currFlow);
+        flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
+        threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
+        flowExecutionList.addFirst(flowExecution);
         return new DTOFlowExecution(flowExecution);
     }
 
@@ -62,7 +83,10 @@ public class systemengineImpl implements systemengine {
     @Override
     public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType, InitialInputIsNotExist {
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
-        flowDefinitionList = schema.schemaBasedJAXB(filePath);
+        FlowsManager flows = schema.schemaBasedJAXB(filePath);
+        flowDefinitionList = flows.getAllFlows();
+        numberOfThreads = flows.getNumberOfThreads();
+        this.threadPool = Executors.newFixedThreadPool(5);
     }
 
     @Override
@@ -104,17 +128,7 @@ public class systemengineImpl implements systemengine {
         return true;
     }
 
-    @Override
-    public DTOFlowExecution activateFlow(int flowChoice, DTOFreeInputsFromUser freeInputs) {
-        FlowExecutor flowExecutor = new FlowExecutor();
-        FlowDefinition currFlow = flowDefinitionList.get(flowChoice - 1);
 
-        FlowExecution flowExecution = new FlowExecution(currFlow);
-        flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
-        flowExecutor.executeFlow(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData);
-        flowExecutionList.addFirst(flowExecution);
-        return new DTOFlowExecution(flowExecution);
-    }
 
 
 
@@ -185,6 +199,11 @@ public class systemengineImpl implements systemengine {
     }
 
 
+    @Override
+    public DTOFlowExecution getDTOFlowExecution(UUID flowId) {
+        FlowExecution executedFlow = flowExecutionList.stream().filter(flow -> flow.getUniqueId().equals(flowId)).findFirst().get();
+        return new DTOFlowExecution(executedFlow);
+    }
 
 }
 

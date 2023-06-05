@@ -137,9 +137,7 @@ public class FlowExecutionTabController {
 
             Spinner<Integer> spinner = new Spinner<>();
             TextField textField = new TextField();
-
-            System.out.println(input.getOriginalName());
-
+            
             if(simpleName.equals("String")) {
                 setTextFieldSetting(textField, input);
                 if(input.getOriginalName().equals("FILE_NAME")){
@@ -282,7 +280,6 @@ public class FlowExecutionTabController {
     public void commitEdit(Object newValue, Input input) {
         input.setValue(newValue);
         updateFreeInputMap(input, newValue);
-        System.out.println(freeInputMap);
         boolean hasAllMandatoryInputs = hasAllMandatoryInputs(freeInputMap);
         executeButton.setDisable(!hasAllMandatoryInputs);
     }
@@ -309,14 +306,10 @@ public class FlowExecutionTabController {
         if (endIndex != -1) {
             finalName = finalName.substring(0, endIndex);
         }
-
-        System.out.println(finalName);
-        System.out.println("Starts with asterisk: " + startsWithAsterisk); // Print if label starts with asterisk
-
+        
         if (startsWithAsterisk) {
             String finalName1 = finalName;
             Optional<Input> optionalInput = inputList.stream().filter(input1 -> input1.getFinalName().equals(finalName1)).findFirst();
-            System.out.println(optionalInput);
             if (optionalInput.isPresent()) {
                 Input input = optionalInput.get();
                 String key = input.getStepName() + "." + input.getOriginalName();
@@ -331,48 +324,12 @@ public class FlowExecutionTabController {
 
     @FXML
     void StartExecuteFlowButton(ActionEvent event){
-        System.out.println(freeInputMap);
-
         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
-        System.out.println(freeInputs);
         DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
+
         freeInputMap = new HashMap<>();
-        //  createTask();
         masterDetailController.initMasterDetailComponent(flowExecution);
-        mainController.goToStatisticsTab();
-
-    }
-
-
-
-
-
-    protected Task<Void> createTask() {
-        return new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                boolean isDone = false;
-                while (!isDone) {//maybe instead of name need to do with id
-                     isDone = mainController.getSystemEngineInterface().isCurrFlowExecutionDone(mainController.getFlowName());
-                    if (!isDone) {
-                        Thread.sleep(200);
-                        continue;
-                    }
-                    // If done is true, get the DTO object
-                   // DTOFlowExecution dto = mainController.getSystemEngineInterface().getItem();
-
-                    // Update UI if needed
-                    Platform.runLater(() -> {
-                        // Update UI components with the DTO object
-                        // For example, update a label with DTO properties
-                    });
-
-                    // Sleep for 200ms before the next iteration
-                    //Thread.sleep(200);
-                }
-                return null;
-            }
-        };
+        //mainController.goToStatisticsTab();
     }
 
 /*
