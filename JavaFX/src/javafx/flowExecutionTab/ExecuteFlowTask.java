@@ -4,6 +4,8 @@ import dto.DTOFlowExecution;
 import dto.DTOStepExecutionData;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import javafx.flowExecutionTab.MasterDetail.MasterDetailController;
 import systemengine.systemengineImpl;
@@ -15,11 +17,11 @@ public class ExecuteFlowTask extends Task<Boolean> {
     private final systemengine engineManager = systemengineImpl.getInstance();
     private final MasterDetailController masterDetailController;
     private final UUID flowId;
-    private final String currentFlowId;
+    private final SimpleStringProperty currentFlowId;
     private final SimpleBooleanProperty isTaskFinished;
     private String lastTaskId = "";
 
-    public ExecuteFlowTask(UUID flowId, MasterDetailController masterDetailController, String currentFlowId, SimpleBooleanProperty isTaskFinished) {
+    public ExecuteFlowTask(UUID flowId, MasterDetailController masterDetailController, SimpleStringProperty currentFlowId, SimpleBooleanProperty isTaskFinished) {
         this.flowId = flowId;
         this.masterDetailController = masterDetailController;
         this.currentFlowId = currentFlowId;
@@ -62,7 +64,6 @@ public class ExecuteFlowTask extends Task<Boolean> {
 
 
     protected Boolean call() {
-        lastTaskId = currentFlowId;
         int SLEEP_TIME = 200;
         DTOFlowExecution executedData = engineManager.getDTOFlowExecution(this.flowId);
         masterDetailController.initMasterDetailPaneController(executedData);
@@ -71,9 +72,7 @@ public class ExecuteFlowTask extends Task<Boolean> {
 
         while (executedData.getFlowExecutionResult() == null) {
             executedData = engineManager.getDTOFlowExecution(this.flowId);
-            System.out.println(currentFlowId);
-            System.out.println(flowId.toString());
-            if (currentFlowId.equals(flowId.toString())) {
+            if (currentFlowId.getValue().equals(flowId.toString())) {
                 DTOFlowExecution finalExecutedData = executedData;
                 Platform.runLater(() -> masterDetailController.addStepsToMasterDetail(finalExecutedData));
             }

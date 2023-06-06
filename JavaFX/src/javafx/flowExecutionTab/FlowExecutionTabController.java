@@ -334,7 +334,7 @@ public class FlowExecutionTabController {
 
         freeInputMap = new HashMap<>();
         ExecuteFlowTask currentRunningTask = new ExecuteFlowTask(UUID.fromString(executedFlowIDProperty.getValue()),
-                masterDetailController,executedFlowIDProperty.getValue(), new SimpleBooleanProperty(false));
+                masterDetailController,executedFlowIDProperty, new SimpleBooleanProperty(false));
 
         new Thread(currentRunningTask).start();
     }

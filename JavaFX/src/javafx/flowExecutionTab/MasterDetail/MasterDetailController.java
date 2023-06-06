@@ -98,11 +98,6 @@ public class MasterDetailController {
 
     }
 
-/*    public void initMasterDetailPaneController(DTOFlowExecution flowExecution) {
-        this.isTaskFinished.set(false);
-        initMasterDetailComponent(flowExecution);
-
-    }*/
     public void initMasterDetailPaneController(DTOFlowExecution flowExecution) {
         this.flowExecution = flowExecution;
         detailPane = new VBox();
@@ -191,11 +186,14 @@ public class MasterDetailController {
     }
 
 
+/*
     private Label createDetailLabel(String text, MasterDetailPane masterDetailPane, boolean isFirstLabel, VBox detailPane) {
         Label detailLabel = new Label(text);
-        /*TextArea textArea = new TextArea();
+        */
+/*TextArea textArea = new TextArea();
         textArea.setWrapText(true);  // Enable text wrapping
-        textArea.setEditable(false);*/ // Make the text area read-only
+        textArea.setEditable(false);*//*
+ // Make the text area read-only
 
         detailLabel.setOnMouseClicked(event -> {
             detailLabel.getStyleClass().add("label-selected");
@@ -251,6 +249,74 @@ public class MasterDetailController {
 
         return detailLabel;
     }
+*/
+
+    private Label createDetailLabel(String text, MasterDetailPane masterDetailPane, boolean isFirstLabel, VBox detailPane) {
+        Label detailLabel = new Label(text);
+        if (isFirstLabel) {
+            detailLabel.getStyleClass().add("first-label");
+        } else {
+            detailLabel.getStyleClass().add("detail-label");
+        }
+        detailLabel.setCursor(Cursor.HAND);
+        detailLabel.setOnMouseEntered(event -> {
+            detailLabel.setUnderline(true);
+        });
+        detailLabel.setOnMouseExited(event -> {
+            detailLabel.setUnderline(false);
+        });
+
+        detailLabel.setOnMouseClicked(event -> {
+            showDetails(text, isFirstLabel);
+        });
+
+        return detailLabel;
+    }
+
+    private void showDetails(String text, boolean isFirstLabel) {
+        // Remove highlight from previously selected labels
+        for (Node child : detailPane.getChildren()) {
+            if (child instanceof Label) {
+                Label label = (Label) child;
+                label.getStyleClass().remove("label-selected");
+            }
+        }
+
+        Label selectedLabel = null;
+        for (Node child : detailPane.getChildren()) {
+            if (child instanceof Label && ((Label) child).getText().equals(text)) {
+                selectedLabel = (Label) child;
+                break;
+            }
+        }
+
+        TreeView treeView = null;
+        if (selectedLabel != null) {
+            selectedLabel.getStyleClass().add("label-selected");
+            if (isFirstLabel) {
+                treeView = cratingGeneralFlowExecutionDetail();
+            } else {
+                treeView = cratingStepsExecutionDetail(text);
+            }
+
+            TextArea textArea = new TextArea();
+            textArea.setWrapText(true);  // Enable text wrapping
+            textArea.setEditable(false);
+
+            if (treeView != null) {
+                treeView.getStyleClass().add("tree-view-style");
+                StackPane stackPane = new StackPane();
+
+                stackPane.getChildren().addAll(textArea, treeView);
+
+                FlowMasterDetails.setMasterNode(stackPane);
+                FlowMasterDetails.setDividerPosition(0.3);
+
+            }
+        }
+    }
+
+
 
     TreeView<Object> cratingStepsExecutionDetail(String dataName) {
         TreeItem<Object> rootItem = new TreeItem<>("Step Details");
