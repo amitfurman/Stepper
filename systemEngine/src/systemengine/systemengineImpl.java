@@ -34,9 +34,6 @@ public class systemengineImpl implements systemengine {
 
 
     static public systemengine getInstance() {
-        if (instance == null) {
-            instance = new systemengineImpl();
-        }
         return instance;
     }
     @Override
@@ -201,6 +198,7 @@ public class systemengineImpl implements systemengine {
 
     @Override
     public DTOFlowExecution getDTOFlowExecution(UUID flowId) {
+        System.out.println("num " + flowExecutionList.size());
         FlowExecution executedFlow = flowExecutionList.stream().filter(flow -> flow.getUniqueId().equals(flowId)).findFirst().get();
         return new DTOFlowExecution(executedFlow);
     }

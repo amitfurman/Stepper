@@ -27,10 +27,14 @@ public class ExecuteFlowTask extends Task<Boolean> {
     @Override
     protected Boolean call() {
         int SLEEP_TIME = 200;
+
+        System.out.println("start call");
         DTOFlowExecution executedData = engineManager.getDTOFlowExecution(this.flowId);
+        System.out.println("after one");
         masterDetailController.initMasterDetailComponent(executedData);
 
         while (executedData.isComplete() == null) {
+            System.out.println("start while");
             System.out.println("Executing flow: " + flowId);
             executedData = engineManager.getDTOFlowExecution(this.flowId);
             if (currentFlowId.equals(flowId.toString())) {
