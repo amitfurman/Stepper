@@ -73,44 +73,48 @@ public class StatisticsTabController {
     }
 
     public void initFlowsChart(List<DTOStatisticData> flowsStatisticData) {
-        FlowNumberOfRunsChart.getData().clear();
-       AverageFlowsRunTimeChart.getData().clear();
+        Platform.runLater(() -> {
+            FlowNumberOfRunsChart.getData().clear();
+            AverageFlowsRunTimeChart.getData().clear();
 
-        //  setMaxBarWidth(FlowNumberOfRunsChart, 40, 10);
-        //  setMaxBarWidth(AverageFlowsRunTimeChart, 40, 10);
-        XYChart.Series series1 = new XYChart.Series();
-        flowsStatisticData.stream().forEach(flowStatisticData -> {
-            series1.getData().add(new XYChart.Data(flowStatisticData.getName(), flowStatisticData.getTimesRun()));
+            //  setMaxBarWidth(FlowNumberOfRunsChart, 40, 10);
+            //  setMaxBarWidth(AverageFlowsRunTimeChart, 40, 10);
+            XYChart.Series series1 = new XYChart.Series();
+            flowsStatisticData.stream().forEach(flowStatisticData -> {
+                series1.getData().add(new XYChart.Data(flowStatisticData.getName(), flowStatisticData.getTimesRun()));
+            });
+            FlowNumberOfRunsChart.getData().add(series1);
+
+
+            XYChart.Series series2 = new XYChart.Series();
+            flowsStatisticData.stream().forEach(flowStatisticData -> {
+                series2.getData().add(new XYChart.Data(flowStatisticData.getName(), flowStatisticData.getAverageTime()));
+            });
+            AverageFlowsRunTimeChart.getData().add(series2);
+
         });
-        FlowNumberOfRunsChart.getData().add(series1);
-
-
-        XYChart.Series series2 = new XYChart.Series();
-        flowsStatisticData.stream().forEach(flowStatisticData -> {
-            series2.getData().add(new XYChart.Data(flowStatisticData.getName(), flowStatisticData.getAverageTime()));
-        });
-        AverageFlowsRunTimeChart.getData().add(series2);
 
 
     }
 
     public void initStepsChart (List < DTOStatisticData > stepsStatisticData) {
-       StepNumberOfRunsChart.getData().clear();
-       AverageStepsRunTimeChart.getData().clear();
+        Platform.runLater(() -> {
+            StepNumberOfRunsChart.getData().clear();
+            AverageStepsRunTimeChart.getData().clear();
 
-        XYChart.Series series1 = new XYChart.Series();
-        stepsStatisticData.stream().forEach(stepStatisticData -> {
-            series1.getData().add(new XYChart.Data(stepStatisticData.getName(), stepStatisticData.getTimesRun()));
+            XYChart.Series series1 = new XYChart.Series();
+            stepsStatisticData.stream().forEach(stepStatisticData -> {
+                series1.getData().add(new XYChart.Data(stepStatisticData.getName(), stepStatisticData.getTimesRun()));
+            });
+            StepNumberOfRunsChart.getData().add(series1);
+
+
+            XYChart.Series series2 = new XYChart.Series();
+            stepsStatisticData.stream().forEach(stepStatisticData -> {
+                series2.getData().add(new XYChart.Data(stepStatisticData.getName(), stepStatisticData.getAverageTime()));
+            });
+            AverageStepsRunTimeChart.getData().add(series2);
         });
-        StepNumberOfRunsChart.getData().add(series1);
-
-
-        XYChart.Series series2 = new XYChart.Series();
-        stepsStatisticData.stream().forEach(stepStatisticData -> {
-            series2.getData().add(new XYChart.Data(stepStatisticData.getName(), stepStatisticData.getAverageTime()));
-        });
-        AverageStepsRunTimeChart.getData().add(series2);
-
 
     }
 

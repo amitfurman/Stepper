@@ -72,4 +72,8 @@ public class FlowExecution  implements Serializable {
         }
         return flowExecutionResult != null;
     }
+
+    public void addStepExecution(StepExecutionData currInvokingStep) {
+        stepExecutionDataList.add(currInvokingStep);
+    }
 }

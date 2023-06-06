@@ -7,6 +7,7 @@ import dto.DTOSingleFlowIOData;
 import dto.DTOStepExecutionData;
 import javafx.Controller;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -54,20 +55,11 @@ public class FlowExecutionTabController {
     @FXML
     private Label MandatoryLabel;
 
-
-   // private ExecutorService executorService;
-
-   // private List<FlowExecutionTask> flowExecutionTasks;
-
-   // private Timeline progressTimeline;
-
-   // private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-
-  // private final long EXECUTE_CHECK_INTERVAL = 200; // Check interval in milliseconds
-
+    Logic logic;
 
     @FXML
     public void initialize() throws IOException {
+        logic = new Logic();
         freeInputMap = new HashMap<>();
         executeButton.setDisable(true);
         AnchorPane.setTopAnchor(borderPane, 0.0);
@@ -104,6 +96,9 @@ public class FlowExecutionTabController {
         inputValuesHBox.getChildren().clear();
     }
 
+    public Controller getMainController() {
+        return mainController;
+    }
     public void setMasterDetailsController(MasterDetailController masterDetailComponentController) {
         this.masterDetailController = masterDetailComponentController;
         masterDetailComponentController.setFlowExecutionTabController(this);
@@ -324,131 +319,16 @@ public class FlowExecutionTabController {
 
     @FXML
     void StartExecuteFlowButton(ActionEvent event){
+        masterDetailPane = new MasterDetailPane();
         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
         DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
-
+        System.out.println(flowExecution.getFlowName());
+        System.out.println(flowExecution.getUniqueIdByUUID());
         freeInputMap = new HashMap<>();
-        masterDetailController.initMasterDetailComponent(flowExecution);
-        //mainController.goToStatisticsTab();
+        ExecuteFlowTask currentRunningTask = new ExecuteFlowTask(flowExecution.getUniqueIdByUUID(),
+                masterDetailController,flowExecution.getUniqueId(), new SimpleBooleanProperty(false));
+
+        new Thread(currentRunningTask).start();
     }
-
-/*
-    @FXML
-    void StartExecuteFlowButton(ActionEvent event) throws ExecutionException, InterruptedException {
-        System.out.println(freeInputMap);
-        DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
-
-        FlowExecutionTask flowExecutionTask = new FlowExecutionTask(freeInputs);
-        flowExecutionTask.setOnSucceeded(this::handleFlowExecutionSuccess);
-        flowExecutionTask.setOnFailed(this::handleFlowExecutionFailure);
-
-        System.out.println("Starting flow execution");
-        executorService.submit(flowExecutionTask);
-        flowExecutionTasks.add(flowExecutionTask);
-
-        ///////////////////null/////////
-        DTOFlowExecution dtoFlowExecution = flowExecutionTask.get(); // Retrieve the returned value
-        startExecuteButtonCheckThread(dtoFlowExecution.getUniqueIdByUUID());
-
-        freeInputMap = new HashMap<>();
-        System.out.println(freeInputMap);
-    }
-
-
-    private void startExecuteButtonCheckThread(UUID flowSessionId) {
-        scheduledExecutorService.scheduleAtFixedRate(() -> {
-            System.out.println("Checking executeButton");
-            System.out.println(flowSessionId.toString());
-            updateProgressDetails(flowSessionId);
-
-        }, 0, EXECUTE_CHECK_INTERVAL, TimeUnit.MILLISECONDS);
-    }
-
-    public void handleFlowExecutionSuccess(WorkerStateEvent event) {
-        FlowExecutionTask flowExecutionTask = (FlowExecutionTask) event.getSource();
-        DTOFlowExecution flowExecution = flowExecutionTask.getValue();
-        System.out.println("Flow execution completed: " + flowExecution.getFlowName());
-        flowExecutionTasks.remove(flowExecutionTask);
-
-        if (flowExecutionTasks.isEmpty()) {
-            System.out.println("All flows completed");
-            // Stop the progress update mechanism or perform any other necessary actions
-        }
-    }
-
-    private void handleFlowExecutionFailure(WorkerStateEvent event) {
-        FlowExecutionTask flowExecutionTask = (FlowExecutionTask) event.getSource();
-        Throwable exception = flowExecutionTask.getException();
-        System.out.println("Flow execution failed: " + exception.getMessage());
-        flowExecutionTasks.remove(flowExecutionTask);
-
-        if (flowExecutionTasks.isEmpty()) {
-            System.out.println("All flows completed");
-            // Stop the progress update mechanism or perform any other necessary actions
-        }
-    }
-
-    private class FlowExecutionTask extends Task<DTOFlowExecution> {
-        private DTOFreeInputsFromUser freeInputs;
-        private DTOFlowExecution dtoFlowExecution;
-
-        public FlowExecutionTask(DTOFreeInputsFromUser freeInputs) {
-            this.freeInputs = freeInputs;
-        }
-
-        @Override
-        protected DTOFlowExecution call() throws Exception {
-            System.out.println("call");
-            this.dtoFlowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
-
-            // Start the progress update mechanism
-            startProgressUpdates(dtoFlowExecution.getUniqueIdByUUID());
-
-            // Simulate flow execution (replace with your actual flow execution code)
-            // Thread.sleep(5000);
-            // update UI
-            return dtoFlowExecution;
-        }
-
-        public DTOFlowExecution getDTOFlowExecution() {
-            return dtoFlowExecution;
-        }
-    }
-
-    private void startProgressUpdates(UUID flowSessionId) {
-        System.out.println("startProgressUpdates");
-         progressTimeline = new Timeline(new KeyFrame(Duration.millis(200), event -> {
-             System.out.println("Checking executeButton"); // Add this line to check the execution every 200ms
-            // Update progress details for the flow with the given flowSessionId
-            updateProgressDetails(flowSessionId);
-        }));
-        progressTimeline.setCycleCount(Timeline.INDEFINITE);
-        progressTimeline.play();
-    }
-
-    private void updateProgressDetails(UUID flowSessionId) {
-        System.out.println("updateProgressDetails");
-        DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().getFlowExecutionStatus(flowSessionId);
-        System.out.println(flowExecution.isComplete());
-        if (flowExecution.isComplete()) {
-            // The flow execution is complete
-            stopProgressUpdates();
-            Platform.runLater(() -> {mainController.goToStatisticsTab(); });
-        } else {
-            System.out.println("still not complete");
-        }
-    }
-
-    private void stopProgressUpdates() {
-        System.out.println("stopProgressUpdates");
-        System.out.println(progressTimeline);
-        if (progressTimeline != null) {
-            progressTimeline.stop();
-        }
-        scheduledExecutorService.shutdown();
-
-    }
-
- */
 
 }

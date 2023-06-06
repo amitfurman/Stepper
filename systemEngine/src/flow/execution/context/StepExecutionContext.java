@@ -22,5 +22,6 @@ public interface StepExecutionContext {
     void setStepResultToCurrInvokingStep(StepResult stepResult);
     StepResult getStepResultToCurrInvokingStep();
     List<StepExecutionData> getStepExecutionList();
+    void setFinishToExecutionStep();
 
 }

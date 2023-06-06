@@ -77,13 +77,26 @@ public class DTOFlowExecution {
     public List<DTOSingleFlowIOData> getFreeInputsList() { return freeInputsList; }
     public List<DTOSingleFlowIOData> getIOlist(){return IOlist;};
     public List<DTOStepExecutionData>getStepExecutionDataList(){return stepExecutionDataList;}
-    public FlowExecutionResult isComplete() {
-/*        for (DTOStepExecutionData stepExecutionData : stepExecutionDataList) {
+/*    public FlowExecutionResult isComplete() {
+        for (DTOStepExecutionData stepExecutionData : stepExecutionDataList) {
             if (!stepExecutionData.isExecuted()) {
                 return false;
             }
-        }*/
-        return flowExecutionResult != null ? flowExecutionResult : null;
+        }
+        //return flowExecutionResult != null ? flowExecutionResult : null;
+    }*/
+    public boolean isComplete() {
+        System.out.println("isComplete");
+        System.out.println(stepExecutionDataList.size());
+        for (DTOStepExecutionData stepExecutionData : stepExecutionDataList) {
+            System.out.println(stepExecutionData.getFinalNameStep());
+            System.out.println(stepExecutionData.isExecuted());
+            if (!stepExecutionData.isExecuted()) {
+                return false;
+            }
+        }
+        return true;
+        //return flowExecutionResult != null ? flowExecutionResult : null;
     }
 
 
