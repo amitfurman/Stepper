@@ -47,27 +47,29 @@ public class systemengineImpl implements systemengine {
         return new DTOFlowExecution(flowExecution);
     }
 
-    /////need synchronized?
     @Override
-    synchronized public DTOFlowExecution activateFlowByName(String flowName, DTOFreeInputsFromUser freeInputs) {
+     synchronized public DTOFlowExecution activateFlowByName(String flowName, DTOFreeInputsFromUser freeInputs) {
         FlowDefinition currFlow = flowDefinitionList.stream().filter(flow -> flow.getName().equals(flowName)).findFirst().get();
-
         FlowExecution flowExecution = new FlowExecution(currFlow);
         flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
-        threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
         flowExecutionList.addFirst(flowExecution);
 
-        return new DTOFlowExecution(flowExecution);
+        threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
+
+        DTOFlowExecution dtoFlowExecution = new DTOFlowExecution(flowExecution);
+
+        return dtoFlowExecution;
     }
 
 /////need synchronized?
     @Override
-    synchronized public DTOFlowExecution activateFlow(int flowChoice, DTOFreeInputsFromUser freeInputs) {
+    public DTOFlowExecution activateFlow(int flowChoice, DTOFreeInputsFromUser freeInputs) {
         FlowDefinition currFlow = flowDefinitionList.get(flowChoice - 1);
         FlowExecution flowExecution = new FlowExecution(currFlow);
         flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
-        threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
+
         flowExecutionList.addFirst(flowExecution);
+        threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
         return new DTOFlowExecution(flowExecution);
     }
 
@@ -75,6 +77,7 @@ public class systemengineImpl implements systemengine {
         this.flowDefinitionList = new LinkedList<>();
         this.flowExecutionList = new LinkedList<>();
         this.statisticData = new FlowAndStepStatisticData();
+        this.instance = this;
     }
 
     @Override
