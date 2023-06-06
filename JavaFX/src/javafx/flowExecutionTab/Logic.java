@@ -11,7 +11,7 @@ public class Logic {
 
     private Task<Boolean> currentRunningTask;
 
-    public void fetchData(UUID flowId, MasterDetailController masterDetail, String currentFlowId, SimpleBooleanProperty isTaskFinished) {
+    public void fetchData(UUID flowId, MasterDetailController masterDetail, SimpleStringProperty currentFlowId, SimpleBooleanProperty isTaskFinished) {
         currentRunningTask = new ExecuteFlowTask(flowId, masterDetail, currentFlowId, isTaskFinished);
 
         new Thread(currentRunningTask).start();

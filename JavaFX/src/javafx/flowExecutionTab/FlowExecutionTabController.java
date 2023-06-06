@@ -4,24 +4,19 @@ package javafx.flowExecutionTab;
 import dto.DTOFlowExecution;
 import dto.DTOFreeInputsFromUser;
 import dto.DTOSingleFlowIOData;
-import dto.DTOStepExecutionData;
 import javafx.Controller;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.flowExecutionTab.MasterDetail.MasterDetailController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -30,7 +25,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.MasterDetailPane;
-import steps.api.StepResult;
 
 import javax.swing.*;
 import java.io.File;
@@ -56,6 +50,20 @@ public class FlowExecutionTabController {
     private Label MandatoryLabel;
 
     Logic logic;
+
+    private final SimpleStringProperty executedFlowIDProperty;
+
+    public FlowExecutionTabController() {
+        executedFlowIDProperty = new SimpleStringProperty();
+    }
+
+    public SimpleStringProperty getExecutedFlowID() {
+        return this.executedFlowIDProperty;
+    }
+
+    public void setExecutedFlowID(UUID id) {
+        this.executedFlowIDProperty.set(id.toString());
+    }
 
     @FXML
     public void initialize() throws IOException {
@@ -316,11 +324,11 @@ public class FlowExecutionTabController {
         masterDetailPane = new MasterDetailPane();
         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
         DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
-        System.out.println(flowExecution.getFlowName());
-        System.out.println(flowExecution.getUniqueIdByUUID());
+        setExecutedFlowID(flowExecution.getUniqueIdByUUID());
+
         freeInputMap = new HashMap<>();
-        ExecuteFlowTask currentRunningTask = new ExecuteFlowTask(flowExecution.getUniqueIdByUUID(),
-                masterDetailController,flowExecution.getUniqueId(), new SimpleBooleanProperty(false));
+        ExecuteFlowTask currentRunningTask = new ExecuteFlowTask(UUID.fromString(executedFlowIDProperty.getValue()),
+                masterDetailController,executedFlowIDProperty, new SimpleBooleanProperty(false));
 
         new Thread(currentRunningTask).start();
     }
