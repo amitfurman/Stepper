@@ -83,19 +83,10 @@ public class FlowExecutionTabController {
         Text asterisk1 = new Text("*");
         asterisk1.setFill(Color.RED);
         MandatoryLabel.setGraphic(asterisk1);
-
-        //MasterDetailComponent.setDetailNode()// int numThreads = 5; // Set the desired number of threads
-        //executorService = Executors.newFixedThreadPool(numThreads);
-       // flowExecutionTasks = new ArrayList<>();
     }
-    public void initDataInFlowExecutionTab() {
-        masterDetailController.initMasterDetailPaneController();
+    public void setMainController(Controller mainController) {
+        this.mainController = mainController;
     }
-    public void initInputsInFlowExecutionTab() {
-        executeButton.setDisable(true);
-        inputValuesHBox.getChildren().clear();
-    }
-
     public Controller getMainController() {
         return mainController;
     }
@@ -103,8 +94,12 @@ public class FlowExecutionTabController {
         this.masterDetailController = masterDetailComponentController;
         masterDetailComponentController.setFlowExecutionTabController(this);
     }
-    public void setMainController(Controller mainController) {
-        this.mainController = mainController;
+    public void initDataInFlowExecutionTab() {
+        masterDetailController.initMasterDetailPaneController();
+    }
+    public void initInputsInFlowExecutionTab() {
+        executeButton.setDisable(true);
+        inputValuesHBox.getChildren().clear();
     }
     public void initInputsTable(List<DTOSingleFlowIOData> freeInputs) {
         executeButton.setDisable(true);
@@ -316,7 +311,6 @@ public class FlowExecutionTabController {
     }
     return true;
 }
-
     @FXML
     void StartExecuteFlowButton(ActionEvent event){
         masterDetailPane = new MasterDetailPane();

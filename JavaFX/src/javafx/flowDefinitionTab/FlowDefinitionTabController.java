@@ -32,21 +32,17 @@ public class FlowDefinitionTabController {
     public void initialize() {
         ExecuteFlowButton.setDisable(true);
     }
-
     @FXML
     public void setPressOnExecuteFlowButton() {
         mainController.goToFlowExecutionTab(chosenFlowName);
         mainController.initDataInFlowExecutionTab();
     }
-
     public void setMainController(Controller mainController) {
         this.mainController = mainController;
     }
-
     public TreeView<String> getFlowsTree(){
         return flowsTree;
     }
-
     public void showFlowsTree() {
         TreeItem<String> rootItem = new TreeItem<>("Flows");
         rootItem.setExpanded(true); // Set the root item to be initially expanded
@@ -60,7 +56,6 @@ public class FlowDefinitionTabController {
 
         flowsTree.setRoot(rootItem);
     }
-
     public TreeItem<String> createBranchItem(DTOFlowDefinition flowDefinition) {
         TreeItem<String> branchItem = new TreeItem<>(flowDefinition.getName());
         TreeItem<String> leafItem1 = new TreeItem<>("Description: " + flowDefinition.getDescription());
@@ -80,7 +75,6 @@ public class FlowDefinitionTabController {
 
         return branchItem;
     }
-
     public void showChosenFlow(DTOFlowDefinition flowDefinition) {
         TreeItem<String> rootItem = new TreeItem<>("Chosen Flow Details - " + flowDefinition.getName());
         rootItem.setExpanded(true); // Set the root item to be initially expanded
@@ -120,7 +114,6 @@ public class FlowDefinitionTabController {
         boolean isEmptyFlowDetailsTree = (flowDetailsTree.getRoot() == null || flowDetailsTree.getRoot().getChildren().isEmpty());
         ExecuteFlowButton.setDisable(isEmptyFlowDetailsTree);
     }
-
     public TreeItem<String> showStepsOfChosenFlow(DTOFlowDefinition flowDefinition){
         AtomicInteger stepIndex = new AtomicInteger(1);
         TreeItem<String> branchSteps = new TreeItem<>("Steps in the current flow");
@@ -157,7 +150,6 @@ public class FlowDefinitionTabController {
         return branchSteps;
 
     }
-
     public TreeItem<String> showFreeInputsOfChosenFlow(DTOFlowDefinition flowDefinition){
         AtomicInteger freeInputIndex = new AtomicInteger(1);
         TreeItem<String> branchFreeInputs = new TreeItem<>("Free inputs in the current flow");
@@ -190,7 +182,6 @@ public class FlowDefinitionTabController {
                 });
         return branchFreeInputs;
     }
-
     public TreeItem<String> showFlowOutputsOfChosenFlow(DTOFlowDefinition flowDefinition){
         AtomicInteger flowOutputIndex = new AtomicInteger(1);
         TreeItem<String> branchFlowOutputs = new TreeItem<>("Flow Outputs");
@@ -215,7 +206,6 @@ public class FlowDefinitionTabController {
         }
         return branchFlowOutputs;
     }
-
     public void setFlowDetailsTree(){
         TreeItem<String> rootItem = new TreeItem<>();
         flowDetailsTree.setRoot(rootItem);

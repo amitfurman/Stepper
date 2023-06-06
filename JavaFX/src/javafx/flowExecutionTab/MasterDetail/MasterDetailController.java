@@ -63,28 +63,23 @@ public class MasterDetailController {
         logic = new Logic();
         this.isTaskFinished = new SimpleBooleanProperty(false);
     }
-
     public FlowExecutionTabController getFlowExecutionTabController() {
         return flowExecutionTabController;
     }
-
     public void clearStepsInMasterDetail() {
         detailPane.getChildren().removeIf(node -> node instanceof Label && !((Label) node).getStyleClass().contains("first-label"));
         addedStepNames.clear();
         stepCounter = 1;
     }
-
     @FXML
     public void initialize() {
         FlowMasterDetails.setDetailSide(Side.LEFT);
         FlowMasterDetails.setDividerPosition(0.3);
 
     }
-
     public void setFlowExecutionTabController(FlowExecutionTabController flowExecutionTabController) {
         this.flowExecutionTabController = flowExecutionTabController;
     }
-
     public MasterDetailPane getMasterDetailsComponent() {
         return FlowMasterDetails;
     }
@@ -155,11 +150,7 @@ public class MasterDetailController {
 
     }
 
-
-        ////UPDATE HISTORY
-
-
-
+    ////UPDATE HISTORY
     public void addStepsToMasterDetail(DTOFlowExecution flowExecution)
     {
         this.flowExecution = flowExecution;
@@ -193,9 +184,9 @@ public class MasterDetailController {
 
     private Label createDetailLabel(String text, MasterDetailPane masterDetailPane, boolean isFirstLabel, VBox detailPane) {
         Label detailLabel = new Label(text);
-        /*TextArea textArea = new TextArea();
+        TextArea textArea = new TextArea();
         textArea.setWrapText(true);  // Enable text wrapping
-        textArea.setEditable(false);*/ // Make the text area read-only
+        textArea.setEditable(false); // Make the text area read-only
 
         detailLabel.setOnMouseClicked(event -> {
             detailLabel.getStyleClass().add("label-selected");
@@ -218,11 +209,11 @@ public class MasterDetailController {
              } else {
                  treeView = cratingStepsExecutionDetail(text);
              }
-
+/*
             TextArea textArea = new TextArea();
             textArea.setWrapText(true);  // Enable text wrapping
             textArea.setEditable(false);
-
+*/
             if (treeView != null) {
                 treeView.getStyleClass().add("tree-view-style");
                 StackPane stackPane = new StackPane();
