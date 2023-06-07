@@ -49,8 +49,6 @@ public class FlowExecutionTabController {
     @FXML
     private Label MandatoryLabel;
 
-    Logic logic;
-
     private final SimpleStringProperty executedFlowIDProperty;
 
     public FlowExecutionTabController() {
@@ -67,7 +65,6 @@ public class FlowExecutionTabController {
 
     @FXML
     public void initialize() throws IOException {
-        logic = new Logic();
         freeInputMap = new HashMap<>();
         executeButton.setDisable(true);
         AnchorPane.setTopAnchor(borderPane, 0.0);

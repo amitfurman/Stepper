@@ -14,7 +14,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.flowExecutionTab.FlowExecutionTabController;
-import javafx.flowExecutionTab.Logic;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -47,8 +46,6 @@ public class MasterDetailController {
 
     DTOFlowExecution flowExecution;
 
-    private final Logic logic;
-
     private final SimpleBooleanProperty isTaskFinished;
 
     private boolean isActive;
@@ -60,7 +57,6 @@ public class MasterDetailController {
     int stepCounter;
 
     public MasterDetailController() {
-        logic = new Logic();
         this.isTaskFinished = new SimpleBooleanProperty(false);
     }
 
@@ -70,7 +66,7 @@ public class MasterDetailController {
 
     public void clearStepsInMasterDetail() {
         detailPane.getChildren().removeIf(node -> node instanceof Label && !((Label) node).getStyleClass().contains("first-label"));
-        addedStepNames.clear();
+        addedStepNames = new ArrayList<>();
         stepCounter = 1;
     }
 
@@ -78,6 +74,7 @@ public class MasterDetailController {
     public void initialize() {
         FlowMasterDetails.setDetailSide(Side.LEFT);
         FlowMasterDetails.setDividerPosition(0.3);
+
 
     }
 
@@ -90,9 +87,10 @@ public class MasterDetailController {
     }
 
     public void initMasterDetailPaneController(){
-        ScrollPane scrollPane = new ScrollPane();
-        FlowMasterDetails.setDetailNode(scrollPane);
+        detailPane = new VBox();
+        ScrollPane scrollPane = new ScrollPane(detailPane);
         scrollPane.setFitToWidth(true);
+        FlowMasterDetails.setDetailNode(scrollPane);
         StackPane stackPane = new StackPane();
         FlowMasterDetails.setMasterNode(stackPane);
 
@@ -106,6 +104,7 @@ public class MasterDetailController {
         Label flowDetailLabel = createDetailLabel(flowExecution.getFlowName(), FlowMasterDetails, true, detailPane);
         detailPane.getChildren().add(flowDetailLabel);
         flowDetailLabel.getStyleClass().add("label-selected");
+        addedStepNames = new ArrayList<>();
         stepCounter = 1;
     }
 
@@ -174,6 +173,7 @@ public class MasterDetailController {
                     statusImage.setImage(new Image(getClass().getResource("icons8-error-16.png").toString()));
                     detailLabel.setGraphic(statusImage);
                 }
+                System.out.println("added step");
                 detailPane.getChildren().add(detailLabel);
                 addedStepNames.add(stepName); // Add the step name to the list
             }
@@ -186,11 +186,11 @@ public class MasterDetailController {
     }
 
 
-/*
-    private Label createDetailLabel(String text, MasterDetailPane masterDetailPane, boolean isFirstLabel, VBox detailPane) {
+
+   /* private Label createDetailLabel(String text, MasterDetailPane masterDetailPane, boolean isFirstLabel, VBox detailPane) {
         Label detailLabel = new Label(text);
-        */
-/*TextArea textArea = new TextArea();
+
+*//*TextArea textArea = new TextArea();
         textArea.setWrapText(true);  // Enable text wrapping
         textArea.setEditable(false);*//*
  // Make the text area read-only
@@ -250,6 +250,7 @@ public class MasterDetailController {
         return detailLabel;
     }
 */
+
 
     private Label createDetailLabel(String text, MasterDetailPane masterDetailPane, boolean isFirstLabel, VBox detailPane) {
         Label detailLabel = new Label(text);
@@ -318,6 +319,7 @@ public class MasterDetailController {
 
 
 
+
     TreeView<Object> cratingStepsExecutionDetail(String dataName) {
         TreeItem<Object> rootItem = new TreeItem<>("Step Details");
         rootItem.setExpanded(true);
@@ -370,6 +372,8 @@ public class MasterDetailController {
                         TreeItem<Object> input = new TreeItem<>("Input " + inputIndex.getAndIncrement());
                         inputItem.getChildren().add(input);
                         input.getChildren().add(new TreeItem<>("Final Name: " + io.getFinalName()));
+                        System.out.println("name: " + io.getFinalName());
+                        System.out.println("type: " + io.getType().toString());
                         if (io.getType().toString().equals("RELATION") || io.getType().toString().equals("STRING_LIST")
                                 || io.getType().toString().equals("FILE_LIST") || io.getType().toString().equals("MAPPING2NUMBERS")) {
                             input.getChildren().add(new TreeItem<>(showOutputValue(io)));
@@ -568,8 +572,12 @@ public class MasterDetailController {
 
         ObservableList<String> items = FXCollections.observableArrayList();
         int index =1;
+        System.out.println(output.getType().toString());
         if(output.getType().toString().equals("FILE_LIST")) {
+            System.out.println(output.getValue());
+            System.out.println(((FileListData) output.getValue()).getItems());
             for (File value :((FileListData) output.getValue()).getItems()) {
+                System.out.println(value.getAbsolutePath());
                 String name = index +". " + value.getAbsolutePath();
                 index++;
                 items.add(name);
