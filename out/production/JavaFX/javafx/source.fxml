@@ -11,7 +11,7 @@
    <content>
       <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="372.0" prefWidth="607.0" stylesheets="@source.css">
          <center>
-            <TabPane id="tabs-pane" fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="320.0" prefWidth="600.0" style="-fx-background-color: BLUE;" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+            <TabPane id="tabs-pane" fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="320.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
               <tabs>
                   <Tab fx:id="ExecutionHistoryTab" styleClass="tabs" text="Execution History">
                     <content>
