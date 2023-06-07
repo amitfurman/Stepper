@@ -82,8 +82,6 @@ public class StatisticsTabController {
 
             XYChart.Series series1 = new XYChart.Series();
             flowsStatisticData.stream().forEach(flowStatisticData -> {
-                System.out.println(flowStatisticData.getName());
-                System.out.println(flowStatisticData.getTimesRun());
                 series1.getData().add(new XYChart.Data(flowStatisticData.getName(), flowStatisticData.getTimesRun()));
             });
             FlowNumberOfRunsChart.getData().add(series1);

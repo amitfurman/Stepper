@@ -69,7 +69,7 @@ public class systemengineImpl implements systemengine {
         flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
 
         flowExecutionList.addFirst(flowExecution);
-        threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
+     //   threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
         return new DTOFlowExecution(flowExecution);
     }
 
@@ -201,7 +201,6 @@ public class systemengineImpl implements systemengine {
 
     @Override
     public DTOFlowExecution getDTOFlowExecution(UUID flowId) {
-        System.out.println("num " + flowExecutionList.size());
         FlowExecution executedFlow = flowExecutionList.stream().filter(flow -> flow.getUniqueId().equals(flowId)).findFirst().get();
         return new DTOFlowExecution(executedFlow);
     }

@@ -142,8 +142,6 @@ public class Controller {
                 .findFirst()
                 .orElse(null);
         DTOFlowAndStepStatisticData statisticData = systemEngineInterface.getStatisticData();
-        System.out.println(statisticData.getStepsStatisticData().size());
-        System.out.println(statisticData.getFlowsStatisticData().size());
         statisticsTabController.initCharts(statisticData);
     }
 

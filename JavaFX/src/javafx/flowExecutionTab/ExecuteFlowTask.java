@@ -84,8 +84,6 @@ public class ExecuteFlowTask extends Task<Boolean> {
         }
         executedData = engineManager.getDTOFlowExecution(UUID.fromString(currentFlowId.getValue()));
         DTOFlowExecution finalExecutedData1 = executedData;
-        System.out.println(finalExecutedData1.getFlowName());
-        System.out.println(finalExecutedData1.getStepExecutionDataList().size());
         Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData1));
 
         masterDetailController.getFlowExecutionTabController().getMainController().goToStatisticsTab();

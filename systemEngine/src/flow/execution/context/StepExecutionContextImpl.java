@@ -2,6 +2,7 @@ package flow.execution.context;
 
 import datadefinition.api.DataDefinitions;
 import datadefinition.api.IO_NAMES;
+import flow.api.FlowIO.IO;
 import flow.api.FlowIO.SingleFlowIOData;
 import flow.execution.StepExecutionData;
 import steps.api.Logger;
@@ -71,9 +72,19 @@ public class StepExecutionContextImpl implements StepExecutionContext {
             }
             theExpectedDataDefinition = stepAndIOName2DD.get(dataName);
         }
-
+/*
+        IOlist.stream().forEach(data->{
+            if(data.getType().equals(IO.INPUT)) {
+                System.out.println("name: " + data.getFinalName() + " outputs into inputs: " + data.getOptionalOutput());
+            }
+            if(data.getType().equals(IO.OUTPUT)) {
+                System.out.println("name: " + data.getFinalName() + " inputs into outputs: " + data.getOptionalInputs() );
+            }
+        });
+*/
         if (expectedDataType.isAssignableFrom(theExpectedDataDefinition.getType())) {
             Object aValue = dataValues.get(ioAlias);
+
             if (aValue != null) {
                 return expectedDataType.cast(aValue);
             }else if(!(IOlist.stream().filter(io -> io.getOriginalName().equals(dataName)).findFirst().get().getOptionalOutput().isEmpty())){
@@ -89,8 +100,8 @@ public class StepExecutionContextImpl implements StepExecutionContext {
     }
 /*    @Override
     public <T> T getDataValue(String dataName, Class<T> expectedDataType) {
-        *//*DataDefinitions theExpectedDataDefinition =IO_NAMES.getDataDefinition(dataName);
-        }*//*
+        DataDefinitions theExpectedDataDefinition =IO_NAMES.getDataDefinition(dataName);
+        }
         DataDefinitions theExpectedDataDefinition =name2DD.get(dataName);
         String nameAfterAlias= name2Alias.get(dataName);
 

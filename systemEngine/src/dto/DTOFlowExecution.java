@@ -1,5 +1,6 @@
 package dto;
 
+import flow.api.FlowIO.IO;
 import flow.api.FlowIO.SingleFlowIOData;
 import flow.execution.FlowExecution;
 import flow.execution.FlowExecutionResult;
@@ -46,12 +47,17 @@ public class DTOFlowExecution {
         this.dataValues = flowExecution.getDataValues();
         this.freeInputsValues = new HashMap<>(flowExecution.getFreeInputsValues());
         this.freeInputsList = new LinkedList<>();
-        for (SingleFlowIOData freeInput :flowExecution.getFreeInputsList()) {
-            freeInputsList.add(new DTOSingleFlowIOData(freeInput, freeInputsValues.get(freeInput.getStepName() + "." + freeInput.getFinalName())));
+        for (SingleFlowIOData freeInput :flowExecution.getFreeInputsList()) {//change to freeInput.getOriginalName() instead of  freeInput.getFinalName()
+            freeInputsList.add(new DTOSingleFlowIOData(freeInput, freeInputsValues.get(freeInput.getStepName() + "." + freeInput.getOriginalName())));
         }
         this.IOlist = new LinkedList<>();
-        for (SingleFlowIOData IO :flowExecution.getIOlist()) {
-            IOlist.add(new DTOSingleFlowIOData(IO, dataValues.get(IO.getFinalName())));
+
+        for (SingleFlowIOData io :flowExecution.getIOlist()) {
+            if(dataValues.get(io.getFinalName()) == null && io.getType().equals(IO.INPUT) && !(io.getOptionalOutput().isEmpty())        ) {
+                IOlist.add(new DTOSingleFlowIOData(io, dataValues.get(io.getOptionalOutput().get(0).getFinalName())));
+            }else{
+                IOlist.add(new DTOSingleFlowIOData(io, dataValues.get(io.getFinalName())));
+            }
         }
         this.stepExecutionDataList = new LinkedList<>();
         for(StepExecutionData step : flowExecution.getStepExecutionDataList()){
@@ -86,11 +92,7 @@ public class DTOFlowExecution {
         //return flowExecutionResult != null ? flowExecutionResult : null;
     }*/
     public boolean isComplete() {
-        System.out.println("isComplete");
-        System.out.println(stepExecutionDataList.size());
         for (DTOStepExecutionData stepExecutionData : stepExecutionDataList) {
-            System.out.println(stepExecutionData.getFinalNameStep());
-            System.out.println(stepExecutionData.isExecuted());
             if (!stepExecutionData.isExecuted()) {
                 return false;
             }

@@ -2,6 +2,8 @@ package flow.execution.runner;
 
 
 import dto.DTOFreeInputsFromUser;
+import flow.api.FlowIO.IO;
+import flow.api.FlowIO.SingleFlowIOData;
 import flow.execution.FlowExecutionResult;
 import flow.execution.StepExecutionData;
 import statistic.FlowAndStepStatisticData;
@@ -15,8 +17,10 @@ import flow.execution.context.StepExecutionContextImpl;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class FlowExecutor implements Runnable {
     private FlowExecution flowExecution;
@@ -25,12 +29,15 @@ public class FlowExecutor implements Runnable {
     private FlowAndStepStatisticData flowStatisticData;
     private FlowExecutionResult flowExecutionResult;
 
+    private  Map<String, Object> FEdataValues;
+
     public FlowExecutor(FlowExecution flowExecution, DTOFreeInputsFromUser freeInputs, Map<String, Object> initialInputs, FlowAndStepStatisticData flowStatisticData) {
         this.flowExecution = flowExecution;
         this.freeInputs = freeInputs;
         this.initialInputs = initialInputs;
         this.flowStatisticData = flowStatisticData;
         this.flowExecutionResult=FlowExecutionResult.SUCCESS;
+        this.FEdataValues = new HashMap<>();
     }
 
     @Override
@@ -44,6 +51,7 @@ public class FlowExecutor implements Runnable {
                         flowExecution.getFlowDefinition().getInputName2aliasMap(), flowExecution.getFlowDefinition().getAlias2StepNameMap(),
                         flowExecution.getIOlist(), flowExecution.getFlowDefinition().getName2DDMap(), flowExecution.getFlowDefinition().getName2AliasMap());
 
+
         for (Map.Entry<String, Object> entry : freeInputs.getFreeInputMap().entrySet()) {
             context.storeDataValue(entry.getKey(), entry.getValue());
         }
@@ -51,12 +59,14 @@ public class FlowExecutor implements Runnable {
             context.storeDataValue(entry.getKey(), entry.getValue());
         }
 
+
         // start actual execution
         for (int i = 0; i < flowExecution.getFlowDefinition().getFlowSteps().size(); i++) {
             context.setCurrInvokingStep(flowExecution.getFlowDefinition().getFlowSteps().get(i).getFinalStepName(), flowExecution.getFlowDefinition().getFlowSteps().get(i).getStepDefinition().name());
             StepUsageDeclaration stepUsageDeclaration = flowExecution.getFlowDefinition().getFlowSteps().get(i);
 
             System.out.println("Executing step " + stepUsageDeclaration.getStepDefinition().name());
+
             StepResult stepResult = stepUsageDeclaration.getStepDefinition().invoke(context);
             context.setFinishToExecutionStep();
 
@@ -102,6 +112,8 @@ public class FlowExecutor implements Runnable {
 
             flowExecution.setDataValues(context.getDataValues());
          //   flowExecution.setStepExecutionDataList(context.getStepExecutionList());
+
+            FEdataValues = context.getDataValues();
         }
 
         flowExecution.setFlowExecutionResult(flowExecutionResult);

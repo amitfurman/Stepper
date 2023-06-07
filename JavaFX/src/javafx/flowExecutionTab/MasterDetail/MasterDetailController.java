@@ -172,7 +172,6 @@ public class MasterDetailController {
                     statusImage.setImage(new Image(getClass().getResource("icons8-error-16.png").toString()));
                     detailLabel.setGraphic(statusImage);
                 }
-                System.out.println("added step");
                 detailPane.getChildren().add(detailLabel);
                 addedStepNames.add(stepName); // Add the step name to the list
             }
@@ -362,7 +361,11 @@ public class MasterDetailController {
 
         AtomicInteger inputIndex = new AtomicInteger(1);
         AtomicInteger outputIndex = new AtomicInteger(1);
-
+/*
+        flowExecution.getIOlist().stream().forEach(data -> {
+            System.out.println("step: " + data.getStepName() + " io name: " + data.getFinalName() + " va: "  + data.getValue());
+        });
+*/
 
         flowExecution.getIOlist().stream()
                 .filter(io1 -> io1.getStepName().equals(step.getFinalNameStep()))
@@ -371,8 +374,7 @@ public class MasterDetailController {
                         TreeItem<Object> input = new TreeItem<>("Input " + inputIndex.getAndIncrement());
                         inputItem.getChildren().add(input);
                         input.getChildren().add(new TreeItem<>("Final Name: " + io.getFinalName()));
-                        System.out.println("name: " + io.getFinalName());
-                        System.out.println("type: " + io.getType().toString());
+
                         if (io.getType().toString().equals("RELATION") || io.getType().toString().equals("STRING_LIST")
                                 || io.getType().toString().equals("FILE_LIST") || io.getType().toString().equals("MAPPING2NUMBERS")) {
                             input.getChildren().add(new TreeItem<>(showOutputValue(io)));
@@ -391,8 +393,8 @@ public class MasterDetailController {
 
                         output.getChildren().add(new TreeItem<>("Final Name: " + io.getFinalName()));
                         if (io.getType().toString().equals("RELATION") || io.getType().toString().equals("STRING_LIST")
-                                || io.getType().toString().equals("FILE_LIST") || io.getType().toString().equals("MAPPING2NUMBERS")) {
-                            output.getChildren().add(new TreeItem<>(showOutputValue(io)));
+                            || io.getType().toString().equals("FILE_LIST") || io.getType().toString().equals("MAPPING2NUMBERS")) {
+                        output.getChildren().add(new TreeItem<>(showOutputValue(io)));
                         } else {
                             if (io.getValue() != null) {
                                 output.getChildren().add(new TreeItem<>("Value: " + io.getValue().toString()));
@@ -571,12 +573,9 @@ public class MasterDetailController {
 
         ObservableList<String> items = FXCollections.observableArrayList();
         int index =1;
-        System.out.println(output.getType().toString());
+
         if(output.getType().toString().equals("FILE_LIST")) {
-            System.out.println(output.getValue());
-            System.out.println(((FileListData) output.getValue()).getItems());
             for (File value :((FileListData) output.getValue()).getItems()) {
-                System.out.println(value.getAbsolutePath());
                 String name = index +". " + value.getAbsolutePath();
                 index++;
                 items.add(name);
