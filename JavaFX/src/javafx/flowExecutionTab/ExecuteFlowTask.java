@@ -28,51 +28,17 @@ public class ExecuteFlowTask extends Task<Boolean> {
         this.isTaskFinished = isTaskFinished;
     }
 
-/*    @Override
-    protected Boolean call() {
-        lastTaskId = currentFlowId;
-        int SLEEP_TIME = 200;
-        DTOFlowExecution executedData = engineManager.getDTOFlowExecution(this.flowId);
-        masterDetailController.initMasterDetailPaneController(executedData);
-        DTOFlowExecution finalExecutedData2 = executedData;
-        Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData2));
-
-        while (executedData.getFlowExecutionResult() == null) {
-            executedData = engineManager.getDTOFlowExecution(this.flowId);
-            System.out.println(currentFlowId);
-            System.out.println(flowId);
-            try {
-                Thread.sleep(SLEEP_TIME);
-            } catch (InterruptedException ignored) {}
-
-
-        }
-
-
-            executedData = engineManager.getDTOFlowExecution(this.flowId);
-            DTOFlowExecution finalExecutedData1 = executedData;
-            Platform.runLater(() -> {
-                //masterDetailController.clearStepsInMasterDetail(); // Clear existing steps in master details
-               // masterDetailController.initMasterDetailPaneController(finalExecutedData1);
-                masterDetailController.updateFlowLabel(finalExecutedData1);
-               // masterDetailController.addStepsToMasterDetail(finalExecutedData1);
-            });
-
-
-        return Boolean.TRUE;
-    }*/
-
-
     protected Boolean call() {
         int SLEEP_TIME = 200;
         DTOFlowExecution executedData = engineManager.getDTOFlowExecution(this.flowId);
         masterDetailController.initMasterDetailPaneController(executedData);
         DTOFlowExecution finalExecutedData2 = executedData;
         Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData2));
-/**/
+
         while (executedData.getFlowExecutionResult() == null) {
             executedData = engineManager.getDTOFlowExecution(this.flowId);
             if (currentFlowId.getValue().equals(flowId.toString())) {
+                System.out.println("id: " +  executedData.getUniqueId() + "curr " + currentFlowId );
                 DTOFlowExecution finalExecutedData = executedData;
                 Platform.runLater(() -> masterDetailController.addStepsToMasterDetail(finalExecutedData));
             }
@@ -81,10 +47,10 @@ public class ExecuteFlowTask extends Task<Boolean> {
             } catch (InterruptedException ignored) {}
         }
 
-        executedData = engineManager.getDTOFlowExecution(this.flowId);
-        DTOFlowExecution finalExecutedData1 = executedData;
+     /*   executedData = engineManager.getDTOFlowExecution(this.flowId);
+       DTOFlowExecution finalExecutedData1 = executedData;
         //Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData1));
-/**/
+*/
 
         masterDetailController.getFlowExecutionTabController().getMainController().goToStatisticsTab();
         isTaskFinished.set(true);

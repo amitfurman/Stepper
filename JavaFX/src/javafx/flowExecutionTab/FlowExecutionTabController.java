@@ -60,11 +60,9 @@ public class FlowExecutionTabController {
     public SimpleStringProperty getExecutedFlowID() {
         return this.executedFlowIDProperty;
     }
-
     public void setExecutedFlowID(UUID id) {
         this.executedFlowIDProperty.set(id.toString());
     }
-
     @FXML
     public void initialize() throws IOException {
         logic = new Logic();

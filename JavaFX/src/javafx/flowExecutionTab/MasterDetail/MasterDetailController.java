@@ -95,7 +95,6 @@ public class MasterDetailController {
         scrollPane.setFitToWidth(true);
         StackPane stackPane = new StackPane();
         FlowMasterDetails.setMasterNode(stackPane);
-
     }
 
     public void initMasterDetailPaneController(DTOFlowExecution flowExecution) {
@@ -588,6 +587,7 @@ public class MasterDetailController {
 
         return list;
     }
+
     public TableView showRelationData(DTOSingleFlowIOData output) {
         TableView<Map<String, String>> table = new TableView<>();
         table.setEditable(false);
