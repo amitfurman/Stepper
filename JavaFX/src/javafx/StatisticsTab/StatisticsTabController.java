@@ -5,6 +5,7 @@ import dto.DTOFlowAndStepStatisticData;
 import dto.DTOStatisticData;
 import javafx.Controller;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
@@ -15,6 +16,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.XYChart;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StatisticsTabController {
 
@@ -72,19 +74,19 @@ public class StatisticsTabController {
         initStepsChart(statisticData.getStepsStatisticData());
     }
 
+
     public void initFlowsChart(List<DTOStatisticData> flowsStatisticData) {
         Platform.runLater(() -> {
             FlowNumberOfRunsChart.getData().clear();
             AverageFlowsRunTimeChart.getData().clear();
 
-            //  setMaxBarWidth(FlowNumberOfRunsChart, 40, 10);
-            //  setMaxBarWidth(AverageFlowsRunTimeChart, 40, 10);
             XYChart.Series series1 = new XYChart.Series();
             flowsStatisticData.stream().forEach(flowStatisticData -> {
+                System.out.println(flowStatisticData.getName());
+                System.out.println(flowStatisticData.getTimesRun());
                 series1.getData().add(new XYChart.Data(flowStatisticData.getName(), flowStatisticData.getTimesRun()));
             });
             FlowNumberOfRunsChart.getData().add(series1);
-
 
             XYChart.Series series2 = new XYChart.Series();
             flowsStatisticData.stream().forEach(flowStatisticData -> {
@@ -93,9 +95,8 @@ public class StatisticsTabController {
             AverageFlowsRunTimeChart.getData().add(series2);
 
         });
-
-
     }
+
 
     public void initStepsChart (List < DTOStatisticData > stepsStatisticData) {
         Platform.runLater(() -> {
@@ -119,7 +120,7 @@ public class StatisticsTabController {
     }
 
 
-    private void setMaxBarWidth(BarChart<String, Number> barChart, double maxBarWidth, double minCategoryGap) {
+    /*private void setMaxBarWidth(BarChart<String, Number> barChart, double maxBarWidth, double minCategoryGap) {
         Axis<String> xAxis = barChart.getXAxis();
         double axisWidth = xAxis.getWidth();
         int numCategories = barChart.getData().size();
@@ -147,6 +148,6 @@ public class StatisticsTabController {
             categoryGap = categorySpacing - requiredBarSpace - barGap;
             barChart.setCategoryGap(categoryGap);
         } while (barWidth < maxBarWidth && categoryGap > minCategoryGap);
-    }
+    }*/
 }
 

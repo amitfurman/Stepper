@@ -32,6 +32,7 @@ public class FilesDeleter extends AbstractStepDefinition {
     public StepResult invoke(StepExecutionContext context) {
         Instant start = Instant.now();
         FileListData filesToDelete = context.getDataValue(IO_NAMES.FILES_LIST, FileListData.class);
+
         StringListData DELETED_LIST = new StringListData(new ArrayList<String>());
         NumberMappingData DELETION_STATS = new NumberMappingData(new HashMap<>());
         DELETION_STATS.setItems(new HashMap<Number, Number>()); // initialize to empty map

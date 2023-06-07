@@ -55,6 +55,8 @@ public class FlowExecutor implements Runnable {
         for (int i = 0; i < flowExecution.getFlowDefinition().getFlowSteps().size(); i++) {
             context.setCurrInvokingStep(flowExecution.getFlowDefinition().getFlowSteps().get(i).getFinalStepName(), flowExecution.getFlowDefinition().getFlowSteps().get(i).getStepDefinition().name());
             StepUsageDeclaration stepUsageDeclaration = flowExecution.getFlowDefinition().getFlowSteps().get(i);
+
+            System.out.println("Executing step " + stepUsageDeclaration.getStepDefinition().name());
             StepResult stepResult = stepUsageDeclaration.getStepDefinition().invoke(context);
             context.setFinishToExecutionStep();
 
