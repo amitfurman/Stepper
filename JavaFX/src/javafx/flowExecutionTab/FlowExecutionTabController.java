@@ -4,7 +4,10 @@ package javafx.flowExecutionTab;
 import dto.DTOFlowExecution;
 import dto.DTOFreeInputsFromUser;
 import dto.DTOSingleFlowIOData;
+import flow.mapping.FlowContinuationMapping;
 import javafx.Controller;
+import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -17,6 +20,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -42,14 +46,22 @@ public class FlowExecutionTabController {
     private HBox inputValuesHBox;
     @FXML
     private Button executeButton;
+
     private Map<String, Object> freeInputMap;
+
     private ObservableList<Input> inputList = FXCollections.observableArrayList();
+
     private MasterDetailController masterDetailController;
+
     private MasterDetailPane masterDetailPane;
     @FXML
     private Label MandatoryLabel;
 
     private final SimpleStringProperty executedFlowIDProperty;
+    @FXML
+    private TableView ContinuationTableView;
+
+
 
     public FlowExecutionTabController() {
         executedFlowIDProperty = new SimpleStringProperty();
@@ -58,9 +70,11 @@ public class FlowExecutionTabController {
     public SimpleStringProperty getExecutedFlowID() {
         return this.executedFlowIDProperty;
     }
+
     public void setExecutedFlowID(UUID id) {
         this.executedFlowIDProperty.set(id.toString());
     }
+
     @FXML
     public void initialize() throws IOException {
         freeInputMap = new HashMap<>();
@@ -87,23 +101,29 @@ public class FlowExecutionTabController {
         asterisk1.setFill(Color.RED);
         MandatoryLabel.setGraphic(asterisk1);
     }
+
     public void setMainController(Controller mainController) {
         this.mainController = mainController;
     }
+
     public Controller getMainController() {
         return mainController;
     }
+
     public void setMasterDetailsController(MasterDetailController masterDetailComponentController) {
         this.masterDetailController = masterDetailComponentController;
         masterDetailComponentController.setFlowExecutionTabController(this);
     }
+
     public void initDataInFlowExecutionTab() {
         masterDetailController.initMasterDetailPaneController();
     }
+
     public void initInputsInFlowExecutionTab() {
         executeButton.setDisable(true);
         inputValuesHBox.getChildren().clear();
     }
+
     public void initInputsTable(List<DTOSingleFlowIOData> freeInputs) {
         executeButton.setDisable(true);
         inputValuesHBox.getChildren().clear();
@@ -163,6 +183,7 @@ public class FlowExecutionTabController {
             inputValuesHBox.setSpacing(50);
         });
     }
+
     public void setInputValues(Input input, DTOSingleFlowIOData freeInput){
         input.setFinalName(freeInput.getFinalName());
         input.setOriginalName(freeInput.getOriginalName());
@@ -170,6 +191,7 @@ public class FlowExecutionTabController {
         input.setMandatory(freeInput.getNecessity().toString());
         input.setType(freeInput.getType());
     }
+
     public void openChooseDialog(TextField textField) {
         textField.setOnMouseClicked(e -> {
             if (e.getClickCount() == 1) {
@@ -188,6 +210,7 @@ public class FlowExecutionTabController {
         });
 
     }
+
     public void openDirectoryChooser(TextField textField) {
         textField.setOnMouseClicked(e -> {
             if (e.getClickCount() == 1) {
@@ -203,6 +226,7 @@ public class FlowExecutionTabController {
             }
         });
     }
+
     public void openFileChooser(TextField textField){
         textField.setOnMouseClicked(e -> {
             if (e.getClickCount() == 1) {
@@ -218,17 +242,20 @@ public class FlowExecutionTabController {
             }
         });
     }
+
     public void setLabelSetting(Label label){
        label.setWrapText(true);
        label.setAlignment(Pos.CENTER_LEFT);
        label.setTextAlignment(TextAlignment.LEFT);
        label.setTextOverrun(OverrunStyle.CLIP); // Clip the text if it exceeds the label width
    }
+
     public void setVBoxSetting(VBox vbox,Label label){
         vbox.setAlignment(Pos.CENTER_LEFT);
         vbox.setSpacing(10);
         vbox.setVgrow(label, Priority.ALWAYS);
     }
+
     public void setTextFieldSetting(TextField textField, Input input){
         textField.getStyleClass().add("text-field");
         textField.setOnAction(event -> {
@@ -241,6 +268,7 @@ public class FlowExecutionTabController {
         });
 
     }
+
     public void setSpinnerSetting(Spinner spinner, Input input){
         SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
         spinner.setEditable(true);
@@ -270,15 +298,18 @@ public class FlowExecutionTabController {
         });
         spinner.setValueFactory(valueFactory);
     }
+
     public void commitEdit(Object newValue, Input input) {
         input.setValue(newValue);
         updateFreeInputMap(input, newValue);
         boolean hasAllMandatoryInputs = hasAllMandatoryInputs(freeInputMap);
         executeButton.setDisable(!hasAllMandatoryInputs);
     }
+
     public void updateFreeInputMap(Input input, Object newValue) {
         freeInputMap.put(input.getStepName() + "." + input.getOriginalName(), newValue);
     }
+
     public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
     for (Node node : inputValuesHBox.getChildren()) {
         VBox vbox = (VBox) node;
@@ -327,5 +358,47 @@ public class FlowExecutionTabController {
 
         new Thread(currentRunningTask).start();
     }
+
+    public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings) {
+        Platform.runLater(() -> {
+
+            // Define the target flow column
+            TableColumn<FlowContinuationMapping, String> targetFlowColumn = new TableColumn<>("Target Flow");
+            targetFlowColumn.setCellValueFactory(new PropertyValueFactory<>("targetFlow"));
+
+            // Define the action column
+            TableColumn<FlowContinuationMapping, FlowContinuationMapping> actionColumn = new TableColumn<>("Action");
+            actionColumn.setCellFactory(param -> new TableCell<FlowContinuationMapping, FlowContinuationMapping>() {
+                private final Button btn = new Button("Continue To Flow");
+
+                @Override
+                protected void updateItem(FlowContinuationMapping item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        btn.setOnAction(event -> {
+                            // Handle the button click here
+                            System.out.println("Continuing to flow: " + item.getTargetFlow());
+                        });
+                        setGraphic(btn);
+                    }
+                }
+            });
+
+            // Populate the TableView
+            ContinuationTableView.setItems(FXCollections.observableArrayList(mappings));
+            ContinuationTableView.getColumns().addAll(targetFlowColumn, actionColumn);
+        });
+    }
+
+
+
+    public void backToFlowExecutionTabAfterExecution() {
+       getMainController().goToStatisticsTab();
+        initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(mainController.getFlowName()));
+    }
+
+
 
 }

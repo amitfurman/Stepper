@@ -8,6 +8,7 @@ import flow.api.FlowIO.SingleFlowIOData;
 import flow.execution.FlowExecution;
 import flow.execution.runner.FlowExecutor;
 import flow.impl.FlowsManager;
+import flow.mapping.FlowContinuationMapping;
 import jaxb.schema.SchemaBasedJAXBMain;
 import statistic.FlowAndStepStatisticData;
 import steps.api.DataNecessity;
@@ -31,16 +32,18 @@ public class systemengineImpl implements systemengine {
     public FlowAndStepStatisticData statisticData;
     public ExecutorService threadPool;
     public int numberOfThreads;
-
+    public LinkedList<FlowContinuationMapping> allContinuationMappings;
 
     static public systemengine getInstance() {
         return instance;
     }
+
     @Override
     public Boolean isCurrFlowExecutionDone(String currFlowName){
         FlowExecution currFlow = flowExecutionList.stream().filter(flow -> flow.getFlowName().equals(currFlowName)).findFirst().get();
         return currFlow.isComplete();
     }
+
     @Override
     public DTOFlowExecution getFlowExecutionStatus(UUID flowSessionId){
         FlowExecution flowExecution = flowExecutionList.stream().filter(flow -> flow.getUniqueId().equals(flowSessionId)).findFirst().get();
@@ -61,7 +64,7 @@ public class systemengineImpl implements systemengine {
         return dtoFlowExecution;
     }
 
-/////need synchronized?
+
     @Override
     public DTOFlowExecution activateFlow(int flowChoice, DTOFreeInputsFromUser freeInputs) {
         FlowDefinition currFlow = flowDefinitionList.get(flowChoice - 1);
@@ -69,7 +72,6 @@ public class systemengineImpl implements systemengine {
         flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
 
         flowExecutionList.addFirst(flowExecution);
-     //   threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
         return new DTOFlowExecution(flowExecution);
     }
 
@@ -78,15 +80,29 @@ public class systemengineImpl implements systemengine {
         this.flowExecutionList = new LinkedList<>();
         this.statisticData = new FlowAndStepStatisticData();
         this.instance = this;
+        this.allContinuationMappings = new LinkedList<>();
     }
 
     @Override
-    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType, InitialInputIsNotExist {
+    public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD,
+            UnExistsOutput, FreeInputsWithSameNameAndDifferentType, InitialInputIsNotExist, UnExistsFlow,UnExistsDataInTargetFlow {
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         FlowsManager flows = schema.schemaBasedJAXB(filePath);
         flowDefinitionList = flows.getAllFlows();
         numberOfThreads = flows.getNumberOfThreads();
-        this.threadPool = Executors.newFixedThreadPool(5);
+        allContinuationMappings = flows.getAllContinuationMappings();
+        threadPool = Executors.newFixedThreadPool(numberOfThreads);
+    }
+
+    @Override
+    public  LinkedList<FlowContinuationMapping> getAllContinuationMappingsWithSameSourceFlow(String currFlowName) {
+        LinkedList<FlowContinuationMapping> sortedContinuationMappings = new LinkedList<>();
+        for (FlowContinuationMapping mapping : allContinuationMappings) {
+            if(currFlowName.equals(mapping.getSourceFlow())){
+                sortedContinuationMappings.add(mapping);
+            }
+        }
+        return sortedContinuationMappings;
     }
 
     @Override
@@ -127,11 +143,6 @@ public class systemengineImpl implements systemengine {
         }
         return true;
     }
-
-
-
-
-
 
     //////check!!!!!!!!!
     @Override
@@ -197,7 +208,6 @@ public class systemengineImpl implements systemengine {
             throw new RuntimeException(e);
         }
     }
-
 
     @Override
     public DTOFlowExecution getDTOFlowExecution(UUID flowId) {

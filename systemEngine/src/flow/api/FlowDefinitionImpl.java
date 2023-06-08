@@ -312,15 +312,25 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
                 .stream()
                 .filter(data -> data.getType().equals(IO.INPUT))
                 .filter(data -> data.getOptionalOutput().isEmpty())
-                .filter(data -> !initialInputMap.containsKey(data.getFinalName()))
+                .filter(data -> !initialInputMap.containsKey(data.getStepName() + "." +data.getFinalName()))
                 .filter(data -> uniqueInputs.add(data.getFinalName() + data.getDD()))
                 .collect(Collectors.toList()));
     }
 
     @Override
     public void removeOptionalOutputsFromInitialInputs() {
-        IOlist.stream()
-                .filter(io -> initialInputMap.containsKey(io.getFinalName()))
+        Map<String, Object> newMap = new HashMap<>(); // Replace ValueType with the type of the values in your map
+
+        initialInputMap.forEach((key, value) -> {
+            String newKey = key.substring(key.indexOf('.') + 1);
+            newMap.put(newKey, value);
+        });
+
+        System.out.println(newMap);
+        System.out.println(initialInputMap);
+
+         IOlist.stream()
+                .filter(io -> newMap.containsKey(io.getFinalName()))
                 .collect(Collectors.toList())
                 .forEach( io->
                 {
@@ -331,6 +341,7 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
                     }
                 }
         );
+
     }
 
 /*    @Override

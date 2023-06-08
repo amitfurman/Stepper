@@ -486,6 +486,11 @@ public class MasterDetailController {
             for (DTOSingleFlowIOData output : outputs) {
                 TreeItem<Object> outputItem = new TreeItem<>("Output " + outputIndex.getAndIncrement());
                 outputsItem.getChildren().add(outputItem);
+
+                System.out.println("Final Name: " + output.getFinalName());
+                System.out.println("type: " + output.getType());
+                System.out.println("val: " + output.getValue());
+
                 outputItem.getChildren().addAll(
                         new TreeItem<>("Final Name: " + output.getFinalName()),
                         new TreeItem<>("Type: " + output.getType().toString()),

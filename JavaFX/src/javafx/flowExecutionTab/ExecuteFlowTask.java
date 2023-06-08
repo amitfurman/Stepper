@@ -47,7 +47,7 @@ public class ExecuteFlowTask extends Task<Boolean> {
         DTOFlowExecution finalExecutedData1 = executedData;
         Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData1));
 
-        masterDetailController.getFlowExecutionTabController().getMainController().goToStatisticsTab();
+        //masterDetailController.getFlowExecutionTabController().backToFlowExecutionTabAfterExecution();
         return Boolean.TRUE;
     }
 }

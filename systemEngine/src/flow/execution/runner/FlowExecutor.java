@@ -55,6 +55,7 @@ public class FlowExecutor implements Runnable {
         for (Map.Entry<String, Object> entry : freeInputs.getFreeInputMap().entrySet()) {
             context.storeDataValue(entry.getKey(), entry.getValue());
         }
+        System.out.println(initialInputs);
         for (Map.Entry<String, Object> entry : initialInputs.entrySet()) {
             context.storeDataValue(entry.getKey(), entry.getValue());
         }
@@ -87,25 +88,6 @@ public class FlowExecutor implements Runnable {
                 updateStepStatisticData(flowStatisticData, stepStatistic);
             }
 
-/*
-            if (stepResult.equals(StepResult.FAILURE)) {
-                flowExecution.setFlowExecutionResult(FlowExecutionResult.WARNING);
-                StatisticData stepStatistic = new StatisticData(flowExecution.getFlowDefinition().getFlowSteps().get(i).getStepDefinition().name(), context.getCurrInvokingStep().getTotalStepTime());
-                updateStepStatisticData(flowStatisticData, stepStatistic);
-                if (!(stepUsageDeclaration.skipIfFail())) {
-                    flowExecution.setFlowExecutionResult(FlowExecutionResult.FAILURE);
-                    break;
-                }
-            } else if (stepResult.equals(StepResult.WARNING)) {
-                flowExecution.setFlowExecutionResult(FlowExecutionResult.WARNING);
-                StatisticData stepStatistic = new StatisticData(flowExecution.getFlowDefinition().getFlowSteps().get(i).getStepDefinition().name(), context.getCurrInvokingStep().getTotalStepTime());
-                updateStepStatisticData(flowStatisticData, stepStatistic);
-            } else {
-                flowExecution.setFlowExecutionResult(FlowExecutionResult.SUCCESS);
-                StatisticData stepStatistic = new StatisticData(flowExecution.getFlowDefinition().getFlowSteps().get(i).getStepDefinition().name(), context.getCurrInvokingStep().getTotalStepTime());
-                updateStepStatisticData(flowStatisticData, stepStatistic);
-            }
-*/
             context.setStepResultToCurrInvokingStep(stepResult);
             context.addCurrInvokingStepToStepExecutionList();
             flowExecution.addStepExecution(context.getCurrInvokingStep());
