@@ -81,7 +81,7 @@ public class systemengineImpl implements systemengine {
         this.flowExecutionList = new LinkedList<>();
         this.statisticData = new FlowAndStepStatisticData();
         this.instance = this;
-        this.allContinuationMappings = new LinkedList<>();
+       // this.allContinuationMappings = new LinkedList<>();
     }
 
     @Override
@@ -93,18 +93,22 @@ public class systemengineImpl implements systemengine {
         FlowsManager flows = schema.schemaBasedJAXB(filePath);
         flowDefinitionList = flows.getAllFlows();
         numberOfThreads = flows.getNumberOfThreads();
-        allContinuationMappings = flows.getAllContinuationMappings();
+        allContinuationMappings = new LinkedList<>(flows.getAllContinuationMappings());
         threadPool = Executors.newFixedThreadPool(numberOfThreads);
     }
 
     @Override
     public  LinkedList<FlowContinuationMapping> getAllContinuationMappingsWithSameSourceFlow(String currFlowName) {
         LinkedList<FlowContinuationMapping> sortedContinuationMappings = new LinkedList<>();
+        System.out.println("getAllContinuationMappingsWithSameSourceFlow");
+        System.out.println(allContinuationMappings);
         for (FlowContinuationMapping mapping : allContinuationMappings) {
             if(currFlowName.equals(mapping.getSourceFlow())){
                 sortedContinuationMappings.add(mapping);
             }
         }
+        System.out.println("sortedContinuationMappings");
+        System.out.println(sortedContinuationMappings);
         return sortedContinuationMappings;
     }
 

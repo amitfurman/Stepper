@@ -153,11 +153,11 @@ public class FlowExecutionTabController {
             
             if(simpleName.equals("String")) {
                 setTextFieldSetting(textField, input);
-                if(input.getOriginalName().equals("FILE_NAME")){
+                /*if(input.getOriginalName().equals("FILE_NAME")){
                     openFileChooser(textField);
                     textField.setCursor(Cursor.HAND);
 
-                }else if(input.getOriginalName().equals("FOLDER_NAME")){
+                }else */if(input.getOriginalName().equals("FOLDER_NAME")){
                     openDirectoryChooser(textField);
                     textField.setCursor(Cursor.HAND);
 
@@ -360,6 +360,8 @@ public class FlowExecutionTabController {
     }
 
     public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings) {
+        System.out.println("initFlowContinuationTableView");
+        System.out.println("mappings: " + mappings);
         Platform.runLater(() -> {
 
             // Define the target flow column

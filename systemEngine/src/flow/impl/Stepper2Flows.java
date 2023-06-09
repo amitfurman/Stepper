@@ -126,6 +126,8 @@ public class Stepper2Flows {
                 }
             }
 
+            System.out.println("all continuation mappings stepper2Flow: " + allContinuationMappings);
+
 
             //initial input
 /*            if(currFlow.getSTInitialInputValues() != null) {

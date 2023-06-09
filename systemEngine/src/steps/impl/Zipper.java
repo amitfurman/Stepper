@@ -2,7 +2,7 @@ package steps.impl;
 
 import datadefinition.DataDefinitionRegistry;
 import datadefinition.api.IO_NAMES;
-import datadefinition.impl.enumerator.ZipEnumeratorData;
+import datadefinition.impl.enumerator.zipper.ZipEnumeratorData;
 import flow.execution.context.StepExecutionContext;
 import steps.api.AbstractStepDefinition;
 import steps.api.DataDefinitionDeclarationImpl;
@@ -25,7 +25,7 @@ public class Zipper extends AbstractStepDefinition {
 
         // step inputs
         addInput(new DataDefinitionDeclarationImpl("SOURCE", DataNecessity.MANDATORY, "Source", DataDefinitionRegistry.STRING));
-        addInput(new DataDefinitionDeclarationImpl("OPERATION", DataNecessity.MANDATORY, "Operation type", DataDefinitionRegistry.ENUMERATOR));
+        addInput(new DataDefinitionDeclarationImpl("OPERATION", DataNecessity.MANDATORY, "Operation type", DataDefinitionRegistry.STRING));
 
         // step outputs
         addOutput(new DataDefinitionDeclarationImpl("RESULT", DataNecessity.NA, "Zip operation result", DataDefinitionRegistry.STRING));
@@ -35,8 +35,10 @@ public class Zipper extends AbstractStepDefinition {
     public StepResult invoke(StepExecutionContext context) {
         Instant start = Instant.now();
         String source = context.getDataValue(IO_NAMES.SOURCE, String.class);
-        ZipEnumeratorData operation = context.getDataValue(IO_NAMES.OPERATION, ZipEnumeratorData.class);
+        String operation = context.getDataValue(IO_NAMES.OPERATION, String.class);
 
+        System.out.println(source);
+        System.out.println(operation);
         context.storeLogLine("About to perform operation " + operation + " on source " + source);
 
         if (!Files.exists(Paths.get(source))) {
@@ -46,9 +48,9 @@ public class Zipper extends AbstractStepDefinition {
             return StepResult.FAILURE;
         }
 
-        if (operation.getValue().equalsIgnoreCase("ZIP")) {
+        if (operation.equalsIgnoreCase("ZIP")) {
             return zip(source, context, start);
-        } else if (operation.getValue().equalsIgnoreCase("UNZIP")) {
+        } else if (operation.equalsIgnoreCase("UNZIP")) {
             return unzip(source, context, start);
         } else {
             context.storeLogLineAndSummaryLine("Invalid operation type.");

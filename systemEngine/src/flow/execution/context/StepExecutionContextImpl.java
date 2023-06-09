@@ -84,7 +84,6 @@ public class StepExecutionContextImpl implements StepExecutionContext {
 */
         if (expectedDataType.isAssignableFrom(theExpectedDataDefinition.getType())) {
             Object aValue = dataValues.get(ioAlias);
-
             if (aValue != null) {
                 return expectedDataType.cast(aValue);
             }else if(!(IOlist.stream().filter(io -> io.getOriginalName().equals(dataName)).findFirst().get().getOptionalOutput().isEmpty())){
@@ -134,11 +133,8 @@ public class StepExecutionContextImpl implements StepExecutionContext {
             theData = stepAndIOName2DD.get(currInvokingStep.getFinalNameStep()+"."+ioAlias);
         }
         else {
-            System.out.println("inputs: "+inputName2alias);
             ioAlias = inputName2alias.get(dataName);
             if (ioAlias == null) {
-                System.out.println("outputs: "+outputName2alias);
-
                 ioAlias = outputName2alias.get(dataName);
             }
             theData = stepAndIOName2DD.get(dataName);
@@ -146,7 +142,7 @@ public class StepExecutionContextImpl implements StepExecutionContext {
 
         if (theData.getType().isAssignableFrom(value.getClass())) {
             dataValues.put(ioAlias, value);
-        } else if (theData.getType().getSimpleName().equals("ZipEnumeratorData") && value.getClass().getSimpleName().equals("String")) {
+        } else if (theData.getType().getSimpleName().equals("ZipEnumeratorData") && value.getClass().getSimpleName().equals("String")) { /////no neede
             dataValues.put(ioAlias, value);
         } else {
             throw new IllegalArgumentException("Data definition for " + dataName + " is not found or expected data type is not compatible.");

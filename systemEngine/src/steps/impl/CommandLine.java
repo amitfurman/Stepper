@@ -36,7 +36,7 @@ public class CommandLine  extends AbstractStepDefinition {
         Instant start = Instant.now();
         String commandName = context.getDataValue(IO_NAMES.COMMAND, String.class);
         String arguments = context.getDataValue(IO_NAMES.ARGUMENTS, String.class);
-        StringBuilder result = new StringBuilder();
+        String result = "";
 
         //before starting the operation
         context.storeLogLine("About to invoke"+ commandName + arguments);
@@ -62,7 +62,7 @@ public class CommandLine  extends AbstractStepDefinition {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    result.append(line).append(System.lineSeparator());
+                    result = result + line;
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -73,7 +73,8 @@ public class CommandLine  extends AbstractStepDefinition {
             throw new RuntimeException(e);
         }
 
-        context.storeDataValue("RESULT", result.toString());
+        System.out.println(result.toString());
+        context.storeDataValue("RESULT", result);
 
         context.storeStepTotalTime(start);
         return StepResult.SUCCESS;
