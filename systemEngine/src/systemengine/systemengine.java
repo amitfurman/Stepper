@@ -16,7 +16,7 @@ import java.util.UUID;
 public interface systemengine {
 
     public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD,
-            UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotExist, UnExistsFlow, UnExistsDataInTargetFlow;
+            UnExistsOutput, FreeInputsWithSameNameAndDifferentType, InitialInputIsNotExist, UnExistsFlow, UnExistsDataInTargetFlow, FileNotExistsException, FileIsNotXmlTypeException;
 
     DTOAllStepperFlows getAllFlows();
 

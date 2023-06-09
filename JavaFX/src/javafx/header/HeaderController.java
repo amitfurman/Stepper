@@ -72,7 +72,7 @@ public class HeaderController {
         } catch (DuplicateFlowsNames | UnExistsStep | OutputsWithSameName | MandatoryInputsIsntUserFriendly |
                  UnExistsData | SourceStepBeforeTargetStep | TheSameDD | UnExistsOutput |
                  FreeInputsWithSameNameAndDifferentType | InitialInputIsNotExist | FileNotFoundException |
-                 JAXBException | UnExistsFlow | UnExistsDataInTargetFlow e) {
+                 JAXBException | UnExistsFlow | UnExistsDataInTargetFlow |FileNotExistsException | FileIsNotXmlTypeException e) {
             showError(e.getMessage());
             mainController.getFlowsTree().setVisible(false);
         }

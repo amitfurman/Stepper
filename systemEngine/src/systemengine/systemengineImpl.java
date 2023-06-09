@@ -12,6 +12,7 @@ import flow.mapping.FlowContinuationMapping;
 import jaxb.schema.SchemaBasedJAXBMain;
 import statistic.FlowAndStepStatisticData;
 import steps.api.DataNecessity;
+import xml.XmlValidator;
 
 import javax.xml.bind.JAXBException;
 import java.io.*;
@@ -85,7 +86,9 @@ public class systemengineImpl implements systemengine {
 
     @Override
     public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD,
-            UnExistsOutput, FreeInputsWithSameNameAndDifferentType, InitialInputIsNotExist, UnExistsFlow,UnExistsDataInTargetFlow {
+            UnExistsOutput, FreeInputsWithSameNameAndDifferentType, InitialInputIsNotExist, UnExistsFlow, UnExistsDataInTargetFlow, FileNotExistsException, FileIsNotXmlTypeException {
+        XmlValidator validator = new XmlValidator();
+        validator.isXmlFileValid(filePath);
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         FlowsManager flows = schema.schemaBasedJAXB(filePath);
         flowDefinitionList = flows.getAllFlows();
