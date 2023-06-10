@@ -42,6 +42,9 @@ public class systemengineImpl implements systemengine {
         FlowContinuationMapping currContinuation = allContinuationMappings.stream().filter(mapping->mapping.getSourceFlow().equals(sourceFlowName) && mapping.getTargetFlow().equals(targetFlowName)).findFirst().get();
         Map<String,String> source2targetDataMapping = currContinuation.getSource2targetDataMapping();
 
+        System.out.println("sourceFlowExecution.getDataValues() = " + sourceFlowExecution.getDataValues());
+        System.out.println(sourceFlowExecution);
+        System.out.println(currContinuation);
         Map<String , Object> continuationDataMap = new HashMap<>();
 
         for (Map.Entry<String,String> entry : source2targetDataMapping.entrySet()) {
@@ -114,11 +117,15 @@ public class systemengineImpl implements systemengine {
     @Override
     public  LinkedList<FlowContinuationMapping> getAllContinuationMappingsWithSameSourceFlow(String currFlowName) {
         LinkedList<FlowContinuationMapping> sortedContinuationMappings = new LinkedList<>();
+        System.out.println("getAllContinuationMappingsWithSameSourceFlow");
+        System.out.println(allContinuationMappings);
         for (FlowContinuationMapping mapping : allContinuationMappings) {
             if(currFlowName.equals(mapping.getSourceFlow())){
                 sortedContinuationMappings.add(mapping);
             }
         }
+        System.out.println("sortedContinuationMappings");
+        System.out.println(sortedContinuationMappings);
         return sortedContinuationMappings;
     }
 

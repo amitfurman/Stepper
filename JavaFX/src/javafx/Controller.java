@@ -38,13 +38,8 @@ public class Controller {
     @FXML
     private StatisticsTabController statisticsTabController;
     @FXML
-    private GridPane headerComponent;
-    @FXML
     private TabPane tabPane;
-
     String flowName;
-
-
 
     @FXML
     public void initialize() {
@@ -85,49 +80,36 @@ public class Controller {
     public Controller() {
         this.systemEngineInterface = new systemengineImpl();
     }
-
-    public systemengine getSystemEngineInterface() {
-        return systemEngineInterface;
-    }
-
+    public systemengine getSystemEngineInterface() {return systemEngineInterface;}
     public void showFlowsTree() {
         flowDefinitionTabController.showFlowsTree();
     }
-
     public TreeView<String> getFlowsTree() {
         return flowDefinitionTabController.getFlowsTree();
     }
-
     public void setHeaderComponentController(HeaderController headerComponentController) {
         this.headerComponentController = headerComponentController;
         headerComponentController.setMainController(this);
     }
-
     public void setFlowDefinitionTabController(FlowDefinitionTabController flowDefinitionTabComponentController) {
         this.flowDefinitionTabController = flowDefinitionTabComponentController;
         flowDefinitionTabController.setMainController(this);
     }
-
     public void setFlowExecutionTabController(FlowExecutionTabController flowExecutionTabComponentController) {
         this.flowExecutionTabController = flowExecutionTabComponentController;
         flowExecutionTabController.setMainController(this);
     }
-
     public void setExecutionsHistoryTabController(ExecutionsHistoryTabController executionsHistoryTabController) {
         this.executionsHistoryTabController = executionsHistoryTabController;
         executionsHistoryTabController.setMainController(this);
     }
-
-
     public void setStatisticsTabController(StatisticsTabController statisticsTabComponentController) {
         this.statisticsTabController = statisticsTabComponentController;
         statisticsTabController.setMainController(this);
     }
-
     public void setFlowDetailsTree() {
         flowDefinitionTabController.setFlowDetailsTree();
     }
-
     public void goToFlowExecutionTab(String chosenFlowName) {
         flowName = chosenFlowName;
 
@@ -140,33 +122,23 @@ public class Controller {
             tabPane.getSelectionModel().select(flowExecutionTab);
         }
 
-
         List<DTOSingleFlowIOData> freeInputs = systemEngineInterface.getAllFlows().getFlowByName(chosenFlowName).getFlowFreeInputs();
         List<DTOSingleFlowIOData> sortedList = freeInputs.stream()
                 .sorted(Comparator.comparing(obj -> obj.getNecessity().equals(DataNecessity.MANDATORY) ? 0 : 1))
                 .collect(Collectors.toList());
         flowExecutionTabController.initInputsTable(sortedList);
     }
-
     public void goToStatisticsTab() {
-        System.out.println("goToStatisticsTab");
-/*        Tab StatisticsTab = tabPane.getTabs().stream()
-                .filter(tab -> tab.getId().equals("StatisticsTab"))
-                .findFirst()
-                .orElse(null);*/
         DTOFlowAndStepStatisticData statisticData = systemEngineInterface.getStatisticData();
         statisticsTabController.initCharts(statisticData);
     }
-
     public String getFlowName() { return flowName; }
-
     public void initDataInFlowExecutionTab() {
         flowExecutionTabController.initDataInFlowExecutionTab();
     }
     public void initInputsInFlowExecutionTab() {
         flowExecutionTabController.initInputsInFlowExecutionTab();
     }
-
     public void initExecutionHistoryTableInExecutionsHistoryTab() {
         executionsHistoryTabController.initExecutionHistoryTable();
     }

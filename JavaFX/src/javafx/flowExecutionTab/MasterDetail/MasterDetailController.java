@@ -38,54 +38,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class MasterDetailController {
-
     @FXML
     private MasterDetailPane FlowMasterDetails;
-
-    FlowExecutionTabController flowExecutionTabController;
-
-    DTOFlowExecution flowExecution;
-
-    private final SimpleBooleanProperty isTaskFinished;
-
-    private boolean isActive;
-
-    VBox detailPane;
-
-    List<String> addedStepNames = new ArrayList<>();
-
-    int stepCounter;
-
-    public MasterDetailController() {
-        this.isTaskFinished = new SimpleBooleanProperty(false);
-    }
-
+    private FlowExecutionTabController flowExecutionTabController;
+    private DTOFlowExecution flowExecution;
+    private VBox detailPane;
+    private List<String> addedStepNames = new ArrayList<>();
+    private int stepCounter;
     public FlowExecutionTabController getFlowExecutionTabController() {
         return flowExecutionTabController;
     }
-
-    public void clearStepsInMasterDetail() {
-        detailPane.getChildren().removeIf(node -> node instanceof Label && !((Label) node).getStyleClass().contains("first-label"));
-        addedStepNames = new ArrayList<>();
-        stepCounter = 1;
-    }
-
     @FXML
     public void initialize() {
         FlowMasterDetails.setDetailSide(Side.LEFT);
         FlowMasterDetails.setDividerPosition(0.3);
-
-
     }
-
     public void setFlowExecutionTabController(FlowExecutionTabController flowExecutionTabController) {
         this.flowExecutionTabController = flowExecutionTabController;
     }
-
-    public MasterDetailPane getMasterDetailsComponent() {
-        return FlowMasterDetails;
-    }
-
     public void initMasterDetailPaneController(){
         detailPane = new VBox();
         ScrollPane scrollPane = new ScrollPane(detailPane);
@@ -94,7 +64,6 @@ public class MasterDetailController {
         StackPane stackPane = new StackPane();
         FlowMasterDetails.setMasterNode(stackPane);
     }
-
     public void initMasterDetailPaneController(DTOFlowExecution flowExecution) {
         this.flowExecution = flowExecution;
         detailPane = new VBox();
@@ -106,7 +75,6 @@ public class MasterDetailController {
         addedStepNames = new ArrayList<>();
         stepCounter = 1;
     }
-
     public  void updateFlowLabel(DTOFlowExecution flowExecution) {
         this.flowExecution = flowExecution;
         TreeView treeView = null;
@@ -118,41 +86,8 @@ public class MasterDetailController {
             stackPane.getChildren().addAll(treeView);
             FlowMasterDetails.setMasterNode(stackPane);
             FlowMasterDetails.setDividerPosition(0.3);
-
         }
     }
-    public void initMasterDetailComponent(DTOFlowExecution flowExecution) {
-/*
-        this.flowExecution = flowExecution;
-
-        detailPane = new VBox();
-        detailPane.setPadding(new Insets(10));
-        detailPane.setSpacing(5);
-
-        Label flowDetailLabel = createDetailLabel(flowExecution.getFlowName(), FlowMasterDetails, true, detailPane);
-        detailPane.getChildren().add(flowDetailLabel);
-        System.out.println(flowExecution.getFlowName());
-        System.out.println(flowExecution.isComplete());
-        System.out.println(flowExecution.getStepExecutionDataList());
-*/
-
-      //  addStepsToMasterDetail();
-
-            ScrollPane scrollPane = new ScrollPane(detailPane);
-            scrollPane.setFitToWidth(true);
-            FlowMasterDetails.setDetailNode(scrollPane);
-            FlowMasterDetails.setDividerPosition(0.3);
-
-          this.isTaskFinished.set(false);
-
-
-    }
-
-
-        ////UPDATE HISTORY
-
-
-
     public void addStepsToMasterDetail(DTOFlowExecution flowExecution)
     {
         this.flowExecution = flowExecution;
@@ -182,74 +117,6 @@ public class MasterDetailController {
         FlowMasterDetails.setDetailNode(scrollPane);
         FlowMasterDetails.setDividerPosition(0.3);
     }
-
-
-
-   /* private Label createDetailLabel(String text, MasterDetailPane masterDetailPane, boolean isFirstLabel, VBox detailPane) {
-        Label detailLabel = new Label(text);
-
-*//*TextArea textArea = new TextArea();
-        textArea.setWrapText(true);  // Enable text wrapping
-        textArea.setEditable(false);*//*
- // Make the text area read-only
-
-        detailLabel.setOnMouseClicked(event -> {
-            detailLabel.getStyleClass().add("label-selected");
-            System.out.println("clicked on label"+ detailLabel.getText());
-
-            // Remove highlight from previously selected labels
-            for (Node child : detailPane.getChildren()) {
-                if (child instanceof Label) {
-                    Label label = (Label) child;
-                    if (!label.equals(detailLabel)) {
-                        label.getStyleClass().remove("label-selected");
-                    }
-                }
-            }
-
-            TreeView treeView = null;
-
-             if (isFirstLabel) {
-                 treeView = cratingGeneralFlowExecutionDetail();
-             } else {
-                 treeView = cratingStepsExecutionDetail(text);
-             }
-
-            TextArea textArea = new TextArea();
-            textArea.setWrapText(true);  // Enable text wrapping
-            textArea.setEditable(false);
-
-            if (treeView != null) {
-                treeView.getStyleClass().add("tree-view-style");
-                StackPane stackPane = new StackPane();
-
-                stackPane.getChildren().addAll(textArea, treeView);
-
-                FlowMasterDetails.setMasterNode(stackPane);
-                masterDetailPane.setDividerPosition(0.3);
-
-            }
-        });
-
-        if (isFirstLabel) {
-            detailLabel.getStyleClass().add("first-label");
-        } else {
-            detailLabel.getStyleClass().add("detail-label");
-        }
-
-        detailLabel.setCursor(Cursor.HAND);
-        detailLabel.setOnMouseEntered(event -> {
-            detailLabel.setUnderline(true);
-        });
-        detailLabel.setOnMouseExited(event -> {
-            detailLabel.setUnderline(false);
-        });
-
-        return detailLabel;
-    }
-*/
-
-
     private Label createDetailLabel(String text, MasterDetailPane masterDetailPane, boolean isFirstLabel, VBox detailPane) {
         Label detailLabel = new Label(text);
         if (isFirstLabel) {
@@ -268,10 +135,8 @@ public class MasterDetailController {
         detailLabel.setOnMouseClicked(event -> {
             showDetails(text, isFirstLabel);
         });
-
         return detailLabel;
     }
-
     private void showDetails(String text, boolean isFirstLabel) {
         // Remove highlight from previously selected labels
         for (Node child : detailPane.getChildren()) {
@@ -307,17 +172,11 @@ public class MasterDetailController {
                 StackPane stackPane = new StackPane();
 
                 stackPane.getChildren().addAll(textArea, treeView);
-
                 FlowMasterDetails.setMasterNode(stackPane);
                 FlowMasterDetails.setDividerPosition(0.3);
-
             }
         }
     }
-
-
-
-
     TreeView<Object> cratingStepsExecutionDetail(String dataName) {
         TreeItem<Object> rootItem = new TreeItem<>("Step Details");
         rootItem.setExpanded(true);
@@ -361,11 +220,6 @@ public class MasterDetailController {
 
         AtomicInteger inputIndex = new AtomicInteger(1);
         AtomicInteger outputIndex = new AtomicInteger(1);
-/*
-        flowExecution.getIOlist().stream().forEach(data -> {
-            System.out.println("step: " + data.getStepName() + " io name: " + data.getFinalName() + " va: "  + data.getValue());
-        });
-*/
 
         flowExecution.getIOlist().stream()
                 .filter(io1 -> io1.getStepName().equals(step.getFinalNameStep()))
@@ -405,7 +259,6 @@ public class MasterDetailController {
                     }
                 });
 
-
         TreeItem<Object> logsItem = new TreeItem<>("Step's Logs:");
         rootItem.getChildren().add(logsItem);
         logsItem.setExpanded(true);
@@ -423,11 +276,8 @@ public class MasterDetailController {
         TreeView<Object> treeView = new TreeView<>(rootItem);
         treeView.setShowRoot(false);
         treeView.getStyleClass().add("tree-view-style");
-
-
         return treeView;
     }
-
     TreeView<Object> cratingGeneralFlowExecutionDetail() {
         TreeItem<Object> rootItem = new TreeItem<>("Flow Details");
         rootItem.setExpanded(true);
@@ -504,12 +354,9 @@ public class MasterDetailController {
 
         TreeView<Object> treeView = new TreeView<>(rootItem);
         treeView.setShowRoot(false);
-
         treeView.getStyleClass().add("tree-view-style");
-
         return treeView;
     }
-
     public Hyperlink showOutputValue(DTOSingleFlowIOData output) {
 
         Hyperlink viewDataLink = new Hyperlink("View Data");
@@ -541,7 +388,6 @@ public class MasterDetailController {
         });
         return  viewDataLink;
     }
-
     public TableView showMappingData(DTOSingleFlowIOData output) {
         TableView<Map.Entry<Number, Number>> table = new TableView<>();
         table.setEditable(false);
@@ -572,8 +418,6 @@ public class MasterDetailController {
         table.setItems(items);
         return table;
     }
-
-
     public ListView<String> showListData(DTOSingleFlowIOData output){
         ListView<String> list = new ListView<>();
 
@@ -595,26 +439,20 @@ public class MasterDetailController {
         }
 
         list.getStyleClass().add("list-view-style");
-
         list.setItems(items);
-
         return list;
     }
-
     public TableView showRelationData(DTOSingleFlowIOData output) {
         TableView<Map<String, String>> table = new TableView<>();
         table.setEditable(false);
         table.setSelectionModel(null);
-
         double tableWidth = 1.0; // Total width of the table, set to 1.0 for simplicity
-
         double firstColumnWidth = tableWidth * 0.15;
         double remainingColumnsWidth = (tableWidth - firstColumnWidth) / 2;
 
         for (String column : ((RelationData) output.getValue()).getColumns()) {
             TableColumn<Map<String, String>, String> tableColumn = new TableColumn<>(column);
 
-            // Set the preferred width for the columns
             if (column.equals(((RelationData) output.getValue()).getColumns().get(0))) {
                 tableColumn.prefWidthProperty().bind(table.widthProperty().multiply(firstColumnWidth));
             } else {
@@ -635,49 +473,4 @@ public class MasterDetailController {
 
         return table;
     }
-
-
-/*    public TableView showRelationData(DTOSingleFlowIOData output) {
-        TableView table = new TableView();
-        table.setEditable(false);
-
-        for (String column : ((RelationData) output.getValue()).getColumns()) {
-            TableColumn<Map<String, String>, String> tableColumn = new TableColumn<>(column);
-            tableColumn.setPrefWidth(100);
-            tableColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(column)));
-            table.getColumns().add(tableColumn);
-        }
-
-        ObservableList<Map<String, String>> data = FXCollections.observableArrayList();
-        for (RelationData.SingleRow singleRow : ((RelationData) output.getValue()).getRows()) {
-            Map<String, String> row = singleRow.getRowData();
-            data.add(row);
-            table.setItems(data);
-        }
-
-       return table;
-    }*/
-
 }
-
-/* private TextFlow createTextFlow(String label, String value) {
-        Text labelText = new Text(label);
-        labelText.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 12));
-
-        Text valueText = new Text(value);
-        valueText.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
-
-        TextFlow textFlow = new TextFlow(labelText, valueText);
-        return textFlow;
-    }
-
-    private TextFlow createTextFlow(String label, Void value) {
-        Text labelText = new Text(label);
-        labelText.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 12));
-
-        Text valueText = new Text(value.toString());
-        valueText.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
-
-        TextFlow textFlow = new TextFlow(labelText, valueText);
-        return textFlow;
-    }*/

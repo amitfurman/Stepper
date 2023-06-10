@@ -17,7 +17,6 @@ public class CSVExporter extends AbstractStepDefinition {
 
     public CSVExporter() {
         super("CSV Exporter", true);
-
         // step inputs
         addInput(new DataDefinitionDeclarationImpl("SOURCE", DataNecessity.MANDATORY, "Source data", DataDefinitionRegistry.RELATION));
 

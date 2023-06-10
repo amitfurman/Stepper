@@ -17,9 +17,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class HeaderController {
-
     private Controller mainController;
-    // private final systemengine systemEngineInterface;
     private String filePath;
     private boolean isErrorMessageShown = false;
     @FXML
@@ -29,24 +27,13 @@ public class HeaderController {
     @FXML
     private Label errorMessageLabel;
 
-
-/*
-    public HeaderController() {
-        this.systemEngineInterface = new systemengineImpl();
-    }
-*/
-
     @FXML
     private void initialize() {
         chosenXmlFilePath.setEditable(false);
-
-       // errorMessageLabel.setVisible(false);
     }
-
     public void setMainController(Controller mainController) {
         this.mainController = mainController;
     }
-
     @FXML
     void clickToChooseXMLFileButton(ActionEvent event) {
         mainController.initDataInFlowExecutionTab();
@@ -81,12 +68,11 @@ public class HeaderController {
     void viewChosenXmlFilePath(ActionEvent event) {
         chosenXmlFilePath.setText(filePath.toString());
     }
-
     private void showError(String message) {
         if (!isErrorMessageShown) {
             isErrorMessageShown = true;
             errorMessageLabel.setText(message);
-            errorMessageLabel.getStyleClass().add("errors"); // Apply the CSS class to the label
+            errorMessageLabel.getStyleClass().add("errors");
             FadeTransition animation = new FadeTransition();
             animation.setNode(errorMessageLabel);
             animation.setDuration(Duration.seconds(0.5));
@@ -94,9 +80,7 @@ public class HeaderController {
             animation.setToValue(1.0);
             animation.play();
         }
-        //set activeFlow - false
     }
-
     private void hideError() {
         FadeTransition animation = new FadeTransition();
         animation.setNode(errorMessageLabel);
@@ -107,7 +91,5 @@ public class HeaderController {
 
         isErrorMessageShown = false;
         errorMessageLabel.textProperty().setValue("");
-
-        //set activeFlow - false
     }
 }

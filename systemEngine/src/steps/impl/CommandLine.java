@@ -73,6 +73,7 @@ public class CommandLine  extends AbstractStepDefinition {
             throw new RuntimeException(e);
         }
 
+        System.out.println(result.toString());
         context.storeDataValue("RESULT", result);
 
         context.storeStepTotalTime(start);
