@@ -13,6 +13,8 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -36,11 +38,15 @@ public class ExecutionsHistoryTabController {
     @FXML
     private TableColumn resultColumn;
 
-    private ObservableList<ExecutionHistoryEntry> executionHistoryData;
+    @FXML
+    private TableColumn chooseOldFlowExecutions;
 
+
+    private ObservableList<ExecutionHistoryEntry> executionHistoryData;
 
     @FXML
     private ComboBox resultFilterComboBox;
+
 
     @FXML
     public void initialize() {
@@ -51,17 +57,19 @@ public class ExecutionsHistoryTabController {
         flowNameColumn.setPrefWidth(columnWidth);
         startDateColumn.setPrefWidth(columnWidth);
         resultColumn.setPrefWidth(columnWidth);
+        chooseOldFlowExecutions.setPrefWidth(columnWidth);
 
         executionHistoryTable.widthProperty().addListener((obs, oldWidth, newWidth) -> {
             double newColumnWidth = newWidth.doubleValue() / 3.0;
             flowNameColumn.setPrefWidth(newColumnWidth);
             startDateColumn.setPrefWidth(newColumnWidth);
             resultColumn.setPrefWidth(newColumnWidth);
-
+            chooseOldFlowExecutions.setPrefWidth(newColumnWidth);
         });
         executionHistoryTable.getSortOrder().add(flowNameColumn);
         executionHistoryTable.getSortOrder().add(startDateColumn);
         executionHistoryTable.getSortOrder().add(resultColumn);
+        executionHistoryTable.getSortOrder().add(chooseOldFlowExecutions);
     }
 
     public void initExecutionHistoryTable() {
@@ -129,6 +137,7 @@ public class ExecutionsHistoryTabController {
 //        });
 
     }
+
     private void initializeExecutionHistoryTable() {
         initExecutionHistoryDataList();
 
@@ -136,6 +145,7 @@ public class ExecutionsHistoryTabController {
             flowNameColumn.setCellValueFactory(new PropertyValueFactory<>("flowName"));
             startDateColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
             resultColumn.setCellValueFactory(new PropertyValueFactory<>("runResult"));
+            chooseOldFlowExecutions.setCellValueFactory(new PropertyValueFactory<>(""));
             executionHistoryTable.setItems(executionHistoryData);
         });
 
@@ -156,6 +166,7 @@ public class ExecutionsHistoryTabController {
             executionHistoryTable.setItems(filteredData);
         }
     }
+
 
 /*    private void addSortingFunctionality() {
         flowNameColumn.setSortType(TableColumn.SortType.ASCENDING);

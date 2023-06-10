@@ -46,17 +46,12 @@ public class FlowExecutionTabController {
     private HBox inputValuesHBox;
     @FXML
     private Button executeButton;
-
     private Map<String, Object> freeInputMap;
-
     private ObservableList<Input> inputList = FXCollections.observableArrayList();
-
     private MasterDetailController masterDetailController;
-
     private MasterDetailPane masterDetailPane;
     @FXML
     private Label MandatoryLabel;
-
     private final SimpleStringProperty executedFlowIDProperty;
     private TableView<FlowContinuationMapping> continuationTableView;
     private VBox continuationVbox;
@@ -64,6 +59,7 @@ public class FlowExecutionTabController {
     public FlowExecutionTabController() {
         executedFlowIDProperty = new SimpleStringProperty();
     }
+
     public void setExecutedFlowID(UUID id) {
         this.executedFlowIDProperty.set(id.toString());
     }
@@ -108,12 +104,15 @@ public class FlowExecutionTabController {
         asterisk1.setFill(Color.RED);
         MandatoryLabel.setGraphic(asterisk1);
     }
+
     public void setMainController(Controller mainController) {
         this.mainController = mainController;
     }
+
     public Controller getMainController() {
         return mainController;
     }
+
     public void setMasterDetailsController(MasterDetailController masterDetailComponentController) {
         this.masterDetailController = masterDetailComponentController;
         masterDetailComponentController.setFlowExecutionTabController(this);
@@ -363,160 +362,6 @@ public class FlowExecutionTabController {
         new Thread(currentRunningTask).start();
     }
 
-/*
-    public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings) {
-        TableView<FlowContinuationMapping> continuationTableView = new TableView<>();
-        Platform.runLater(() -> {
-            TableColumn<FlowContinuationMapping, String> targetFlowColumn = new TableColumn<>("Target Flow");
-            targetFlowColumn.setCellValueFactory(new PropertyValueFactory<>("targetFlow"));
-            targetFlowColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
-
-            TableColumn<FlowContinuationMapping, FlowContinuationMapping> actionColumn = new TableColumn<>("");
-            actionColumn.setCellFactory(param -> new TableCell<FlowContinuationMapping, FlowContinuationMapping>() {
-                private final Button btn = new Button("Continue To Flow");
-
-                @Override
-                protected void updateItem(FlowContinuationMapping item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty) {
-                        setGraphic(null);
-                    } else {
-                        btn.setOnAction(event -> {
-                            // Handle the button click here
-                            // System.out.println("Continuing to flow: " + item.getTargetFlow());
-                        });
-                        setGraphic(btn);
-                    }
-                    btn.getStyleClass().add("continue-to-flow-button");
-                }
-            });
-            actionColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
-            continuationTableView.getColumns().addAll(targetFlowColumn, actionColumn);
-            continuationTableView.setItems(FXCollections.observableArrayList(mappings));
-
-            Label titleLabel = new Label("Flow Continuation Table");
-            titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
-
-            VBox vbox = new VBox();
-            vbox.getChildren().addAll(titleLabel, continuationTableView);
-
-            vbox.getStyleClass().add("flow-continuation-table");
-            continuationVbox.getChildren().add(vbox);
-        });
-    }
-*/
-
-    /*public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings) {
-        Platform.runLater(() -> {
-            if (continuationTableView == null) {
-                continuationTableView = new TableView<>();
-                Label titleLabel = new Label("Flow Continuation Table");
-                titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
-
-                VBox vbox = new VBox();
-                vbox.getChildren().addAll(titleLabel, continuationTableView);
-
-                vbox.getStyleClass().add("flow-continuation-table");
-                continuationVbox.getChildren().add(vbox);
-            } else {
-                continuationTableView.getItems().clear();
-            }
-
-            TableColumn<FlowContinuationMapping, String> targetFlowColumn = new TableColumn<>("Target Flow");
-            targetFlowColumn.setCellValueFactory(new PropertyValueFactory<>("targetFlow"));
-            targetFlowColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
-            TableColumn<FlowContinuationMapping, FlowContinuationMapping> actionColumn = new TableColumn<>("");
-            actionColumn.setCellFactory(param -> new TableCell<FlowContinuationMapping, FlowContinuationMapping>() {
-                private final Button btn = new Button("Continue To Flow");
-
-                @Override
-                protected void updateItem(FlowContinuationMapping item, boolean empty) {
-                    System.out.println("updateItem" + item);
-                    System.out.println("continuationTableView" + mappings);
-                    super.updateItem(item, empty);
-                    if (empty) {
-                        setGraphic(null);
-                    } else {
-                        btn.setOnAction(event -> {
-                            Map <String, Object> countinuationMap = mainController.getSystemEngineInterface().continuationFlowExecution(item.getSourceFlow(), item.getTargetFlow());
-                            mainController.goToFlowExecutionTab(item.getTargetFlow());
-                            mainController.initDataInFlowExecutionTab();
-                            freeInputMap = countinuationMap;
-                            System.out.println(countinuationMap);
-                        });
-                        setGraphic(btn);
-                    }
-                    btn.getStyleClass().add("continue-to-flow-button");
-                }
-            });
-            actionColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
-            continuationTableView.getColumns().setAll(targetFlowColumn, actionColumn);
-            continuationTableView.setItems(FXCollections.observableArrayList(mappings));
-        });
-    }*/
-
-/*
-    public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings) {
-        System.out.println(mappings.size());
-        Platform.runLater(() -> {
-            if (continuationTableView == null) {
-                continuationTableView = new TableView<>();
-                Label titleLabel = new Label("Flow Continuation Table");
-                titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
-
-                VBox vbox = new VBox();
-                vbox.getChildren().addAll(titleLabel, continuationTableView);
-
-                vbox.getStyleClass().add("flow-continuation-table");
-                continuationVbox.getChildren().add(vbox);
-            } else {
-                continuationTableView.getItems().clear();
-            }
-
-            TableColumn<FlowContinuationMapping, String> targetFlowColumn = new TableColumn<>("Target Flow");
-            targetFlowColumn.setCellValueFactory(new PropertyValueFactory<>("targetFlow"));
-            targetFlowColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
-
-            TableColumn<FlowContinuationMapping, FlowContinuationMapping> actionColumn = new TableColumn<>("");
-            actionColumn.setCellFactory(new Callback<TableColumn<FlowContinuationMapping, FlowContinuationMapping>, TableCell<FlowContinuationMapping, FlowContinuationMapping>>() {
-                @Override
-                public TableCell<FlowContinuationMapping, FlowContinuationMapping> call(TableColumn<FlowContinuationMapping, FlowContinuationMapping> param) {
-                    System.out.println("mainController" + getMainController());
-                    System.out.println("systemEngineInterface" + getMainController().getSystemEngineInterface());
-                    return new TableCell<FlowContinuationMapping, FlowContinuationMapping>() {
-
-                        private final Button btn = new Button("Continue To Flow");
-
-                        @Override
-                        protected void updateItem(FlowContinuationMapping item, boolean empty) {
-                            System.out.println("updateItem" + item);
-                            super.updateItem(item, empty);
-                            if (empty) {
-                                setGraphic(null);
-                            } else {
-                                btn.setOnAction(event -> {
-
-                                    Map<String, Object> continuationMap = getMainController().getSystemEngineInterface().continuationFlowExecution(item.getSourceFlow(), item.getTargetFlow());
-                                    getMainController().goToFlowExecutionTab(item.getTargetFlow());
-                                    getMainController().initDataInFlowExecutionTab();
-                                    // freeInputMap = continuationMap; // Where is freeInputMap defined?
-                                    System.out.println(continuationMap);
-                                });
-                                setGraphic(btn);
-                            }
-                            btn.getStyleClass().add("continue-to-flow-button");
-                        }
-                    };
-                }
-            });
-            actionColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
-
-            continuationTableView.getColumns().setAll(targetFlowColumn, actionColumn);
-            continuationTableView.setItems(FXCollections.observableArrayList(mappings));
-        });
-    }
-*/
-
     public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings) {
         Platform.runLater(() -> {
             if (continuationTableView == null) {
@@ -552,6 +397,8 @@ public class FlowExecutionTabController {
                                 Map<String, Object> continuationMap = getMainController().getSystemEngineInterface().continuationFlowExecution(sourceFlow, targetFlow);
                                 getMainController().goToFlowExecutionTab(targetFlow);
                                 getMainController().initDataInFlowExecutionTab();
+
+                                setInputValuesFromContinuationMap(continuationMap);
                                 // freeInputMap = continuationMap; // Where is freeInputMap defined?
                                 System.out.println(continuationMap);
 
@@ -580,6 +427,40 @@ public class FlowExecutionTabController {
         });
     }
 
+   public void setInputValuesFromContinuationMap(Map<String, Object> continuationMap) {
+       for (Node node : inputValuesHBox.getChildren()) {
+           if (node instanceof VBox) {
+               VBox vbox = (VBox) node;
+               Label label = (Label) vbox.getChildren().get(0); // Assuming the label is always at index 0 in the VBox
+               Node inputNode = vbox.getChildren().get(1); // Assuming the input field is always at index 1 in the VBox
+
+               String originalName = label.getText();
+               if(label.getText().equals("TIME_TO_SPEND (sec)")){
+                   originalName = "TIME_TO_SPEND";
+               }
+
+               if (inputNode instanceof TextField) {
+                   TextField textField = (TextField) inputNode;
+
+                   if (continuationMap.containsKey(originalName)) {
+                       Object value = continuationMap.get(originalName);
+                       if (value instanceof String) {
+                           textField.setText((String) value);
+                       }
+                   }
+               } else if (inputNode instanceof Spinner) {
+                   Spinner<Integer> spinner = (Spinner<Integer>) inputNode;
+
+                   if (continuationMap.containsKey(originalName)) {
+                       Object value = continuationMap.get(originalName);
+                       if (value instanceof Integer) {
+                           spinner.getValueFactory().setValue((Integer) value);
+                       }
+                   }
+               }
+           }
+       }
+    }
 
     public void backToFlowExecutionTabAfterExecution() {
         System.out.println("backToFlowExecutionTabAfterExecution");
