@@ -64,7 +64,7 @@ public class ExecuteFlowTask extends Task<Boolean> {
 
 
     protected Boolean call() {
-        int SLEEP_TIME = 500;
+        int SLEEP_TIME = 700;
         //DTOFlowExecution executedData = engineManager.getDTOFlowExecution(UUID.fromString(currentFlowId.getValue()))
         DTOFlowExecution executedData = engineManager.getDTOFlowExecution(this.flowId);
 

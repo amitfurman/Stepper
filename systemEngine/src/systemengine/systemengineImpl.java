@@ -129,10 +129,6 @@ public class systemengineImpl implements systemengine {
     }
 
 
-
-
-
-
     //////check!!!!!!!!!
     @Override
     public DTOFreeInputsByUserString printFreeInputsByUserString(int choice) {
