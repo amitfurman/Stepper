@@ -425,6 +425,7 @@ public class FlowExecutionTabController {
     }
 */
 
+
     public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings) {
         Platform.runLater(() -> {
             if (continuationTableView == null) {
@@ -468,11 +469,13 @@ public class FlowExecutionTabController {
                     btn.getStyleClass().add("continue-to-flow-button");
                 }
             });
+
             actionColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
             continuationTableView.getColumns().setAll(targetFlowColumn, actionColumn);
             continuationTableView.setItems(FXCollections.observableArrayList(mappings));
         });
     }
+
 
     public void backToFlowExecutionTabAfterExecution() {
         System.out.println("backToFlowExecutionTabAfterExecution");

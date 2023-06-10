@@ -326,9 +326,6 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
             newMap.put(newKey, value);
         });
 
-        System.out.println(newMap);
-        System.out.println(initialInputMap);
-
          IOlist.stream()
                 .filter(io -> newMap.containsKey(io.getFinalName()))
                 .collect(Collectors.toList())

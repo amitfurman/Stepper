@@ -30,10 +30,6 @@ public class FileDumper extends AbstractStepDefinition {
         String fileName = context.getDataValue(IO_NAMES.FILE_NAME, String.class);
         File file = new File(fileName);
 
-        System.out.println("FileDumper");
-        System.out.println(content);
-        System.out.println(fileName);
-
 /*
         if (!file.isFile()) {
             context.storeLogLineAndSummaryLine("Step failed because the target path is not a file.");

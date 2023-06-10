@@ -494,6 +494,7 @@ public class MasterDetailController {
                 outputItem.getChildren().addAll(
                         new TreeItem<>("Final Name: " + output.getFinalName()),
                         new TreeItem<>("Type: " + output.getType().toString()),
+                        output.getValue() == null ?  new TreeItem<>( "Value: N/A") :
                         output.getType().toString().equals("RELATION") || output.getType().toString().equals("STRING_LIST")
                                 || output.getType().toString().equals("FILE_LIST") || output.getType().toString().equals("MAPPING2NUMBERS")
                                 ? new TreeItem<>(showOutputValue(output)) : new TreeItem<>("Value: " + output.getValue().toString())

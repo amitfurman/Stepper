@@ -37,14 +37,13 @@ public class Zipper extends AbstractStepDefinition {
         String source = context.getDataValue(IO_NAMES.SOURCE, String.class);
         String operation = context.getDataValue(IO_NAMES.OPERATION, String.class);
 
-        System.out.println(source);
-        System.out.println(operation);
         context.storeLogLine("About to perform operation " + operation + " on source " + source);
 
         if (!Files.exists(Paths.get(source))) {
             context.storeLogLineAndSummaryLine("Source does not exist.");
             context.storeDataValue("RESULT",StepResult.FAILURE.toString());
             context.storeStepTotalTime(start);
+
             return StepResult.FAILURE;
         }
 
@@ -116,6 +115,7 @@ public class Zipper extends AbstractStepDefinition {
                 context.storeLogLineAndSummaryLine("Destination directory does not exist.");
                 context.storeDataValue("RESULT",StepResult.FAILURE.toString());
                 context.storeStepTotalTime(start);
+
                 return StepResult.FAILURE;
             }
 
@@ -123,10 +123,12 @@ public class Zipper extends AbstractStepDefinition {
             context.storeDataValue("RESULT",StepResult.SUCCESS.toString());
             context.storeStepTotalTime(start);
             return StepResult.SUCCESS;
+
         } catch (IOException e) {
             context.storeLogLineAndSummaryLine("Failed to perform UNZIP operation: " + e.getMessage());
             context.storeDataValue("RESULT",StepResult.FAILURE.toString());
             context.storeStepTotalTime(start);
+
             return StepResult.FAILURE;
         }
     }
