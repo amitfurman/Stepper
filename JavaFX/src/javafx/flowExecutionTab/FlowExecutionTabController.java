@@ -1,13 +1,13 @@
 
 package javafx.flowExecutionTab;
 
+import datadefinition.impl.relation.RelationData;
 import dto.DTOFlowExecution;
 import dto.DTOFreeInputsFromUser;
 import dto.DTOSingleFlowIOData;
 import flow.mapping.FlowContinuationMapping;
 import javafx.Controller;
 import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -29,7 +29,6 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.controlsfx.control.MasterDetailPane;
 
 import javax.swing.*;
@@ -60,11 +59,8 @@ public class FlowExecutionTabController {
     private Label MandatoryLabel;
 
     private final SimpleStringProperty executedFlowIDProperty;
+    private TableView<FlowContinuationMapping> continuationTableView;
     private VBox continuationVbox;
-
-    //  @FXML
-   // private TableView ContinuationTableView;
-
 
 
     public FlowExecutionTabController() {
@@ -100,24 +96,33 @@ public class FlowExecutionTabController {
             masterDetailController.setFlowExecutionTabController(this);
         }
 
-        BorderPane.setMargin(gridPane, new Insets(10));
+     //   BorderPane.setMargin(gridPane, new Insets(10));
 
         VBox masterDetailPaneVbox = new VBox(MasterDetailComponent);
+        VBox.setVgrow(masterDetailPane, Priority.ALWAYS);
         borderPane.setCenter(masterDetailPaneVbox);
 
         borderPane.setBottom(continuationVbox);
-        BorderPane.setMargin(continuationVbox, new Insets(10));
+       // BorderPane.setMargin(continuationVbox, new Insets(10));
 
-        // Set preferred heights for top and bottom regions
-        gridPane.setMaxHeight(Double.MAX_VALUE);
-        gridPane.setMinHeight(40);
-        continuationVbox.setMaxHeight(Double.MAX_VALUE);
-        continuationVbox.setMinHeight(40);
+        // Set preferred heights for top, bottom, and center regions
+        double totalHeight = borderPane.getPrefHeight();
+        double topHeight = totalHeight * 0.23;
+        double bottomHeight = totalHeight * 0.2;
+        double centerHeight = totalHeight * 0.57;
 
+        // Adjust VBox constraints
+        VBox.setMargin(masterDetailPaneVbox, new Insets(topHeight, 0, bottomHeight, 0));
+        masterDetailPaneVbox.setMaxHeight(centerHeight);
+
+        gridPane.setPrefHeight(topHeight);
+        continuationVbox.setPrefHeight(bottomHeight);
 
         Text asterisk1 = new Text("*");
         asterisk1.setFill(Color.RED);
         MandatoryLabel.setGraphic(asterisk1);
+
+        borderPane.getCenter().setStyle("-fx-border-color: #000000;");
     }
 
     public void setMainController(Controller mainController) {
@@ -270,7 +275,7 @@ public class FlowExecutionTabController {
 
     public void setVBoxSetting(VBox vbox,Label label){
         vbox.setAlignment(Pos.CENTER_LEFT);
-        vbox.setSpacing(10);
+        vbox.setSpacing(5);
         vbox.setVgrow(label, Priority.ALWAYS);
     }
 
@@ -377,24 +382,14 @@ public class FlowExecutionTabController {
         new Thread(currentRunningTask).start();
     }
 
-    public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings, Stage stage) {
-
-
-
-    }
-
-
+/*
     public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings) {
         TableView<FlowContinuationMapping> continuationTableView = new TableView<>();
-        double tableViewWidth = 400.0;
         Platform.runLater(() -> {
-
-            // Define the target flow column
             TableColumn<FlowContinuationMapping, String> targetFlowColumn = new TableColumn<>("Target Flow");
             targetFlowColumn.setCellValueFactory(new PropertyValueFactory<>("targetFlow"));
-            targetFlowColumn.setPrefWidth(0.5 * tableViewWidth); // Set to half of the table view width
+            targetFlowColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
 
-            // Define the action column
             TableColumn<FlowContinuationMapping, FlowContinuationMapping> actionColumn = new TableColumn<>("");
             actionColumn.setCellFactory(param -> new TableCell<FlowContinuationMapping, FlowContinuationMapping>() {
                 private final Button btn = new Button("Continue To Flow");
@@ -407,31 +402,80 @@ public class FlowExecutionTabController {
                     } else {
                         btn.setOnAction(event -> {
                             // Handle the button click here
-//                            System.out.println("Continuing to flow: " + item.getTargetFlow());
+                            // System.out.println("Continuing to flow: " + item.getTargetFlow());
                         });
                         setGraphic(btn);
                     }
+                    btn.getStyleClass().add("continue-to-flow-button");
                 }
             });
-            actionColumn.setPrefWidth(0.5 * tableViewWidth); // Set to half of the table view width
-
+            actionColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
             continuationTableView.getColumns().addAll(targetFlowColumn, actionColumn);
             continuationTableView.setItems(FXCollections.observableArrayList(mappings));
 
-            // Set the title for the TableView
             Label titleLabel = new Label("Flow Continuation Table");
             titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
-            // Create a VBox to hold the title and the TableView
-            continuationVbox.getChildren().addAll(titleLabel, continuationTableView);
+            VBox vbox = new VBox();
+            vbox.getChildren().addAll(titleLabel, continuationTableView);
+
+            vbox.getStyleClass().add("flow-continuation-table");
+            continuationVbox.getChildren().add(vbox);
+        });
+    }
+*/
+
+    public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings) {
+        Platform.runLater(() -> {
+            // Create a new TableView only if it doesn't exist yet
+            if (continuationTableView == null) {
+                continuationTableView = new TableView<>();
+                Label titleLabel = new Label("Flow Continuation Table");
+                titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+
+                VBox vbox = new VBox();
+                vbox.getChildren().addAll(titleLabel, continuationTableView);
+
+                vbox.getStyleClass().add("flow-continuation-table");
+                continuationVbox.getChildren().add(vbox);
+            } else {
+                continuationTableView.getItems().clear();
+            }
+
+            // Create and bind the table columns
+            TableColumn<FlowContinuationMapping, String> targetFlowColumn = new TableColumn<>("Target Flow");
+            targetFlowColumn.setCellValueFactory(new PropertyValueFactory<>("targetFlow"));
+            targetFlowColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
+            TableColumn<FlowContinuationMapping, FlowContinuationMapping> actionColumn = new TableColumn<>("");
+            actionColumn.setCellFactory(param -> new TableCell<FlowContinuationMapping, FlowContinuationMapping>() {
+                private final Button btn = new Button("Continue To Flow");
+
+                @Override
+                protected void updateItem(FlowContinuationMapping item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        btn.setOnAction(event -> {
+                            // Handle the button click here
+                            // System.out.println("Continuing to flow: " + item.getTargetFlow());
+                        });
+                        setGraphic(btn);
+                    }
+                    btn.getStyleClass().add("continue-to-flow-button");
+                }
+            });
+            actionColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
+            continuationTableView.getColumns().setAll(targetFlowColumn, actionColumn);
+            continuationTableView.setItems(FXCollections.observableArrayList(mappings));
         });
     }
 
-
-
     public void backToFlowExecutionTabAfterExecution() {
-       getMainController().goToStatisticsTab();
+        System.out.println("backToFlowExecutionTabAfterExecution");
+        getMainController().goToStatisticsTab();
         initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(mainController.getFlowName()));
+        getMainController().initExecutionHistoryTableInExecutionsHistoryTab();
     }
 
 

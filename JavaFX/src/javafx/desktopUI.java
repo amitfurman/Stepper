@@ -2,6 +2,7 @@ package javafx;
 
 import javafx.StatisticsTab.StatisticsTabController;
 import javafx.application.Application;
+import javafx.executionsHistoryTab.ExecutionsHistoryTabController;
 import javafx.flowDefinitionTab.FlowDefinitionTabController;
 import javafx.flowExecutionTab.FlowExecutionTabController;
 import javafx.fxml.FXMLLoader;
@@ -54,17 +55,24 @@ public class desktopUI extends Application {
         FlowExecutionTabController flowExecutionTabController =  fxmlLoader.getController();
 
         fxmlLoader = new FXMLLoader();
+        url = getClass().getResource("executionsHistoryTab/executionsHistoryTab.fxml");
+        fxmlLoader.setLocation(url);
+        Tab executionsHistoryTabComponent = fxmlLoader.load(url.openStream());
+        ExecutionsHistoryTabController executionsHistoryTabController =  fxmlLoader.getController();
+
+        fxmlLoader = new FXMLLoader();
         url = getClass().getResource("StatisticsTab/StatisticsTab.fxml");
         fxmlLoader.setLocation(url);
         Tab StatisticsTabComponent = fxmlLoader.load(url.openStream());
         StatisticsTabController StatisticsTabController =  fxmlLoader.getController();
 
         TabPane tabPane = (TabPane) borderPane.getCenter();
-        tabPane.getTabs().addAll(flowDefinitionTabComponent,flowExecutionTabComponent, StatisticsTabComponent);
+        tabPane.getTabs().addAll(flowDefinitionTabComponent,flowExecutionTabComponent,executionsHistoryTabComponent, StatisticsTabComponent);
 
         mainController.setHeaderComponentController(headerController);
         mainController.setFlowDefinitionTabController(flowDefinitionTabController);
         mainController.setFlowExecutionTabController(flowExecutionTabController);
+        mainController.setExecutionsHistoryTabController(executionsHistoryTabController);
         mainController.setStatisticsTabController(StatisticsTabController);
         Scene scene = new Scene(mainComponent, 600, 400);
         primaryStage.setScene(scene);
