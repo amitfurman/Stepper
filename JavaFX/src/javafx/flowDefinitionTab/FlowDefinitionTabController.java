@@ -37,7 +37,6 @@ public class FlowDefinitionTabController {
         mainController.goToFlowExecutionTab(chosenFlowName);
         mainController.initDataInFlowExecutionTab();
 
-
     }
     public void setMainController(Controller mainController) {
         this.mainController = mainController;

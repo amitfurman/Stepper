@@ -18,10 +18,7 @@ import javax.xml.bind.JAXBException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,6 +34,26 @@ public class systemengineImpl implements systemengine {
 
     static public systemengine getInstance() {
         return instance;
+    }
+
+    @Override
+    public Map<String , Object> continuationFlowExecution(String sourceFlowName, String targetFlowName) {
+        FlowExecution sourceFlowExecution = flowExecutionList.stream().filter(flow->flow.getFlowName().equals(sourceFlowName)).findFirst().get();
+        FlowContinuationMapping currContinuation = allContinuationMappings.stream().filter(mapping->mapping.getSourceFlow().equals(sourceFlowName) && mapping.getTargetFlow().equals(targetFlowName)).findFirst().get();
+        Map<String,String> source2targetDataMapping = currContinuation.getSource2targetDataMapping();
+
+        System.out.println("sourceFlowExecution.getDataValues() = " + sourceFlowExecution.getDataValues());
+        System.out.println(sourceFlowExecution);
+        System.out.println(currContinuation);
+        Map<String , Object> continuationDataMap = new HashMap<>();
+
+        for (Map.Entry<String,String> entry : source2targetDataMapping.entrySet()) {
+            String sourceDataName = entry.getKey();
+            Object sourceDataValue = sourceFlowExecution.getDataValues().get(sourceDataName);
+
+            continuationDataMap.put(entry.getValue(),sourceDataValue);
+        }
+        return continuationDataMap;
     }
 
     @Override

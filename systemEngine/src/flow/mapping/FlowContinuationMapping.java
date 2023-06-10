@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FlowContinuationMapping {
-    private Map<String,String> source2targetDataMapping;
+    private Map<String,String> source2targetDataMapping; //The values were saved in the map like this: SourceData, TargetData
     private String sourceFlow;
     private String targetFlow;
 

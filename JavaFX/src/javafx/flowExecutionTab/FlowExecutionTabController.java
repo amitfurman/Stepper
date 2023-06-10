@@ -427,7 +427,6 @@ public class FlowExecutionTabController {
 
     public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings) {
         Platform.runLater(() -> {
-            // Create a new TableView only if it doesn't exist yet
             if (continuationTableView == null) {
                 continuationTableView = new TableView<>();
                 Label titleLabel = new Label("Flow Continuation Table");
@@ -442,7 +441,6 @@ public class FlowExecutionTabController {
                 continuationTableView.getItems().clear();
             }
 
-            // Create and bind the table columns
             TableColumn<FlowContinuationMapping, String> targetFlowColumn = new TableColumn<>("Target Flow");
             targetFlowColumn.setCellValueFactory(new PropertyValueFactory<>("targetFlow"));
             targetFlowColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
@@ -452,13 +450,18 @@ public class FlowExecutionTabController {
 
                 @Override
                 protected void updateItem(FlowContinuationMapping item, boolean empty) {
+                    System.out.println("updateItem" + item);
+                    System.out.println("continuationTableView" + mappings);
                     super.updateItem(item, empty);
                     if (empty) {
                         setGraphic(null);
                     } else {
                         btn.setOnAction(event -> {
-                            // Handle the button click here
-                            // System.out.println("Continuing to flow: " + item.getTargetFlow());
+                            Map <String, Object> countinuationMap = mainController.getSystemEngineInterface().continuationFlowExecution(item.getSourceFlow(), item.getTargetFlow());
+                            mainController.goToFlowExecutionTab(item.getTargetFlow());
+                            mainController.initDataInFlowExecutionTab();
+                            freeInputMap = countinuationMap;
+                            System.out.println(countinuationMap);
                         });
                         setGraphic(btn);
                     }

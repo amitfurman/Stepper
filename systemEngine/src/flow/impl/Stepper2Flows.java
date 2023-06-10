@@ -172,8 +172,8 @@ public class Stepper2Flows {
         }
 
         for (FlowContinuationMapping flowContinuationMapping: allContinuationMappings) {
-            FlowDefinition sourceFlow = allFlows.stream().filter(flowDefinition -> flowDefinition.getName().equals(flowContinuationMapping.getSourceFlow())).findFirst().get();
 
+            FlowDefinition sourceFlow = allFlows.stream().filter(flowDefinition -> flowDefinition.getName().equals(flowContinuationMapping.getSourceFlow())).findFirst().get();
             FlowDefinition targetFlow = allFlows.stream().filter(flowDefinition -> flowDefinition.getName().equals(flowContinuationMapping.getTargetFlow())).findFirst().get();
 
             for (Map.Entry<String, String> entry : flowContinuationMapping.getSource2targetDataMapping().entrySet()) {

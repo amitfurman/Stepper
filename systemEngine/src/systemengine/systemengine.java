@@ -55,5 +55,5 @@ public interface systemengine {
     DTOFlowExecution getFlowExecutionStatus(UUID flowSessionId);
     DTOFlowExecution getDTOFlowExecution(UUID flowId);
     LinkedList<FlowContinuationMapping> getAllContinuationMappingsWithSameSourceFlow(String currFlowName);
-
+    Map<String , Object> continuationFlowExecution(String sourceFlow, String targetFlow);
 }
