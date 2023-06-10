@@ -72,59 +72,8 @@ public class CommandLine  extends AbstractStepDefinition {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-        System.out.println(result.toString());
         context.storeDataValue("RESULT", result);
-
         context.storeStepTotalTime(start);
         return StepResult.SUCCESS;
     }
-
-
-    /*
-    public StepResult invoke(StepExecutionContext context) {
-        Instant start = Instant.now();
-        String commandName = context.getDataValue(IO_NAMES.COMMAND, String.class);
-        String arguments = context.getDataValue(IO_NAMES.ARGUMENTS, String.class);
-        StringBuilder result = new StringBuilder();
-        ProcessBuilder processBuilder = new ProcessBuilder();
-
-        //before starting the operation
-        context.storeLogLine("About to invoke"+ commandName + arguments);
-
-        if(arguments!=null) {
-            processBuilder.command(commandName, arguments);
-        }else{
-            processBuilder.command(commandName);
-        }
-
-//          In the context of ProcessBuilder, the redirectOutput() method is used
-//          to specify where the output of the subprocess should be directed.
-//          The ProcessBuilder.Redirect.PIPE argument indicates that the output should
-//          be piped into the Java process, allowing you to read it.
-        processBuilder.redirectOutput(ProcessBuilder.Redirect.PIPE);
-
-        try {
-            Process process = processBuilder.start();
-            process.waitFor();
-
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    result.append(line).append(System.lineSeparator());
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-///if result is null? will .toString throw exception?
-        context.storeDataValue("RESULT", result.toString());
-
-        context.storeStepTotalTime(start);
-        return StepResult.SUCCESS;
-    }
-    */
 }

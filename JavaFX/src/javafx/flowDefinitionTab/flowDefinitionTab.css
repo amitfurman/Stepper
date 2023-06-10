@@ -2,7 +2,6 @@
 #header-grid{
     -fx-background-color: #9b9a9a;
     -fx-border-color: #36454f;
-
 }
 
 #execute-button {
@@ -29,7 +28,7 @@
     -fx-background-color: #9b9a9a;
     -fx-border-color: #fdfff7;
     -fx-border-width: 1px;
-    -fx-background-radius: 5px; /* Set the background radius */
+    -fx-background-radius: 5px;
     -fx-border-radius: 5px;
 }
 
@@ -40,6 +39,5 @@
 }
 
 .tree-cell {
-    -fx-font-size: 13px; /* Set the font size */
-    /* Add more styling properties as needed */
+    -fx-font-size: 13px;
 }

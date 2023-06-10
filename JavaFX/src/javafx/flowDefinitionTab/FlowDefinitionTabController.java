@@ -24,7 +24,6 @@ public class FlowDefinitionTabController {
     private TreeView<String> flowDetailsTree;
     @FXML
     private Button ExecuteFlowButton;
-
     private String chosenFlowName;
 
 
@@ -46,7 +45,7 @@ public class FlowDefinitionTabController {
     }
     public void showFlowsTree() {
         TreeItem<String> rootItem = new TreeItem<>("Flows");
-        rootItem.setExpanded(true); // Set the root item to be initially expanded
+        rootItem.setExpanded(true);
         DTOAllStepperFlows allStepperFlows =  mainController.getSystemEngineInterface().getAllFlows();
 
         for (int i = 0; i < allStepperFlows.getNumberOfFlows(); i++) {
@@ -211,7 +210,6 @@ public class FlowDefinitionTabController {
         TreeItem<String> rootItem = new TreeItem<>();
         flowDetailsTree.setRoot(rootItem);
         ExecuteFlowButton.setDisable(true);
-
     }
 
 }

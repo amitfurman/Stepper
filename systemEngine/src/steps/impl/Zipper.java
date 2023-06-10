@@ -37,8 +37,6 @@ public class Zipper extends AbstractStepDefinition {
         String source = context.getDataValue(IO_NAMES.SOURCE, String.class);
         String operation = context.getDataValue(IO_NAMES.OPERATION, String.class);
 
-        System.out.println(source);
-        System.out.println(operation);
         context.storeLogLine("About to perform operation " + operation + " on source " + source);
 
         if (!Files.exists(Paths.get(source))) {
