@@ -28,7 +28,7 @@
                <children>
                   <BarChart id="barChart1" fx:id="FlowNumberOfRunsChart" legendVisible="false" styleClass="chart-bar" title="Flow Number Of Runs" GridPane.rowIndex="1">
                      <xAxis>
-                        <CategoryAxis label="Flow Name" prefHeight="20.0" prefWidth="249.0" tickLength="10.0" tickMarkVisible="false">
+                        <CategoryAxis fx:id="FlowNumberOfRunsChartXAxis" label="Flow Name" prefHeight="20.0" prefWidth="249.0" tickLength="10.0" tickMarkVisible="false">
                            <padding>
                               <Insets bottom="5.0" />
                            </padding>
@@ -40,7 +40,7 @@
                   </BarChart>
                   <BarChart id="barChart2" fx:id="AverageFlowsRunTimeChart" legendVisible="false" styleClass="chart-bar" title="Average Flows Run Time in ms" GridPane.rowIndex="2">
                      <xAxis>
-                        <CategoryAxis label="Flow Name" prefHeight="19.0" prefWidth="222.0" side="BOTTOM" tickMarkVisible="false" />
+                        <CategoryAxis fx:id="AverageFlowsRunTimeChartXAxis" label="Flow Name" prefHeight="19.0" prefWidth="222.0" side="BOTTOM" tickMarkVisible="false" />
                      </xAxis>
                      <yAxis>
                         <NumberAxis label="Average Run Time(ms)" side="LEFT" upperBound="20.0" />
@@ -48,7 +48,7 @@
                   </BarChart>
                   <BarChart id="barChart3" fx:id="StepNumberOfRunsChart" legendVisible="false" prefHeight="200.0" prefWidth="312.0" styleClass="chart-bar" title="Step Number Of Runs" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <xAxis>
-                        <CategoryAxis label="Step Name" prefHeight="19.0" prefWidth="222.0" side="BOTTOM" tickMarkVisible="false" />
+                        <CategoryAxis fx:id="StepNumberOfRunsChartXAxis" label="Step Name" prefHeight="19.0" prefWidth="222.0" side="BOTTOM" tickMarkVisible="false" />
                      </xAxis>
                      <yAxis>
                         <NumberAxis label="Number of Runs" prefHeight="127.0" prefWidth="45.0" side="LEFT" upperBound="20.0" />
@@ -56,7 +56,7 @@
                   </BarChart>
                   <BarChart id="barChart4" fx:id="AverageStepsRunTimeChart" legendVisible="false" styleClass="chart-bar" title="Average Steps Run Time in ms" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <xAxis>
-                        <CategoryAxis label="Step Name" prefHeight="20.0" prefWidth="243.0" side="BOTTOM" tickMarkVisible="false">
+                        <CategoryAxis fx:id="AverageStepsRunTimeChartXAxis" label="Step Name" prefHeight="20.0" prefWidth="243.0" side="BOTTOM" tickMarkVisible="false">
                            <effect>
                               <Glow />
                            </effect>

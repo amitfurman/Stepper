@@ -168,6 +168,14 @@ public class consoleUI {
                     System.out.println(e.getMessage());
                 } catch (InitialInputIsNotExist e) {
                     System.out.println(e.getMessage());
+                } catch (UnExistsFlow e) {
+                    System.out.println(e.getMessage());
+                } catch (UnExistsDataInTargetFlow e) {
+                    System.out.println(e.getMessage());
+                }catch (FileNotExistsException e) {
+                    System.out.println(e.getMessage());
+                }catch (FileIsNotXmlTypeException e) {
+                    System.out.println(e.getMessage());
                 }
 
             }

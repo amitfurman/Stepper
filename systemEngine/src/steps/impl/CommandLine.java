@@ -36,6 +36,56 @@ public class CommandLine  extends AbstractStepDefinition {
         Instant start = Instant.now();
         String commandName = context.getDataValue(IO_NAMES.COMMAND, String.class);
         String arguments = context.getDataValue(IO_NAMES.ARGUMENTS, String.class);
+        String result = "";
+
+        //before starting the operation
+        context.storeLogLine("About to invoke"+ commandName + arguments);
+
+        List<String> commandWithArgs = new ArrayList<>();
+        commandWithArgs.add("cmd");     // You're running a cmd command
+        commandWithArgs.add("/c");      // The /c argument makes cmd execute the following string
+        commandWithArgs.add(commandName);
+
+        if (arguments != null) {
+            String[] args = arguments.split(" ");
+            commandWithArgs.addAll(Arrays.asList(args));
+        }
+
+        ProcessBuilder processBuilder = new ProcessBuilder(commandWithArgs);
+
+        processBuilder.redirectOutput(ProcessBuilder.Redirect.PIPE);
+
+        try {
+            Process process = processBuilder.start();
+            process.waitFor();
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    result = result + line;
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println(result.toString());
+        context.storeDataValue("RESULT", result);
+
+        context.storeStepTotalTime(start);
+        return StepResult.SUCCESS;
+    }
+
+
+    /*
+    public StepResult invoke(StepExecutionContext context) {
+        Instant start = Instant.now();
+        String commandName = context.getDataValue(IO_NAMES.COMMAND, String.class);
+        String arguments = context.getDataValue(IO_NAMES.ARGUMENTS, String.class);
         StringBuilder result = new StringBuilder();
         ProcessBuilder processBuilder = new ProcessBuilder();
 
@@ -48,10 +98,10 @@ public class CommandLine  extends AbstractStepDefinition {
             processBuilder.command(commandName);
         }
 
-        /*In the context of ProcessBuilder, the redirectOutput() method is used
-          to specify where the output of the subprocess should be directed.
-          The ProcessBuilder.Redirect.PIPE argument indicates that the output should
-          be piped into the Java process, allowing you to read it.*/
+//          In the context of ProcessBuilder, the redirectOutput() method is used
+//          to specify where the output of the subprocess should be directed.
+//          The ProcessBuilder.Redirect.PIPE argument indicates that the output should
+//          be piped into the Java process, allowing you to read it.
         processBuilder.redirectOutput(ProcessBuilder.Redirect.PIPE);
 
         try {
@@ -76,4 +126,5 @@ public class CommandLine  extends AbstractStepDefinition {
         context.storeStepTotalTime(start);
         return StepResult.SUCCESS;
     }
+    */
 }

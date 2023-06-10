@@ -21,17 +21,16 @@ import java.util.List;
 public class SchemaBasedJAXBMain {
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "jaxb.schema.generated";
 
-    public FlowsManager schemaBasedJAXB(String filePath) throws JAXBException, FileNotFoundException, DuplicateFlowsNames, UnExistsStep, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotExist {
+    public FlowsManager schemaBasedJAXB(String filePath) throws JAXBException, FileNotFoundException, DuplicateFlowsNames, UnExistsStep, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD,
+            UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotExist,UnExistsFlow,UnExistsDataInTargetFlow {
         InputStream inputStream = new FileInputStream(new File(filePath));
         STStepper stepper = deserializeFrom(inputStream);
         verifyIfExistsFlowsWithDuplicateNames(stepper);
         ReferenceToUnExistsStep(stepper);
         Stepper2Flows step = new Stepper2Flows(stepper);
 
-        return new FlowsManager(step.getAllFlows(),step.getNumberOfThreads());
+        return new FlowsManager(step.getAllFlows(),step.getNumberOfThreads(), step.getAllContinuationMappings());
     }
-
-
 
     private static STStepper deserializeFrom(InputStream in) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);

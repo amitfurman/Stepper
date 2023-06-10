@@ -2,14 +2,12 @@ package flow.impl;
 
 import datadefinition.api.DataDefinitions;
 import exceptions.*;
-import flow.api.CustomMapping;
+import flow.api.*;
 import flow.mapping.FlowAutomaticMapping;
+import flow.mapping.FlowContinuationMapping;
 import flow.mapping.FlowCustomMapping;
 import steps.StepDefinitionRegistry;
 import steps.api.DataDefinitionDeclaration;
-import flow.api.FlowDefinition;
-import flow.api.FlowDefinitionImpl;
-import flow.api.StepUsageDeclarationImpl;
 import jaxb.schema.generated.*;
 
 import java.util.*;
@@ -20,12 +18,13 @@ import java.util.stream.Collectors;
 public class Stepper2Flows {
     private LinkedList<FlowDefinition> allFlows;
     private int numberOfThreads;
+    private LinkedList<FlowContinuationMapping> allContinuationMappings;
 
-    public Stepper2Flows(STStepper stepper) throws OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsStep, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotExist {
+    public Stepper2Flows(STStepper stepper) throws OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsStep, UnExistsData, SourceStepBeforeTargetStep, TheSameDD, UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotExist, UnExistsFlow, UnExistsDataInTargetFlow {
          this.numberOfThreads = stepper.getSTThreadPool();
-        //System.out.println("number of threads: " + numberOfThreads);
 
         allFlows = new LinkedList<>();
+        allContinuationMappings = new LinkedList<>();
         int numberOfFlows = stepper.getSTFlows().getSTFlow().size();
         FlowDefinition flow;
         //each flow
@@ -115,11 +114,45 @@ public class Stepper2Flows {
             FlowAutomaticMapping automaticMapping = new FlowAutomaticMapping(flow);
             FlowCustomMapping customMapping = new FlowCustomMapping(flow);
 
-            if(currFlow.getSTInitialInputValues() != null) {
+            //continuation
+            if(currFlow.getSTContinuations() != null){
+                FlowContinuationMapping flowContinuation;
+                for(STContinuation continuation:  currFlow.getSTContinuations().getSTContinuation()){
+                    flowContinuation = new FlowContinuationMapping(currFlow.getName(), continuation.getTargetFlow());
+                    for (STContinuationMapping continuationMapping:continuation.getSTContinuationMapping()) {
+                        flowContinuation.addToSource2targetDataMapping(continuationMapping.getSourceData(), continuationMapping.getTargetData());
+                    }
+                    allContinuationMappings.add(flowContinuation);
+                }
+            }
+
+            System.out.println("all continuation mappings stepper2Flow: " + allContinuationMappings);
+
+
+            //initial input
+/*            if(currFlow.getSTInitialInputValues() != null) {
                 for(STInitialInputValue initValue : currFlow.getSTInitialInputValues().getSTInitialInputValue()) {
                     if(!flow.getIOlist().stream().anyMatch(io -> io.getFinalName().equals(initValue.getInputName())))
                         throw new InitialInputIsNotExist();
                     flow.addToInitialInputMap(initValue.getInputName(), initValue.getInitialValue());
+                }
+                flow.removeOptionalOutputsFromInitialInputs();
+            }*/
+
+            if(currFlow.getSTInitialInputValues() != null) {
+                for(STInitialInputValue initValue : currFlow.getSTInitialInputValues().getSTInitialInputValue()) {
+                    if(!flow.getIOlist().stream().anyMatch(io -> io.getFinalName().equals(initValue.getInputName())))
+                        throw new InitialInputIsNotExist();
+
+                    List<String> stepsWithInitialInput = new ArrayList<>();
+                    for (StepUsageDeclaration step : flow.getFlowSteps()) {
+                        if(step.getStepDefinition().inputs().stream().anyMatch(input->input.getName().equals(initValue.getInputName()))){
+                            stepsWithInitialInput.add(step.getFinalStepName());
+                        }
+                    }
+                    for (String stepName : stepsWithInitialInput) {
+                        flow.addToInitialInputMap(stepName + "." + initValue.getInputName(), initValue.getInitialValue());
+                    }
                 }
                 flow.removeOptionalOutputsFromInitialInputs();
             }
@@ -132,11 +165,48 @@ public class Stepper2Flows {
 
             allFlows.add(flow);
         }
+
+        //check if all continuations are valid
+        for (FlowContinuationMapping flowContinuationMapping: allContinuationMappings) {
+            allFlows.stream().filter(flowDefinition -> flowDefinition.getName().equals(flowContinuationMapping.getTargetFlow())).findFirst().orElseThrow(() -> new UnExistsFlow());
+        }
+
+        for (FlowContinuationMapping flowContinuationMapping: allContinuationMappings) {
+
+            FlowDefinition sourceFlow = allFlows.stream().filter(flowDefinition -> flowDefinition.getName().equals(flowContinuationMapping.getSourceFlow())).findFirst().get();
+            FlowDefinition targetFlow = allFlows.stream().filter(flowDefinition -> flowDefinition.getName().equals(flowContinuationMapping.getTargetFlow())).findFirst().get();
+
+            for (Map.Entry<String, String> entry : flowContinuationMapping.getSource2targetDataMapping().entrySet()) {
+                String sourceDataName = entry.getKey();
+                if (!sourceFlow.getIOlist().stream().anyMatch(io -> io.getFinalName().equals(sourceDataName)))
+                    throw new UnExistsData();
+
+                String targetDataName = entry.getValue();
+                if (!targetFlow.getIOlist().stream().anyMatch(io -> io.getFinalName().equals(targetDataName)))
+                    throw new UnExistsDataInTargetFlow();
+
+                DataDefinitions DDOfSourceData = sourceFlow.getIOlist().stream().filter(io -> io.getFinalName().equals(sourceDataName)).findFirst().get().getDD();
+                DataDefinitions DDOfTargetData = targetFlow.getIOlist().stream().filter(io -> io.getFinalName().equals(targetDataName)).findFirst().get().getDD();
+
+                if (!DDOfSourceData.getType().equals(DDOfTargetData.getType()))
+                    throw new TheSameDD();
+            }
+
+        }
+
     }
+
     public LinkedList<FlowDefinition> getAllFlows() {
         return allFlows;
     }
+
+    public LinkedList<FlowContinuationMapping> getAllContinuationMappings() {
+        return allContinuationMappings;
+    }
+
     public int getNumberOfThreads() {
         return numberOfThreads;
     }
+
+
 }

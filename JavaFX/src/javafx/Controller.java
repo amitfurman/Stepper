@@ -4,6 +4,7 @@ import dto.DTOFlowAndStepStatisticData;
 import dto.DTOSingleFlowIOData;
 import dto.DTOStatisticData;
 import javafx.StatisticsTab.StatisticsTabController;
+import javafx.executionsHistoryTab.ExecutionsHistoryTabController;
 import javafx.flowDefinitionTab.FlowDefinitionTabController;
 import javafx.flowExecutionTab.FlowExecutionTabController;
 import javafx.fxml.FXML;
@@ -33,6 +34,8 @@ public class Controller {
     @FXML
     private FlowExecutionTabController flowExecutionTabController;
     @FXML
+    private ExecutionsHistoryTabController executionsHistoryTabController;
+    @FXML
     private StatisticsTabController statisticsTabController;
     @FXML
     private GridPane headerComponent;
@@ -53,6 +56,9 @@ public class Controller {
         }
         if (flowExecutionTabController != null) {
             flowExecutionTabController.setMainController(this);
+        }
+        if (executionsHistoryTabController != null) {
+            executionsHistoryTabController.setMainController(this);
         }
         if (statisticsTabController != null) {
             statisticsTabController.setMainController(this);
@@ -107,6 +113,12 @@ public class Controller {
         flowExecutionTabController.setMainController(this);
     }
 
+    public void setExecutionsHistoryTabController(ExecutionsHistoryTabController executionsHistoryTabController) {
+        this.executionsHistoryTabController = executionsHistoryTabController;
+        executionsHistoryTabController.setMainController(this);
+    }
+
+
     public void setStatisticsTabController(StatisticsTabController statisticsTabComponentController) {
         this.statisticsTabController = statisticsTabComponentController;
         statisticsTabController.setMainController(this);
@@ -137,10 +149,11 @@ public class Controller {
     }
 
     public void goToStatisticsTab() {
-        Tab StatisticsTab = tabPane.getTabs().stream()
+        System.out.println("goToStatisticsTab");
+/*        Tab StatisticsTab = tabPane.getTabs().stream()
                 .filter(tab -> tab.getId().equals("StatisticsTab"))
                 .findFirst()
-                .orElse(null);
+                .orElse(null);*/
         DTOFlowAndStepStatisticData statisticData = systemEngineInterface.getStatisticData();
         statisticsTabController.initCharts(statisticData);
     }
@@ -154,4 +167,7 @@ public class Controller {
         flowExecutionTabController.initInputsInFlowExecutionTab();
     }
 
+    public void initExecutionHistoryTableInExecutionsHistoryTab() {
+        executionsHistoryTabController.initExecutionHistoryTable();
+    }
 }

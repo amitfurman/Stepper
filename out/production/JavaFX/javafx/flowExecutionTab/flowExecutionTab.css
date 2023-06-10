@@ -51,3 +51,32 @@
 .tree-view-style {
     -fx-font-size: 14px;
 }
+
+.flow-continuation-table {
+    -fx-alignment: center;
+}
+
+.flow-continuation-table .label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.flow-continuation-table .table-cell {
+    -fx-alignment: CENTER;
+    -fx-font-size: 12px;
+}
+
+.flow-continuation-table .column-header {
+    -fx-background-color: #ffeaec;
+}
+
+.continue-to-flow-button {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+    -fx-background-color: #9b9a9a;
+    -fx-border-color: #ffeaec;
+    -fx-border-width: 1px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+}

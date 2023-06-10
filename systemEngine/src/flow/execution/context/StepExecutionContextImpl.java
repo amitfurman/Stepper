@@ -84,7 +84,6 @@ public class StepExecutionContextImpl implements StepExecutionContext {
 */
         if (expectedDataType.isAssignableFrom(theExpectedDataDefinition.getType())) {
             Object aValue = dataValues.get(ioAlias);
-
             if (aValue != null) {
                 return expectedDataType.cast(aValue);
             }else if(!(IOlist.stream().filter(io -> io.getOriginalName().equals(dataName)).findFirst().get().getOptionalOutput().isEmpty())){
@@ -142,6 +141,8 @@ public class StepExecutionContextImpl implements StepExecutionContext {
         }
 
         if (theData.getType().isAssignableFrom(value.getClass())) {
+            dataValues.put(ioAlias, value);
+        } else if (theData.getType().getSimpleName().equals("ZipEnumeratorData") && value.getClass().getSimpleName().equals("String")) { /////no neede
             dataValues.put(ioAlias, value);
         } else {
             throw new IllegalArgumentException("Data definition for " + dataName + " is not found or expected data type is not compatible.");

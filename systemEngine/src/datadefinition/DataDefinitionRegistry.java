@@ -1,7 +1,7 @@
 package datadefinition;
 
 import datadefinition.api.DataDefinitions;
-import datadefinition.impl.enumerator.ZipEnumeratorDataDefinition;
+import datadefinition.impl.enumerator.zipper.ZipEnumeratorDataDefinition;
 import datadefinition.impl.list.FileListDataDefinition;
 import datadefinition.impl.list.StringListDataDefinition;
 import datadefinition.impl.mapping.NumberMappingDataDefinition;
