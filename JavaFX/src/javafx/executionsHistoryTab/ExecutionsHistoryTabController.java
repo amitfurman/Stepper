@@ -56,8 +56,6 @@ public class ExecutionsHistoryTabController {
             mainController.getFlowExecutionTabController().initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(currFlowName));
             mainController.goToFlowExecutionTab(currFlowName);
             Map<String,Object> inputsValues = mainController.getSystemEngineInterface().getFreeInputsFromCurrFlow(currFlowName);
-
-            //   System.out.println("new map: " + newMap);
             mainController.getFlowExecutionTabController().setInputValuesFromContinuationMap(inputsValues);
         });
     }
@@ -153,6 +151,7 @@ public class ExecutionsHistoryTabController {
         chooseOldFlowExecutions.setCellFactory(column -> new TableCell<ExecutionHistoryEntry, String>() {
             private final Button chooseButton = new Button("Choose This Flow");
             {
+                chooseButton.getStyleClass().add("choose-flow-button");
                 chooseButton.setOnAction(event -> {
                     ExecutionHistoryEntry entry = (ExecutionHistoryEntry) getTableRow().getItem();
                     if (entry != null) {

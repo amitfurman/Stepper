@@ -91,14 +91,14 @@ public class FlowExecutionTabController {
         VBox masterDetailPaneVbox = new VBox(MasterDetailComponent);
         VBox.setVgrow(masterDetailPane, Priority.ALWAYS);
         borderPane.setCenter(masterDetailPaneVbox);
-        borderPane.setBottom(continuationVbox);
+       // borderPane.setBottom(continuationVbox);
 
         double totalHeight = borderPane.getPrefHeight();
         double topHeight = totalHeight * 0.23;
         double bottomHeight = totalHeight * 0.2;
         double centerHeight = totalHeight * 0.57;
 
-        VBox.setMargin(masterDetailPaneVbox, new Insets(topHeight, 0, bottomHeight, 0));
+       VBox.setMargin(masterDetailPaneVbox, new Insets(topHeight, 0, bottomHeight, 0));
         masterDetailPaneVbox.setMaxHeight(centerHeight);
         gridPane.setPrefHeight(topHeight);
         continuationVbox.setPrefHeight(bottomHeight);
@@ -110,6 +110,10 @@ public class FlowExecutionTabController {
     public void initContinuationVbox(){
         continuationVbox = new VBox();
         borderPane.setBottom(continuationVbox);
+        double totalHeight = borderPane.getPrefHeight();
+        double bottomHeight = totalHeight * 0.2;
+        continuationVbox.setPrefHeight(bottomHeight);
+
 
     }
     public void setMainController(Controller mainController) {
@@ -391,6 +395,8 @@ public class FlowExecutionTabController {
     void StartExecuteFlowButton(ActionEvent event){
         masterDetailPane = new MasterDetailPane();
         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
+
+        System.out.println(freeInputMap);
         DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
         setExecutedFlowID(flowExecution.getUniqueIdByUUID());
 

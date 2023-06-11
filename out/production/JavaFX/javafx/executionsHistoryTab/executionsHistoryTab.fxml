@@ -61,7 +61,7 @@
                         <Insets left="480.0" />
                      </GridPane.margin>
                      <children>
-                        <Button fx:id="RerunFlow" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#rerunCurrentFlow" prefHeight="25.0" prefWidth="108.0" text="Rerun flow" textAlignment="CENTER" />
+                        <Button id="RerunFlowButton" fx:id="RerunFlow" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#rerunCurrentFlow" prefHeight="25.0" prefWidth="108.0" text="Rerun flow" textAlignment="CENTER" />
                      </children>
                   </HBox>
                </children>

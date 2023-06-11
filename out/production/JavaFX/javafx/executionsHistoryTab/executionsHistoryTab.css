@@ -60,7 +60,7 @@
     -fx-font-size: 11px;
     -fx-font-weight: bold;
     -fx-text-fill: #000000;
-    -fx-background-color: #ffeaec;
+    -fx-background-color: #c7c7c7;
     -fx-border-color: #000000;
     -fx-border-width: 1px;
     -fx-background-radius: 5px;
@@ -68,8 +68,25 @@
 }
 
 .choose-flow-button:hover {
-    -fx-background-color: #ffeaec;
+    -fx-background-color: #c7c7c7;
     -fx-text-fill: #000000;
-    -fx-border-color: #000000;
+    -fx-opacity: 0.8;
+}
+
+#RerunFlowButton {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #36454f;
+    -fx-background-color: #ffeaec;
+    -fx-border-color: #36454f;
+    -fx-border-width: 1px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+
+}
+
+#RerunFlowButton:hover {
+    -fx-background-color: #ffeaec;
+    -fx-text-fill: #36454f;
     -fx-opacity: 0.8;
 }
