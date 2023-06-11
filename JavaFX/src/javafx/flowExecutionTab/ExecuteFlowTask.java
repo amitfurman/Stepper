@@ -27,14 +27,14 @@ public class ExecuteFlowTask extends Task<Boolean> {
 
     protected Boolean call() {
         int SLEEP_TIME = 700;
-        DTOFlowExecution executedData = engineManager.getDTOFlowExecution(this.flowId);
+        DTOFlowExecution executedData = engineManager.getDTOFlowExecutionById(this.flowId);
 
         masterDetailController.initMasterDetailPaneController(executedData);
         DTOFlowExecution finalExecutedData2 = executedData;
         Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData2));
 
         while (executedData.getFlowExecutionResult() == null) {
-            executedData = engineManager.getDTOFlowExecution(this.flowId);
+            executedData = engineManager.getDTOFlowExecutionById(this.flowId);
             if (currentFlowId.getValue().equals(flowId.toString())) {
                 DTOFlowExecution finalExecutedData = executedData;
                 Platform.runLater(() -> masterDetailController.addStepsToMasterDetail(finalExecutedData));
@@ -43,7 +43,7 @@ public class ExecuteFlowTask extends Task<Boolean> {
                 Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException ignored) {}
         }
-        executedData = engineManager.getDTOFlowExecution(UUID.fromString(currentFlowId.getValue()));
+        executedData = engineManager.getDTOFlowExecutionById(UUID.fromString(currentFlowId.getValue()));
         DTOFlowExecution finalExecutedData1 = executedData;
         System.out.println(finalExecutedData1.getFlowName());
         Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData1));

@@ -46,12 +46,17 @@ public class FlowExecutionTabController {
     private HBox inputValuesHBox;
     @FXML
     private Button executeButton;
+
     private Map<String, Object> freeInputMap;
+
     private ObservableList<Input> inputList = FXCollections.observableArrayList();
+
     private MasterDetailController masterDetailController;
+
     private MasterDetailPane masterDetailPane;
     @FXML
     private Label MandatoryLabel;
+
     private final SimpleStringProperty executedFlowIDProperty;
     private TableView<FlowContinuationMapping> continuationTableView;
     private VBox continuationVbox;
@@ -59,11 +64,9 @@ public class FlowExecutionTabController {
     public FlowExecutionTabController() {
         executedFlowIDProperty = new SimpleStringProperty();
     }
-
     public void setExecutedFlowID(UUID id) {
         this.executedFlowIDProperty.set(id.toString());
     }
-
     @FXML
     public void initialize() throws IOException {
         freeInputMap = new HashMap<>();
@@ -104,29 +107,29 @@ public class FlowExecutionTabController {
         asterisk1.setFill(Color.RED);
         MandatoryLabel.setGraphic(asterisk1);
     }
+    public void initContinuationVbox(){
+        continuationVbox = new VBox();
+        borderPane.setBottom(continuationVbox);
 
+    }
     public void setMainController(Controller mainController) {
         this.mainController = mainController;
     }
-
     public Controller getMainController() {
         return mainController;
     }
-
     public void setMasterDetailsController(MasterDetailController masterDetailComponentController) {
         this.masterDetailController = masterDetailComponentController;
         masterDetailComponentController.setFlowExecutionTabController(this);
     }
-
     public void initDataInFlowExecutionTab() {
         masterDetailController.initMasterDetailPaneController();
+        initContinuationVbox();
     }
-
     public void initInputsInFlowExecutionTab() {
         executeButton.setDisable(true);
         inputValuesHBox.getChildren().clear();
     }
-
     public void initInputsTable(List<DTOSingleFlowIOData> freeInputs) {
         executeButton.setDisable(true);
         inputValuesHBox.getChildren().clear();
@@ -139,8 +142,6 @@ public class FlowExecutionTabController {
 
             Label label = new Label((input.getFinalName().equals("TIME_TO_SPEND") ? input.getFinalName() + " (sec)" : input.getFinalName()));
             setLabelSetting(label);
-
-            // Check if input.getMandatory() is "MANDATORY"
             if (input.getMandatory().equals("MANDATORY")) {
                 Text asterisk1 = new Text("*");
                 asterisk1.setFill(Color.RED);
@@ -156,11 +157,7 @@ public class FlowExecutionTabController {
             
             if(simpleName.equals("String")) {
                 setTextFieldSetting(textField, input);
-                /*if(input.getOriginalName().equals("FILE_NAME")){
-                    openFileChooser(textField);
-                    textField.setCursor(Cursor.HAND);
-
-                }else */if(input.getOriginalName().equals("FOLDER_NAME")){
+                    if(input.getOriginalName().equals("FOLDER_NAME")){
                     openDirectoryChooser(textField);
                     textField.setCursor(Cursor.HAND);
 
@@ -186,7 +183,6 @@ public class FlowExecutionTabController {
             inputValuesHBox.setSpacing(50);
         });
     }
-
     public void setInputValues(Input input, DTOSingleFlowIOData freeInput){
         input.setFinalName(freeInput.getFinalName());
         input.setOriginalName(freeInput.getOriginalName());
@@ -194,7 +190,6 @@ public class FlowExecutionTabController {
         input.setMandatory(freeInput.getNecessity().toString());
         input.setType(freeInput.getType());
     }
-
     public void openChooseDialog(TextField textField) {
         textField.setOnMouseClicked(e -> {
             if (e.getClickCount() == 1) {
@@ -213,7 +208,6 @@ public class FlowExecutionTabController {
         });
 
     }
-
     public void openDirectoryChooser(TextField textField) {
         textField.setOnMouseClicked(e -> {
             if (e.getClickCount() == 1) {
@@ -229,7 +223,6 @@ public class FlowExecutionTabController {
             }
         });
     }
-
     public void openFileChooser(TextField textField){
         textField.setOnMouseClicked(e -> {
             if (e.getClickCount() == 1) {
@@ -245,20 +238,17 @@ public class FlowExecutionTabController {
             }
         });
     }
-
     public void setLabelSetting(Label label){
        label.setWrapText(true);
        label.setAlignment(Pos.CENTER_LEFT);
        label.setTextAlignment(TextAlignment.LEFT);
        label.setTextOverrun(OverrunStyle.CLIP); // Clip the text if it exceeds the label width
    }
-
     public void setVBoxSetting(VBox vbox,Label label){
         vbox.setAlignment(Pos.CENTER_LEFT);
         vbox.setSpacing(5);
         vbox.setVgrow(label, Priority.ALWAYS);
     }
-
     public void setTextFieldSetting(TextField textField, Input input){
         textField.getStyleClass().add("text-field");
         textField.setOnAction(event -> {
@@ -271,7 +261,6 @@ public class FlowExecutionTabController {
         });
 
     }
-
     public void setSpinnerSetting(Spinner spinner, Input input){
         SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
         spinner.setEditable(true);
@@ -301,7 +290,6 @@ public class FlowExecutionTabController {
         });
         spinner.setValueFactory(valueFactory);
     }
-
     public void commitEdit(Object newValue, Input input) {
         input.setValue(newValue);
         updateFreeInputMap(input, newValue);
@@ -313,6 +301,7 @@ public class FlowExecutionTabController {
         freeInputMap.put(input.getStepName() + "." + input.getOriginalName(), newValue);
     }
 
+    /*
     public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
     for (Node node : inputValuesHBox.getChildren()) {
         VBox vbox = (VBox) node;
@@ -347,7 +336,57 @@ public class FlowExecutionTabController {
         }
     }
     return true;
-}
+}*/
+
+
+    public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
+        for (Node node : inputValuesHBox.getChildren()) {
+            VBox vbox = (VBox) node;
+            Label label = (Label) vbox.getChildren().get(0);
+            String finalName;
+
+            String labelText = label.getText();
+            boolean startsWithAsterisk = false;
+            Node graphic = label.getGraphic();
+            if (graphic instanceof Text) {
+                Text asterisk = (Text) graphic;
+                startsWithAsterisk = asterisk.getText().equals("*");
+            }
+
+            finalName = labelText;
+
+            int endIndex = finalName.lastIndexOf(" (");
+            if (endIndex != -1) {
+                finalName = finalName.substring(0, endIndex);
+            }
+
+            if (startsWithAsterisk) {
+                String finalName1 = finalName;
+                Optional<Input> optionalInput = inputList.stream().filter(input1 -> input1.getFinalName().equals(finalName1)).findFirst();
+                if (optionalInput.isPresent()) {
+                    Input input = optionalInput.get();
+                    String key = input.getStepName() + "." + input.getOriginalName();
+                    if (!freeInputMap.containsKey(key) || freeInputMap.get(key).equals("")) {
+                        // Check if the TextField or Spinner has a value set programmatically
+                        Node inputNode = vbox.getChildren().get(1);
+                        if (inputNode instanceof TextField) {
+                            TextField textField = (TextField) inputNode;
+                            if (textField.getText().isEmpty()) {
+                                return false;
+                            }
+                        } else if (inputNode instanceof Spinner) {
+                            Spinner<Integer> spinner = (Spinner<Integer>) inputNode;
+                            if (spinner.getValue() == null) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     @FXML
     void StartExecuteFlowButton(ActionEvent event){
         masterDetailPane = new MasterDetailPane();
@@ -381,11 +420,9 @@ public class FlowExecutionTabController {
             TableColumn<FlowContinuationMapping, String> targetFlowColumn = new TableColumn<>("Target Flow");
             targetFlowColumn.setCellValueFactory(new PropertyValueFactory<>("targetFlow"));
             targetFlowColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
-
             TableColumn<FlowContinuationMapping, FlowContinuationMapping> actionColumn = new TableColumn<>("");
             actionColumn.setCellFactory(param -> new TableCell<FlowContinuationMapping, FlowContinuationMapping>() {
                 private final Button btn = new Button("Continue To Flow");
-
                 {
                     btn.setOnAction(event -> {
                                 FlowContinuationMapping mapping = getTableView().getItems().get(getIndex());
@@ -393,19 +430,12 @@ public class FlowExecutionTabController {
                                 String targetFlow = mapping.getTargetFlow();
                                 String sourceFlow = mapping.getSourceFlow();
 
-
                                 Map<String, Object> continuationMap = getMainController().getSystemEngineInterface().continuationFlowExecution(sourceFlow, targetFlow);
                                 getMainController().goToFlowExecutionTab(targetFlow);
                                 getMainController().initDataInFlowExecutionTab();
 
                                 setInputValuesFromContinuationMap(continuationMap);
-                                // freeInputMap = continuationMap; // Where is freeInputMap defined?
-                                System.out.println(continuationMap);
-
-                                // Handle the button click event here
-                                System.out.println("Target Flow: " + targetFlow);
-                                System.out.println("Source to Target Data Mapping: " + source2targetDataMapping);
-                            });
+                     });
 
                     btn.getStyleClass().add("continue-to-flow-button");
                 }
@@ -427,40 +457,46 @@ public class FlowExecutionTabController {
         });
     }
 
-   public void setInputValuesFromContinuationMap(Map<String, Object> continuationMap) {
-       for (Node node : inputValuesHBox.getChildren()) {
-           if (node instanceof VBox) {
-               VBox vbox = (VBox) node;
-               Label label = (Label) vbox.getChildren().get(0); // Assuming the label is always at index 0 in the VBox
-               Node inputNode = vbox.getChildren().get(1); // Assuming the input field is always at index 1 in the VBox
+    public void setInputValuesFromContinuationMap(Map<String, Object> valuesMap) {
+        for (Node node : inputValuesHBox.getChildren()) {
+            if (node instanceof VBox) {
+                VBox vbox = (VBox) node;
+                Label label = (Label) vbox.getChildren().get(0); // Assuming the label is always at index 0 in the VBox
+                Node inputNode = vbox.getChildren().get(1); // Assuming the input field is always at index 1 in the VBox
 
-               String originalName = label.getText();
-               if(label.getText().equals("TIME_TO_SPEND (sec)")){
-                   originalName = "TIME_TO_SPEND";
-               }
+                String originalName = label.getText();
+                if(label.getText().equals("TIME_TO_SPEND (sec)")){
+                    originalName = "TIME_TO_SPEND";
+                }
 
-               if (inputNode instanceof TextField) {
-                   TextField textField = (TextField) inputNode;
+                if (inputNode instanceof TextField) {
+                    TextField textField = (TextField) inputNode;
 
-                   if (continuationMap.containsKey(originalName)) {
-                       Object value = continuationMap.get(originalName);
-                       if (value instanceof String) {
-                           textField.setText((String) value);
-                       }
-                   }
-               } else if (inputNode instanceof Spinner) {
-                   Spinner<Integer> spinner = (Spinner<Integer>) inputNode;
+                    if (valuesMap.containsKey(originalName)) {
+                        Object value = valuesMap.get(originalName);
+                        if (value instanceof String) {
+                            textField.setText((String) value);
+                        }
+                    }
+                } else if (inputNode instanceof Spinner) {
+                    Spinner<Integer> spinner = (Spinner<Integer>) inputNode;
 
-                   if (continuationMap.containsKey(originalName)) {
-                       Object value = continuationMap.get(originalName);
-                       if (value instanceof Integer) {
-                           spinner.getValueFactory().setValue((Integer) value);
-                       }
-                   }
-               }
-           }
-       }
+                    if (valuesMap.containsKey(originalName)) {
+                        Object value = valuesMap.get(originalName);
+                        if (value instanceof Integer) {
+                            spinner.getValueFactory().setValue((Integer) value);
+                           // spinner.requestFocus(); // Set focus on the spinner
+
+                        }
+                    }
+                }
+            }
+        }
+
+
+        System.out.println("inputValuesHBox.getChildren(): " + inputValuesHBox.getChildren());
     }
+
 
     public void backToFlowExecutionTabAfterExecution() {
         getMainController().goToStatisticsTab();

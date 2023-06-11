@@ -41,6 +41,7 @@ public class Controller {
     private TabPane tabPane;
     String flowName;
 
+
     @FXML
     public void initialize() {
         if (headerComponentController != null) {
@@ -77,6 +78,9 @@ public class Controller {
         });
 
     }
+    public FlowExecutionTabController getFlowExecutionTabController(){
+        return flowExecutionTabController;
+    };
     public Controller() {
         this.systemEngineInterface = new systemengineImpl();
     }
@@ -142,4 +146,6 @@ public class Controller {
     public void initExecutionHistoryTableInExecutionsHistoryTab() {
         executionsHistoryTabController.initExecutionHistoryTable();
     }
+
+
 }

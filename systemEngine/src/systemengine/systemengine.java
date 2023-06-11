@@ -26,13 +26,17 @@ public interface systemengine {
     DTOFreeInputsByUserString printFreeInputsByUserString(int choice);
     DTOSingleFlowIOData getSpecificFreeInput(int flowChoice, int freeInputChoice);
     DTOFlowsExecutionList getFlowsExecutionList();
-    DTOFlowExecution getFlowExecutionDetails(int flowExecutionChoice);
     DTOFlowAndStepStatisticData getStatisticData();
     void saveToFile(String path);
     void loadFromFile(String path);
     Boolean isCurrFlowExecutionDone(String currFlowName);
     DTOFlowExecution getFlowExecutionStatus(UUID flowSessionId);
-    DTOFlowExecution getDTOFlowExecution(UUID flowId);
+
+    DTOFlowExecution getFlowExecutionDetails(int flowExecutionChoice);
+    DTOFlowExecution getDTOFlowExecutionById(UUID flowId);
+    DTOFlowExecution getDTOFlowExecutionByName(String flowName);
+
     LinkedList<FlowContinuationMapping> getAllContinuationMappingsWithSameSourceFlow(String currFlowName);
     Map<String , Object> continuationFlowExecution(String sourceFlow, String targetFlow);
+    Map<String, Object> getFreeInputsFromCurrFlow (String flowName);
 }

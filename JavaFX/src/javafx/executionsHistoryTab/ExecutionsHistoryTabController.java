@@ -7,60 +7,78 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
+import javafx.flowExecutionTab.MasterDetail.MasterDetailController;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import org.controlsfx.control.MasterDetailPane;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.io.IOException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ExecutionsHistoryTabController {
     private Controller mainController;
-    public void setMainController(Controller mainController) {
-        this.mainController = mainController;
-    }
     @FXML
     private TableView executionHistoryTable;
-
     @FXML
     private TableColumn flowNameColumn;
-
     @FXML
     private TableColumn startDateColumn;
-
     @FXML
     private TableColumn resultColumn;
-
     @FXML
     private TableColumn chooseOldFlowExecutions;
 
-
     private ObservableList<ExecutionHistoryEntry> executionHistoryData;
-
     @FXML
     private ComboBox resultFilterComboBox;
+    @FXML
+    private GridPane executionHistoryGrid;
 
+    private MasterDetailController masterDetailController;
+
+    private MasterDetailPane masterDetailPane;
 
     @FXML
-    public void initialize() {
+    private Button RerunFlow;
 
+    private String currFlowName;
+
+    @FXML
+    void rerunCurrentFlow(ActionEvent event) {
+        RerunFlow.setOnMouseClicked(e -> {
+            mainController.getFlowExecutionTabController().initDataInFlowExecutionTab();
+            mainController.getFlowExecutionTabController().initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(currFlowName));
+            mainController.goToFlowExecutionTab(currFlowName);
+            Map<String,Object> inputsValues = mainController.getSystemEngineInterface().getFreeInputsFromCurrFlow(currFlowName);
+
+            //   System.out.println("new map: " + newMap);
+            mainController.getFlowExecutionTabController().setInputValuesFromContinuationMap(inputsValues);
+        });
+    }
+
+    public void setMainController(Controller mainController) {
+        this.mainController = mainController;
+    }
+
+    @FXML
+    public void initialize() throws IOException {
+        RerunFlow.setDisable(true);
         executionHistoryTable.getStyleClass().add("execution-history-table");
         double tableWidth = executionHistoryTable.getWidth();
-        double columnWidth = tableWidth / 3.0;
+        double columnWidth = tableWidth / 4;
         flowNameColumn.setPrefWidth(columnWidth);
         startDateColumn.setPrefWidth(columnWidth);
         resultColumn.setPrefWidth(columnWidth);
         chooseOldFlowExecutions.setPrefWidth(columnWidth);
 
         executionHistoryTable.widthProperty().addListener((obs, oldWidth, newWidth) -> {
-            double newColumnWidth = newWidth.doubleValue() / 3.0;
+            double newColumnWidth = newWidth.doubleValue() / 4;
             flowNameColumn.setPrefWidth(newColumnWidth);
             startDateColumn.setPrefWidth(newColumnWidth);
             resultColumn.setPrefWidth(newColumnWidth);
@@ -70,6 +88,27 @@ public class ExecutionsHistoryTabController {
         executionHistoryTable.getSortOrder().add(startDateColumn);
         executionHistoryTable.getSortOrder().add(resultColumn);
         executionHistoryTable.getSortOrder().add(chooseOldFlowExecutions);
+
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = getClass().getResource("/javafx/flowExecutionTab/MasterDetail/masterDetails.fxml");
+        fxmlLoader.setLocation(url);
+        MasterDetailPane MasterDetailComponent = fxmlLoader.load(url.openStream());
+        MasterDetailController masterDetailController = fxmlLoader.getController();
+        this.setMasterDetailsController(masterDetailController);
+        this.masterDetailPane = MasterDetailComponent;
+        if (masterDetailController != null) {
+            masterDetailController.setExecutionsHistoryTabController(this);
+        }
+       // masterDetailPane.getStylesheets().add("/javafx/flowExecutionTab/MasterDetail/masterDetails.css");
+        masterDetailPane.getStylesheets().add("/javafx/flowExecutionTab/flowExecutionTab.css");
+
+
+        executionHistoryGrid.add(masterDetailPane, 0 , 2);
+
+    }
+
+    private void setMasterDetailsController(MasterDetailController masterDetailController) {
+        this.masterDetailController = masterDetailController;
     }
 
     public void initExecutionHistoryTable() {
@@ -99,8 +138,6 @@ public class ExecutionsHistoryTabController {
                     setStyle(""); // Reset cell style
                 } else {
                     setText(item);
-
-                    // Apply style class based on the result value
                     getStyleClass().removeAll("success-result", "warning-result", "failure-result"); // Remove existing style classes
                     if (item.equals("SUCCESS")) {
                         getStyleClass().add("success-result");
@@ -113,29 +150,29 @@ public class ExecutionsHistoryTabController {
             }
         });
 
+        chooseOldFlowExecutions.setCellFactory(column -> new TableCell<ExecutionHistoryEntry, String>() {
+            private final Button chooseButton = new Button("Choose This Flow");
+            {
+                chooseButton.setOnAction(event -> {
+                    ExecutionHistoryEntry entry = (ExecutionHistoryEntry) getTableRow().getItem();
+                    if (entry != null) {
+                        currFlowName = entry.getFlowName();
+                        initMasterDetails(currFlowName);
+                        RerunFlow.setDisable(false);
+                    }
+                });
+            }
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
 
-//        resultColumn.setCellFactory(column -> new TableCell<ExecutionHistoryEntry, String>() {
-//            @Override
-//            protected void updateItem(String item, boolean empty) {
-//                super.updateItem(item, empty);
-//
-//                if (empty || item == null) {
-//                    setText(null);
-//                    setStyle(""); // Reset cell style
-//                } else {
-//                    setText(item);
-//                    getStyleClass().removeAll("success-result", "warning-result", "failure-result"); // Remove existing style classes
-//                    if (item.equals("SUCCESS")) {
-//                        getStyleClass().add("success-result");
-//                    } else if (item.equals("WARNING")) {
-//                        getStyleClass().add("warning-result");
-//                    } else if (item.equals("FAILURE")) {
-//                        getStyleClass().add("failure-result");
-//                    }
-//                }
-//            }
-//        });
-
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(chooseButton);
+                }
+            }
+        });
     }
 
     private void initializeExecutionHistoryTable() {
@@ -167,32 +204,13 @@ public class ExecutionsHistoryTabController {
         }
     }
 
-/*    private void addSortingFunctionality() {
-        flowNameColumn.setSortType(TableColumn.SortType.ASCENDING);
-        startDateColumn.setSortType(TableColumn.SortType.ASCENDING);
-        resultColumn.setSortType(TableColumn.SortType.ASCENDING);
-        executionHistoryTable.getSortOrder().addAll(flowNameColumn, startDateColumn, resultColumn);
-        executionHistoryTable.setSortPolicy(table -> {
-            Comparator<ExecutionHistoryEntry> comparator = (entry1, entry2) -> {
-                // Customize the sorting logic based on your requirements
-                // Compare entry1 and entry2 based on the selected column
-                // Return -1, 0, or 1 depending on the comparison result
-            };
+    public void initMasterDetails(String flowName) {
+        DTOFlowExecution executedData = mainController.getSystemEngineInterface().getDTOFlowExecutionByName(flowName);
+        masterDetailController.initMasterDetailPaneController(executedData);
+        masterDetailController.updateFlowLabel(executedData);
+        masterDetailController.addStepsToMasterDetail(executedData);
 
-            FXCollections.sort(executionHistoryData, comparator);
-            return true;
-        });
     }
 
-    private void addFilteringFunctionality() {
-        // Add UI controls for filtering, e.g., choice boxes or checkboxes
-
-        // Add event handlers to the UI controls to apply filters
-        // Customize the filtering logic based on your requirements
-        // Update the executionHistoryData list with the filtered entries
-        // Call executionHistoryTable.setItems(executionHistoryData) to refresh the table
-    }*/
-
-    // Other necessary methods and event handlers
 
 }

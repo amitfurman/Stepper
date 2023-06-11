@@ -13,6 +13,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.executionsHistoryTab.ExecutionsHistoryTabController;
 import javafx.flowExecutionTab.FlowExecutionTabController;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -41,10 +42,13 @@ public class MasterDetailController {
     @FXML
     private MasterDetailPane FlowMasterDetails;
     private FlowExecutionTabController flowExecutionTabController;
+    private ExecutionsHistoryTabController flowExecutionHistoryTabController;
     private DTOFlowExecution flowExecution;
     private VBox detailPane;
     private List<String> addedStepNames = new ArrayList<>();
     private int stepCounter;
+
+    public MasterDetailPane getFlowMasterDetails() {return FlowMasterDetails;}
     public FlowExecutionTabController getFlowExecutionTabController() {
         return flowExecutionTabController;
     }
@@ -56,6 +60,9 @@ public class MasterDetailController {
     public void setFlowExecutionTabController(FlowExecutionTabController flowExecutionTabController) {
         this.flowExecutionTabController = flowExecutionTabController;
     }
+    public void setExecutionsHistoryTabController(ExecutionsHistoryTabController flowExecutionHistoryTabController) {
+        this.flowExecutionHistoryTabController = flowExecutionHistoryTabController;
+    }
     public void initMasterDetailPaneController(){
         detailPane = new VBox();
         ScrollPane scrollPane = new ScrollPane(detailPane);
@@ -64,6 +71,7 @@ public class MasterDetailController {
         StackPane stackPane = new StackPane();
         FlowMasterDetails.setMasterNode(stackPane);
     }
+
     public void initMasterDetailPaneController(DTOFlowExecution flowExecution) {
         this.flowExecution = flowExecution;
         detailPane = new VBox();
