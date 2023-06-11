@@ -107,6 +107,11 @@ public class FlowExecutionTabController {
         asterisk1.setFill(Color.RED);
         MandatoryLabel.setGraphic(asterisk1);
     }
+    public void initContinuationVbox(){
+        continuationVbox = new VBox();
+        borderPane.setBottom(continuationVbox);
+
+    }
     public void setMainController(Controller mainController) {
         this.mainController = mainController;
     }
@@ -119,6 +124,7 @@ public class FlowExecutionTabController {
     }
     public void initDataInFlowExecutionTab() {
         masterDetailController.initMasterDetailPaneController();
+        initContinuationVbox();
     }
     public void initInputsInFlowExecutionTab() {
         executeButton.setDisable(true);
@@ -486,6 +492,9 @@ public class FlowExecutionTabController {
                 }
             }
         }
+
+
+        System.out.println("inputValuesHBox.getChildren(): " + inputValuesHBox.getChildren());
     }
 
 

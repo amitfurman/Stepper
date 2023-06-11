@@ -118,7 +118,7 @@ public class systemengineImpl implements systemengine {
     public  LinkedList<FlowContinuationMapping> getAllContinuationMappingsWithSameSourceFlow(String currFlowName) {
         LinkedList<FlowContinuationMapping> sortedContinuationMappings = new LinkedList<>();
         System.out.println("getAllContinuationMappingsWithSameSourceFlow");
-        System.out.println(allContinuationMappings);
+       System.out.println(allContinuationMappings);
         for (FlowContinuationMapping mapping : allContinuationMappings) {
             if(currFlowName.equals(mapping.getSourceFlow())){
                 sortedContinuationMappings.add(mapping);

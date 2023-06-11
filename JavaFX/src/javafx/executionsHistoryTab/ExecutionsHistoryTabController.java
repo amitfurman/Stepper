@@ -53,6 +53,7 @@ public class ExecutionsHistoryTabController {
     void rerunCurrentFlow(ActionEvent event) {
         RerunFlow.setOnMouseClicked(e -> {
             mainController.getFlowExecutionTabController().initDataInFlowExecutionTab();
+            mainController.getFlowExecutionTabController().initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(currFlowName));
             mainController.goToFlowExecutionTab(currFlowName);
             Map<String,Object> inputsValues = mainController.getSystemEngineInterface().getFreeInputsFromCurrFlow(currFlowName);
 
@@ -67,6 +68,7 @@ public class ExecutionsHistoryTabController {
 
     @FXML
     public void initialize() throws IOException {
+        RerunFlow.setDisable(true);
         executionHistoryTable.getStyleClass().add("execution-history-table");
         double tableWidth = executionHistoryTable.getWidth();
         double columnWidth = tableWidth / 4;
@@ -156,6 +158,7 @@ public class ExecutionsHistoryTabController {
                     if (entry != null) {
                         currFlowName = entry.getFlowName();
                         initMasterDetails(currFlowName);
+                        RerunFlow.setDisable(false);
                     }
                 });
             }
