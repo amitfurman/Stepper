@@ -167,7 +167,6 @@ public class ExecutionsHistoryTabController {
         }
     }
 
-
 /*    private void addSortingFunctionality() {
         flowNameColumn.setSortType(TableColumn.SortType.ASCENDING);
         startDateColumn.setSortType(TableColumn.SortType.ASCENDING);
