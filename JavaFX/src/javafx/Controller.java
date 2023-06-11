@@ -78,9 +78,7 @@ public class Controller {
         });
 
     }
-    public FlowExecutionTabController getFlowExecutionTabController(){
-        return flowExecutionTabController;
-    };
+    public FlowExecutionTabController getFlowExecutionTabController(){ return flowExecutionTabController;};
     public Controller() {
         this.systemEngineInterface = new systemengineImpl();
     }
@@ -137,15 +135,11 @@ public class Controller {
         statisticsTabController.initCharts(statisticData);
     }
     public String getFlowName() { return flowName; }
-    public void initDataInFlowExecutionTab() {
-        flowExecutionTabController.initDataInFlowExecutionTab();
-    }
+    public void initDataInFlowExecutionTab() {flowExecutionTabController.initDataInFlowExecutionTab();}
     public void initInputsInFlowExecutionTab() {
         flowExecutionTabController.initInputsInFlowExecutionTab();
     }
-    public void initExecutionHistoryTableInExecutionsHistoryTab() {
-        executionsHistoryTabController.initExecutionHistoryTable();
-    }
+    public void initExecutionHistoryTableInExecutionsHistoryTab() { executionsHistoryTabController.initExecutionHistoryTable();}
 
 
 }

@@ -16,23 +16,16 @@ public class FlowContinuationMapping {
     public void addToSource2targetDataMapping(String sourceDataName, String targetDataName) {
         this.source2targetDataMapping.put(sourceDataName,targetDataName);
     }
-
-    public void setSourceFlow(String sourceFlow) {
-        this.sourceFlow = sourceFlow;
-    }
-
+    public void setSourceFlow(String sourceFlow) {this.sourceFlow = sourceFlow;}
     public void setTargetFlow(String targetFlow) {
         this.targetFlow = targetFlow;
     }
-
     public Map<String,String> getSource2targetDataMapping() {
         return source2targetDataMapping;
     }
-
     public String getSourceFlow() {
         return sourceFlow;
     }
-
     public String getTargetFlow() {
         return targetFlow;
     }

@@ -4,24 +4,18 @@ package javafx.StatisticsTab;
 import dto.DTOFlowAndStepStatisticData;
 import dto.DTOStatisticData;
 import javafx.Controller;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.geometry.Side;
 import javafx.scene.Node;
-import javafx.scene.chart.*;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class StatisticsTabController {
 
@@ -54,12 +48,10 @@ public class StatisticsTabController {
         Node label4 = AverageStepsRunTimeChartXAxis.lookup(".axis-label");
         label4.setTranslateY(10);
     }
-
     public void initCharts(DTOFlowAndStepStatisticData statisticData) {
         initFlowsChart(statisticData.getFlowsStatisticData());
         initStepsChart(statisticData.getStepsStatisticData());
     }
-
     public void initFlowsChart(List<DTOStatisticData> flowsStatisticData) {
         Platform.runLater(() -> {
             FlowNumberOfRunsChart.getData().clear();
@@ -113,7 +105,6 @@ public class StatisticsTabController {
             AverageFlowsRunTimeChart.setAnimated(false);
         });
     }
-
     public void initStepsChart(List<DTOStatisticData> stepsStatisticData) {
         Platform.runLater(() -> {
             StepNumberOfRunsChart.getData().clear();

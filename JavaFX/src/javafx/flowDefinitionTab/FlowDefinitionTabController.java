@@ -11,12 +11,10 @@ import javafx.scene.paint.Color;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class FlowDefinitionTabController {
-
     private Controller mainController;
     @FXML
     private TreeView<String> flowsTree;
@@ -77,7 +75,6 @@ public class FlowDefinitionTabController {
     public void showChosenFlow(DTOFlowDefinition flowDefinition) {
         TreeItem<String> rootItem = new TreeItem<>("Chosen Flow Details - " + flowDefinition.getName());
         rootItem.setExpanded(true); // Set the root item to be initially expanded
-        DTOAllStepperFlows allStepperFlows =  mainController.getSystemEngineInterface().getAllFlows();
 
         TreeItem<String> branchName = new TreeItem<>("Flow Name");
         chosenFlowName = flowDefinition.getName();

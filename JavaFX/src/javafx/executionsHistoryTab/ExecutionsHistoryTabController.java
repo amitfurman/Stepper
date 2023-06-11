@@ -15,10 +15,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import org.controlsfx.control.MasterDetailPane;
-
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ExecutionsHistoryTabController {
@@ -33,20 +31,15 @@ public class ExecutionsHistoryTabController {
     private TableColumn resultColumn;
     @FXML
     private TableColumn chooseOldFlowExecutions;
-
-    private ObservableList<ExecutionHistoryEntry> executionHistoryData;
     @FXML
     private ComboBox resultFilterComboBox;
     @FXML
     private GridPane executionHistoryGrid;
-
-    private MasterDetailController masterDetailController;
-
-    private MasterDetailPane masterDetailPane;
-
     @FXML
     private Button RerunFlow;
-
+    private ObservableList<ExecutionHistoryEntry> executionHistoryData;
+    private MasterDetailController masterDetailController;
+    private MasterDetailPane masterDetailPane;
     private String currFlowName;
 
     @FXML
@@ -59,11 +52,7 @@ public class ExecutionsHistoryTabController {
             mainController.getFlowExecutionTabController().setInputValuesFromContinuationMap(inputsValues);
         });
     }
-
-    public void setMainController(Controller mainController) {
-        this.mainController = mainController;
-    }
-
+    public void setMainController(Controller mainController) {this.mainController = mainController;}
     @FXML
     public void initialize() throws IOException {
         RerunFlow.setDisable(true);
@@ -97,23 +86,16 @@ public class ExecutionsHistoryTabController {
         if (masterDetailController != null) {
             masterDetailController.setExecutionsHistoryTabController(this);
         }
-       // masterDetailPane.getStylesheets().add("/javafx/flowExecutionTab/MasterDetail/masterDetails.css");
         masterDetailPane.getStylesheets().add("/javafx/flowExecutionTab/flowExecutionTab.css");
-
         executionHistoryGrid.add(masterDetailPane, 0 , 2);
     }
-
-    private void setMasterDetailsController(MasterDetailController masterDetailController) {
-        this.masterDetailController = masterDetailController;
-    }
-
+    private void setMasterDetailsController(MasterDetailController masterDetailController) {this.masterDetailController = masterDetailController;}
     public void initExecutionHistoryTable() {
         initializeExecutionHistoryTable();
         addFilteringFunctionality();
     }
-
     public void initExecutionHistoryDataList() {
-        executionHistoryData = FXCollections.observableArrayList(); // Initialize the executionHistoryData list
+        executionHistoryData = FXCollections.observableArrayList();
 
         DTOFlowsExecutionList flowsExecutionList = mainController.getSystemEngineInterface().getFlowsExecutionList();
         for (DTOFlowExecution flowExecution : flowsExecutionList.getFlowsExecutionNamesList()) {
@@ -135,12 +117,16 @@ public class ExecutionsHistoryTabController {
                 } else {
                     setText(item);
                     getStyleClass().removeAll("success-result", "warning-result", "failure-result"); // Remove existing style classes
-                    if (item.equals("SUCCESS")) {
-                        getStyleClass().add("success-result");
-                    } else if (item.equals("WARNING")) {
-                        getStyleClass().add("warning-result");
-                    } else if (item.equals("FAILURE")) {
-                        getStyleClass().add("failure-result");
+                    switch (item) {
+                        case "SUCCESS":
+                            getStyleClass().add("success-result");
+                            break;
+                        case "WARNING":
+                            getStyleClass().add("warning-result");
+                            break;
+                        case "FAILURE":
+                            getStyleClass().add("failure-result");
+                            break;
                     }
                 }
             }
@@ -171,26 +157,22 @@ public class ExecutionsHistoryTabController {
             }
         });
     }
-
     private void initializeExecutionHistoryTable() {
         initExecutionHistoryDataList();
-
         Platform.runLater(() -> {
             flowNameColumn.setCellValueFactory(new PropertyValueFactory<>("flowName"));
             startDateColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
             resultColumn.setCellValueFactory(new PropertyValueFactory<>("runResult"));
             chooseOldFlowExecutions.setCellValueFactory(new PropertyValueFactory<>(""));
+
             executionHistoryTable.setItems(executionHistoryData);
         });
-
     }
-
     private void addFilteringFunctionality() {
         resultFilterComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             filterExecutionHistoryTable((String) newValue);
         });
     }
-
     private void filterExecutionHistoryTable(String filterValue) {
         if (filterValue.equals("All")) {
             executionHistoryTable.setItems(executionHistoryData);
@@ -200,14 +182,10 @@ public class ExecutionsHistoryTabController {
             executionHistoryTable.setItems(filteredData);
         }
     }
-
     public void initMasterDetails(String flowName) {
         DTOFlowExecution executedData = mainController.getSystemEngineInterface().getDTOFlowExecutionByName(flowName);
         masterDetailController.initMasterDetailPaneController(executedData);
         masterDetailController.updateFlowLabel(executedData);
         masterDetailController.addStepsToMasterDetail(executedData);
-
     }
-
-
 }

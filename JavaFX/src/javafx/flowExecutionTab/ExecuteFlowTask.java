@@ -24,7 +24,6 @@ public class ExecuteFlowTask extends Task<Boolean> {
         this.currentFlowId = currentFlowId;
         this.isTaskFinished = isTaskFinished;
     }
-
     protected Boolean call() {
         int SLEEP_TIME = 700;
         DTOFlowExecution executedData = engineManager.getDTOFlowExecutionById(this.flowId);

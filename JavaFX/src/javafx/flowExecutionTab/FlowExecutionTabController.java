@@ -15,21 +15,23 @@ import javafx.event.ActionEvent;
 import javafx.flowExecutionTab.MasterDetail.MasterDetailController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.controlsfx.control.MasterDetailPane;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -41,21 +43,15 @@ public class FlowExecutionTabController {
     @FXML
     private GridPane flowExecutionGridPane;
     @FXML
-    private GridPane gridPane;
-    @FXML
     private HBox inputValuesHBox;
     @FXML
     private Button executeButton;
-
-    private Map<String, Object> freeInputMap;
-
-    private ObservableList<Input> inputList = FXCollections.observableArrayList();
-
-    private MasterDetailController masterDetailController;
-
-    private MasterDetailPane masterDetailPane;
     @FXML
     private Label MandatoryLabel;
+    private Map<String, Object> freeInputMap;
+    private ObservableList<Input> inputList = FXCollections.observableArrayList();
+    private MasterDetailController masterDetailController;
+    private MasterDetailPane masterDetailPane;
     private final SimpleStringProperty executedFlowIDProperty;
     private TableView<FlowContinuationMapping> continuationTableView;
     private VBox continuationVbox;
@@ -280,49 +276,9 @@ public class FlowExecutionTabController {
         boolean hasAllMandatoryInputs = hasAllMandatoryInputs(freeInputMap);
         executeButton.setDisable(!hasAllMandatoryInputs);
     }
-
     public void updateFreeInputMap(Input input, Object newValue) {
         freeInputMap.put(input.getStepName() + "." + input.getOriginalName(), newValue);
     }
-
-    /*
-    public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
-    for (Node node : inputValuesHBox.getChildren()) {
-        VBox vbox = (VBox) node;
-        Label label = (Label) vbox.getChildren().get(0);
-        String finalName;
-
-        String labelText = label.getText();
-        boolean startsWithAsterisk = false;
-        Node graphic = label.getGraphic();
-        if (graphic instanceof Text) {
-            Text asterisk = (Text) graphic;
-            startsWithAsterisk = asterisk.getText().equals("*");
-        }
-
-        finalName = labelText;
-
-        int endIndex = finalName.lastIndexOf(" (");
-        if (endIndex != -1) {
-            finalName = finalName.substring(0, endIndex);
-        }
-        
-        if (startsWithAsterisk) {
-            String finalName1 = finalName;
-            Optional<Input> optionalInput = inputList.stream().filter(input1 -> input1.getFinalName().equals(finalName1)).findFirst();
-            if (optionalInput.isPresent()) {
-                Input input = optionalInput.get();
-                String key = input.getStepName() + "." + input.getOriginalName();
-                if (!freeInputMap.containsKey(key) || freeInputMap.get(key).equals("")) {
-                    return false;
-                }
-            }
-        }
-    }
-    return true;
-}*/
-
-
     public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
         for (Node node : inputValuesHBox.getChildren()) {
             VBox vbox = (VBox) node;
@@ -338,7 +294,6 @@ public class FlowExecutionTabController {
             }
 
             finalName = labelText;
-
             int endIndex = finalName.lastIndexOf(" (");
             if (endIndex != -1) {
                 finalName = finalName.substring(0, endIndex);
@@ -370,7 +325,6 @@ public class FlowExecutionTabController {
         }
         return true;
     }
-
     @FXML
     void StartExecuteFlowButton(ActionEvent event){
         masterDetailPane = new MasterDetailPane();
@@ -386,7 +340,6 @@ public class FlowExecutionTabController {
 
         new Thread(currentRunningTask).start();
     }
-
     public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings) {
         Platform.runLater(() -> {
             if (continuationTableView == null) {
@@ -413,19 +366,15 @@ public class FlowExecutionTabController {
                     btn.getStyleClass().add("continue-to-flow-button");
                     btn.setOnAction(event -> {
                                 FlowContinuationMapping mapping = getTableView().getItems().get(getIndex());
-                                Map<String, String> source2targetDataMapping = mapping.getSource2targetDataMapping();
                                 String targetFlow = mapping.getTargetFlow();
                                 String sourceFlow = mapping.getSourceFlow();
 
                                 Map<String, Object> continuationMap = getMainController().getSystemEngineInterface().continuationFlowExecution(sourceFlow, targetFlow);
                                 getMainController().goToFlowExecutionTab(targetFlow);
                                 getMainController().initDataInFlowExecutionTab();
-
                                 setInputValuesFromContinuationMap(continuationMap);
                      });
-
                 }
-
                 @Override
                 protected void updateItem(FlowContinuationMapping item, boolean empty) {
                     super.updateItem(item, empty);
@@ -437,12 +386,10 @@ public class FlowExecutionTabController {
                 }
             });
             actionColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
-
             continuationTableView.getColumns().setAll(targetFlowColumn, actionColumn);
             continuationTableView.setItems(FXCollections.observableArrayList(mappings));
         });
     }
-
     public void setInputValuesFromContinuationMap(Map<String, Object> valuesMap) {
         for (Node node : inputValuesHBox.getChildren()) {
             if (node instanceof VBox) {
@@ -478,13 +425,48 @@ public class FlowExecutionTabController {
                 }
             }
         }
-        System.out.println("inputValuesHBox.getChildren(): " + inputValuesHBox.getChildren());
     }
-
-
     public void backToFlowExecutionTabAfterExecution() {
         getMainController().goToStatisticsTab();
         initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(mainController.getFlowName()));
         getMainController().initExecutionHistoryTableInExecutionsHistoryTab();
     }
 }
+
+
+    /*
+    public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
+    for (Node node : inputValuesHBox.getChildren()) {
+        VBox vbox = (VBox) node;
+        Label label = (Label) vbox.getChildren().get(0);
+        String finalName;
+
+        String labelText = label.getText();
+        boolean startsWithAsterisk = false;
+        Node graphic = label.getGraphic();
+        if (graphic instanceof Text) {
+            Text asterisk = (Text) graphic;
+            startsWithAsterisk = asterisk.getText().equals("*");
+        }
+
+        finalName = labelText;
+
+        int endIndex = finalName.lastIndexOf(" (");
+        if (endIndex != -1) {
+            finalName = finalName.substring(0, endIndex);
+        }
+
+        if (startsWithAsterisk) {
+            String finalName1 = finalName;
+            Optional<Input> optionalInput = inputList.stream().filter(input1 -> input1.getFinalName().equals(finalName1)).findFirst();
+            if (optionalInput.isPresent()) {
+                Input input = optionalInput.get();
+                String key = input.getStepName() + "." + input.getOriginalName();
+                if (!freeInputMap.containsKey(key) || freeInputMap.get(key).equals("")) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}*/

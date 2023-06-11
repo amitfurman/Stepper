@@ -18,21 +18,18 @@ import java.io.FileNotFoundException;
 
 public class HeaderController {
     private Controller mainController;
-    private String filePath;
-    private boolean isErrorMessageShown = false;
     @FXML
     private Button chooseXMLFileButton;
     @FXML
     private TextArea chosenXmlFilePath;
     @FXML
     private Label errorMessageLabel;
+    private String filePath;
+    private boolean isErrorMessageShown = false;
 
     @FXML
     private void initialize() {
         chosenXmlFilePath.setEditable(false);
-    }
-    public void setMainController(Controller mainController) {
-        this.mainController = mainController;
     }
     @FXML
     void clickToChooseXMLFileButton(ActionEvent event) {
@@ -67,6 +64,9 @@ public class HeaderController {
     @FXML
     void viewChosenXmlFilePath(ActionEvent event) {
         chosenXmlFilePath.setText(filePath.toString());
+    }
+    public void setMainController(Controller mainController) {
+        this.mainController = mainController;
     }
     private void showError(String message) {
         if (!isErrorMessageShown) {

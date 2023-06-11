@@ -8,7 +8,6 @@ import dto.DTOFlowExecution;
 import dto.DTOSingleFlowIOData;
 import dto.DTOStepExecutionData;
 import flow.api.FlowIO.IO;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -32,9 +31,11 @@ import javafx.stage.Stage;
 import org.controlsfx.control.MasterDetailPane;
 import steps.api.DataNecessity;
 import steps.api.StepResult;
-
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -71,7 +72,6 @@ public class MasterDetailController {
         StackPane stackPane = new StackPane();
         FlowMasterDetails.setMasterNode(stackPane);
     }
-
     public void initMasterDetailPaneController(DTOFlowExecution flowExecution) {
         this.flowExecution = flowExecution;
         detailPane = new VBox();
@@ -96,8 +96,7 @@ public class MasterDetailController {
             FlowMasterDetails.setDividerPosition(0.3);
         }
     }
-    public void addStepsToMasterDetail(DTOFlowExecution flowExecution)
-    {
+    public void addStepsToMasterDetail(DTOFlowExecution flowExecution) {
         this.flowExecution = flowExecution;
         for (DTOStepExecutionData stepExecution : flowExecution.getStepExecutionDataList()) {
             String stepName = stepExecution.getFinalNameStep();
@@ -146,7 +145,6 @@ public class MasterDetailController {
         return detailLabel;
     }
     private void showDetails(String text, boolean isFirstLabel) {
-        // Remove highlight from previously selected labels
         for (Node child : detailPane.getChildren()) {
             if (child instanceof Label) {
                 Label label = (Label) child;
@@ -369,10 +367,10 @@ public class MasterDetailController {
 
         Hyperlink viewDataLink = new Hyperlink("View Data");
         viewDataLink.setOnAction(event -> {
-            Stage popupwindow = new Stage();
+            Stage popupWindow = new Stage();
 
-            popupwindow.initModality(Modality.APPLICATION_MODAL);
-            popupwindow.setTitle("Data Values");
+            popupWindow.initModality(Modality.APPLICATION_MODAL);
+            popupWindow.setTitle("Data Values");
             Label label1 = new Label("Data Values");
             label1.getStyleClass().add("data-values-label");
             VBox layout = new VBox(10);
@@ -391,8 +389,8 @@ public class MasterDetailController {
             Scene scene1 = new Scene(layout, 700, 400);
             scene1.getStylesheets().add(getClass().getResource("MasterDetail.css").toExternalForm());
 
-            popupwindow.setScene(scene1);
-            popupwindow.showAndWait();
+            popupWindow.setScene(scene1);
+            popupWindow.showAndWait();
         });
         return  viewDataLink;
     }

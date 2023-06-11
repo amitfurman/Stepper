@@ -3,7 +3,6 @@ package systemengine;
 import dto.*;
 import exceptions.*;
 import flow.api.FlowDefinition;
-import flow.api.FlowDefinitionImpl;
 import flow.api.FlowIO.SingleFlowIOData;
 import flow.execution.FlowExecution;
 import flow.execution.runner.FlowExecutor;
@@ -32,19 +31,20 @@ public class systemengineImpl implements systemengine {
     public int numberOfThreads;
     public LinkedList<FlowContinuationMapping> allContinuationMappings;
 
+    public systemengineImpl() {
+        this.flowDefinitionList = new LinkedList<>();
+        this.flowExecutionList = new LinkedList<>();
+        this.statisticData = new FlowAndStepStatisticData();
+        this.instance = this;
+    }
     static public systemengine getInstance() {
         return instance;
     }
-
     @Override
     public Map<String , Object> continuationFlowExecution(String sourceFlowName, String targetFlowName) {
         FlowExecution sourceFlowExecution = flowExecutionList.stream().filter(flow->flow.getFlowName().equals(sourceFlowName)).findFirst().get();
         FlowContinuationMapping currContinuation = allContinuationMappings.stream().filter(mapping->mapping.getSourceFlow().equals(sourceFlowName) && mapping.getTargetFlow().equals(targetFlowName)).findFirst().get();
         Map<String,String> source2targetDataMapping = currContinuation.getSource2targetDataMapping();
-
-        System.out.println("sourceFlowExecution.getDataValues() = " + sourceFlowExecution.getDataValues());
-        System.out.println(sourceFlowExecution);
-        System.out.println(currContinuation);
         Map<String , Object> continuationDataMap = new HashMap<>();
 
         for (Map.Entry<String,String> entry : source2targetDataMapping.entrySet()) {
@@ -55,19 +55,16 @@ public class systemengineImpl implements systemengine {
         }
         return continuationDataMap;
     }
-
     @Override
     public Boolean isCurrFlowExecutionDone(String currFlowName){
         FlowExecution currFlow = flowExecutionList.stream().filter(flow -> flow.getFlowName().equals(currFlowName)).findFirst().get();
         return currFlow.isComplete();
     }
-
     @Override
     public DTOFlowExecution getFlowExecutionStatus(UUID flowSessionId){
         FlowExecution flowExecution = flowExecutionList.stream().filter(flow -> flow.getUniqueId().equals(flowSessionId)).findFirst().get();
         return new DTOFlowExecution(flowExecution);
     }
-
     @Override
      synchronized public DTOFlowExecution activateFlowByName(String flowName, DTOFreeInputsFromUser freeInputs) {
         FlowDefinition currFlow = flowDefinitionList.stream().filter(flow -> flow.getName().equals(flowName)).findFirst().get();
@@ -76,13 +73,8 @@ public class systemengineImpl implements systemengine {
         flowExecutionList.addFirst(flowExecution);
 
         threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
-
-        DTOFlowExecution dtoFlowExecution = new DTOFlowExecution(flowExecution);
-
-        return dtoFlowExecution;
+        return  new DTOFlowExecution(flowExecution);
     }
-
-
     @Override
     public DTOFlowExecution activateFlow(int flowChoice, DTOFreeInputsFromUser freeInputs) {
         FlowDefinition currFlow = flowDefinitionList.get(flowChoice - 1);
@@ -92,15 +84,6 @@ public class systemengineImpl implements systemengine {
         flowExecutionList.addFirst(flowExecution);
         return new DTOFlowExecution(flowExecution);
     }
-
-    public systemengineImpl() {
-        this.flowDefinitionList = new LinkedList<>();
-        this.flowExecutionList = new LinkedList<>();
-        this.statisticData = new FlowAndStepStatisticData();
-        this.instance = this;
-       // this.allContinuationMappings = new LinkedList<>();
-    }
-
     @Override
     public void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD,
             UnExistsOutput, FreeInputsWithSameNameAndDifferentType, InitialInputIsNotExist, UnExistsFlow, UnExistsDataInTargetFlow, FileNotExistsException, FileIsNotXmlTypeException {
@@ -113,27 +96,20 @@ public class systemengineImpl implements systemengine {
         allContinuationMappings = new LinkedList<>(flows.getAllContinuationMappings());
         threadPool = Executors.newFixedThreadPool(numberOfThreads);
     }
-
     @Override
     public  LinkedList<FlowContinuationMapping> getAllContinuationMappingsWithSameSourceFlow(String currFlowName) {
         LinkedList<FlowContinuationMapping> sortedContinuationMappings = new LinkedList<>();
-        System.out.println("getAllContinuationMappingsWithSameSourceFlow");
-       System.out.println(allContinuationMappings);
         for (FlowContinuationMapping mapping : allContinuationMappings) {
             if(currFlowName.equals(mapping.getSourceFlow())){
                 sortedContinuationMappings.add(mapping);
             }
         }
-        System.out.println("sortedContinuationMappings");
-        System.out.println(sortedContinuationMappings);
         return sortedContinuationMappings;
     }
-
     @Override
     public DTOAllStepperFlows getAllFlows() {
         return new DTOAllStepperFlows(flowDefinitionList);
     }
-
     @Override
     public DTOFlowsNames printFlowsName() {
         int index = 1;
@@ -145,18 +121,15 @@ public class systemengineImpl implements systemengine {
         }
         return new DTOFlowsNames(flowData);
     }
-
     @Override
     public List<FlowDefinition> getFlowDefinitionList() {
         return flowDefinitionList;
     }
-
     @Override
     public DTOFlowDefinition IntroduceTheChosenFlow(int flowNumber) {
         FlowDefinition flow = flowDefinitionList.get(flowNumber - 1);
         return new DTOFlowDefinition(flow);
     }
-
     @Override
     public boolean hasAllMandatoryInputs(int flowChoice, Map<String, Object> freeInputMap) {
         for (SingleFlowIOData input : flowDefinitionList.get(flowChoice - 1).getFlowFreeInputs()) {
@@ -167,8 +140,6 @@ public class systemengineImpl implements systemengine {
         }
         return true;
     }
-
-    //////check!!!!!!!!!
     @Override
     public DTOFreeInputsByUserString printFreeInputsByUserString(int choice) {
         AtomicInteger freeInputsIndex = new AtomicInteger(1);
@@ -186,27 +157,22 @@ public class systemengineImpl implements systemengine {
                 });
         return new DTOFreeInputsByUserString(freeInputsData, flowDefinitionList.get(choice - 1).getFlowFreeInputs().size());
     }
-
     @Override
     public DTOSingleFlowIOData getSpecificFreeInput(int flowChoice, int freeInputChoice) {
         return new DTOSingleFlowIOData(flowDefinitionList.get(flowChoice - 1).getFlowFreeInputs().get(freeInputChoice - 1));
     }
-
     @Override
     public DTOFlowsExecutionList getFlowsExecutionList() {
         return new DTOFlowsExecutionList(flowExecutionList);
     }
-
     @Override
     public DTOFlowExecution getFlowExecutionDetails(int flowExecutionChoice) {
         return new DTOFlowExecution(flowExecutionList.get(flowExecutionChoice - 1));
     }
-
     @Override
     public DTOFlowAndStepStatisticData getStatisticData() {
         return new DTOFlowAndStepStatisticData(statisticData);
     }
-
     @Override
     public void saveToFile(String path) {
         try (ObjectOutputStream out =
@@ -219,7 +185,6 @@ public class systemengineImpl implements systemengine {
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public void loadFromFile(String path) {
         try (ObjectInputStream in =
@@ -232,7 +197,6 @@ public class systemengineImpl implements systemengine {
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public DTOFlowExecution getDTOFlowExecutionById(UUID flowId) {
         FlowExecution executedFlow = flowExecutionList.stream().filter(flow -> flow.getUniqueId().equals(flowId)).findFirst().get();
@@ -243,11 +207,9 @@ public class systemengineImpl implements systemengine {
         FlowExecution executedFlow = flowExecutionList.stream().filter(flow -> flow.getFlowName().equals(flowName)).findFirst().get();
         return new DTOFlowExecution(executedFlow);
     }
-
     @Override
     public Map<String, Object> getFreeInputsFromCurrFlow (String flowName){
         FlowExecution executedFlow = flowExecutionList.stream().filter(flow -> flow.getFlowName().equals(flowName)).findFirst().get();
-
         Map<String, Object> freeInputsMap = new HashMap<>();
 
         executedFlow.getIOlist()

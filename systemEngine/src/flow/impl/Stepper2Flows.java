@@ -6,13 +6,10 @@ import flow.api.*;
 import flow.mapping.FlowAutomaticMapping;
 import flow.mapping.FlowContinuationMapping;
 import flow.mapping.FlowCustomMapping;
+import jaxb.schema.generated.*;
 import steps.StepDefinitionRegistry;
 import steps.api.DataDefinitionDeclaration;
-import jaxb.schema.generated.*;
-
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class Stepper2Flows {
@@ -33,7 +30,7 @@ public class Stepper2Flows {
             flow = new FlowDefinitionImpl(currFlow.getName(), currFlow.getSTFlowDescription());
 
             //add steps to flow
-            for (STStepInFlow step : currFlow.getSTStepsInFlow().getSTStepInFlow()) {;
+            for (STStepInFlow step : currFlow.getSTStepsInFlow().getSTStepInFlow()) {
                 StepDefinitionRegistry myEnum = StepDefinitionRegistry.valueOf(step.getName().toUpperCase().replace(" ", "_"));
                 if (step.getAlias() != null && step.isContinueIfFailing()!=null) {
                     flow.addStepToFlow(new StepUsageDeclarationImpl(myEnum.getStepDefinition(), step.isContinueIfFailing(), step.getAlias()));
@@ -126,16 +123,7 @@ public class Stepper2Flows {
                 }
             }
 
-            //initial input
-/*            if(currFlow.getSTInitialInputValues() != null) {
-                for(STInitialInputValue initValue : currFlow.getSTInitialInputValues().getSTInitialInputValue()) {
-                    if(!flow.getIOlist().stream().anyMatch(io -> io.getFinalName().equals(initValue.getInputName())))
-                        throw new InitialInputIsNotExist();
-                    flow.addToInitialInputMap(initValue.getInputName(), initValue.getInitialValue());
-                }
-                flow.removeOptionalOutputsFromInitialInputs();
-            }*/
-
+            //initial values
             if(currFlow.getSTInitialInputValues() != null) {
                 for(STInitialInputValue initValue : currFlow.getSTInitialInputValues().getSTInitialInputValue()) {
                     if(!flow.getIOlist().stream().anyMatch(io -> io.getFinalName().equals(initValue.getInputName())))
@@ -148,7 +136,14 @@ public class Stepper2Flows {
                         }
                     }
                     for (String stepName : stepsWithInitialInput) {
-                        flow.addToInitialInputMap(stepName + "." + initValue.getInputName(), initValue.getInitialValue());
+                        String value = initValue.getInitialValue();
+                        Object convertedValue;
+                        try {
+                            convertedValue = Integer.parseInt(value);
+                        } catch (NumberFormatException e) {
+                            convertedValue = value;
+                        }
+                        flow.addToInitialInputMap(stepName + "." + initValue.getInputName(),convertedValue);
                     }
                 }
                 flow.removeOptionalOutputsFromInitialInputs();
