@@ -28,11 +28,12 @@ public class FileDumper extends AbstractStepDefinition {
         Instant start = Instant.now();
         String content = context.getDataValue(IO_NAMES.CONTENT, String.class);
         String fileName = context.getDataValue(IO_NAMES.FILE_NAME, String.class);
+        System.out.println(fileName);
+
         File file = new File(fileName);
 
         System.out.println("FileDumper");
         System.out.println(content);
-        System.out.println(fileName);
 
 /*
         if (!file.isFile()) {

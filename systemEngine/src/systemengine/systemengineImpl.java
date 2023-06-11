@@ -234,9 +234,38 @@ public class systemengineImpl implements systemengine {
     }
 
     @Override
-    public DTOFlowExecution getDTOFlowExecution(UUID flowId) {
+    public DTOFlowExecution getDTOFlowExecutionById(UUID flowId) {
         FlowExecution executedFlow = flowExecutionList.stream().filter(flow -> flow.getUniqueId().equals(flowId)).findFirst().get();
         return new DTOFlowExecution(executedFlow);
+    }
+    @Override
+    public DTOFlowExecution getDTOFlowExecutionByName(String flowName) {
+        FlowExecution executedFlow = flowExecutionList.stream().filter(flow -> flow.getFlowName().equals(flowName)).findFirst().get();
+        return new DTOFlowExecution(executedFlow);
+    }
+
+    @Override
+    public Map<String, Object> getFreeInputsFromCurrFlow (String flowName){
+        FlowExecution executedFlow = flowExecutionList.stream().filter(flow -> flow.getFlowName().equals(flowName)).findFirst().get();
+
+        Map<String, Object> freeInputsMap = new HashMap<>();
+
+        executedFlow.getIOlist()
+                .stream()
+                .filter(io -> executedFlow.getFreeInputsValues().keySet().contains(io.getStepName() + "." + io.getOriginalName()))
+                .forEach(io -> {
+                    String key = executedFlow.getFreeInputsValues().keySet()
+                            .stream()
+                            .filter(input -> input.equals(io.getStepName() + "." + io.getOriginalName()))
+                            .findFirst()
+                            .orElse(null);
+                    if (key != null) {
+                        freeInputsMap.put(io.getFinalName(), executedFlow.getFreeInputsValues().get(key));
+                    }
+                });
+
+        System.out.println("freeInputsMap" + freeInputsMap  );
+        return freeInputsMap;
     }
 
 }
