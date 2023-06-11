@@ -39,7 +39,7 @@ import java.util.*;
 public class FlowExecutionTabController {
     private Controller mainController;
     @FXML
-    private BorderPane borderPane;
+    private GridPane flowExecutionGridPane;
     @FXML
     private GridPane gridPane;
     @FXML
@@ -56,7 +56,6 @@ public class FlowExecutionTabController {
     private MasterDetailPane masterDetailPane;
     @FXML
     private Label MandatoryLabel;
-
     private final SimpleStringProperty executedFlowIDProperty;
     private TableView<FlowContinuationMapping> continuationTableView;
     private VBox continuationVbox;
@@ -72,10 +71,6 @@ public class FlowExecutionTabController {
         freeInputMap = new HashMap<>();
         continuationVbox = new VBox();
         executeButton.setDisable(true);
-        AnchorPane.setTopAnchor(borderPane, 0.0);
-        AnchorPane.setBottomAnchor(borderPane, 0.0);
-        AnchorPane.setLeftAnchor(borderPane, 0.0);
-        AnchorPane.setRightAnchor(borderPane, 0.0);
 
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = getClass().getResource("MasterDetail/masterDetails.fxml");
@@ -90,18 +85,8 @@ public class FlowExecutionTabController {
 
         VBox masterDetailPaneVbox = new VBox(MasterDetailComponent);
         VBox.setVgrow(masterDetailPane, Priority.ALWAYS);
-        borderPane.setCenter(masterDetailPaneVbox);
-       // borderPane.setBottom(continuationVbox);
-
-        double totalHeight = borderPane.getPrefHeight();
-        double topHeight = totalHeight * 0.23;
-        double bottomHeight = totalHeight * 0.2;
-        double centerHeight = totalHeight * 0.57;
-
-       VBox.setMargin(masterDetailPaneVbox, new Insets(topHeight, 0, bottomHeight, 0));
-        masterDetailPaneVbox.setMaxHeight(centerHeight);
-        gridPane.setPrefHeight(topHeight);
-        continuationVbox.setPrefHeight(bottomHeight);
+        flowExecutionGridPane.add(masterDetailPaneVbox,0,1);
+        flowExecutionGridPane.add(continuationVbox,0,2);
 
         Text asterisk1 = new Text("*");
         asterisk1.setFill(Color.RED);
@@ -109,12 +94,7 @@ public class FlowExecutionTabController {
     }
     public void initContinuationVbox(){
         continuationVbox = new VBox();
-        borderPane.setBottom(continuationVbox);
-        double totalHeight = borderPane.getPrefHeight();
-        double bottomHeight = totalHeight * 0.2;
-        continuationVbox.setPrefHeight(bottomHeight);
-
-
+        flowExecutionGridPane.add(continuationVbox,0,2);
     }
     public void setMainController(Controller mainController) {
         this.mainController = mainController;
@@ -430,6 +410,7 @@ public class FlowExecutionTabController {
             actionColumn.setCellFactory(param -> new TableCell<FlowContinuationMapping, FlowContinuationMapping>() {
                 private final Button btn = new Button("Continue To Flow");
                 {
+                    btn.getStyleClass().add("continue-to-flow-button");
                     btn.setOnAction(event -> {
                                 FlowContinuationMapping mapping = getTableView().getItems().get(getIndex());
                                 Map<String, String> source2targetDataMapping = mapping.getSource2targetDataMapping();
@@ -443,7 +424,6 @@ public class FlowExecutionTabController {
                                 setInputValuesFromContinuationMap(continuationMap);
                      });
 
-                    btn.getStyleClass().add("continue-to-flow-button");
                 }
 
                 @Override
@@ -498,8 +478,6 @@ public class FlowExecutionTabController {
                 }
             }
         }
-
-
         System.out.println("inputValuesHBox.getChildren(): " + inputValuesHBox.getChildren());
     }
 

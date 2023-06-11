@@ -45,7 +45,6 @@ public class ExecuteFlowTask extends Task<Boolean> {
         }
         executedData = engineManager.getDTOFlowExecutionById(UUID.fromString(currentFlowId.getValue()));
         DTOFlowExecution finalExecutedData1 = executedData;
-        System.out.println(finalExecutedData1.getFlowName());
         Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData1));
 
         masterDetailController.getFlowExecutionTabController().backToFlowExecutionTabAfterExecution();

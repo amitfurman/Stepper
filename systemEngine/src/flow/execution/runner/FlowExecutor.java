@@ -66,8 +66,6 @@ public class FlowExecutor implements Runnable {
             context.setCurrInvokingStep(flowExecution.getFlowDefinition().getFlowSteps().get(i).getFinalStepName(), flowExecution.getFlowDefinition().getFlowSteps().get(i).getStepDefinition().name());
             StepUsageDeclaration stepUsageDeclaration = flowExecution.getFlowDefinition().getFlowSteps().get(i);
 
-            System.out.println("Executing step " + stepUsageDeclaration.getStepDefinition().name());
-
             StepResult stepResult = stepUsageDeclaration.getStepDefinition().invoke(context);
             context.setFinishToExecutionStep();
 
@@ -77,6 +75,10 @@ public class FlowExecutor implements Runnable {
                 updateStepStatisticData(flowStatisticData, stepStatistic);
                 if (!(stepUsageDeclaration.skipIfFail())) {
                     flowExecutionResult = FlowExecutionResult.FAILURE;
+                    context.setStepResultToCurrInvokingStep(stepResult);
+                    context.addCurrInvokingStepToStepExecutionList();
+                    flowExecution.addStepExecution(context.getCurrInvokingStep());
+                    flowExecution.setDataValues(context.getDataValues());
                     break;
                 }
             }else if (stepResult.equals(StepResult.WARNING)) {
@@ -91,7 +93,6 @@ public class FlowExecutor implements Runnable {
             context.setStepResultToCurrInvokingStep(stepResult);
             context.addCurrInvokingStepToStepExecutionList();
             flowExecution.addStepExecution(context.getCurrInvokingStep());
-
             flowExecution.setDataValues(context.getDataValues());
          //   flowExecution.setStepExecutionDataList(context.getStepExecutionList());
 

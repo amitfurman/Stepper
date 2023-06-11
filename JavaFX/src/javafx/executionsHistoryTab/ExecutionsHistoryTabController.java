@@ -100,9 +100,7 @@ public class ExecutionsHistoryTabController {
        // masterDetailPane.getStylesheets().add("/javafx/flowExecutionTab/MasterDetail/masterDetails.css");
         masterDetailPane.getStylesheets().add("/javafx/flowExecutionTab/flowExecutionTab.css");
 
-
         executionHistoryGrid.add(masterDetailPane, 0 , 2);
-
     }
 
     private void setMasterDetailsController(MasterDetailController masterDetailController) {
