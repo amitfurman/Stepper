@@ -1,6 +1,7 @@
 package javafx;
 
 import javafx.StatisticsTab.StatisticsTabController;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.executionsHistoryTab.ExecutionsHistoryTabController;
 import javafx.flowDefinitionTab.FlowDefinitionTabController;
@@ -15,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.net.URL;
 
@@ -73,6 +75,17 @@ public class desktopUI extends Application {
         mainController.setFlowExecutionTabController(flowExecutionTabController);
         mainController.setExecutionsHistoryTabController(executionsHistoryTabController);
         mainController.setStatisticsTabController(StatisticsTabController);
+
+/*        // Set the initial opacity to 0
+        mainComponent.setOpacity(0);
+
+        // Create a fade transition
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), mainComponent);
+        fadeTransition.setFromValue(0);
+        fadeTransition.setToValue(1);
+
+        // Play the fade-in animation
+        fadeTransition.play();*/
         Scene scene = new Scene(mainComponent, 600, 400);
         primaryStage.setScene(scene);
         primaryStage.show();

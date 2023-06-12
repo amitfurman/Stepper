@@ -96,10 +96,11 @@ public class ExecutionsHistoryTabController {
     }
     public void initExecutionHistoryDataList() {
         executionHistoryData = FXCollections.observableArrayList();
-
         DTOFlowsExecutionList flowsExecutionList = mainController.getSystemEngineInterface().getFlowsExecutionList();
+        System.out.println("flowsExecutionList: " + flowsExecutionList.getFlowsExecutionNamesList().size());
         for (DTOFlowExecution flowExecution : flowsExecutionList.getFlowsExecutionNamesList()) {
             String flowName = flowExecution.getFlowName();
+            System.out.println("flowName: " + flowName);
             String startDate = flowExecution.getStartTimeFormatted();
             String runResult = flowExecution.getFlowExecutionResult().toString();
             ExecutionHistoryEntry historyEntry = new ExecutionHistoryEntry(flowName, startDate, runResult);

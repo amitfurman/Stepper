@@ -427,9 +427,10 @@ public class FlowExecutionTabController {
         }
     }
     public void backToFlowExecutionTabAfterExecution() {
+        System.out.println("backToFlowExecutionTabAfterExecution");
+        getMainController().initExecutionHistoryTableInExecutionsHistoryTab();
         getMainController().goToStatisticsTab();
         initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(mainController.getFlowName()));
-        getMainController().initExecutionHistoryTableInExecutionsHistoryTab();
     }
 }
 
