@@ -31,6 +31,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.MasterDetailPane;
+import systemengine.Input;
 
 import javax.swing.*;
 import java.io.File;
@@ -48,7 +49,7 @@ public class FlowExecutionTabController {
     private Button executeButton;
     @FXML
     private Label MandatoryLabel;
-    private Map<String, Object> freeInputMap;
+    private Map<String, Object> freeInputMap; //StepName.OriginalName, newValue
     private ObservableList<Input> inputList = FXCollections.observableArrayList();
     private MasterDetailController masterDetailController;
     private MasterDetailPane masterDetailPane;
@@ -89,8 +90,8 @@ public class FlowExecutionTabController {
         MandatoryLabel.setGraphic(asterisk1);
     }
     public void initContinuationVbox(){
-        continuationVbox = new VBox();
-        flowExecutionGridPane.add(continuationVbox,0,2);
+        if (continuationTableView != null)
+            continuationTableView.getItems().clear();
     }
     public void setMainController(Controller mainController) {
         this.mainController = mainController;
@@ -119,7 +120,6 @@ public class FlowExecutionTabController {
             setInputValues(input, freeInput);
             inputList.add(input);
 
-
             Label label = new Label((input.getFinalName().equals("TIME_TO_SPEND") ? input.getFinalName() + " (sec)" : input.getFinalName()));
             setLabelSetting(label);
             if (input.getMandatory().equals("MANDATORY")) {
@@ -145,7 +145,6 @@ public class FlowExecutionTabController {
                 else if(input.getOriginalName().equals("SOURCE")){
                     openChooseDialog(textField);
                     textField.setCursor(Cursor.HAND);
-
                 }
                 vbox.getChildren().addAll(label, textField);
                 vbox.setVgrow(textField, Priority.ALWAYS);
@@ -363,17 +362,19 @@ public class FlowExecutionTabController {
             actionColumn.setCellFactory(param -> new TableCell<FlowContinuationMapping, FlowContinuationMapping>() {
                 private final Button btn = new Button("Continue To Flow");
                 {
+
                     btn.getStyleClass().add("continue-to-flow-button");
                     btn.setOnAction(event -> {
                                 FlowContinuationMapping mapping = getTableView().getItems().get(getIndex());
                                 String targetFlow = mapping.getTargetFlow();
                                 String sourceFlow = mapping.getSourceFlow();
-
-                                Map<String, Object> continuationMap = getMainController().getSystemEngineInterface().continuationFlowExecution(sourceFlow, targetFlow);
+                                                        //Map<String, Object> continuationMap = getMainController().getSystemEngineInterface().continuationFlowExecution();
                                 getMainController().goToFlowExecutionTab(targetFlow);
                                 getMainController().initDataInFlowExecutionTab();
-                                setInputValuesFromContinuationMap(continuationMap);
-                     });
+                                List<Input> valuesList = getMainController().getSystemEngineInterface().getValuesListFromContinuationMap(sourceFlow, targetFlow);
+                                setInputValuesFromContinuationMap(valuesList);
+                                initContinuationVbox();
+                    });
                 }
                 @Override
                 protected void updateItem(FlowContinuationMapping item, boolean empty) {
@@ -390,7 +391,7 @@ public class FlowExecutionTabController {
             continuationTableView.setItems(FXCollections.observableArrayList(mappings));
         });
     }
-    public void setInputValuesFromContinuationMap(Map<String, Object> valuesMap) {
+    public void setInputValuesFromContinuationMap(List<Input> valuesList) {
         for (Node node : inputValuesHBox.getChildren()) {
             if (node instanceof VBox) {
                 VBox vbox = (VBox) node;
@@ -398,34 +399,127 @@ public class FlowExecutionTabController {
                 Node inputNode = vbox.getChildren().get(1); // Assuming the input field is always at index 1 in the VBox
 
                 String originalName = label.getText();
-                if(label.getText().equals("TIME_TO_SPEND (sec)")){
+                if (label.getText().equals("TIME_TO_SPEND (sec)")) {
                     originalName = "TIME_TO_SPEND";
                 }
+                String finalOriginalName = originalName;
+                valuesList.stream()
+                        .filter(data -> data.getOriginalName().equals(finalOriginalName))
+                        .findFirst()
+                        .ifPresent(input -> {
+                            if (inputNode instanceof TextField) {
+                                TextField textField = (TextField) inputNode;
+                                Object value = input.getValue();
+                                if (value instanceof String) {
+                                    textField.setText((String) value);
+                                    updateFreeInputMap(input, value);
+                                }
+                            } else if (inputNode instanceof Spinner) {
+                                Spinner<Integer> spinner = (Spinner<Integer>) inputNode;
+                                Object value = input.getValue();
+                                if (value instanceof Integer) {
+                                    spinner.getValueFactory().setValue((Integer) value);
+                                    updateFreeInputMap(input, value);
+                                }
+                            }
+                        });
+                System.out.println("Input values from continuation map: " + freeInputMap);
 
-                if (inputNode instanceof TextField) {
+
+
+                /*if (inputNode instanceof TextField) {
                     TextField textField = (TextField) inputNode;
 
-                    if (valuesMap.containsKey(originalName)) {
-                        Object value = valuesMap.get(originalName);
+                    String finalOriginalName = originalName;
+                    Input input = valuesList.stream().filter(data -> data.getOriginalName().equals(finalOriginalName)).findFirst().get();
+                    if (input != null) {
+                        Object value = input.getValue();
                         if (value instanceof String) {
                             textField.setText((String) value);
+                            updateFreeInputMap(input, value);
                         }
                     }
                 } else if (inputNode instanceof Spinner) {
                     Spinner<Integer> spinner = (Spinner<Integer>) inputNode;
 
-                    if (valuesMap.containsKey(originalName)) {
-                        Object value = valuesMap.get(originalName);
+                    String finalOriginalName = originalName;
+                    Input input = valuesList.stream().filter(data -> data.getOriginalName().equals(finalOriginalName)).findFirst().get();
+                    if (input != null) {
+                        Object value = input.getValue();
                         if (value instanceof Integer) {
                             spinner.getValueFactory().setValue((Integer) value);
-                           // spinner.requestFocus(); // Set focus on the spinner
-
+                            updateFreeInputMap(input, value);
                         }
                     }
-                }
+
+
+
+
+
+                    String finalOriginalName = originalName;
+                    Optional<Input> inputOptional = valuesList.stream()
+                            .filter(data -> data.getOriginalName().equals(finalOriginalName))
+                            .findFirst();
+                    if (inputOptional != null) {
+
+                        Object value = inputOptional.get().getValue();
+                        if (value instanceof String) {
+                            textField.setText((String) value);
+                            updateFreeInputMap(inputOptional.get(), value);
+
+                        } else if (inputNode instanceof Spinner) {
+                            Spinner<Integer> spinner = (Spinner<Integer>) inputNode;
+
+                            String finalOriginalName1 = originalName;
+                            Optional<Input> inputOptional1 = valuesList.stream()
+                                    .filter(data -> data.getOriginalName().equals(finalOriginalName1))
+                                    .findFirst();
+                            if (inputOptional1 != null) {
+                                Object value1 = inputOptional1.get().getValue();
+                                if (value instanceof Integer) {
+                                    spinner.getValueFactory().setValue((Integer) value);
+                                    updateFreeInputMap(inputOptional1.get(), value1);
+                                }
+                            }
+                        }
+                    }
+*/              }
             }
-        }
     }
+
+
+
+
+/*                    if (inputOptional.isPresent()) {
+                        Input input = inputOptional.get();
+
+                        if (inputNode instanceof TextField) {
+                            TextField textField = (TextField) inputNode;
+
+                            Object value = input.getValue();
+                            if (value instanceof String) {
+                                textField.setText((String) value);
+                                updateFreeInputMap(input, value);
+                            }
+                        } else if (inputNode instanceof Spinner) {
+                            Spinner<Integer> spinner = (Spinner<Integer>) inputNode;
+
+                            Object value = input.getValue();
+                            if (value instanceof Integer) {
+                                spinner.getValueFactory().setValue((Integer) value);
+                                updateFreeInputMap(input, value);
+                            }
+                        }
+                    }
+
+
+                    String finalOriginalName = originalName;
+                    Optional<Input> inputOptional = valuesList.stream()
+                            .filter(data -> data.getOriginalName().equals(finalOriginalName))
+                            .findFirst();*/
+
+                        //Input input = valuesList.stream().filter(data -> data.getOriginalName().equals(finalOriginalName)).findFirst().get();
+
     public void backToFlowExecutionTabAfterExecution() {
         System.out.println("backToFlowExecutionTabAfterExecution");
         getMainController().initExecutionHistoryTableInExecutionsHistoryTab();

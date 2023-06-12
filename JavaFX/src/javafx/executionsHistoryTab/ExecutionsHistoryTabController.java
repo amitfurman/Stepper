@@ -15,8 +15,11 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import org.controlsfx.control.MasterDetailPane;
+import systemengine.Input;
+
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 public class ExecutionsHistoryTabController {
@@ -46,9 +49,8 @@ public class ExecutionsHistoryTabController {
     void rerunCurrentFlow(ActionEvent event) {
         RerunFlow.setOnMouseClicked(e -> {
             mainController.getFlowExecutionTabController().initDataInFlowExecutionTab();
-            mainController.getFlowExecutionTabController().initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(currFlowName));
             mainController.goToFlowExecutionTab(currFlowName);
-            Map<String,Object> inputsValues = mainController.getSystemEngineInterface().getFreeInputsFromCurrFlow(currFlowName);
+            List<Input> inputsValues = mainController.getSystemEngineInterface().getFreeInputsFromCurrFlow(currFlowName);
             mainController.getFlowExecutionTabController().setInputValuesFromContinuationMap(inputsValues);
         });
     }

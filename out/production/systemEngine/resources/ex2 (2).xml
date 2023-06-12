@@ -50,14 +50,17 @@
 				<ST-StepInFlow name="Spend Some Time"/>
 				<ST-StepInFlow name="Files Deleter"/>
 			</ST-StepsInFlow>
-			<ST-InitialInputValues>
-				<ST-InitialInputValue input-name="TIME_TO_SPEND" initial-value="60"/>
-			</ST-InitialInputValues>
+			<ST-Continuations>
+				<ST-Continuation target-flow="Store Command Result">
+					<ST-Continuation-Mapping source-data="TOTAL_FOUND" target-data="TIME_TO_SPEND"/>
+				</ST-Continuation>
+			</ST-Continuations>
 		</ST-Flow>
 		<ST-Flow name="Store Command Result">
 			<ST-FlowDescription>Invoke a command line and plots its output to a file. The file is then zipped</ST-FlowDescription>				
 			<ST-FlowOutput>CONTENT</ST-FlowOutput>
 			<ST-StepsInFlow>
+				<ST-StepInFlow name="Spend Some Time"/>
 				<ST-StepInFlow name="Command Line"/>
 				<ST-StepInFlow name="File Dumper"/>
 				<ST-StepInFlow name="Zipper"/>
