@@ -24,7 +24,9 @@ public class HeaderController {
     private TextArea chosenXmlFilePath;
     @FXML
     private Label errorMessageLabel;
+
     private String filePath;
+
     private boolean isErrorMessageShown = false;
 
     @FXML

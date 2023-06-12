@@ -20,10 +20,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -49,12 +46,19 @@ public class FlowExecutionTabController {
     private Button executeButton;
     @FXML
     private Label MandatoryLabel;
+
     private Map<String, Object> freeInputMap; //StepName.OriginalName, newValue
+
     private ObservableList<Input> inputList = FXCollections.observableArrayList();
+
     private MasterDetailController masterDetailController;
+
     private MasterDetailPane masterDetailPane;
+
     private final SimpleStringProperty executedFlowIDProperty;
+
     private TableView<FlowContinuationMapping> continuationTableView;
+
     private VBox continuationVbox;
 
     public FlowExecutionTabController() {
@@ -67,7 +71,25 @@ public class FlowExecutionTabController {
     public void initialize() throws IOException {
         freeInputMap = new HashMap<>();
         continuationVbox = new VBox();
+
+        //continuationVbox = new HBox();
+        //continuationHbox.setAlignment(Pos.CENTER);
         executeButton.setDisable(true);
+
+        //flowExecutionGridPane.setHgrow(continuationHbox, Priority.SOMETIMES);
+        //continuationHbox.setMaxWidth(flowExecutionGridPane.getMaxWidth());
+
+        //flowExecutionGridPane.setHgap(10); // Sets the horizontal gap between columns to 10 pixels
+       // flowExecutionGridPane.setVgap(10); // Sets the vertical gap between rows to 10 pixels
+
+       // Set the column span of the HBox
+        //GridPane.setColumnSpan(continuationHbox, Integer.MAX_VALUE);
+ /*
+        // Set constraints for the column to make it grow horizontally
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setPercentWidth(100);
+        flowExecutionGridPane.getColumnConstraints().add(columnConstraints);
+        */
 
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = getClass().getResource("MasterDetail/masterDetails.fxml");
@@ -83,7 +105,11 @@ public class FlowExecutionTabController {
         VBox masterDetailPaneVbox = new VBox(MasterDetailComponent);
         VBox.setVgrow(masterDetailPane, Priority.ALWAYS);
         flowExecutionGridPane.add(masterDetailPaneVbox,0,1);
-        flowExecutionGridPane.add(continuationVbox,0,2);
+        ScrollPane scrollPane = new ScrollPane(continuationVbox);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+
+        flowExecutionGridPane.add(scrollPane,0,2);
 
         Text asterisk1 = new Text("*");
         asterisk1.setFill(Color.RED);
@@ -345,12 +371,10 @@ public class FlowExecutionTabController {
                 continuationTableView = new TableView<>();
                 Label titleLabel = new Label("Flow Continuation Table");
                 titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+                continuationVbox.getChildren().add(continuationTableView);
 
-                VBox vbox = new VBox();
-                vbox.getChildren().addAll(titleLabel, continuationTableView);
-
-                vbox.getStyleClass().add("flow-continuation-table");
-                continuationVbox.getChildren().add(vbox);
+                 continuationVbox.getStyleClass().add("flow-continuation-table");
+                //continuationHbox.getChildren().add(vbox);
             } else {
                 continuationTableView.getItems().clear();
             }
@@ -423,102 +447,9 @@ public class FlowExecutionTabController {
                                 }
                             }
                         });
-                System.out.println("Input values from continuation map: " + freeInputMap);
-
-
-
-                /*if (inputNode instanceof TextField) {
-                    TextField textField = (TextField) inputNode;
-
-                    String finalOriginalName = originalName;
-                    Input input = valuesList.stream().filter(data -> data.getOriginalName().equals(finalOriginalName)).findFirst().get();
-                    if (input != null) {
-                        Object value = input.getValue();
-                        if (value instanceof String) {
-                            textField.setText((String) value);
-                            updateFreeInputMap(input, value);
-                        }
-                    }
-                } else if (inputNode instanceof Spinner) {
-                    Spinner<Integer> spinner = (Spinner<Integer>) inputNode;
-
-                    String finalOriginalName = originalName;
-                    Input input = valuesList.stream().filter(data -> data.getOriginalName().equals(finalOriginalName)).findFirst().get();
-                    if (input != null) {
-                        Object value = input.getValue();
-                        if (value instanceof Integer) {
-                            spinner.getValueFactory().setValue((Integer) value);
-                            updateFreeInputMap(input, value);
-                        }
-                    }
-
-
-
-
-
-                    String finalOriginalName = originalName;
-                    Optional<Input> inputOptional = valuesList.stream()
-                            .filter(data -> data.getOriginalName().equals(finalOriginalName))
-                            .findFirst();
-                    if (inputOptional != null) {
-
-                        Object value = inputOptional.get().getValue();
-                        if (value instanceof String) {
-                            textField.setText((String) value);
-                            updateFreeInputMap(inputOptional.get(), value);
-
-                        } else if (inputNode instanceof Spinner) {
-                            Spinner<Integer> spinner = (Spinner<Integer>) inputNode;
-
-                            String finalOriginalName1 = originalName;
-                            Optional<Input> inputOptional1 = valuesList.stream()
-                                    .filter(data -> data.getOriginalName().equals(finalOriginalName1))
-                                    .findFirst();
-                            if (inputOptional1 != null) {
-                                Object value1 = inputOptional1.get().getValue();
-                                if (value instanceof Integer) {
-                                    spinner.getValueFactory().setValue((Integer) value);
-                                    updateFreeInputMap(inputOptional1.get(), value1);
-                                }
-                            }
-                        }
-                    }
-*/              }
             }
+        }
     }
-
-
-
-
-/*                    if (inputOptional.isPresent()) {
-                        Input input = inputOptional.get();
-
-                        if (inputNode instanceof TextField) {
-                            TextField textField = (TextField) inputNode;
-
-                            Object value = input.getValue();
-                            if (value instanceof String) {
-                                textField.setText((String) value);
-                                updateFreeInputMap(input, value);
-                            }
-                        } else if (inputNode instanceof Spinner) {
-                            Spinner<Integer> spinner = (Spinner<Integer>) inputNode;
-
-                            Object value = input.getValue();
-                            if (value instanceof Integer) {
-                                spinner.getValueFactory().setValue((Integer) value);
-                                updateFreeInputMap(input, value);
-                            }
-                        }
-                    }
-
-
-                    String finalOriginalName = originalName;
-                    Optional<Input> inputOptional = valuesList.stream()
-                            .filter(data -> data.getOriginalName().equals(finalOriginalName))
-                            .findFirst();*/
-
-                        //Input input = valuesList.stream().filter(data -> data.getOriginalName().equals(finalOriginalName)).findFirst().get();
 
     public void backToFlowExecutionTabAfterExecution() {
         System.out.println("backToFlowExecutionTabAfterExecution");
@@ -527,41 +458,3 @@ public class FlowExecutionTabController {
         initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(mainController.getFlowName()));
     }
 }
-
-
-    /*
-    public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
-    for (Node node : inputValuesHBox.getChildren()) {
-        VBox vbox = (VBox) node;
-        Label label = (Label) vbox.getChildren().get(0);
-        String finalName;
-
-        String labelText = label.getText();
-        boolean startsWithAsterisk = false;
-        Node graphic = label.getGraphic();
-        if (graphic instanceof Text) {
-            Text asterisk = (Text) graphic;
-            startsWithAsterisk = asterisk.getText().equals("*");
-        }
-
-        finalName = labelText;
-
-        int endIndex = finalName.lastIndexOf(" (");
-        if (endIndex != -1) {
-            finalName = finalName.substring(0, endIndex);
-        }
-
-        if (startsWithAsterisk) {
-            String finalName1 = finalName;
-            Optional<Input> optionalInput = inputList.stream().filter(input1 -> input1.getFinalName().equals(finalName1)).findFirst();
-            if (optionalInput.isPresent()) {
-                Input input = optionalInput.get();
-                String key = input.getStepName() + "." + input.getOriginalName();
-                if (!freeInputMap.containsKey(key) || freeInputMap.get(key).equals("")) {
-                    return false;
-                }
-            }
-        }
-    }
-    return true;
-}*/

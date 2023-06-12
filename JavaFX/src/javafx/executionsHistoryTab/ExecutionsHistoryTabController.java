@@ -16,11 +16,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import org.controlsfx.control.MasterDetailPane;
 import systemengine.Input;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
 public class ExecutionsHistoryTabController {
     private Controller mainController;
