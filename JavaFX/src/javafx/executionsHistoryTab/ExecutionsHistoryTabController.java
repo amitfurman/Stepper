@@ -19,6 +19,7 @@ import systemengine.Input;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ExecutionsHistoryTabController {
     private Controller mainController;
@@ -97,16 +98,17 @@ public class ExecutionsHistoryTabController {
     public void initExecutionHistoryDataList() {
         executionHistoryData = FXCollections.observableArrayList();
         DTOFlowsExecutionList flowsExecutionList = mainController.getSystemEngineInterface().getFlowsExecutionList();
-        System.out.println("flowsExecutionList: " + flowsExecutionList.getFlowsExecutionNamesList().size());
-        for (DTOFlowExecution flowExecution : flowsExecutionList.getFlowsExecutionNamesList()) {
-            String flowName = flowExecution.getFlowName();
-            System.out.println("flowName: " + flowName);
-            String startDate = flowExecution.getStartTimeFormatted();
-            String runResult = flowExecution.getFlowExecutionResult().toString();
-            ExecutionHistoryEntry historyEntry = new ExecutionHistoryEntry(flowName, startDate, runResult);
-            executionHistoryData.add(historyEntry);
-        }
 
+        List<DTOFlowExecution> executedFlows = flowsExecutionList.getFlowsExecutionNamesList().stream().filter(flow-> flow.getFlowExecutionResult() != null).collect(Collectors.toList());
+        executedFlows.stream().forEach(
+                    flow -> {
+                    String flowName = flow.getFlowName();
+                    String startDate = flow.getStartTimeFormatted();
+                    String runResult = flow.getFlowExecutionResult().toString();
+                    ExecutionHistoryEntry historyEntry = new ExecutionHistoryEntry(flowName, startDate, runResult);
+                    executionHistoryData.add(historyEntry);
+                }
+        );
         resultColumn.setCellFactory(column -> new TableCell<ExecutionHistoryEntry, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {

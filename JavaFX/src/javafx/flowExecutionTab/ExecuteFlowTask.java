@@ -42,12 +42,12 @@ public class ExecuteFlowTask extends Task<Boolean> {
                 Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException ignored) {}
         }
+
         executedData = engineManager.getDTOFlowExecutionById(UUID.fromString(currentFlowId.getValue()));
         DTOFlowExecution finalExecutedData1 = executedData;
         Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData1));
 
         masterDetailController.getFlowExecutionTabController().backToFlowExecutionTabAfterExecution();
-
         return Boolean.TRUE;
     }
 }

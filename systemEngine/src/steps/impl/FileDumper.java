@@ -28,21 +28,8 @@ public class FileDumper extends AbstractStepDefinition {
         Instant start = Instant.now();
         String content = context.getDataValue(IO_NAMES.CONTENT, String.class);
         String fileName = context.getDataValue(IO_NAMES.FILE_NAME, String.class);
-        System.out.println(fileName);
 
         File file = new File(fileName);
-
-        System.out.println("FileDumper");
-        System.out.println(content);
-
-/*
-        if (!file.isFile()) {
-            context.storeLogLineAndSummaryLine("Step failed because the target path is not a file.");
-            context.storeDataValue("RESULT", StepResult.FAILURE.toString() + "! Failed because the target path is not a file");
-            context.storeStepTotalTime(start);
-            return StepResult.FAILURE;
-        }
-*/
 
         if (file.exists()) {
             context.storeLogLineAndSummaryLine("Step failed because the target file path already exists.");

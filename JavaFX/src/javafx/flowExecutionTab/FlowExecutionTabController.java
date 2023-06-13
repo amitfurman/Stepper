@@ -59,7 +59,8 @@ public class FlowExecutionTabController {
 
     private TableView<FlowContinuationMapping> continuationTableView;
 
-    private VBox continuationVbox;
+    @FXML
+    private AnchorPane continuationAnchorPane;
 
     public FlowExecutionTabController() {
         executedFlowIDProperty = new SimpleStringProperty();
@@ -70,27 +71,9 @@ public class FlowExecutionTabController {
     @FXML
     public void initialize() throws IOException {
         freeInputMap = new HashMap<>();
-        continuationVbox = new VBox();
 
-        //continuationVbox = new HBox();
-        //continuationHbox.setAlignment(Pos.CENTER);
         executeButton.setDisable(true);
-
-        //flowExecutionGridPane.setHgrow(continuationHbox, Priority.SOMETIMES);
-        //continuationHbox.setMaxWidth(flowExecutionGridPane.getMaxWidth());
-
-        //flowExecutionGridPane.setHgap(10); // Sets the horizontal gap between columns to 10 pixels
-       // flowExecutionGridPane.setVgap(10); // Sets the vertical gap between rows to 10 pixels
-
-       // Set the column span of the HBox
-        //GridPane.setColumnSpan(continuationHbox, Integer.MAX_VALUE);
- /*
-        // Set constraints for the column to make it grow horizontally
-        ColumnConstraints columnConstraints = new ColumnConstraints();
-        columnConstraints.setPercentWidth(100);
-        flowExecutionGridPane.getColumnConstraints().add(columnConstraints);
-        */
-
+        flowExecutionGridPane.setVgap(5);
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = getClass().getResource("MasterDetail/masterDetails.fxml");
         fxmlLoader.setLocation(url);
@@ -105,11 +88,6 @@ public class FlowExecutionTabController {
         VBox masterDetailPaneVbox = new VBox(MasterDetailComponent);
         VBox.setVgrow(masterDetailPane, Priority.ALWAYS);
         flowExecutionGridPane.add(masterDetailPaneVbox,0,1);
-        ScrollPane scrollPane = new ScrollPane(continuationVbox);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-
-        flowExecutionGridPane.add(scrollPane,0,2);
 
         Text asterisk1 = new Text("*");
         asterisk1.setFill(Color.RED);
@@ -355,7 +333,6 @@ public class FlowExecutionTabController {
         masterDetailPane = new MasterDetailPane();
         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
 
-        System.out.println(freeInputMap);
         DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
         setExecutedFlowID(flowExecution.getUniqueIdByUUID());
 
@@ -368,13 +345,17 @@ public class FlowExecutionTabController {
     public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings) {
         Platform.runLater(() -> {
             if (continuationTableView == null) {
-                continuationTableView = new TableView<>();
-                Label titleLabel = new Label("Flow Continuation Table");
-                titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
-                continuationVbox.getChildren().add(continuationTableView);
 
-                 continuationVbox.getStyleClass().add("flow-continuation-table");
-                //continuationHbox.getChildren().add(vbox);
+                continuationTableView = new TableView<>();
+                continuationAnchorPane.getChildren().add(continuationTableView);
+                continuationAnchorPane.setTopAnchor(continuationTableView, 0.0);
+                continuationAnchorPane.setBottomAnchor(continuationTableView, 0.0);
+                continuationAnchorPane.setLeftAnchor(continuationTableView, 0.0);
+                continuationAnchorPane.setRightAnchor(continuationTableView, 0.0);
+                continuationTableView.setMinHeight(0.0);
+                continuationTableView.setMaxHeight(0.0);
+
+                continuationTableView.getStyleClass().add("flow-continuation-table");
             } else {
                 continuationTableView.getItems().clear();
             }
@@ -392,7 +373,6 @@ public class FlowExecutionTabController {
                                 FlowContinuationMapping mapping = getTableView().getItems().get(getIndex());
                                 String targetFlow = mapping.getTargetFlow();
                                 String sourceFlow = mapping.getSourceFlow();
-                                                        //Map<String, Object> continuationMap = getMainController().getSystemEngineInterface().continuationFlowExecution();
                                 getMainController().goToFlowExecutionTab(targetFlow);
                                 getMainController().initDataInFlowExecutionTab();
                                 List<Input> valuesList = getMainController().getSystemEngineInterface().getValuesListFromContinuationMap(sourceFlow, targetFlow);
@@ -452,7 +432,6 @@ public class FlowExecutionTabController {
     }
 
     public void backToFlowExecutionTabAfterExecution() {
-        System.out.println("backToFlowExecutionTabAfterExecution");
         getMainController().initExecutionHistoryTableInExecutionsHistoryTab();
         getMainController().goToStatisticsTab();
         initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(mainController.getFlowName()));

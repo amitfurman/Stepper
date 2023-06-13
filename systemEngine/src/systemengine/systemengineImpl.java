@@ -268,20 +268,12 @@ public class systemengineImpl implements systemengine {
         for (Map.Entry<String, Object> entry : valuesMap.entrySet()){
             Input input = new Input();
             input.setFinalName(entry.getKey());
-            System.out.println(entry.getKey());
-            System.out.println(entry.getValue());
             input.setValue(entry.getValue());
             SingleFlowIOData IO = targetFlow.getIOlist().stream().filter(io->io.getFinalName().equals(entry.getKey())).findFirst().get();
             input.setOriginalName(IO.getOriginalName());
             input.setStepName(IO.getStepName());
             input.setType(IO.getDD());
             input.setMandatory(IO.getNecessity().toString());
-
-            System.out.println(input.getStepName());
-            System.out.println(input.getOriginalName());
-            System.out.println(input.getFinalName());
-            System.out.println(input.getValue());
-
             valuesList.add(input);
         }
 

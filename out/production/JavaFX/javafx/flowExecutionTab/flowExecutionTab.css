@@ -55,8 +55,7 @@
 }
 
 .flow-continuation-table .label {
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
+    -fx-font-size: 12px;
 }
 
 .flow-continuation-table .table-cell {
