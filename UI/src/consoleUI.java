@@ -73,7 +73,7 @@ public class consoleUI {
                         exitProgram();
                         break;
                     default:
-                        System.out.println("Invalid choice, please choose again");
+                        System.out.println("Invalid choice, please choose again\n");
                         break;
                 }
             }
