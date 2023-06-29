@@ -9,5 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="systemEngine" />
     <orderEntry type="library" name="controlsfx-8.40.14" level="project" />
+    <orderEntry type="library" name="okhttp-4.9.1" level="project" />
+    <orderEntry type="module" module-name="Client" />
   </component>
 </module>
