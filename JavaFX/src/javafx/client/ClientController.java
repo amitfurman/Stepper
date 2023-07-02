@@ -32,7 +32,7 @@ import java.util.SplittableRandom;
 import static login.util.Constants.JHON_DOE;
 import static login.util.Constants.LOGIN_PAGE_FXML_RESOURCE_LOCATION;
 
-public class ClientController implements HttpStatusUpdate {
+public class ClientController{
     @FXML
     private Parent httpStatusComponent;
     @FXML private StatusController httpStatusComponentController;
@@ -49,17 +49,16 @@ public class ClientController implements HttpStatusUpdate {
         currentUserName = new SimpleStringProperty(JHON_DOE);
     }
 
-    @FXML
-    public void initialize() throws IOException {
-        userGreetingLabel.textProperty().bind(Bindings.concat("Hello ", currentUserName));
+    public void init() throws IOException {
+       // userGreetingLabel.textProperty().bind(Bindings.concat("Hello ", currentUserName));
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = getClass().getResource("header/header.fxml");
+        URL url = getClass().getResource("/javafx/header/header.fxml");
         fxmlLoader.setLocation(url);
         GridPane headerComponent = fxmlLoader.load(url.openStream());
         HeaderController headerController = fxmlLoader.getController();
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("source.fxml");
+        url = getClass().getResource("/javafx/source.fxml");
         fxmlLoader.setLocation(url);
         mainComponent = fxmlLoader.load(url.openStream());
         Controller mainController = fxmlLoader.getController();
@@ -68,20 +67,20 @@ public class ClientController implements HttpStatusUpdate {
         borderPane.setTop(headerComponent);
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("flowDefinitionTab/flowDefinitionTab.fxml");
+        url = getClass().getResource("/javafx/flowDefinitionTab/flowDefinitionTab.fxml");
         fxmlLoader.setLocation(url);
         Tab flowDefinitionTabComponent = fxmlLoader.load(url.openStream());
         FlowDefinitionTabController flowDefinitionTabController =  fxmlLoader.getController();
 
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("flowExecutionTab/flowExecutionTab.fxml");
+        url = getClass().getResource("/javafx/flowExecutionTab/flowExecutionTab.fxml");
         fxmlLoader.setLocation(url);
         Tab flowExecutionTabComponent = fxmlLoader.load(url.openStream());
         FlowExecutionTabController flowExecutionTabController =  fxmlLoader.getController();
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("executionsHistoryTab/executionsHistoryTab.fxml");
+        url = getClass().getResource("/javafx/executionsHistoryTab/executionsHistoryTab.fxml");
         fxmlLoader.setLocation(url);
         Tab executionsHistoryTabComponent = fxmlLoader.load(url.openStream());
         ExecutionsHistoryTabController executionsHistoryTabController =  fxmlLoader.getController();
@@ -104,6 +103,11 @@ public class ClientController implements HttpStatusUpdate {
     }
 
     public void switchToMainClient() {
+        try {
+            init();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Scene newScene = new Scene(mainComponent);
         this.primaryStage.setScene(newScene);
     }
@@ -155,10 +159,10 @@ public class ClientController implements HttpStatusUpdate {
         }
     }*/
 
-    @Override
+/*    @Override
     public void updateHttpLine(String line) {
         httpStatusComponentController.addHttpStatusLine(line);
-    }
+    }*/
 
 /*    public void switchToChatRoom() {
         setMainPanelTo(chatRoomComponent);

@@ -45,6 +45,7 @@ public class ClientMain extends Application {
             loginController = fxmlLoader.getController();
             clientController = new ClientController();
             clientController.setStage(primaryStage);
+            loginController.setClientMainController(clientController);
 
             Scene scene = new Scene(root, 700, 600);
             primaryStage.setScene(scene);
