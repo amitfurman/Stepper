@@ -84,10 +84,14 @@ public class Controller {
     }
     public systemengine getSystemEngineInterface() {return systemEngineInterface;}
     public void showFlowsTree() {
-        flowDefinitionTabController.showFlowsTree();
+        if (flowDefinitionTabController != null)
+          flowDefinitionTabController.showFlowsTree();
     }
     public TreeView<String> getFlowsTree() {
-        return flowDefinitionTabController.getFlowsTree();
+        if (flowDefinitionTabController!=null)
+            return flowDefinitionTabController.getFlowsTree();
+        else
+            return null;
     }
     public void setHeaderComponentController(HeaderController headerComponentController) {
         this.headerComponentController = headerComponentController;
@@ -110,7 +114,8 @@ public class Controller {
         statisticsTabController.setMainController(this);
     }
     public void setFlowDetailsTree() {
-        flowDefinitionTabController.setFlowDetailsTree();
+        if (flowDefinitionTabController!=null)
+            flowDefinitionTabController.setFlowDetailsTree();
     }
     public void goToFlowExecutionTab(String chosenFlowName) {
         flowName = chosenFlowName;
@@ -135,10 +140,8 @@ public class Controller {
         statisticsTabController.initCharts(statisticData);
     }
     public String getFlowName() { return flowName; }
-    public void initDataInFlowExecutionTab() {flowExecutionTabController.initDataInFlowExecutionTab();}
-    public void initInputsInFlowExecutionTab() {
-        flowExecutionTabController.initInputsInFlowExecutionTab();
-    }
+    public void initDataInFlowExecutionTab() {if (flowExecutionTabController!=null) flowExecutionTabController.initDataInFlowExecutionTab();}
+    public void initInputsInFlowExecutionTab() { if (flowExecutionTabController!=null) flowExecutionTabController.initInputsInFlowExecutionTab();}
     public void initExecutionHistoryTableInExecutionsHistoryTab() { executionsHistoryTabController.initExecutionHistoryTable();}
 
 

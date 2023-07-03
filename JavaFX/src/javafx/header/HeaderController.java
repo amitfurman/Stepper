@@ -13,8 +13,12 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import javax.xml.bind.JAXBException;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.file.Files;
+
+import static login.util.Constants.UPLOAD_FILE;
 
 public class HeaderController {
     private Controller mainController;
@@ -33,7 +37,67 @@ public class HeaderController {
     private void initialize() {
         chosenXmlFilePath.setEditable(false);
     }
+
     @FXML
+    void clickToChooseXMLFileButton(ActionEvent event) throws IOException {
+        mainController.initDataInFlowExecutionTab();
+        mainController.initInputsInFlowExecutionTab();
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose XML File");
+
+        Stage stage = (Stage) chooseXMLFileButton.getScene().getWindow();
+        File selectedFile = fileChooser.showOpenDialog(stage);
+        filePath = selectedFile.getAbsolutePath();
+
+        if (selectedFile != null) {
+            String filename = selectedFile.getName();
+            String contentType = Files.probeContentType(selectedFile.toPath());
+
+            try (InputStream inputStream = new FileInputStream(selectedFile)) {
+                HttpURLConnection connection = (HttpURLConnection) new URL(UPLOAD_FILE).openConnection();
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+
+                // Set request headers
+                connection.setRequestProperty("Content-Type", contentType);
+                connection.setRequestProperty("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+
+                // Write file content to the request body
+                try (OutputStream outputStream = connection.getOutputStream()) {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                }
+
+                int responseCode = connection.getResponseCode();
+                String responseMessage = connection.getResponseMessage();
+                mainController.getSystemEngineInterface().cratingFlowFromXml(filePath);
+                hideError();
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    System.out.println("File uploaded successfully: " + responseMessage);
+                } else {
+                    System.out.println("Server returned the following response code: " + responseCode + " " + responseMessage);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }  catch (DuplicateFlowsNames | UnExistsStep | OutputsWithSameName | MandatoryInputsIsntUserFriendly |
+                      UnExistsData | SourceStepBeforeTargetStep | TheSameDD | UnExistsOutput |
+                      FreeInputsWithSameNameAndDifferentType | InitialInputIsNotExist |
+                      JAXBException | UnExistsFlow | UnExistsDataInTargetFlow |FileNotExistsException | FileIsNotXmlTypeException e) {
+                showError(e.getMessage());
+            }
+
+            viewChosenXmlFilePath(event);
+        }
+    }
+
+    /* @FXML
     void clickToChooseXMLFileButton(ActionEvent event) {
         mainController.initDataInFlowExecutionTab();
         mainController.initInputsInFlowExecutionTab();
@@ -62,7 +126,7 @@ public class HeaderController {
             showError(e.getMessage());
             mainController.getFlowsTree().setVisible(false);
         }
-    }
+    }*/
     @FXML
     void viewChosenXmlFilePath(ActionEvent event) {
         chosenXmlFilePath.setText(filePath.toString());

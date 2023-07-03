@@ -22,13 +22,13 @@ public class Main extends Application {
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/javafx/heaart.png")));
 
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = getClass().getResource("header/header.fxml");
+        URL url = getClass().getResource("/javafx/header/header.fxml");
         fxmlLoader.setLocation(url);
         GridPane headerComponent = fxmlLoader.load(url.openStream());
         HeaderController headerController = fxmlLoader.getController();
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("source.fxml");
+        url = getClass().getResource("/javafx/source.fxml");
         fxmlLoader.setLocation(url);
         ScrollPane mainComponent = fxmlLoader.load(url.openStream());
         Controller mainController = fxmlLoader.getController();
@@ -38,13 +38,13 @@ public class Main extends Application {
 
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("executionsHistoryTab/executionsHistoryTab.fxml");
+        url = getClass().getResource("/javafx/executionsHistoryTab/executionsHistoryTab.fxml");
         fxmlLoader.setLocation(url);
         Tab executionsHistoryTabComponent = fxmlLoader.load(url.openStream());
         ExecutionsHistoryTabController executionsHistoryTabController =  fxmlLoader.getController();
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("StatisticsTab/StatisticsTab.fxml");
+        url = getClass().getResource("/javafx/StatisticsTab/StatisticsTab.fxml");
         fxmlLoader.setLocation(url);
         Tab StatisticsTabComponent = fxmlLoader.load(url.openStream());
         StatisticsTabController StatisticsTabController =  fxmlLoader.getController();
