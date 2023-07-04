@@ -38,7 +38,7 @@
       </HBox>
       <VBox alignment="CENTER" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0">
          <children>
-            <Label fx:id="stepperTitle" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="600.0" stylesheets="@../source.css" text="Stepper" textOverrun="CENTER_WORD_ELLIPSIS" wrapText="true">
+            <Label fx:id="stepperTitle" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="600.0" stylesheets="@../source.css" text="Stepper - Administrator" textOverrun="CENTER_WORD_ELLIPSIS" wrapText="true">
                <cursor>
                   <Cursor fx:constant="NONE" />
                </cursor>

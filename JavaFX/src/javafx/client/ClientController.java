@@ -12,6 +12,7 @@ import javafx.flowExecutionTab.FlowExecutionTabController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.header.HeaderController;
+import javafx.headerClient.HeaderClientController;
 import javafx.login.LoginController;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -52,10 +53,12 @@ public class ClientController{
     public void init() throws IOException {
        // userGreetingLabel.textProperty().bind(Bindings.concat("Hello ", currentUserName));
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = getClass().getResource("/javafx/header/header.fxml");
+        URL url = getClass().getResource("/javafx/headerClient/headerClient.fxml");
         fxmlLoader.setLocation(url);
         GridPane headerComponent = fxmlLoader.load(url.openStream());
-        HeaderController headerController = fxmlLoader.getController();
+        HeaderClientController headerController = fxmlLoader.getController();
+        headerController.setClientController(this);
+        headerController.updateNameLabel();
 
         fxmlLoader = new FXMLLoader();
         url = getClass().getResource("/javafx/source.fxml");
@@ -123,6 +126,10 @@ public class ClientController{
         AnchorPane.setTopAnchor(pane, 1.0);
         AnchorPane.setLeftAnchor(pane, 1.0);
         AnchorPane.setRightAnchor(pane, 1.0);
+    }
+
+    public StringProperty getCurrentUserNameProperty() {
+        return currentUserName;
     }
 
 /*    @Override

@@ -9,6 +9,7 @@ import javafx.flowDefinitionTab.FlowDefinitionTabController;
 import javafx.flowExecutionTab.FlowExecutionTabController;
 import javafx.fxml.FXML;
 import javafx.header.HeaderController;
+import javafx.headerClient.HeaderClientController;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -29,6 +30,8 @@ public class Controller {
     private ScrollPane scrollPane;
     @FXML
     private HeaderController headerComponentController;
+    @FXML
+    private HeaderClientController headerClientComponentController;
     @FXML
     private FlowDefinitionTabController flowDefinitionTabController;
     @FXML
@@ -96,6 +99,10 @@ public class Controller {
     public void setHeaderComponentController(HeaderController headerComponentController) {
         this.headerComponentController = headerComponentController;
         headerComponentController.setMainController(this);
+    }
+    public void setHeaderComponentController(HeaderClientController headerClientComponentController) {
+        this.headerClientComponentController = headerClientComponentController;
+        headerClientComponentController.setMainController(this);
     }
     public void setFlowDefinitionTabController(FlowDefinitionTabController flowDefinitionTabComponentController) {
         this.flowDefinitionTabController = flowDefinitionTabComponentController;

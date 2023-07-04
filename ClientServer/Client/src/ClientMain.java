@@ -36,7 +36,6 @@ public class ClientMain extends Application {
 
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/javafx/heaart.png")));
 
-
         URL loginPage = getClass().getResource("/javafx/login/login.fxml");
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
