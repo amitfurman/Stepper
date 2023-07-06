@@ -1,27 +1,25 @@
 package javafx;
 
+import components.header.AdminHeaderController;
 import dto.DTOFlowAndStepStatisticData;
 import dto.DTOSingleFlowIOData;
-import dto.DTOStatisticData;
 import javafx.StatisticsTab.StatisticsTabController;
 import javafx.executionsHistoryTab.ExecutionsHistoryTabController;
 import javafx.flowDefinitionTab.FlowDefinitionTabController;
 import javafx.flowExecutionTab.FlowExecutionTabController;
 import javafx.fxml.FXML;
 import javafx.header.HeaderController;
-import javafx.headerClient.HeaderClientController;
+import components.headerClient.HeaderClientController;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeView;
-import javafx.scene.layout.GridPane;
 import steps.api.DataNecessity;
 import systemengine.systemengine;
 import systemengine.systemengineImpl;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Controller {
@@ -30,6 +28,8 @@ public class Controller {
     private ScrollPane scrollPane;
     @FXML
     private HeaderController headerComponentController;
+    @FXML
+    private AdminHeaderController headerAdminComponentController;
     @FXML
     private HeaderClientController headerClientComponentController;
     @FXML
@@ -99,6 +99,10 @@ public class Controller {
     public void setHeaderComponentController(HeaderController headerComponentController) {
         this.headerComponentController = headerComponentController;
         headerComponentController.setMainController(this);
+    }
+    public void setAdminHeaderComponentController(AdminHeaderController headerComponentController) {
+        this.headerAdminComponentController = headerComponentController;
+        headerAdminComponentController.setMainController(this);
     }
     public void setHeaderComponentController(HeaderClientController headerClientComponentController) {
         this.headerClientComponentController = headerClientComponentController;

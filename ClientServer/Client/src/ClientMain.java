@@ -1,7 +1,7 @@
+import components.login.LoginController;
+import components.mainClient.ClientController;
 import javafx.application.Application;
-import javafx.client.ClientController;
 import javafx.fxml.FXMLLoader;
-import javafx.login.LoginController;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
@@ -9,8 +9,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-
-import static login.util.Constants.LOGIN_PAGE_FXML_RESOURCE_LOCATION;
 
 
 public class ClientMain extends Application {
@@ -25,7 +23,7 @@ public class ClientMain extends Application {
 
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/javafx/heaart.png")));
 
-        URL loginPage = getClass().getResource("/javafx/login/login.fxml");
+        URL loginPage = getClass().getResource("/components/login/login.fxml");
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(loginPage);

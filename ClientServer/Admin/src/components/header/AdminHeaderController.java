@@ -13,10 +13,13 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
+import util.http.HttpClientUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+
+import static util.Constants.UPLOAD_FILE;
 
 public class AdminHeaderController {
     private Controller mainController;
@@ -96,78 +99,9 @@ public class AdminHeaderController {
             });
 
         }
-/*
-            try (InputStream inputStream = new FileInputStream(selectedFile)) {
-                HttpURLConnection connection = (HttpURLConnection) new URL(UPLOAD_FILE).openConnection();
-                connection.setRequestMethod("POST");
-                connection.setDoOutput(true);
-
-                // Set request headers
-                connection.setRequestProperty("Content-Type", contentType);
-                connection.setRequestProperty("Content-Disposition", "attachment; filename=\"" + filename + "\"");
-
-                // Write file content to the request body
-                try (OutputStream outputStream = connection.getOutputStream()) {
-                    byte[] buffer = new byte[4096];
-                    int bytesRead;
-
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        outputStream.write(buffer, 0, bytesRead);
-                    }
-                }
-
-                int responseCode = connection.getResponseCode();
-                String responseMessage = connection.getResponseMessage();
-                mainController.getSystemEngineInterface().cratingFlowFromXml(filePath);
-                hideError();
-
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    System.out.println("File uploaded successfully: " + responseMessage);
-                } else {
-                    System.out.println("Server returned the following response code: " + responseCode + " " + responseMessage);
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }  catch (DuplicateFlowsNames | UnExistsStep | OutputsWithSameName | MandatoryInputsIsntUserFriendly |
-                      UnExistsData | SourceStepBeforeTargetStep | TheSameDD | UnExistsOutput |
-                      FreeInputsWithSameNameAndDifferentType | InitialInputIsNotExist |
-                      JAXBException | UnExistsFlow | UnExistsDataInTargetFlow |FileNotExistsException | FileIsNotXmlTypeException e) {
-                showError(e.getMessage());
-            }*/
             viewChosenXmlFilePath(event);
     }
 
-    /* @FXML
-    void clickToChooseXMLFileButton(ActionEvent event) {
-        mainController.initDataInFlowExecutionTab();
-        mainController.initInputsInFlowExecutionTab();
-
-        mainController.setFlowDetailsTree();
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choose XML File");
-
-        Stage stage = (Stage) chooseXMLFileButton.getScene().getWindow();
-        File selectedFile = fileChooser.showOpenDialog(stage);
-
-        if (selectedFile != null) {
-            filePath = selectedFile.getAbsolutePath();
-            viewChosenXmlFilePath(event);
-        }
-        try {
-            isErrorMessageShown = false;
-            mainController.getSystemEngineInterface().cratingFlowFromXml(filePath);
-            hideError();
-            mainController.showFlowsTree();
-            mainController.getFlowsTree().setVisible(true);
-        } catch (DuplicateFlowsNames | UnExistsStep | OutputsWithSameName | MandatoryInputsIsntUserFriendly |
-                 UnExistsData | SourceStepBeforeTargetStep | TheSameDD | UnExistsOutput |
-                 FreeInputsWithSameNameAndDifferentType | InitialInputIsNotExist | FileNotFoundException |
-                 JAXBException | UnExistsFlow | UnExistsDataInTargetFlow |FileNotExistsException | FileIsNotXmlTypeException e) {
-            showError(e.getMessage());
-            mainController.getFlowsTree().setVisible(false);
-        }
-    }*/
     @FXML
     void viewChosenXmlFilePath(ActionEvent event) {
         chosenXmlFilePath.setText(filePath.toString());

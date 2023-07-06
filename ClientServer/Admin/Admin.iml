@@ -7,7 +7,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="JavaFX" />
     <orderEntry type="library" name="okhttp-4.9.1" level="project" />
+    <orderEntry type="module" module-name="CommonUtils" />
+    <orderEntry type="module" module-name="JavaFX" />
   </component>
 </module>

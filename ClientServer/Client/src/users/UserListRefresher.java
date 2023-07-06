@@ -1,12 +1,13 @@
 package users;
 
 import javafx.beans.property.BooleanProperty;
-import login.util.Constants;
-import login.util.http.HttpClientUtil;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
+import util.Constants;
+import util.http.HttpClientUtil;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.TimerTask;
 import java.util.function.Consumer;
 
-import static login.util.Constants.GSON_INSTANCE;
+import static util.Constants.GSON_INSTANCE;
 
 public class UserListRefresher extends TimerTask {
 

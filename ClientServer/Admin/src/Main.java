@@ -1,3 +1,4 @@
+import components.header.AdminHeaderController;
 import javafx.Controller;
 import javafx.StatisticsTab.StatisticsTabController;
 import javafx.application.Application;
@@ -22,10 +23,10 @@ public class Main extends Application {
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/javafx/heaart.png")));
 
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = getClass().getResource("/javafx/header/header.fxml");
+        URL url = getClass().getResource("/components/header/Adminheader.fxml");
         fxmlLoader.setLocation(url);
         GridPane headerComponent = fxmlLoader.load(url.openStream());
-        HeaderController headerController = fxmlLoader.getController();
+        AdminHeaderController headerController = fxmlLoader.getController();
 
         fxmlLoader = new FXMLLoader();
         url = getClass().getResource("/javafx/source.fxml");
@@ -52,7 +53,7 @@ public class Main extends Application {
         TabPane tabPane = (TabPane) borderPane.getCenter();
         tabPane.getTabs().addAll(executionsHistoryTabComponent, StatisticsTabComponent);
 
-        mainController.setHeaderComponentController(headerController);
+        mainController.setAdminHeaderComponentController(headerController);
         mainController.setExecutionsHistoryTabController(executionsHistoryTabController);
         mainController.setStatisticsTabController(StatisticsTabController);
         Scene scene = new Scene(mainComponent, 600, 400);

@@ -1,5 +1,6 @@
 package javafx.header;
 
+import exceptions.*;
 import javafx.Controller;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
@@ -11,15 +12,10 @@ import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import login.util.http.HttpClientUtil;
-import okhttp3.*;
-import org.jetbrains.annotations.NotNull;
 
+import javax.xml.bind.JAXBException;
 import java.io.*;
-import java.net.HttpURLConnection;
 
-import static login.util.Constants.UPLOAD_FILE;
-import static login.util.http.Configuration.HTTP_CLIENT;
 
 public class HeaderController {
     private Controller mainController;
@@ -39,6 +35,86 @@ public class HeaderController {
         chosenXmlFilePath.setEditable(false);
     }
 
+ @FXML
+    void clickToChooseXMLFileButton(ActionEvent event) {
+        mainController.initDataInFlowExecutionTab();
+        mainController.initInputsInFlowExecutionTab();
+
+        mainController.setFlowDetailsTree();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose XML File");
+
+        Stage stage = (Stage) chooseXMLFileButton.getScene().getWindow();
+        File selectedFile = fileChooser.showOpenDialog(stage);
+
+        if (selectedFile != null) {
+            filePath = selectedFile.getAbsolutePath();
+            viewChosenXmlFilePath(event);
+            try {
+                isErrorMessageShown = false;
+                mainController.getSystemEngineInterface().cratingFlowFromXml(filePath);
+                hideError();
+                mainController.showFlowsTree();
+                mainController.getFlowsTree().setVisible(true);
+            } catch (DuplicateFlowsNames | UnExistsStep | OutputsWithSameName | MandatoryInputsIsntUserFriendly |
+                     UnExistsData | SourceStepBeforeTargetStep | TheSameDD | UnExistsOutput |
+                     FreeInputsWithSameNameAndDifferentType | InitialInputIsNotExist | FileNotFoundException |
+                     JAXBException | UnExistsFlow | UnExistsDataInTargetFlow | FileNotExistsException | FileIsNotXmlTypeException e) {
+                showError(e.getMessage());
+                mainController.getFlowsTree().setVisible(false);
+            }
+        } else {
+            try {
+                isErrorMessageShown = false;
+                mainController.getSystemEngineInterface().cratingFlowFromXml(filePath);
+                hideError();
+                mainController.showFlowsTree();
+                mainController.getFlowsTree().setVisible(true);
+            } catch (DuplicateFlowsNames | UnExistsStep | OutputsWithSameName | MandatoryInputsIsntUserFriendly |
+                     UnExistsData | SourceStepBeforeTargetStep | TheSameDD | UnExistsOutput |
+                     FreeInputsWithSameNameAndDifferentType | InitialInputIsNotExist | FileNotFoundException |
+                     JAXBException | UnExistsFlow | UnExistsDataInTargetFlow | FileNotExistsException | FileIsNotXmlTypeException e) {
+                showError(e.getMessage());
+                mainController.getFlowsTree().setVisible(false);
+            }
+        }
+ }
+
+    @FXML
+    void viewChosenXmlFilePath(ActionEvent event) {
+        chosenXmlFilePath.setText(filePath.toString());
+    }
+    public void setMainController(Controller mainController) {
+        this.mainController = mainController;
+    }
+    private void showError(String message) {
+        if (!isErrorMessageShown) {
+            isErrorMessageShown = true;
+            errorMessageLabel.setText(message);
+            errorMessageLabel.getStyleClass().add("errors");
+            FadeTransition animation = new FadeTransition();
+            animation.setNode(errorMessageLabel);
+            animation.setDuration(Duration.seconds(0.5));
+            animation.setFromValue(0.0);
+            animation.setToValue(1.0);
+            animation.play();
+        }
+    }
+    private void hideError() {
+        FadeTransition animation = new FadeTransition();
+        animation.setNode(errorMessageLabel);
+        animation.setDuration(Duration.seconds(0.5));
+        animation.setFromValue(1.0);
+        animation.setToValue(0.0);
+        animation.play();
+
+        isErrorMessageShown = false;
+        errorMessageLabel.textProperty().setValue("");
+    }
+}
+
+
+/*
     @FXML
     void clickToChooseXMLFileButton(ActionEvent event) throws IOException {
         mainController.initDataInFlowExecutionTab();
@@ -99,7 +175,6 @@ public class HeaderController {
             });
 
         }
-/*
             try (InputStream inputStream = new FileInputStream(selectedFile)) {
                 HttpURLConnection connection = (HttpURLConnection) new URL(UPLOAD_FILE).openConnection();
                 connection.setRequestMethod("POST");
@@ -137,69 +212,8 @@ public class HeaderController {
                       FreeInputsWithSameNameAndDifferentType | InitialInputIsNotExist |
                       JAXBException | UnExistsFlow | UnExistsDataInTargetFlow |FileNotExistsException | FileIsNotXmlTypeException e) {
                 showError(e.getMessage());
-            }*/
+            }
+
             viewChosenXmlFilePath(event);
     }
-
-    /* @FXML
-    void clickToChooseXMLFileButton(ActionEvent event) {
-        mainController.initDataInFlowExecutionTab();
-        mainController.initInputsInFlowExecutionTab();
-
-        mainController.setFlowDetailsTree();
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choose XML File");
-
-        Stage stage = (Stage) chooseXMLFileButton.getScene().getWindow();
-        File selectedFile = fileChooser.showOpenDialog(stage);
-
-        if (selectedFile != null) {
-            filePath = selectedFile.getAbsolutePath();
-            viewChosenXmlFilePath(event);
-        }
-        try {
-            isErrorMessageShown = false;
-            mainController.getSystemEngineInterface().cratingFlowFromXml(filePath);
-            hideError();
-            mainController.showFlowsTree();
-            mainController.getFlowsTree().setVisible(true);
-        } catch (DuplicateFlowsNames | UnExistsStep | OutputsWithSameName | MandatoryInputsIsntUserFriendly |
-                 UnExistsData | SourceStepBeforeTargetStep | TheSameDD | UnExistsOutput |
-                 FreeInputsWithSameNameAndDifferentType | InitialInputIsNotExist | FileNotFoundException |
-                 JAXBException | UnExistsFlow | UnExistsDataInTargetFlow |FileNotExistsException | FileIsNotXmlTypeException e) {
-            showError(e.getMessage());
-            mainController.getFlowsTree().setVisible(false);
-        }
-    }*/
-    @FXML
-    void viewChosenXmlFilePath(ActionEvent event) {
-        chosenXmlFilePath.setText(filePath.toString());
-    }
-    public void setMainController(Controller mainController) {
-        this.mainController = mainController;
-    }
-    private void showError(String message) {
-        if (!isErrorMessageShown) {
-            isErrorMessageShown = true;
-            errorMessageLabel.setText(message);
-            errorMessageLabel.getStyleClass().add("errors");
-            FadeTransition animation = new FadeTransition();
-            animation.setNode(errorMessageLabel);
-            animation.setDuration(Duration.seconds(0.5));
-            animation.setFromValue(0.0);
-            animation.setToValue(1.0);
-            animation.play();
-        }
-    }
-    private void hideError() {
-        FadeTransition animation = new FadeTransition();
-        animation.setNode(errorMessageLabel);
-        animation.setDuration(Duration.seconds(0.5));
-        animation.setFromValue(1.0);
-        animation.setToValue(0.0);
-        animation.play();
-
-        isErrorMessageShown = false;
-        errorMessageLabel.textProperty().setValue("");
-    }
-}
+*/
