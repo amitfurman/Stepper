@@ -1,4 +1,4 @@
-package javafx.header;
+package components.header;
 
 import javafx.Controller;
 import javafx.animation.FadeTransition;
@@ -11,17 +11,14 @@ import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import login.util.http.HttpClientUtil;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 
-import static login.util.Constants.UPLOAD_FILE;
-import static login.util.http.Configuration.HTTP_CLIENT;
-
-public class HeaderController {
+public class AdminHeaderController {
     private Controller mainController;
     @FXML
     private Button chooseXMLFileButton;

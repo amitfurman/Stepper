@@ -31,6 +31,15 @@ public class SchemaBasedJAXBMain {
 
         return new FlowsManager(step.getAllFlows(),step.getNumberOfThreads(), step.getAllContinuationMappings());
     }
+    public FlowsManager schemaBasedJAXB(InputStream inputStream) throws JAXBException, FileNotFoundException, DuplicateFlowsNames, UnExistsStep, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD,
+            UnExistsOutput, FreeInputsWithSameNameAndDifferentType,InitialInputIsNotExist,UnExistsFlow,UnExistsDataInTargetFlow {
+        STStepper stepper = deserializeFrom(inputStream);
+        verifyIfExistsFlowsWithDuplicateNames(stepper);
+        ReferenceToUnExistsStep(stepper);
+        Stepper2Flows step = new Stepper2Flows(stepper);
+
+        return new FlowsManager(step.getAllFlows(),step.getNumberOfThreads(), step.getAllContinuationMappings());
+    }
 
     private static STStepper deserializeFrom(InputStream in) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);

@@ -1,9 +1,6 @@
 package javafx.client;
 
-import api.HttpStatusUpdate;
 import javafx.Controller;
-import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.executionsHistoryTab.ExecutionsHistoryTabController;
@@ -11,7 +8,6 @@ import javafx.flowDefinitionTab.FlowDefinitionTabController;
 import javafx.flowExecutionTab.FlowExecutionTabController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.header.HeaderController;
 import javafx.headerClient.HeaderClientController;
 import javafx.login.LoginController;
 import javafx.scene.Parent;
@@ -28,7 +24,6 @@ import javafx.status.StatusController;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.SplittableRandom;
 
 import static login.util.Constants.JHON_DOE;
 import static login.util.Constants.LOGIN_PAGE_FXML_RESOURCE_LOCATION;

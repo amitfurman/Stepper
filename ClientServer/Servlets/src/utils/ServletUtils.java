@@ -3,6 +3,7 @@ package utils;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import systemengine.systemengineImpl;
+import systemengine.systemengine;
 import user.UserManager;
 
 
@@ -11,7 +12,7 @@ import static constants.Constants.INT_PARAMETER_ERROR;
 public class ServletUtils {
 
 	private static final String USER_MANAGER_ATTRIBUTE_NAME = "userManager";
-	private static final String SYSTEM_ENGINE_MANAGER_ATTRIBUTE_NAME = "systemEngineManager";
+	private static final String SYSTEM_ENGINE_ATTRIBUTE_NAME = "systemengine";
 
 	/*
 	Note how the synchronization is done only on the question and\or creation of the relevant managers and once they exists -
@@ -30,16 +31,16 @@ public class ServletUtils {
 		return (UserManager) servletContext.getAttribute(USER_MANAGER_ATTRIBUTE_NAME);
 	}
 
-	public static systemengineImpl getChatManager(ServletContext servletContext) {
+	public static systemengine getSystemEngine(ServletContext servletContext) {
 		synchronized (systemEngineManagerLock) {
-			if (servletContext.getAttribute(SYSTEM_ENGINE_MANAGER_ATTRIBUTE_NAME) == null) {
-				servletContext.setAttribute(SYSTEM_ENGINE_MANAGER_ATTRIBUTE_NAME, new systemengineImpl());
+			if (servletContext.getAttribute(SYSTEM_ENGINE_ATTRIBUTE_NAME) == null) {
+				servletContext.setAttribute(SYSTEM_ENGINE_ATTRIBUTE_NAME, new systemengineImpl());
 			}
 		}
-		return (systemengineImpl) servletContext.getAttribute(SYSTEM_ENGINE_MANAGER_ATTRIBUTE_NAME);
+		return (systemengine) servletContext.getAttribute(SYSTEM_ENGINE_ATTRIBUTE_NAME);
 	}
 
-	public static int getIntParameter(HttpServletRequest request, String name) {
+/*	public static int getIntParameter(HttpServletRequest request, String name) {
 		String value = request.getParameter(name);
 		if (value != null) {
 			try {
@@ -48,5 +49,5 @@ public class ServletUtils {
 			}
 		}
 		return INT_PARAMETER_ERROR;
-	}
+	}*/
 }

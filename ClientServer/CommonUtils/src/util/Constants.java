@@ -1,4 +1,4 @@
-package login.util;
+package util;
 
 import com.google.gson.Gson;
 

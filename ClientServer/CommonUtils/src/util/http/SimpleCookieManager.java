@@ -1,4 +1,4 @@
-package login.util.http;
+package util.http;
 
 import okhttp3.Cookie;
 import okhttp3.CookieJar;

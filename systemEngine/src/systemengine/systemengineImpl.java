@@ -90,6 +90,21 @@ public class systemengineImpl implements systemengine {
     }
 
     @Override
+    public void cratingFlowFromXml(InputStream inputStream) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD,
+            UnExistsOutput, FreeInputsWithSameNameAndDifferentType, InitialInputIsNotExist, UnExistsFlow, UnExistsDataInTargetFlow, FileNotExistsException, FileIsNotXmlTypeException {
+        /*
+        XmlValidator validator = new XmlValidator();
+        validator.isXmlFileValid(filePath);*/
+        SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
+        FlowsManager flows = schema.schemaBasedJAXB(inputStream);
+        flowDefinitionList = flows.getAllFlows();
+        numberOfThreads = flows.getNumberOfThreads();
+        allContinuationMappings = new LinkedList<>(flows.getAllContinuationMappings());
+        threadPool = Executors.newFixedThreadPool(numberOfThreads);
+
+    }
+
+    @Override
     public LinkedList<FlowContinuationMapping> getAllContinuationMappingsWithSameSourceFlow(String currFlowName) {
         LinkedList<FlowContinuationMapping> sortedContinuationMappings = new LinkedList<>();
         for (FlowContinuationMapping mapping : allContinuationMappings) {
