@@ -1,0 +1,85 @@
+.input-label {
+    -fx-text-overrun: clip;
+    -fx-ellipsis-string: "";
+}
+
+.text-field {
+    -fx-prompt-text-fill: pink;
+    -fx-border-color: pink;
+    -fx-border-width: 2px;
+}
+
+#executeFlowButton {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+    -fx-background-color: #ffa6c5;
+    -fx-border-color: #000000;
+    -fx-border-width: 1px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+}
+
+#executeFlowButton:hover {
+    -fx-background-color: #ffa6c5;
+    -fx-text-fill: #000000;
+    -fx-opacity: 0.8;
+}
+
+.first-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-underline: true;
+}
+
+.label-selected {
+    -fx-background-color: #ffeaec;
+}
+.detail-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+.master-detail-pane .master-detail-pane-detail {
+    -fx-background-color: #ffeaec;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #36454f;
+}
+
+.tree-view-style {
+    -fx-font-size: 14px;
+}
+
+.flow-continuation-table {
+    -fx-alignment: center;
+}
+
+.flow-continuation-table .label {
+    -fx-font-size: 12px;
+}
+
+.flow-continuation-table .table-cell {
+    -fx-alignment: CENTER;
+    -fx-font-size: 12px;
+}
+
+.flow-continuation-table .column-header {
+    -fx-background-color: #ffeaec;
+}
+
+.continue-to-flow-button {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+    -fx-background-color: #9b9a9a;
+    -fx-border-color: #ffeaec;
+    -fx-border-width: 1px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+}
+
+.continue-to-flow-button:hover {
+    -fx-background-color: #9b9a9a;
+    -fx-text-fill: #000000;
+    -fx-opacity: 0.8;
+}

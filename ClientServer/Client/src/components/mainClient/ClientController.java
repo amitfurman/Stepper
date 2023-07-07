@@ -1,14 +1,13 @@
 package components.mainClient;
 
+import components.body.flowDefinitionTab.ClientFlowDefinitionTabController;
+import components.body.flowExecutionTab.ClientFlowExecutionTabController;
 import components.headerClient.HeaderClientController;
 import components.login.LoginController;
-import components.status.StatusController;
 import javafx.Controller;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.executionsHistoryTab.ExecutionsHistoryTabController;
-import javafx.flowDefinitionTab.FlowDefinitionTabController;
-import javafx.flowExecutionTab.FlowExecutionTabController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -30,7 +29,7 @@ import static util.Constants.LOGIN_PAGE_FXML_RESOURCE_LOCATION;
 public class ClientController{
     @FXML
     private Parent httpStatusComponent;
-    @FXML private StatusController httpStatusComponentController;
+   // @FXML private StatusController httpStatusComponentController;
 
     private GridPane loginComponent;
     private LoginController logicController;
@@ -64,17 +63,17 @@ public class ClientController{
         borderPane.setTop(headerComponent);
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("/javafx/flowDefinitionTab/flowDefinitionTab.fxml");
+        url = getClass().getResource("/components/body/flowDefinitionTab/flowDefinitionTab.fxml");
         fxmlLoader.setLocation(url);
         Tab flowDefinitionTabComponent = fxmlLoader.load(url.openStream());
-        FlowDefinitionTabController flowDefinitionTabController =  fxmlLoader.getController();
+        ClientFlowDefinitionTabController flowDefinitionTabController =  fxmlLoader.getController();
 
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("/javafx/flowExecutionTab/flowExecutionTab.fxml");
+        url = getClass().getResource("/components/body/flowExecutionTab/flowExecutionTab.fxml");
         fxmlLoader.setLocation(url);
         Tab flowExecutionTabComponent = fxmlLoader.load(url.openStream());
-        FlowExecutionTabController flowExecutionTabController =  fxmlLoader.getController();
+        ClientFlowExecutionTabController flowExecutionTabController =  fxmlLoader.getController();
 
         fxmlLoader = new FXMLLoader();
         url = getClass().getResource("/javafx/executionsHistoryTab/executionsHistoryTab.fxml");
@@ -86,13 +85,9 @@ public class ClientController{
         tabPane.getTabs().addAll(flowDefinitionTabComponent,flowExecutionTabComponent,executionsHistoryTabComponent);
 
         mainController.setHeaderComponentController(headerController);
-        mainController.setFlowDefinitionTabController(flowDefinitionTabController);
-        mainController.setFlowExecutionTabController(flowExecutionTabController);
+        mainController.setClientFlowDefinitionTabController(flowDefinitionTabController);
+        mainController.setClientFlowExecutionTabController(flowExecutionTabController);
         mainController.setExecutionsHistoryTabController(executionsHistoryTabController);
-/*        Scene scene = new Scene(mainComponent, 600, 400);
-        primaryStage.setScene(scene);
-        primaryStage.show();*/
-
 
     }
 

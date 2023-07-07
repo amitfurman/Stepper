@@ -11,5 +11,7 @@
     <orderEntry type="library" name="gson-2.8.8" level="project" />
     <orderEntry type="module" module-name="CommonUtils" />
     <orderEntry type="module" module-name="JavaFX" />
+    <orderEntry type="module" module-name="systemEngine" />
+    <orderEntry type="library" name="controlsfx-8.40.14" level="project" />
   </component>
 </module>

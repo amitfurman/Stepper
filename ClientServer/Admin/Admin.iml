@@ -10,5 +10,6 @@
     <orderEntry type="library" name="okhttp-4.9.1" level="project" />
     <orderEntry type="module" module-name="CommonUtils" />
     <orderEntry type="module" module-name="JavaFX" />
+    <orderEntry type="module" module-name="systemEngine" />
   </component>
 </module>

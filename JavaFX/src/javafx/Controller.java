@@ -1,5 +1,9 @@
 package javafx;
 
+import components.body.StatisticsTab.AdminStatisticsTabController;
+import components.body.UsersManagementTab.UsersManagementTabController;
+import components.body.flowDefinitionTab.ClientFlowDefinitionTabController;
+import components.body.flowExecutionTab.ClientFlowExecutionTabController;
 import components.header.AdminHeaderController;
 import dto.DTOFlowAndStepStatisticData;
 import dto.DTOSingleFlowIOData;
@@ -29,17 +33,25 @@ public class Controller {
     @FXML
     private HeaderController headerComponentController;
     @FXML
+    private UsersManagementTabController usersManagementTabController;
+    @FXML
     private AdminHeaderController headerAdminComponentController;
     @FXML
     private HeaderClientController headerClientComponentController;
     @FXML
     private FlowDefinitionTabController flowDefinitionTabController;
     @FXML
+    private ClientFlowDefinitionTabController clientFlowDefinitionTabController;
+    @FXML
     private FlowExecutionTabController flowExecutionTabController;
+    @FXML
+    private ClientFlowExecutionTabController clientFlowExecutionTabController;
     @FXML
     private ExecutionsHistoryTabController executionsHistoryTabController;
     @FXML
     private StatisticsTabController statisticsTabController;
+    @FXML
+    private AdminStatisticsTabController adminStatisticsTabController;
     @FXML
     private TabPane tabPane;
     String flowName;
@@ -112,9 +124,21 @@ public class Controller {
         this.flowDefinitionTabController = flowDefinitionTabComponentController;
         flowDefinitionTabController.setMainController(this);
     }
+    public void setClientFlowDefinitionTabController(ClientFlowDefinitionTabController flowDefinitionTabComponentController) {
+        this.clientFlowDefinitionTabController = flowDefinitionTabComponentController;
+        clientFlowDefinitionTabController.setMainController(this);
+    }
     public void setFlowExecutionTabController(FlowExecutionTabController flowExecutionTabComponentController) {
         this.flowExecutionTabController = flowExecutionTabComponentController;
         flowExecutionTabController.setMainController(this);
+    }
+    public void setClientFlowExecutionTabController(ClientFlowExecutionTabController flowExecutionTabComponentController) {
+        this.clientFlowExecutionTabController = flowExecutionTabComponentController;
+        clientFlowExecutionTabController.setMainController(this);
+    }
+    public void setUsersManagementTabController(UsersManagementTabController usersManagementTabController) {
+        this.usersManagementTabController = usersManagementTabController;
+        usersManagementTabController.setMainController(this);
     }
     public void setExecutionsHistoryTabController(ExecutionsHistoryTabController executionsHistoryTabController) {
         this.executionsHistoryTabController = executionsHistoryTabController;
@@ -123,6 +147,10 @@ public class Controller {
     public void setStatisticsTabController(StatisticsTabController statisticsTabComponentController) {
         this.statisticsTabController = statisticsTabComponentController;
         statisticsTabController.setMainController(this);
+    }
+    public void setAdminStatisticsTabController(AdminStatisticsTabController statisticsTabComponentController) {
+        this.adminStatisticsTabController = statisticsTabComponentController;
+        adminStatisticsTabController.setMainController(this);
     }
     public void setFlowDetailsTree() {
         if (flowDefinitionTabController!=null)

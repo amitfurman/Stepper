@@ -27,6 +27,55 @@ import javax.xml.bind.JAXBException;
 @WebServlet("/upload-file")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
 public class FileUploadServlet extends HttpServlet {
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/xml");
+        Collection<Part> parts = request.getParts();
+
+        StringBuilder fileContent = new StringBuilder();
+
+        for (Part part : parts) {
+            fileContent.append(readFromInputStream(part.getInputStream()));
+            systemengine systemEngine = ServletUtils.getSystemEngine(getServletContext());
+
+            try {
+                systemEngine.cratingFlowFromXml(part.getInputStream());
+            }catch (DuplicateFlowsNames | UnExistsStep | OutputsWithSameName | MandatoryInputsIsntUserFriendly |
+                    UnExistsData | SourceStepBeforeTargetStep | TheSameDD | UnExistsOutput |
+                    FreeInputsWithSameNameAndDifferentType | InitialInputIsNotExist | FileNotFoundException |
+                    JAXBException | UnExistsFlow | UnExistsDataInTargetFlow | FileNotExistsException | FileIsNotXmlTypeException e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getOutputStream().print(e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private String readFromInputStream(InputStream inputStream) {
+        return new Scanner(inputStream).useDelimiter("\\Z").next();
+    }
+}
+/*    private void printFileContent(String content, PrintWriter out) {
+        out.println("File content:");
+        System.out.println(content);
+        out.println(content);
+    }*/
+    /*    private void printPart(Part part, PrintWriter out) {
+            StringBuilder sb = new StringBuilder();
+            sb
+                .append("Parameter Name: ").append(part.getName()).append("\n")
+                .append("Content Type (of the file): ").append(part.getContentType()).append("\n")
+                .append("Size (of the file): ").append(part.getSize()).append("\n")
+                .append("Part Headers:").append("\n");
+
+            for (String header : part.getHeaderNames()) {
+                sb.append(header).append(" : ").append(part.getHeader(header)).append("\n");
+            }
+
+            out.println(sb.toString());
+        }*/
+
+
 
 /*    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -48,58 +97,3 @@ public class FileUploadServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
 
     }*/
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("application/xml");
-       // PrintWriter out = response.getWriter();
-
-        Collection<Part> parts = request.getParts();
-
-        StringBuilder fileContent = new StringBuilder();
-
-        for (Part part : parts) {
-        //    printPart(part, out);
-
-            fileContent.append(readFromInputStream(part.getInputStream()));
-            systemengine systemEngine = ServletUtils.getSystemEngine(getServletContext());
-
-            try {
-                systemEngine.cratingFlowFromXml(part.getInputStream());
-            }catch (DuplicateFlowsNames | UnExistsStep | OutputsWithSameName | MandatoryInputsIsntUserFriendly |
-                    UnExistsData | SourceStepBeforeTargetStep | TheSameDD | UnExistsOutput |
-                    FreeInputsWithSameNameAndDifferentType | InitialInputIsNotExist | FileNotFoundException |
-                    JAXBException | UnExistsFlow | UnExistsDataInTargetFlow | FileNotExistsException | FileIsNotXmlTypeException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getOutputStream().print(e.getMessage());
-//                response.getOutputStream().print("error");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    private void printPart(Part part, PrintWriter out) {
-        StringBuilder sb = new StringBuilder();
-        sb
-            .append("Parameter Name: ").append(part.getName()).append("\n")
-            .append("Content Type (of the file): ").append(part.getContentType()).append("\n")
-            .append("Size (of the file): ").append(part.getSize()).append("\n")
-            .append("Part Headers:").append("\n");
-
-        for (String header : part.getHeaderNames()) {
-            sb.append(header).append(" : ").append(part.getHeader(header)).append("\n");
-        }
-
-        out.println(sb.toString());
-    }
-
-    private String readFromInputStream(InputStream inputStream) {
-        return new Scanner(inputStream).useDelimiter("\\Z").next();
-    }
-
-    private void printFileContent(String content, PrintWriter out) {
-        out.println("File content:");
-        System.out.println(content);
-        out.println(content);
-    }
-}
