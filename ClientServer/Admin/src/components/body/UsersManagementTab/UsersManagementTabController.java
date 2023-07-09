@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import user.UserManager;
@@ -25,17 +26,19 @@ import java.util.stream.Collectors;
 public class UsersManagementTabController {
     private Controller mainController;
     @FXML
-    private static TreeView<String> usersTree;
+    private TreeView<String> usersTree;
     @FXML
     private TreeView<String> userDetailsTree;
     @FXML
     private Button SaveButton;
     private String chosenUserName;
-    @FXML private UsersListController usersListComponentController;
+    private UsersListController usersListComponentController;
+
 
     @FXML
     public void initialize() {
         SaveButton.setDisable(true);
+        usersListComponentController = new UsersListController(this);
         usersListComponentController.startListRefresher();
     }
     @FXML
@@ -49,41 +52,36 @@ public class UsersManagementTabController {
     public TreeView<String> getUsersTree(){
         return usersTree;
     }
-    public static void showUsersTree(List<String> usersList) {
+    public void showUsersTree(List<String> usersList) {
         TreeItem<String> rootItem = new TreeItem<>("Users");
         rootItem.setExpanded(true);
 
         for (String userName : usersList) {
-            TreeItem<String> branchItem = new TreeItem<>(userName);
+            Button pressToSeeFullDetailsButton = new Button("Press to see full details");
+            pressToSeeFullDetailsButton.setId("pressToSeeFullDetailsButton");
+
+            TreeItem<String> branchItem = new TreeItem<>("");
+            branchItem.setGraphic(createTreeCellGraphic(userName, pressToSeeFullDetailsButton));
+
+
+            pressToSeeFullDetailsButton.setOnAction(event -> {
+                showChosenFlow();
+            });
             rootItem.getChildren().add(branchItem);
         }
         usersTree.setRoot(rootItem);
     }
-    public static void setUsersList(List<String> usersList) {
-        List<String> currentUsersList = usersList;
-        showUsersTree(usersList);
+
+    private HBox createTreeCellGraphic(String nodeName, Button button) {
+        Label nameLabel = new Label(nodeName);
+        HBox graphicContainer = new HBox(nameLabel, button);
+        graphicContainer.setSpacing(5);
+        return graphicContainer;
     }
-    public TreeItem<String> createBranchItem(DTOFlowDefinition flowDefinition) {
-        TreeItem<String> branchItem = new TreeItem<>(flowDefinition.getName());
-        TreeItem<String> leafItem1 = new TreeItem<>("Description: " + flowDefinition.getDescription());
-        TreeItem<String> leafItem2 = new TreeItem<>("Number of steps: " + Integer.toString(flowDefinition.getNumberOfSteps()));
-        TreeItem<String> leafItem3 = new TreeItem<>("Number of free inputs: " + Integer.toString(flowDefinition.getNumberOfFreeInputs()));
 
-        Button pressToSeeFullDetailsButton = new Button("Press to see full details");
-        pressToSeeFullDetailsButton.setId("pressToSeeFullDetailsButton");
-
-        pressToSeeFullDetailsButton.setOnAction(event -> {
-            showChosenFlow(flowDefinition);
-        });
-        TreeItem<String> buttonItem = new TreeItem<>(" ");
-        buttonItem.setGraphic(pressToSeeFullDetailsButton);
-
-        branchItem.getChildren().addAll(leafItem1, leafItem2, leafItem3, buttonItem);
-
-        return branchItem;
-    }
-    public void showChosenFlow(DTOFlowDefinition flowDefinition) {
-        TreeItem<String> rootItem = new TreeItem<>("Chosen Flow Details - " + flowDefinition.getName());
+    public void showChosenFlow() {
+        TreeItem<String> rootItem = new TreeItem<>("Chosen Flow Details - ");
+/*
         rootItem.setExpanded(true); // Set the root item to be initially expanded
 
         TreeItem<String> branchName = new TreeItem<>("Flow Name");
@@ -114,8 +112,9 @@ public class UsersManagementTabController {
         TreeItem<String> branchFreeInputs = showFreeInputsOfChosenFlow(flowDefinition);
         TreeItem<String> branchFlowOutputs = showFlowOutputsOfChosenFlow(flowDefinition);
 
-        rootItem.getChildren().addAll(branchName, branchDescription, branchFormalOutputs, branchReadOnly, branchSteps, branchFreeInputs, branchFlowOutputs);
+        rootItem.getChildren().addAll(branchName, branchDescription, branchFormalOutputs, branchReadOnly, branchSteps, branchFreeInputs, branchFlowOutputs);*/
         userDetailsTree.setRoot(rootItem);
+
 
         boolean isEmptyFlowDetailsTree = (userDetailsTree.getRoot() == null || userDetailsTree.getRoot().getChildren().isEmpty());
         SaveButton.setDisable(isEmptyFlowDetailsTree);

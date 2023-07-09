@@ -27,14 +27,8 @@ import java.net.URL;
 import static util.Constants.LOGIN_PAGE_FXML_RESOURCE_LOCATION;
 
 public class ClientController{
-    @FXML
-    private Parent httpStatusComponent;
-   // @FXML private StatusController httpStatusComponentController;
-
     private GridPane loginComponent;
     private LoginController logicController;
-    @FXML private Label userGreetingLabel;
-    @FXML private AnchorPane mainPanel;
     private final StringProperty currentUserName;
     private ScrollPane mainComponent;
     private Stage primaryStage;
@@ -110,8 +104,8 @@ public class ClientController{
     }
 
     private void setMainPanelTo(Parent pane) {
-        mainPanel.getChildren().clear();
-        mainPanel.getChildren().add(pane);
+       // mainPanel.getChildren().clear();
+       // mainPanel.getChildren().add(pane);
         AnchorPane.setBottomAnchor(pane, 1.0);
         AnchorPane.setTopAnchor(pane, 1.0);
         AnchorPane.setLeftAnchor(pane, 1.0);
@@ -128,7 +122,7 @@ public class ClientController{
     }*/
 
 
-    private void loadLoginPage() {
+/*    private void loadLoginPage() {
         URL loginPageUrl = getClass().getResource(LOGIN_PAGE_FXML_RESOURCE_LOCATION);
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
@@ -140,7 +134,7 @@ public class ClientController{
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 
 
