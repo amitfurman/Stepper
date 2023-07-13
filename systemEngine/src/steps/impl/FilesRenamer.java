@@ -35,7 +35,6 @@ public class FilesRenamer extends AbstractStepDefinition {
     public StepResult invoke(StepExecutionContext context) {
         Instant start = Instant.now();
         FileListData filesToRename = context.getDataValue(IO_NAMES.FILES_TO_RENAME, FileListData.class);
-
         String prefix = context.getDataValue(IO_NAMES.PREFIX, String.class);
         String suffix = context.getDataValue(IO_NAMES.SUFFIX, String.class);
         boolean failedToDeleteFile = false;

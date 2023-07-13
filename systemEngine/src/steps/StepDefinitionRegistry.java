@@ -13,7 +13,11 @@ public enum StepDefinitionRegistry {
     PROPERTIES_EXPORTER(new Properties()),
     FILE_DUMPER(new FileDumper()),
     ZIPPER(new Zipper()),
-    COMMAND_LINE(new CommandLine())
+    COMMAND_LINE(new CommandLine()),
+    HTTP_CALL(new HTTPCall()),
+    TO_JSON(new ToJson()),
+    JAVA_DATA_EXTRACTOR(new JsonDataExtractor())
+
     ;
 
     private final StepDefinition stepDefinition;

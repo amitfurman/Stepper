@@ -9,5 +9,25 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="gson-2.8.8" level="project" />
     <orderEntry type="library" name="json-path-2.7.0" level="project" />
+    <orderEntry type="library" name="okhttp-4.9.11" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../3rd/gson-2.8.8.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../3rd/jayson path" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/../3rd/jayson path" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>

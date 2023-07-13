@@ -13,5 +13,37 @@
     <orderEntry type="module" module-name="Client" />
     <orderEntry type="library" name="gson-2.8.8" level="project" />
     <orderEntry type="module" module-name="Admin" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../3rd/gson-2.8.8.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../3rd/okHttp" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/../3rd/okHttp" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../3rd/controlsfx" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../3rd/controlsfx" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/../3rd/controlsfx" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/../3rd/controlsfx" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
   </component>
 </module>

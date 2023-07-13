@@ -8,5 +8,19 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="JavaFX" />
+    <orderEntry type="library" scope="PROVIDED" name="Tomcat 10.0.11" level="application_server_libraries" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../3rd/controlsfx" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../3rd/controlsfx" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/../3rd/controlsfx" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/../3rd/controlsfx" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
   </component>
 </module>

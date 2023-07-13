@@ -13,5 +13,39 @@
     <orderEntry type="module" module-name="JavaFX" />
     <orderEntry type="module" module-name="systemEngine" />
     <orderEntry type="library" name="controlsfx-8.40.14" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../3rd/gson-2.8.8.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../3rd/okHttp" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/../../3rd/okHttp" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../3rd/controlsfx/fxsampler-1.0.10.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../3rd/controlsfx/controlsfx-8.40.14.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../3rd/controlsfx/controlsfx-samples-8.40.14.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../../3rd/controlsfx/fxsampler-1.0.10.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../3rd/controlsfx/controlsfx-8.40.14.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../3rd/controlsfx/controlsfx-samples-8.40.14.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

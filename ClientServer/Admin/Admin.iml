@@ -11,5 +11,38 @@
     <orderEntry type="module" module-name="CommonUtils" />
     <orderEntry type="module" module-name="JavaFX" />
     <orderEntry type="module" module-name="systemEngine" />
+    <orderEntry type="library" name="okhttp-4.9.11" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../3rd/okHttp/okhttp-4.9.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../3rd/okHttp" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/../../3rd/okHttp" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../3rd/google-gson-2.1" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../3rd/google-gson-2.1" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/../../3rd/google-gson-2.1" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/../../3rd/google-gson-2.1" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
   </component>
 </module>

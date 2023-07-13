@@ -11,6 +11,7 @@ import flow.mapping.FlowContinuationMapping;
 import jaxb.schema.SchemaBasedJAXBMain;
 import statistic.FlowAndStepStatisticData;
 import steps.api.DataNecessity;
+import user.UserManager;
 import xml.XmlValidator;
 
 import javax.xml.bind.JAXBException;
@@ -30,12 +31,15 @@ public class systemengineImpl implements systemengine {
     public ExecutorService threadPool;
     public int numberOfThreads;
     public LinkedList<FlowContinuationMapping> allContinuationMappings;
+    public UserManager userManagerObject ;
 
     public systemengineImpl() {
         this.flowDefinitionList = new LinkedList<>();
         this.flowExecutionList = new LinkedList<>();
         this.statisticData = new FlowAndStepStatisticData();
         this.instance = this;
+
+        this.userManagerObject = new UserManager();
     }
 
     static public systemengine getInstance() {
@@ -295,4 +299,7 @@ public class systemengineImpl implements systemengine {
             return valuesList;
     }
 
+    public UserManager getUserMangerObject(){
+        return userManagerObject;
+    }
 }

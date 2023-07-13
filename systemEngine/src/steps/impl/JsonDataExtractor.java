@@ -14,7 +14,7 @@ import steps.api.StepResult;
 import java.time.Instant;
 
 public class JsonDataExtractor extends AbstractStepDefinition {
-    JsonDataExtractor() {
+    public JsonDataExtractor() {
         super("Json Data Extractor", true);
 
         // step inputs

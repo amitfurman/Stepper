@@ -18,6 +18,8 @@ import java.util.function.Consumer;
 
 import static util.Constants.GSON_INSTANCE;
 
+import java.util.Collections;
+
 public class UserListRefresher extends TimerTask {
 
     //private final Consumer<String> httpRequestLoggerConsumer;
@@ -44,12 +46,14 @@ public class UserListRefresher extends TimerTask {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String jsonArrayOfUsersNames = response.body().string();
-               // httpRequestLoggerConsumer.accept("Users Request # " + finalRequestNumber + " | Response: " + jsonArrayOfUsersNames);
-                String[] usersNames = GSON_INSTANCE.fromJson(jsonArrayOfUsersNames, String[].class);
-                usersListConsumer.accept(Arrays.asList(usersNames));
- //               UsersManagementTabController.setUsersList(Arrays.asList(usersNames));
+               //httpRequestLoggerConsumer.accept("Users Request # " + finalRequestNumber + " | Response: " + jsonArrayOfUsersNames);
+               String[] usersNames = GSON_INSTANCE.fromJson(jsonArrayOfUsersNames, String[].class);
+              // usersListConsumer.accept(Arrays.asList(usersNames));
+                usersListConsumer.accept(usersNames != null ? Arrays.asList(usersNames) : Collections.emptyList());
+                //UsersManagementTabController.setUsersList(Arrays.asList(usersNames));
 
             }
         });
+
     }
 }

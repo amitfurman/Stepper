@@ -9,5 +9,33 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="okhttp-4.9.1" level="project" />
     <orderEntry type="library" name="gson-2.8.8" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../3rd/gson-2.8.8.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../3rd/okHttp/okhttp-4.9.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../3rd/okHttp" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/../../3rd/okHttp" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>

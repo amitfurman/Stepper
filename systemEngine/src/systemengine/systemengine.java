@@ -4,6 +4,7 @@ import dto.*;
 import exceptions.*;
 import flow.api.FlowDefinition;
 import flow.mapping.FlowContinuationMapping;
+import user.UserManager;
 
 import javax.xml.bind.JAXBException;
 import java.io.FileInputStream;
@@ -43,4 +44,5 @@ public interface systemengine {
     List<Input> getFreeInputsFromCurrFlow (String flowName);
     Map<String , Object> continuationFlowExecution(String sourceFlow, String targetFlow);
     List<Input> getValuesListFromContinuationMap(String sourceFlowName, String targetFlowName);
+    UserManager getUserMangerObject();
 }
