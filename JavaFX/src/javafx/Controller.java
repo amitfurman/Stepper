@@ -1,5 +1,6 @@
 package javafx;
 
+import components.body.RolesManagementTab.RolesManagementController;
 import components.body.StatisticsTab.AdminStatisticsTabController;
 import components.body.UsersManagementTab.UsersManagementTabController;
 import components.body.flowDefinitionTab.ClientFlowDefinitionTabController;
@@ -34,6 +35,8 @@ public class Controller {
     private HeaderController headerComponentController;
     @FXML
     private UsersManagementTabController usersManagementTabController;
+    @FXML
+    private RolesManagementController rolesManagementTabController;
     @FXML
     private AdminHeaderController headerAdminComponentController;
     @FXML
@@ -140,6 +143,10 @@ public class Controller {
         this.usersManagementTabController = usersManagementTabController;
         usersManagementTabController.setMainController(this);
     }
+    public void setRolesManagementTabController(RolesManagementController rolesManagementTabController) {
+        this.rolesManagementTabController = rolesManagementTabController;
+        rolesManagementTabController.setMainController(this);
+    }
     public void setExecutionsHistoryTabController(ExecutionsHistoryTabController executionsHistoryTabController) {
         this.executionsHistoryTabController = executionsHistoryTabController;
         executionsHistoryTabController.setMainController(this);
@@ -184,4 +191,7 @@ public class Controller {
     public void initExecutionHistoryTableInExecutionsHistoryTab() { executionsHistoryTabController.initExecutionHistoryTable();}
 
 
+    public RolesManagementController getRolesManagementController() {
+        return rolesManagementTabController;
+    }
 }

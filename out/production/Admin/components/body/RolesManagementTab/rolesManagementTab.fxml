@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<Tab styleClass="tabs" text="Roles Management" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="components.body.RolesManagementTab.RolesManagementController">
+   <content>
+      <AnchorPane>
+         <children>
+            <GridPane alignment="CENTER" layoutX="1.0" prefHeight="267.0" prefWidth="594.0">
+               <columnConstraints>
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="294.6666259765625" minWidth="10.0" percentWidth="50.0" prefWidth="282.66668701171875" />
+                  <ColumnConstraints hgrow="ALWAYS" maxWidth="336.0" minWidth="10.0" percentWidth="50.0" prefWidth="317.33331298828125" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" valignment="CENTER" vgrow="ALWAYS" />
+               </rowConstraints>
+               <children>
+                  <GridPane prefHeight="233.0" prefWidth="282.0" GridPane.columnIndex="1">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="269.0" minHeight="10.0" percentHeight="90.0" prefHeight="211.00003051757812" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="128.0" minHeight="0.0" percentHeight="10.0" prefHeight="55.999969482421875" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <HBox alignment="CENTER_RIGHT" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets left="160.0" top="25.0" />
+                           </GridPane.margin>
+                        </HBox>
+                        <TreeView fx:id="roleDetailsTree" prefHeight="197.0" prefWidth="282.0" />
+                        <Button id="execute-button" fx:id="SaveButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#setPressOnSave" prefHeight="26.0" prefWidth="138.0" stylesheets="@rolesManagementTab.css" text="Save!" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets left="150.0" />
+                           </GridPane.margin>
+                        </Button>
+                     </children>
+                  </GridPane>
+                  <GridPane alignment="CENTER" prefHeight="267.0" prefWidth="594.0">
+                     <columnConstraints>
+                        <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="294.6666259765625" minWidth="10.0" percentWidth="0.0" prefWidth="282.66668701171875" />
+                        <ColumnConstraints hgrow="ALWAYS" maxWidth="336.0" minWidth="10.0" percentWidth="100.0" prefWidth="317.33331298828125" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" valignment="CENTER" vgrow="ALWAYS" />
+                     </rowConstraints>
+                     <children>
+                        <VBox alignment="CENTER_LEFT" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                           <children>
+                              <TreeView fx:id="usersTree" prefHeight="386.0" prefWidth="162.0" VBox.vgrow="SOMETIMES" />
+                           </children>
+                        </VBox>
+                        <GridPane prefHeight="233.0" prefWidth="282.0" GridPane.columnIndex="1">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints maxHeight="269.0" minHeight="10.0" percentHeight="90.0" prefHeight="211.00003051757812" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="269.0" minHeight="10.0" percentHeight="10.0" prefHeight="211.00003051757812" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <TreeView fx:id="rolesTree" prefHeight="240.0" prefWidth="213.0" />
+                              <Button id="execute-button" fx:id="NewButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#setPressOnNewButton" prefHeight="26.0" prefWidth="133.0" text="New!" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="150.0" />
+                                 </GridPane.margin>
+                              </Button>
+                           </children>
+                        </GridPane>
+                     </children>
+                  </GridPane>
+               </children>
+            </GridPane>
+         </children>
+      </AnchorPane>
+   </content>
+</Tab>
