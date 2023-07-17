@@ -7,11 +7,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="okhttp-4.9.1" level="project" />
     <orderEntry type="module" module-name="CommonUtils" />
     <orderEntry type="module" module-name="JavaFX" />
     <orderEntry type="module" module-name="systemEngine" />
-    <orderEntry type="library" name="okhttp-4.9.11" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -44,5 +42,6 @@
         <jarDirectory url="file://$MODULE_DIR$/../../3rd/google-gson-2.1" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="controlsfx-8.40.14" level="project" />
   </component>
 </module>

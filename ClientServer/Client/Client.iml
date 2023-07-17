@@ -7,12 +7,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="okhttp-4.9.1" level="project" />
-    <orderEntry type="library" name="gson-2.8.8" level="project" />
     <orderEntry type="module" module-name="CommonUtils" />
     <orderEntry type="module" module-name="JavaFX" />
     <orderEntry type="module" module-name="systemEngine" />
-    <orderEntry type="library" name="controlsfx-8.40.14" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -35,16 +32,14 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../3rd/controlsfx/fxsampler-1.0.10.jar!/" />
-          <root url="jar://$MODULE_DIR$/../../3rd/controlsfx/controlsfx-8.40.14.jar!/" />
-          <root url="jar://$MODULE_DIR$/../../3rd/controlsfx/controlsfx-samples-8.40.14.jar!/" />
+          <root url="file://$MODULE_DIR$/../../3rd/controlsfx" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../3rd/controlsfx/fxsampler-1.0.10.jar!/" />
-          <root url="jar://$MODULE_DIR$/../../3rd/controlsfx/controlsfx-8.40.14.jar!/" />
-          <root url="jar://$MODULE_DIR$/../../3rd/controlsfx/controlsfx-samples-8.40.14.jar!/" />
+          <root url="file://$MODULE_DIR$/../../3rd/controlsfx" />
         </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/../../3rd/controlsfx" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/../../3rd/controlsfx" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
   </component>

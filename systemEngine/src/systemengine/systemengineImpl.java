@@ -9,6 +9,7 @@ import flow.execution.runner.FlowExecutor;
 import flow.impl.FlowsManager;
 import flow.mapping.FlowContinuationMapping;
 import jaxb.schema.SchemaBasedJAXBMain;
+import roles.Role;
 import statistic.FlowAndStepStatisticData;
 import steps.api.DataNecessity;
 import user.UserManager;
@@ -22,6 +23,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class systemengineImpl implements systemengine {
     private static systemengineImpl instance;
@@ -32,6 +34,7 @@ public class systemengineImpl implements systemengine {
     public int numberOfThreads;
     public LinkedList<FlowContinuationMapping> allContinuationMappings;
     public UserManager userManagerObject ;
+    public List<Role> roles;
 
     public systemengineImpl() {
         this.flowDefinitionList = new LinkedList<>();
@@ -96,16 +99,19 @@ public class systemengineImpl implements systemengine {
     @Override
     public void cratingFlowFromXml(InputStream inputStream) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD,
             UnExistsOutput, FreeInputsWithSameNameAndDifferentType, InitialInputIsNotExist, UnExistsFlow, UnExistsDataInTargetFlow, FileNotExistsException, FileIsNotXmlTypeException {
-        /*
-        XmlValidator validator = new XmlValidator();
-        validator.isXmlFileValid(filePath);*/
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         FlowsManager flows = schema.schemaBasedJAXB(inputStream);
         flowDefinitionList = flows.getAllFlows();
         numberOfThreads = flows.getNumberOfThreads();
         allContinuationMappings = new LinkedList<>(flows.getAllContinuationMappings());
         threadPool = Executors.newFixedThreadPool(numberOfThreads);
-
+        initRoles();
+    }
+    @Override
+    public void initRoles() {
+        roles = new ArrayList<>();
+        roles.add(new Role("All Flows", "all flows" , flowDefinitionList));
+        roles.add(new Role("Read Only Flows", "all flows that are read only",flowDefinitionList.stream().filter(flow -> flow.checkIfFlowIsReadOnly()).collect(Collectors.toList())));
     }
 
     @Override
@@ -298,8 +304,12 @@ public class systemengineImpl implements systemengine {
 
             return valuesList;
     }
-
+    @Override
     public UserManager getUserMangerObject(){
         return userManagerObject;
+    }
+    @Override
+    public DTORolesList getDTORolesList(){
+        return new DTORolesList(roles);
     }
 }

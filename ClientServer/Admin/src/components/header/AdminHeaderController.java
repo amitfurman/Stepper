@@ -1,5 +1,6 @@
 package components.header;
 
+import components.body.RolesManagementTab.RolesManagementController;
 import javafx.Controller;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
@@ -33,6 +34,7 @@ public class AdminHeaderController {
     private String filePath;
 
     private boolean isErrorMessageShown = false;
+    private RolesManagementController rolesManagementController;
 
     @FXML
     private void initialize() {
@@ -63,10 +65,10 @@ public class AdminHeaderController {
                     .build();
 
             String finalUrl = HttpUrl
-                        .parse(UPLOAD_FILE)
-                        .newBuilder()
-                        .build()
-                        .toString();
+                    .parse(UPLOAD_FILE)
+                    .newBuilder()
+                    .build()
+                    .toString();
 
             HttpClientUtil.runAsyncPost(finalUrl, request.body(), new Callback() {
                 @Override
@@ -84,14 +86,15 @@ public class AdminHeaderController {
                         Platform.runLater(() -> {
                             hideError();
                             System.out.println("File uploaded successfully: " + response.message());
-                            //open user Management tab
-                        });
+                            rolesManagementController = mainController.getRolesManagementController();
+                            rolesManagementController.initDataInRolesManagementTab();                        });
                     } else {
                         String errorMessage = response.body().string();
 
                         Platform.runLater(() -> {
                             showError(errorMessage);
                             System.out.println("Received message from server: " + errorMessage);
+
                         });
                     }
 
@@ -100,6 +103,8 @@ public class AdminHeaderController {
 
         }
             viewChosenXmlFilePath(event);
+
+
     }
 
     @FXML

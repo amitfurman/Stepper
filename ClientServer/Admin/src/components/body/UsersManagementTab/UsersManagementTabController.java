@@ -31,7 +31,9 @@ public class UsersManagementTabController {
     private TreeView<String> userDetailsTree;
     @FXML
     private Button SaveButton;
+
     private String chosenUserName;
+
     private UsersListController usersListComponentController;
 
 
@@ -41,6 +43,7 @@ public class UsersManagementTabController {
         usersListComponentController = new UsersListController(this);
         usersListComponentController.startListRefresher();
     }
+
     @FXML
     public void setPressOnSaveButton() {
        // mainController.goToFlowExecutionTab(chosenUserName);
@@ -81,6 +84,8 @@ public class UsersManagementTabController {
 
     public void showChosenFlow() {
         TreeItem<String> rootItem = new TreeItem<>("Chosen Flow Details - ");
+        userDetailsTree.setRoot(rootItem);
+
 /*
         rootItem.setExpanded(true); // Set the root item to be initially expanded
 
@@ -113,7 +118,7 @@ public class UsersManagementTabController {
         TreeItem<String> branchFlowOutputs = showFlowOutputsOfChosenFlow(flowDefinition);
 
         rootItem.getChildren().addAll(branchName, branchDescription, branchFormalOutputs, branchReadOnly, branchSteps, branchFreeInputs, branchFlowOutputs);*/
-        userDetailsTree.setRoot(rootItem);
+
 
 
         boolean isEmptyFlowDetailsTree = (userDetailsTree.getRoot() == null || userDetailsTree.getRoot().getChildren().isEmpty());
