@@ -6,6 +6,7 @@ import dto.*;
 import flow.api.FlowIO.IO;
 import javafx.Controller;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -45,6 +46,9 @@ public class RolesManagementController {
     private TreeView<String> roleDetailsTree;
 
     @FXML private Button newButton;
+    @FXML private CheckListView flowsCheckList;
+    @FXML private CheckListView usersCheckList;
+    private String currRole;
 
 
     public void setMainController(Controller mainController) {
@@ -54,6 +58,16 @@ public class RolesManagementController {
     @FXML
     public void setPressOnSave() {
         // mainController.goToFlowExecutionTab(chosenUserName);
+        ObservableList<String> checkedItems = flowsCheckList.getCheckModel().getCheckedItems();
+        updateRoles(checkedItems);
+
+    }
+
+    public void updateRoles(ObservableList<String> checkedItems) {
+       DTORole curRole =  returnedRolesList.getRoles().stream().filter(role-> role.getName().equals(currRole)).findFirst().get();
+        curRole.getFlowsInRole().clear();
+        curRole.getFlowsInRole().addAll(checkedItems);
+
     }
 
     @FXML
@@ -74,14 +88,14 @@ public class RolesManagementController {
         descriptionHbox.getChildren().addAll(descriptionLabel, descriptionTextField);
 
         VBox flowVBox = new VBox();
-        CheckListView<String> flowsListView = new CheckListView<>();
+        CheckListView<String> flowsForNewRoleListView = new CheckListView<>();
         Label flowsLabel = new Label("Choose flows: ");
-        returnedRolesList.getRoles().get(0).getFlowsInRole().forEach(flow -> flowsListView.getItems().add(flow));
-        flowsListView.setMaxHeight(100);
-        flowsListView.setPrefWidth(200);
-        flowVBox.getChildren().addAll(flowsLabel, flowsListView);
+        returnedRolesList.getRoles().get(0).getFlowsInRole().forEach(flow -> flowsForNewRoleListView.getItems().add(flow));
+        flowsForNewRoleListView.setMaxHeight(100);
+        flowsForNewRoleListView.setPrefWidth(200);
+        flowVBox.getChildren().addAll(flowsLabel, flowsForNewRoleListView);
 
-        ObservableList<String> checkedItems = flowsListView.getCheckModel().getCheckedItems();
+        ObservableList<String> checkedItems = flowsForNewRoleListView.getCheckModel().getCheckedItems();
 
         Button saveButton = new Button("Create a new role");
         saveButton.setOnAction(e -> {
@@ -91,6 +105,8 @@ public class RolesManagementController {
             String description = descriptionTextField.getText();
             List<String> chosenItems = new ArrayList<>(checkedItems);
 
+            returnedRolesList.getRoles().add(new DTORole(name, description, chosenItems));
+
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("name", name);
             jsonObject.addProperty("description", description);
@@ -98,11 +114,11 @@ public class RolesManagementController {
             String jsonPayload = jsonObject.toString();
 
             createNewRole(jsonPayload);
+            initRolesTree();
 
             // Close the popup window
             popupWindow.close();
         });
-
 
 
         layout.getChildren().addAll(nameHbox, descriptionHbox, flowVBox, saveButton);
@@ -114,7 +130,7 @@ public class RolesManagementController {
     }
 
     public void createNewRole(String jsonPayload){
-        RequestBody body = RequestBody.create(jsonPayload, MediaType.parse("application/json"))
+        RequestBody body = RequestBody.create(jsonPayload, MediaType.parse("application/json"));
 
         Request request = new Request.Builder()
                 .url(NEW_ROLE)
@@ -190,7 +206,9 @@ public class RolesManagementController {
 
 
             pressToSeeFullDetailsButton.setOnAction(event -> {
+                currRole = role.getName();
                 showChosenRole(role);
+                showFlowsToEachRole(role);
             });
 
             rootItem.getChildren().add(branchItem);
@@ -212,10 +230,9 @@ public class RolesManagementController {
         roleDetailsTree.setRoot(rootItem);
         rootItem.setExpanded(true); // Set the root item to be initially expanded
 
-
         TreeItem<String> branchName = new TreeItem<>("Role Details");
         TreeItem<String> nameItem = new TreeItem<>("Name: " + role.getName());
-        TreeItem<String> descriptionItem = new TreeItem<>("Description " + role.getDescription());
+        TreeItem<String> descriptionItem = new TreeItem<>("Description: " + role.getDescription());
         TreeItem<String> flowsName = new TreeItem<>("Flows");
         for(String flow : role.getFlowsInRole()){
             TreeItem<String> flowName = new TreeItem<>(flow);
@@ -226,6 +243,30 @@ public class RolesManagementController {
 
         boolean isEmptyFlowDetailsTree = (roleDetailsTree.getRoot() == null || roleDetailsTree.getRoot().getChildren().isEmpty());
         SaveButton.setDisable(isEmptyFlowDetailsTree);
+    }
+
+    public void showFlowsToEachRole(DTORole role){
+
+        returnedRolesList.getRoles().get(0).getFlowsInRole().forEach(flow -> flowsCheckList.getItems().add(flow));
+
+       /* flowsCheckList.getItems().addListener((ListChangeListener<String>) c -> {
+            c.next();
+            if (c.wasAdded()) {
+
+            }
+                //flowsCheckList.getSelectionModel().select(c.getAddedSubList().get(0));
+       });
+*/
+
+       /* List<Integer> checkedIndices = flowsCheckList.getCheckModel().getCheckedIndices();
+        List<String> flowsInRole = role.getFlowsInRole();
+
+        for (String flow : flowsInRole) {
+            int index = flowsCheckList.getItems().indexOf(flow);
+            if (index != -1) {
+                checkedIndices.add(index);
+            }
+        }*/
     }
 
 }

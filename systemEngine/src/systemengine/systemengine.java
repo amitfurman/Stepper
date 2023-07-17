@@ -47,4 +47,5 @@ public interface systemengine {
     List<Input> getValuesListFromContinuationMap(String sourceFlowName, String targetFlowName);
     UserManager getUserMangerObject();
     DTORolesList getDTORolesList();
+    void addNewRole(DTORole dtoRole);
 }
