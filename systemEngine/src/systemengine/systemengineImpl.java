@@ -110,8 +110,9 @@ public class systemengineImpl implements systemengine {
     @Override
     public void initRoles() {
         roles = new ArrayList<>();
-        roles.add(new Role("All Flows", "all flows" , flowDefinitionList));
-        roles.add(new Role("Read Only Flows", "all flows that are read only",flowDefinitionList.stream().filter(flow -> flow.checkIfFlowIsReadOnly()).collect(Collectors.toList())));
+
+        roles.add(new Role("All Flows", "all flows", flowDefinitionList.stream().map(FlowDefinition::getName).collect(Collectors.toList())));
+        roles.add(new Role("Read Only Flows", "all flows that are read only",flowDefinitionList.stream().filter(flow -> flow.checkIfFlowIsReadOnly()).map(FlowDefinition::getName).collect(Collectors.toList())));
     }
 
     @Override
@@ -311,5 +312,9 @@ public class systemengineImpl implements systemengine {
     @Override
     public DTORolesList getDTORolesList(){
         return new DTORolesList(roles);
+    }
+    @Override
+    public void addNewRole(DTORole role){
+        this.roles.add(new Role(role.getName(), role.getDescription(), role.getFlowsInRole()));
     }
 }

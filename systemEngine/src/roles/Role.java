@@ -7,9 +7,9 @@ import java.util.List;
 public class Role {
     private String name;
     private String description;
-    private List<FlowDefinition> flowsInRole;
+    private List<String> flowsInRole;
 
-    public Role(String name, String description, List<FlowDefinition> flowsInRole) {
+    public Role(String name, String description, List<String> flowsInRole) {
         this.name = name;
         this.description = description;
         this.flowsInRole = flowsInRole;
@@ -23,7 +23,7 @@ public class Role {
         return description;
     }
 
-    public List<FlowDefinition> getFlowsInRole() {
+    public List<String> getFlowsInRole() {
         return flowsInRole;
     }
 }

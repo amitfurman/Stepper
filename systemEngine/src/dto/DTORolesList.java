@@ -13,11 +13,7 @@ public class DTORolesList {
     public DTORolesList(List<Role> roles) {
         rolesList = new ArrayList<>();
         for (Role role : roles) {
-            List<String> flowsNames = new ArrayList<>();
-            for (FlowDefinition flow : role.getFlowsInRole()) {
-                flowsNames.add(flow.getName());
-            }
-            rolesList.add(new DTORole(role.getName(), role.getDescription(),flowsNames));
+            rolesList.add(new DTORole(role.getName(), role.getDescription(),role.getFlowsInRole()));
         }
     }
     public DTORolesList() {

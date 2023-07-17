@@ -10,12 +10,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.CheckListView?>
 
 <Tab styleClass="tabs" text="Roles Management" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="components.body.RolesManagementTab.RolesManagementController">
    <content>
       <AnchorPane>
          <children>
-            <GridPane alignment="CENTER" layoutX="1.0" prefHeight="267.0" prefWidth="594.0">
+            <GridPane alignment="CENTER" prefHeight="267.0" prefWidth="594.0">
                <columnConstraints>
                   <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="294.6666259765625" minWidth="10.0" percentWidth="50.0" prefWidth="282.66668701171875" />
                   <ColumnConstraints hgrow="ALWAYS" maxWidth="336.0" minWidth="10.0" percentWidth="50.0" prefWidth="317.33331298828125" />
@@ -29,21 +30,25 @@
                         <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
                      </columnConstraints>
                      <rowConstraints>
-                        <RowConstraints maxHeight="269.0" minHeight="10.0" percentHeight="90.0" prefHeight="211.00003051757812" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="128.0" minHeight="0.0" percentHeight="10.0" prefHeight="55.999969482421875" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="269.0" minHeight="10.0" percentHeight="33.0" prefHeight="211.00003051757812" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="269.0" minHeight="10.0" percentHeight="33.0" prefHeight="211.00003051757812" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="269.0" minHeight="10.0" percentHeight="33.0" prefHeight="69.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="128.0" minHeight="0.0" percentHeight="15.0" prefHeight="26.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <HBox alignment="CENTER_RIGHT" GridPane.rowIndex="1">
+                        <HBox alignment="CENTER_RIGHT" GridPane.rowIndex="3">
                            <GridPane.margin>
                               <Insets left="160.0" top="25.0" />
                            </GridPane.margin>
                         </HBox>
                         <TreeView fx:id="roleDetailsTree" prefHeight="197.0" prefWidth="282.0" />
-                        <Button id="execute-button" fx:id="SaveButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#setPressOnSave" prefHeight="26.0" prefWidth="138.0" stylesheets="@rolesManagementTab.css" text="Save!" GridPane.rowIndex="1">
+                        <Button id="execute-button" fx:id="SaveButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#setPressOnSave" prefHeight="22.0" prefWidth="120.0" stylesheets="@rolesManagementTab.css" text="Save!" GridPane.rowIndex="3">
                            <GridPane.margin>
                               <Insets left="150.0" />
                            </GridPane.margin>
                         </Button>
+                        <CheckListView fx:id="flowsCheckList" GridPane.rowIndex="1" />
+                        <CheckListView fx:id="usersCheckList" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
                   <GridPane alignment="CENTER" prefHeight="267.0" prefWidth="594.0">
