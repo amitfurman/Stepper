@@ -6,6 +6,7 @@ import dto.*;
 import flow.api.FlowIO.IO;
 import javafx.Controller;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -208,6 +209,7 @@ public class RolesManagementController {
             pressToSeeFullDetailsButton.setOnAction(event -> {
                 currRole = role.getName();
                 showChosenRole(role);
+                flowsCheckList.getItems().clear();
                 showFlowsToEachRole(role);
             });
 
@@ -246,27 +248,18 @@ public class RolesManagementController {
     }
 
     public void showFlowsToEachRole(DTORole role){
+        List<String> allFlows = returnedRolesList.getRoles().get(0).getFlowsInRole();
 
-        returnedRolesList.getRoles().get(0).getFlowsInRole().forEach(flow -> flowsCheckList.getItems().add(flow));
+        for (String currFlow : allFlows) {
+            flowsCheckList.getItems().add(currFlow);
+        }
 
-       /* flowsCheckList.getItems().addListener((ListChangeListener<String>) c -> {
-            c.next();
-            if (c.wasAdded()) {
-
+        for (String currFlow : allFlows) {
+            if (role.getFlowsInRole().contains(currFlow)) {
+                flowsCheckList.getCheckModel().check(currFlow);
             }
-                //flowsCheckList.getSelectionModel().select(c.getAddedSubList().get(0));
-       });
-*/
+        }
 
-       /* List<Integer> checkedIndices = flowsCheckList.getCheckModel().getCheckedIndices();
-        List<String> flowsInRole = role.getFlowsInRole();
-
-        for (String flow : flowsInRole) {
-            int index = flowsCheckList.getItems().indexOf(flow);
-            if (index != -1) {
-                checkedIndices.add(index);
-            }
-        }*/
     }
 
 }
