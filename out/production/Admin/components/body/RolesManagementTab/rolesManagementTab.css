@@ -9,7 +9,18 @@
     -fx-font-weight: bold;
     -fx-text-fill: #000000;
     -fx-background-color: #ffa6c5;
-    -fx-border-color: #fdfff7;
+    -fx-border-color: #36454f;
+    -fx-border-width: 1px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+}
+
+#new-button {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+    -fx-background-color: #fdfff7;
+    -fx-border-color: #36454f;
     -fx-border-width: 1px;
     -fx-background-radius: 5px;
     -fx-border-radius: 5px;
@@ -21,7 +32,13 @@
     -fx-opacity: 0.8;
 }
 
-#pressToSeeFullDetailsButton {
+#new-button:hover {
+    -fx-background-color: #fdfff7;
+    -fx-text-fill: #000000;
+    -fx-opacity: 0.8;
+}
+
+.pressToSeeFullDetailsButton {
     -fx-font-size: 11px;
     -fx-font-weight: bold;
     -fx-text-fill: #fdfff7;
@@ -32,7 +49,7 @@
     -fx-border-radius: 5px;
 }
 
-#pressToSeeFullDetailsButton:hover {
+.pressToSeeFullDetailsButton:hover {
     -fx-background-color: #9b9a9a;
     -fx-text-fill: #fdfff7;
     -fx-opacity: 0.8;
@@ -40,4 +57,35 @@
 
 .tree-cell {
     -fx-font-size: 13px;
+}
+
+.popup-label {
+    -fx-alignment: center;
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffa6c5;
+}
+
+.data-label {
+    -fx-alignment: center;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+}
+
+.text-field {
+    -fx-prompt-text-fill: pink;
+    -fx-border-color: pink;
+    -fx-border-width: 2px;
+}
+
+.role-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+    -fx-background-color: #ffa6c5;
+    -fx-border-color: #36454f;
+    -fx-border-width: 1px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
 }

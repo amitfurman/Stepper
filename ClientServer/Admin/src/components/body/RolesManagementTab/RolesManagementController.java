@@ -15,6 +15,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
@@ -65,9 +66,10 @@ public class RolesManagementController {
     }
 
     public void updateRoles(ObservableList<String> checkedItems) {
-       DTORole curRole =  returnedRolesList.getRoles().stream().filter(role-> role.getName().equals(currRole)).findFirst().get();
-        curRole.getFlowsInRole().clear();
-        curRole.getFlowsInRole().addAll(checkedItems);
+       DTORole currentRole =  returnedRolesList.getRoles().stream().filter(role-> role.getName().equals(currRole)).findFirst().get();
+        currentRole.getFlowsInRole().clear();
+        currentRole.getFlowsInRole().addAll(checkedItems);
+        System.out.println(currentRole.getFlowsInRole());
 
     }
 
@@ -78,19 +80,30 @@ public class RolesManagementController {
         popupWindow.setTitle("Enter new role details");
         VBox layout = new VBox(10);
 
+        HBox labelHbox = new HBox();
+        Label label = new Label("New Role Details");
+        label.getStyleClass().add("popup-label");
+        labelHbox.setAlignment(Pos.CENTER);
+        labelHbox.getChildren().add(label);
+
         HBox nameHbox = new HBox();
         Label nameLabel = new Label("Role Name: ");
         TextField nameTextField = new TextField();
+        nameTextField.getStyleClass().add("text-field");
+        nameLabel.getStyleClass().add("data-label");
         nameHbox.getChildren().addAll(nameLabel, nameTextField);
 
         HBox descriptionHbox = new HBox();
         Label descriptionLabel = new Label("Description: ");
+        descriptionLabel.getStyleClass().add("data-label");
         TextField descriptionTextField = new TextField();
+        descriptionTextField.getStyleClass().add("text-field");
         descriptionHbox.getChildren().addAll(descriptionLabel, descriptionTextField);
 
         VBox flowVBox = new VBox();
         CheckListView<String> flowsForNewRoleListView = new CheckListView<>();
         Label flowsLabel = new Label("Choose flows: ");
+        flowsLabel.getStyleClass().add("data-label");
         returnedRolesList.getRoles().get(0).getFlowsInRole().forEach(flow -> flowsForNewRoleListView.getItems().add(flow));
         flowsForNewRoleListView.setMaxHeight(100);
         flowsForNewRoleListView.setPrefWidth(200);
@@ -98,7 +111,8 @@ public class RolesManagementController {
 
         ObservableList<String> checkedItems = flowsForNewRoleListView.getCheckModel().getCheckedItems();
 
-        Button saveButton = new Button("Create a new role");
+        Button saveButton = new Button("Press to create a new role");
+        saveButton.getStyleClass().add("role-button");
         saveButton.setOnAction(e -> {
             // Get the entered description and chosen items
 
@@ -122,10 +136,11 @@ public class RolesManagementController {
         });
 
 
-        layout.getChildren().addAll(nameHbox, descriptionHbox, flowVBox, saveButton);
+        layout.getChildren().addAll(labelHbox,nameHbox, descriptionHbox, flowVBox, saveButton);
 
         layout.setAlignment(Pos.CENTER);
         Scene scene1 = new Scene(layout, 700, 400);
+        scene1.getStylesheets().add(getClass().getResource("rolesManagementTab.css").toExternalForm());
         popupWindow.setScene(scene1);
         popupWindow.showAndWait();
     }
@@ -201,6 +216,7 @@ public class RolesManagementController {
         for (DTORole role : returnedRolesList.getRoles()) {
             Button pressToSeeFullDetailsButton = new Button("Press to see full details");
             pressToSeeFullDetailsButton.setId("pressToSeeFullDetailsButton");
+            pressToSeeFullDetailsButton.getStyleClass().add("pressToSeeFullDetailsButton");
 
             TreeItem<String> branchItem = new TreeItem<>("");
             branchItem.setGraphic(createTreeCellGraphic(role.getName(), pressToSeeFullDetailsButton));

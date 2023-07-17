@@ -14,9 +14,9 @@
 
 <Tab styleClass="tabs" text="Roles Management" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="components.body.RolesManagementTab.RolesManagementController">
    <content>
-      <AnchorPane>
+      <AnchorPane stylesheets="@rolesManagementTab.css">
          <children>
-            <GridPane alignment="CENTER" prefHeight="267.0" prefWidth="594.0">
+            <GridPane alignment="CENTER" prefHeight="267.0" prefWidth="594.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <columnConstraints>
                   <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="294.6666259765625" minWidth="10.0" percentWidth="50.0" prefWidth="282.66668701171875" />
                   <ColumnConstraints hgrow="ALWAYS" maxWidth="336.0" minWidth="10.0" percentWidth="50.0" prefWidth="317.33331298828125" />
@@ -40,13 +40,11 @@
                            <GridPane.margin>
                               <Insets left="160.0" top="25.0" />
                            </GridPane.margin>
+                           <children>
+                              <Button id="execute-button" fx:id="SaveButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#setPressOnSave" prefHeight="22.0" prefWidth="120.0" stylesheets="@rolesManagementTab.css" text="Save!" />
+                           </children>
                         </HBox>
                         <TreeView fx:id="roleDetailsTree" prefHeight="197.0" prefWidth="282.0" />
-                        <Button id="execute-button" fx:id="SaveButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#setPressOnSave" prefHeight="22.0" prefWidth="120.0" stylesheets="@rolesManagementTab.css" text="Save!" GridPane.rowIndex="3">
-                           <GridPane.margin>
-                              <Insets left="150.0" />
-                           </GridPane.margin>
-                        </Button>
                         <CheckListView fx:id="flowsCheckList" GridPane.rowIndex="1" />
                         <CheckListView fx:id="usersCheckList" GridPane.rowIndex="2" />
                      </children>
@@ -75,11 +73,14 @@
                            </rowConstraints>
                            <children>
                               <TreeView fx:id="rolesTree" prefHeight="240.0" prefWidth="213.0" />
-                              <Button id="execute-button" fx:id="NewButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#setPressOnNewButton" prefHeight="26.0" prefWidth="133.0" text="New!" GridPane.rowIndex="1">
+                              <HBox alignment="CENTER_RIGHT" GridPane.rowIndex="1">
                                  <GridPane.margin>
                                     <Insets left="150.0" />
                                  </GridPane.margin>
-                              </Button>
+                                 <children>
+                                    <Button id="new-button" fx:id="NewButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#setPressOnNewButton" prefHeight="26.0" prefWidth="133.0" stylesheets="@rolesManagementTab.css" text="New!" />
+                                 </children>
+                              </HBox>
                            </children>
                         </GridPane>
                      </children>
