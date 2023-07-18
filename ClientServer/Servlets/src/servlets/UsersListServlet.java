@@ -23,7 +23,7 @@ public class UsersListServlet extends HttpServlet {
             Gson gson = new Gson();
           //  UserManager userManager = ServletUtils.getUserManager(getServletContext());
             UserManager userManager = ServletUtils.getSystemEngine(getServletContext()).getUserMangerObject();
-            Set<String> usersList = userManager.getUsers();
+            Set<String> usersList = userManager.getUsersNames();
             String json = gson.toJson(usersList);
             out.println(json);
             out.flush();

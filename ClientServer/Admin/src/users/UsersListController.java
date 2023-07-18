@@ -1,6 +1,7 @@
 package users;
 
 import components.api.HttpStatusUpdate;
+import components.body.RolesManagementTab.RolesManagementController;
 import components.body.UsersManagementTab.UsersManagementTabController;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;

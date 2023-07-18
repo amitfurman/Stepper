@@ -12,6 +12,7 @@ import jaxb.schema.SchemaBasedJAXBMain;
 import roles.Role;
 import statistic.FlowAndStepStatisticData;
 import steps.api.DataNecessity;
+import user.UserDefinition;
 import user.UserManager;
 import xml.XmlValidator;
 
@@ -101,7 +102,8 @@ public class systemengineImpl implements systemengine {
             UnExistsOutput, FreeInputsWithSameNameAndDifferentType, InitialInputIsNotExist, UnExistsFlow, UnExistsDataInTargetFlow, FileNotExistsException, FileIsNotXmlTypeException {
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         FlowsManager flows = schema.schemaBasedJAXB(inputStream);
-        flowDefinitionList = flows.getAllFlows();
+        flowDefinitionList.addAll(flows.getAllFlows());
+        //flowDefinitionList = flows.getAllFlows();
         numberOfThreads = flows.getNumberOfThreads();
         allContinuationMappings = new LinkedList<>(flows.getAllContinuationMappings());
         threadPool = Executors.newFixedThreadPool(numberOfThreads);
@@ -316,5 +318,18 @@ public class systemengineImpl implements systemengine {
     @Override
     public void addNewRole(DTORole role){
         this.roles.add(new Role(role.getName(), role.getDescription(), role.getFlowsInRole()));
+    }
+    @Override
+    public void updateFlowsInRole(DTORole dtoRole) {
+        Role role = roles.stream().filter(r -> r.getName().equals(dtoRole.getName())).findFirst().get();
+        role.setFlowsInRole(dtoRole.getFlowsInRole());
+        role.setUsersInRole(dtoRole.getUsers());
+        dtoRole.getUsers().forEach(user -> {
+            UserDefinition user1 = userManagerObject.getUsers().stream().filter(u -> u.getUsername().equals(user)).findFirst().get();
+            user1.addRole(role.getName());
+            System.out.println(user1.getUsername());
+            System.out.println(user1.getRoles());
+        });
+
     }
 }

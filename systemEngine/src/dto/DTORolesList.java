@@ -13,7 +13,7 @@ public class DTORolesList {
     public DTORolesList(List<Role> roles) {
         rolesList = new ArrayList<>();
         for (Role role : roles) {
-            rolesList.add(new DTORole(role.getName(), role.getDescription(),role.getFlowsInRole()));
+            rolesList.add(new DTORole(role.getName(), role.getDescription(),role.getFlowsInRole(), role.getUsersInRole().stream().collect(Collectors.toList())));
         }
     }
     public DTORolesList() {

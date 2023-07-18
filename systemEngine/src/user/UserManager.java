@@ -24,8 +24,12 @@ public class UserManager {
         usersSet.remove(username);
     }
 
-    public synchronized Set<String> getUsers() {
+    public synchronized Set<String> getUsersNames() {
         return Collections.unmodifiableSet(usersSet);
+    }
+
+    public synchronized Set<UserDefinition> getUsers() {
+        return Collections.unmodifiableSet(usersDefinitionSet);
     }
 
     public boolean isUserExists(String username) {

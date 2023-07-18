@@ -29,6 +29,7 @@ public class AdminMain extends Application {
         GridPane headerComponent = fxmlLoader.load(url.openStream());
         AdminHeaderController headerController = fxmlLoader.getController();
 
+
         fxmlLoader = new FXMLLoader();
         url = getClass().getResource("/javafx/source.fxml");
         fxmlLoader.setLocation(url);
@@ -64,6 +65,7 @@ public class AdminMain extends Application {
 
         TabPane tabPane = (TabPane) borderPane.getCenter();
         tabPane.getTabs().addAll(usersManagementTabComponent,rolesManagementTabComponent,executionsHistoryTabComponent, StatisticsTabComponent);
+
 
         mainController.setAdminHeaderComponentController(headerController);
         mainController.setUsersManagementTabController(usersManagementTabController);

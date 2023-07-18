@@ -37,20 +37,15 @@ import static util.Constants.*;
 
 public class RolesManagementController {
     private Controller mainController;
-
     @FXML private Button SaveButton;
-
-    private DTORolesList returnedRolesList = new DTORolesList();
-    @FXML
-    private TreeView<String> rolesTree;
-
-    @FXML
-    private TreeView<String> roleDetailsTree;
-
+    @FXML private TreeView<String> rolesTree;
+    @FXML private TreeView<String> roleDetailsTree;
     @FXML private Button newButton;
     @FXML private CheckListView flowsCheckList;
     @FXML private CheckListView usersCheckList;
+    private DTORolesList returnedRolesList = new DTORolesList();
     private String currRole;
+    private Set<String> usersList;
 
 
     public void setMainController(Controller mainController) {
@@ -59,20 +54,19 @@ public class RolesManagementController {
 
     @FXML
     public void setPressOnSave() {
-        // mainController.goToFlowExecutionTab(chosenUserName);
         ObservableList<String> checkedItems = flowsCheckList.getCheckModel().getCheckedItems();
-        updateRoles(checkedItems);
+        ObservableList<String> checkedUsersItems = usersCheckList.getCheckModel().getCheckedItems();
+        updateRoles(checkedItems,checkedUsersItems);
 
     }
-
-    public void updateRoles(ObservableList<String> checkedItems) {
+    public void updateRoles(ObservableList<String> checkedItems, ObservableList<String> checkedUsersItems) {
        DTORole currentRole =  returnedRolesList.getRoles().stream().filter(role-> role.getName().equals(currRole)).findFirst().get();
         currentRole.getFlowsInRole().clear();
         currentRole.getFlowsInRole().addAll(checkedItems);
-        System.out.println(currentRole.getFlowsInRole());
-
+        currentRole.getUsers().clear();
+        currentRole.getUsers().addAll(checkedUsersItems);
+        updateRole(currentRole);
     }
-
     @FXML
     public void setPressOnNewButton(ActionEvent actionEvent) {
         Stage popupWindow = new Stage();
@@ -120,7 +114,7 @@ public class RolesManagementController {
             String description = descriptionTextField.getText();
             List<String> chosenItems = new ArrayList<>(checkedItems);
 
-            returnedRolesList.getRoles().add(new DTORole(name, description, chosenItems));
+            returnedRolesList.getRoles().add(new DTORole(name, description, chosenItems, null));
 
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("name", name);
@@ -130,6 +124,7 @@ public class RolesManagementController {
 
             createNewRole(jsonPayload);
             initRolesTree();
+
 
             // Close the popup window
             popupWindow.close();
@@ -144,7 +139,6 @@ public class RolesManagementController {
         popupWindow.setScene(scene1);
         popupWindow.showAndWait();
     }
-
     public void createNewRole(String jsonPayload){
         RequestBody body = RequestBody.create(jsonPayload, MediaType.parse("application/json"));
 
@@ -187,7 +181,94 @@ public class RolesManagementController {
             }
         });
     }
+    public void updateRole(DTORole currentRole){
+        String jsonPayload = new Gson().toJson(currentRole);
+        RequestBody body = RequestBody.create(jsonPayload, MediaType.parse("application/json"));
 
+        Request request = new Request.Builder()
+                .url(UPDATE_ROLE)
+                .post(body)
+                .build();
+
+        String finalUrl = HttpUrl
+                .parse(UPDATE_ROLE)
+                .newBuilder()
+                .build()
+                .toString();
+
+        HttpClientUtil.runAsyncPost(finalUrl, request.body(), new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() -> {
+                    System.out.println("Something went wrong: " + e.getMessage());
+                });
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.code() == HttpURLConnection.HTTP_OK) {
+                    Platform.runLater(() -> {
+
+
+                    });
+                } else {
+                    String errorMessage = response.body().string();
+
+                    Platform.runLater(() -> {
+                        System.out.println("Received message from server: " + errorMessage);
+
+                    });
+                }
+
+            }
+        });
+    }
+/*
+    public void updateUsersInRole(DTORole currentRole){
+        String jsonPayload = new Gson().toJson(currentRole);
+        RequestBody body = RequestBody.create(jsonPayload, MediaType.parse("application/json"));
+
+        Request request = new Request.Builder()
+                .url(UPDATE_USERS_IN_ROLE)
+                .post(body)
+                .build();
+
+        String finalUrl = HttpUrl
+                .parse(UPDATE_USERS_IN_ROLE)
+                .newBuilder()
+                .build()
+                .toString();
+
+        HttpClientUtil.runAsyncPost(finalUrl, request.body(), new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() -> {
+                    System.out.println("Something went wrong: " + e.getMessage());
+                });
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.code() == HttpURLConnection.HTTP_OK) {
+                    Platform.runLater(() -> {
+
+
+                    });
+                } else {
+                    String errorMessage = response.body().string();
+
+                    Platform.runLater(() -> {
+                        System.out.println("Received message from server: " + errorMessage);
+
+                    });
+                }
+
+            }
+        });
+    }
+*/
     public void initDataInRolesManagementTab() {
         HttpClientUtil.runAsync(Constants.ROLES_LIST, new Callback() {
             @Override
@@ -204,11 +285,9 @@ public class RolesManagementController {
             }
         });
     }
-
     public void initRolesTree(){
         showRolesTree();
     }
-
     public void showRolesTree() {
         TreeItem<String> rootItem = new TreeItem<>("Roles");
         rootItem.setExpanded(true);
@@ -227,6 +306,7 @@ public class RolesManagementController {
                 showChosenRole(role);
                 flowsCheckList.getItems().clear();
                 showFlowsToEachRole(role);
+                showUsersToEachRole(role);
             });
 
             rootItem.getChildren().add(branchItem);
@@ -235,14 +315,12 @@ public class RolesManagementController {
             rolesTree.setRoot(rootItem);
         });
     }
-
     private HBox createTreeCellGraphic(String nodeName, Button button) {
         Label nameLabel = new Label(nodeName);
         HBox graphicContainer = new HBox(nameLabel, button);
         graphicContainer.setSpacing(5);
         return graphicContainer;
     }
-
     public void showChosenRole(DTORole role) {
         TreeItem<String> rootItem = new TreeItem<>("Chosen Role Details - " + role.getName());
         roleDetailsTree.setRoot(rootItem);
@@ -262,10 +340,9 @@ public class RolesManagementController {
         boolean isEmptyFlowDetailsTree = (roleDetailsTree.getRoot() == null || roleDetailsTree.getRoot().getChildren().isEmpty());
         SaveButton.setDisable(isEmptyFlowDetailsTree);
     }
-
     public void showFlowsToEachRole(DTORole role){
-        List<String> allFlows = returnedRolesList.getRoles().get(0).getFlowsInRole();
-
+        Set<String> allFlows = returnedRolesList.getRoles().get(0).getFlowsInRole().stream().collect(Collectors.toSet());
+        flowsCheckList.getItems().clear();
         for (String currFlow : allFlows) {
             flowsCheckList.getItems().add(currFlow);
         }
@@ -273,6 +350,19 @@ public class RolesManagementController {
         for (String currFlow : allFlows) {
             if (role.getFlowsInRole().contains(currFlow)) {
                 flowsCheckList.getCheckModel().check(currFlow);
+            }
+        }
+    }
+
+    public void showUsersToEachRole(DTORole role){
+        usersList = mainController.getUsersManagementTabController().getUsers();
+        usersCheckList.getItems().clear();
+        for (String user : usersList) {
+            usersCheckList.getItems().add(user);
+        }
+        for (String user : usersList) {
+            if (role.getUsers().contains(user)) {
+                usersCheckList.getCheckModel().check(user);
             }
         }
 

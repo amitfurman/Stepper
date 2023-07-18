@@ -3,25 +3,22 @@ package dto;
 import flow.api.FlowDefinition;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class DTORole {
 
         private String name;
         private String description;
-/*
-    private List<DTOFlowName> flowsInRole;
-*/
+        private List<String> users;
         private List<String> flowsInRole;
 
-        public DTORole(String name, String description, List<String> flows) {
+        public DTORole(String name, String description, List<String> flows, List<String> users) {
             this.name = name;
             this.description = description;
-            flowsInRole = new ArrayList<>();
-            flowsInRole.addAll(flows);
-  /*          for (String flow : flows) {
-                this.flowsInRole.add(new DTOFlowName(flow));
-            }*/
+            this.flowsInRole = new ArrayList<>(flows);
+            this.users = new ArrayList<>(users);
          }
 
         public String getName() {
@@ -35,4 +32,6 @@ public class DTORole {
         public List<String> getFlowsInRole() {
             return flowsInRole;
         }
+
+        public List<String> getUsers() {return users;}
 }

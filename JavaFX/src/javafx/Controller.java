@@ -22,6 +22,7 @@ import javafx.scene.control.TreeView;
 import steps.api.DataNecessity;
 import systemengine.systemengine;
 import systemengine.systemengineImpl;
+import users.UsersListController;
 
 import java.util.Comparator;
 import java.util.List;
@@ -190,7 +191,9 @@ public class Controller {
     public void initInputsInFlowExecutionTab() { if (flowExecutionTabController!=null) flowExecutionTabController.initInputsInFlowExecutionTab();}
     public void initExecutionHistoryTableInExecutionsHistoryTab() { executionsHistoryTabController.initExecutionHistoryTable();}
 
-
+    public UsersManagementTabController getUsersManagementTabController() {
+        return usersManagementTabController;
+    }
     public RolesManagementController getRolesManagementController() {
         return rolesManagementTabController;
     }

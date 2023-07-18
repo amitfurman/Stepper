@@ -48,4 +48,5 @@ public interface systemengine {
     UserManager getUserMangerObject();
     DTORolesList getDTORolesList();
     void addNewRole(DTORole dtoRole);
+    void updateFlowsInRole(DTORole dtoRole);
 }
