@@ -28,7 +28,6 @@ public class RolesListPerUserServlet extends HttpServlet {
             String json = gson.toJson(rolesListAsArray);
             out.println(json);
             out.flush();
-            System.out.println("RolesListPerUserServlet: " + json);
         }
     }}
 

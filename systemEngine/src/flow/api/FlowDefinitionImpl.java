@@ -27,6 +27,7 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
     private final List<SingleFlowIOData> freeInputs;
     private final StatisticData flowStatisticData;
     private final Map<String, Object> initialInputMap;
+    private int numOfContinuation;
 
     public FlowDefinitionImpl(String name, String description) {
         this.name = name;
@@ -341,16 +342,13 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
 
     }
 
-/*    @Override
-    public boolean checkIfInitialInputIsFreeInput(String inputName) throws InitialInputIsNotFreeInput {
-        boolean isPresent =
-                freeInputs
-                        .stream()
-                        .anyMatch(data -> data.getFinalName().equals(inputName));
+    public void setNumOfContinuation(int size) {
+        this.numOfContinuation = size;
+    }
+    public int getNumOfContinuation() {
+        return numOfContinuation;
+    }
 
-        if (!isPresent) {
-            throw new InitialInputIsNotFreeInput();
-        }
-        return isPresent;
-    }*/
+
+
 }

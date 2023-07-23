@@ -121,6 +121,7 @@ public class Stepper2Flows {
                     }
                     allContinuationMappings.add(flowContinuation);
                 }
+                flow.setNumOfContinuation(currFlow.getSTContinuations().getSTContinuation().size());
             }
 
             //initial values
@@ -156,6 +157,7 @@ public class Stepper2Flows {
             flow.mandatoryInputsIsUserFriendly();
 
             allFlows.add(flow);
+
         }
 
         //check if all continuations are valid
@@ -183,7 +185,6 @@ public class Stepper2Flows {
                 if (!DDOfSourceData.getType().equals(DDOfTargetData.getType()))
                     throw new TheSameDD();
             }
-
         }
 
     }

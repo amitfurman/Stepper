@@ -1,7 +1,6 @@
 package components.body.flowDefinitionTab;
-import dto.DTOAllStepperFlows;
-import dto.DTOFlowDefinition;
-import dto.DTOSingleFlowIOData;
+import com.google.gson.Gson;
+import dto.*;
 import flow.api.FlowIO.IO;
 import javafx.Controller;
 import javafx.fxml.FXML;
@@ -10,11 +9,22 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.paint.Color;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
+import util.Constants;
+import util.http.HttpClientUtil;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static util.Constants.GSON_INSTANCE;
 
 public class ClientFlowDefinitionTabController {
     private Controller mainController;
@@ -42,40 +52,63 @@ public class ClientFlowDefinitionTabController {
     public TreeView<String> getFlowsTree(){
         return flowsTree;
     }
-    public void showFlowsTree() {
+    public void showFlowsTree(List<String> roles) {
+        getAllFlows();
+    }
+    public void getAllFlows() {
+        HttpClientUtil.runAsync(Constants.FLOWS_IN_ROLES_SERVLET, new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String jsonResponse = response.body().string();
+                System.out.println(jsonResponse + "jsonResponse");
+                Gson gson = new Gson();
+                DTOFlowsDefinitionInRoles dtoFlowsDefinition = gson.fromJson(jsonResponse, DTOFlowsDefinitionInRoles.class);
+                System.out.println(dtoFlowsDefinition + "dtoFlowsDefinition");
+                if (dtoFlowsDefinition!=null && dtoFlowsDefinition.getFlowsDefinitionInRoles()!=null) {
+                    updateFlowsTree(dtoFlowsDefinition);
+                }
+            }
+        });
+    }
+    public void updateFlowsTree(DTOFlowsDefinitionInRoles dtoFlowsDefinition) {
         TreeItem<String> rootItem = new TreeItem<>("Flows");
         rootItem.setExpanded(true);
-        DTOAllStepperFlows allStepperFlows =  mainController.getSystemEngineInterface().getAllFlows();
-
-        for (int i = 0; i < allStepperFlows.getNumberOfFlows(); i++) {
-            DTOFlowDefinition flowDefinition = allStepperFlows.getFlow(i);
+        for ( DTOFlowDefinitionInRoles flowDefinition: dtoFlowsDefinition.getFlowsDefinitionInRoles()) {
             TreeItem<String> branchItem = createBranchItem(flowDefinition);
             rootItem.getChildren().add(branchItem);
         }
-
         flowsTree.setRoot(rootItem);
     }
-    public TreeItem<String> createBranchItem(DTOFlowDefinition flowDefinition) {
-        TreeItem<String> branchItem = new TreeItem<>(flowDefinition.getName());
+    public TreeItem<String> createBranchItem(DTOFlowDefinitionInRoles flowDefinition) {
+        TreeItem<String> branchItem = new TreeItem<>(flowDefinition.getFlowName());
         TreeItem<String> leafItem1 = new TreeItem<>("Description: " + flowDefinition.getDescription());
         TreeItem<String> leafItem2 = new TreeItem<>("Number of steps: " + Integer.toString(flowDefinition.getNumberOfSteps()));
         TreeItem<String> leafItem3 = new TreeItem<>("Number of free inputs: " + Integer.toString(flowDefinition.getNumberOfFreeInputs()));
+        TreeItem<String> leafItem4 = new TreeItem<>("Number of continuations: " + Integer.toString(flowDefinition.getNumberOfContinuations()));
+
 
         Button pressToSeeFullDetailsButton = new Button("Press to see full details");
         pressToSeeFullDetailsButton.setId("pressToSeeFullDetailsButton");
 
         pressToSeeFullDetailsButton.setOnAction(event -> {
-            showChosenFlow(flowDefinition);
+            //showChosenFlow(flowDefinition);
         });
         TreeItem<String> buttonItem = new TreeItem<>(" ");
         buttonItem.setGraphic(pressToSeeFullDetailsButton);
 
-        branchItem.getChildren().addAll(leafItem1, leafItem2, leafItem3, buttonItem);
+        branchItem.getChildren().addAll(leafItem1, leafItem2, leafItem3,leafItem4, buttonItem);
 
         return branchItem;
     }
-    public void showChosenFlow(DTOFlowDefinition flowDefinition) {
-        TreeItem<String> rootItem = new TreeItem<>("Chosen Flow Details - " + flowDefinition.getName());
+
+    /*
+    public void showChosenFlow(DTOFlowDefinitionInRoles flowDefinition) {
+        TreeItem<String> rootItem = new TreeItem<>("Chosen Flow Details - " + flowDefinition.getFlowName());
         rootItem.setExpanded(true); // Set the root item to be initially expanded
 
         TreeItem<String> branchName = new TreeItem<>("Flow Name");
@@ -208,6 +241,6 @@ public class ClientFlowDefinitionTabController {
         TreeItem<String> rootItem = new TreeItem<>();
         flowDetailsTree.setRoot(rootItem);
         ExecuteFlowButton.setDisable(true);
-    }
+    }*/
 
 }

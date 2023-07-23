@@ -57,7 +57,6 @@ public class RolesManagementController {
         ObservableList<String> checkedItems = flowsCheckList.getCheckModel().getCheckedItems();
         ObservableList<String> checkedUsersItems = usersCheckList.getCheckModel().getCheckedItems();
         updateRoles(checkedItems,checkedUsersItems);
-        //System.out.println(checkedUsersItems);
 
     }
     public void updateRoles(ObservableList<String> checkedItems, ObservableList<String> checkedUsersItems) {
@@ -66,8 +65,6 @@ public class RolesManagementController {
         currentRole.getFlowsInRole().addAll(checkedItems);
         currentRole.getUsers().clear();
         currentRole.getUsers().addAll(checkedUsersItems);
-        System.out.println("role users: " + currentRole.getUsers());
-
         updateRole(currentRole);
     }
     @FXML
@@ -282,9 +279,13 @@ public class RolesManagementController {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String jsonArrayOfRoles = response.body().string();
+                System.out.println(jsonArrayOfRoles + "jsonArrayOfRoles");
                 //String[] roles = GSON_INSTANCE.fromJson(jsonArrayOfRoles, String[].class);
                 returnedRolesList = GSON_INSTANCE.fromJson(jsonArrayOfRoles, DTORolesList.class);
-                initRolesTree();
+                System.out.println(returnedRolesList.getRoles().size() + "returnedRolesList.getRoles().size()");
+                Platform.runLater(() -> {
+                    initRolesTree();
+                });
             }
         });
     }
@@ -294,6 +295,7 @@ public class RolesManagementController {
     public void showRolesTree() {
         TreeItem<String> rootItem = new TreeItem<>("Roles");
         rootItem.setExpanded(true);
+        System.out.println(returnedRolesList.getRoles().size());
 
         for (DTORole role : returnedRolesList.getRoles()) {
             Button pressToSeeFullDetailsButton = new Button("Press to see full details");

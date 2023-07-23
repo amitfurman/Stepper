@@ -340,7 +340,7 @@ public class systemengineImpl implements systemengine {
             //if the update role dont have the curr user
             boolean userFound =  (role.getUsersInRole().stream().anyMatch(us-> us.equals(user.getUsername())));
 
-            if(roleFound==true && userFound==false){
+            if(roleFound && !userFound){
                 user.getRoles().remove(dtoRole.getName());
             }
 
@@ -356,5 +356,22 @@ public class systemengineImpl implements systemengine {
             rolesList.add(role1);
         });
         return new DTORolesList(rolesList);
+    }
+    @Override
+    public DTOFlowsDefinitionInRoles getDtoFlowsDefinition(){
+
+        List<FlowDefinition> flowDefinitionList = new ArrayList<>();
+        roles.forEach(role -> {
+            role.getFlowsInRole().forEach(flowName -> {
+                FlowDefinition flowDefinition = this.flowDefinitionList.stream().filter(flow -> flow.getName().equals(flowName)).findFirst().get();
+                flowDefinitionList.add(flowDefinition);
+            });
+        });
+        Set<DTOFlowDefinitionInRoles> flowsInRoles = new HashSet<>();
+        flowDefinitionList.stream().forEach(flow -> {
+            DTOFlowDefinitionInRoles flows = new DTOFlowDefinitionInRoles(flow.getName(), flow.getDescription(), flow.getFlowSteps().size(), flow.getFlowFreeInputs().size(), flow.getNumOfContinuation());
+            flowsInRoles.add(flows);
+            });
+        return new DTOFlowsDefinitionInRoles(flowsInRoles);
     }
 }

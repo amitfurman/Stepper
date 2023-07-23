@@ -119,10 +119,10 @@ public class HeaderClientController {
 
     private void updateClientData(List<String> roles) {
         updateManagerLabel();
-        System.out.println("updateClientData" + roles);
-        if(roles != null)
+        if(roles != null){
             updateRolesLabel(roles);
-       // clientFlowDefinitionTabController.showFlowsTree(roles);
+            clientFlowDefinitionTabController.showFlowsTree(roles);
+        }
     }
 
     public void startRolesListRefresher() {

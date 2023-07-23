@@ -55,4 +55,6 @@ public interface FlowDefinition {
     void addFlowOutput(String outputName);
     void removeOptionalOutputsFromInitialInputs();
 
-    }
+    void setNumOfContinuation(int size);
+    int getNumOfContinuation();
+}
