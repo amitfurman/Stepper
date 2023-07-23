@@ -57,6 +57,7 @@ public class RolesManagementController {
         ObservableList<String> checkedItems = flowsCheckList.getCheckModel().getCheckedItems();
         ObservableList<String> checkedUsersItems = usersCheckList.getCheckModel().getCheckedItems();
         updateRoles(checkedItems,checkedUsersItems);
+        //System.out.println(checkedUsersItems);
 
     }
     public void updateRoles(ObservableList<String> checkedItems, ObservableList<String> checkedUsersItems) {
@@ -65,6 +66,8 @@ public class RolesManagementController {
         currentRole.getFlowsInRole().addAll(checkedItems);
         currentRole.getUsers().clear();
         currentRole.getUsers().addAll(checkedUsersItems);
+        System.out.println("role users: " + currentRole.getUsers());
+
         updateRole(currentRole);
     }
     @FXML

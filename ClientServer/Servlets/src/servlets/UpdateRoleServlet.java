@@ -38,6 +38,7 @@ public class UpdateRoleServlet extends HttpServlet {
         String description =  currentRole.getDescription();
         List<String> chosenFlows =  currentRole.getFlowsInRole();
         List<String> chosenUsers =  currentRole.getUsers();
+        System.out.println("servlet users: " + chosenUsers );
         systemengine systemEngine = ServletUtils.getSystemEngine(getServletContext());
         systemEngine.updateFlowsInRole(new DTORole(name, description, chosenFlows, chosenUsers));
 

@@ -324,11 +324,26 @@ public class systemengineImpl implements systemengine {
         Role role = roles.stream().filter(r -> r.getName().equals(dtoRole.getName())).findFirst().get();
         role.setFlowsInRole(dtoRole.getFlowsInRole());
         role.setUsersInRole(dtoRole.getUsers());
+
         dtoRole.getUsers().forEach(user -> {
             UserDefinition user1 = userManagerObject.getUsers().stream().filter(u -> u.getUsername().equals(user)).findFirst().get();
             user1.addRole(role.getName());
             System.out.println(user1.getUsername());
             System.out.println(user1.getRoles());
+        });
+
+
+      userManagerObject.getUsers().stream().forEach(user ->
+        {
+            //if the curr user have dtoRole
+            boolean roleFound = user.getRoles().stream().anyMatch(rol-> rol.equals(dtoRole.getName()));
+            //if the update role dont have the curr user
+            boolean userFound =  (role.getUsersInRole().stream().anyMatch(us-> us.equals(user.getUsername())));
+
+            if(roleFound==true && userFound==false){
+                user.getRoles().remove(dtoRole.getName());
+            }
+
         });
 
     }
