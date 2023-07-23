@@ -46,6 +46,7 @@ public class ClientController{
         HeaderClientController headerController = fxmlLoader.getController();
         headerController.setClientController(this);
         headerController.updateNameLabel();
+        headerController.startRolesListRefresher();
 
         fxmlLoader = new FXMLLoader();
         url = getClass().getResource("/javafx/source.fxml");
@@ -61,7 +62,7 @@ public class ClientController{
         fxmlLoader.setLocation(url);
         Tab flowDefinitionTabComponent = fxmlLoader.load(url.openStream());
         ClientFlowDefinitionTabController flowDefinitionTabController =  fxmlLoader.getController();
-
+        headerController.setFlowDefinitionTabController(flowDefinitionTabController);
 
         fxmlLoader = new FXMLLoader();
         url = getClass().getResource("/components/body/flowExecutionTab/flowExecutionTab.fxml");

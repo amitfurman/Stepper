@@ -1,28 +1,16 @@
 package components.body.UsersManagementTab;
 
-import dto.DTOAllStepperFlows;
-import dto.DTOFlowDefinition;
-import dto.DTOSingleFlowIOData;
-import flow.api.FlowIO.IO;
 import javafx.Controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import user.UserManager;
-import users.UserListRefresher;
 import users.UsersListController;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class UsersManagementTabController {

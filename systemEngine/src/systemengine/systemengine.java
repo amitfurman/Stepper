@@ -49,4 +49,6 @@ public interface systemengine {
     DTORolesList getDTORolesList();
     void addNewRole(DTORole dtoRole);
     void updateFlowsInRole(DTORole dtoRole);
+
+    DTORolesList getDTORolesListPerUser(String userName);
 }

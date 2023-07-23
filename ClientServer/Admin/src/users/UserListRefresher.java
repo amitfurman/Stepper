@@ -1,6 +1,7 @@
 package users;
 
 import components.body.UsersManagementTab.UsersManagementTabController;
+import dto.DTORole;
 import javafx.beans.property.BooleanProperty;
 
 import okhttp3.Call;

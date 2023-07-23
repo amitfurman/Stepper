@@ -332,4 +332,14 @@ public class systemengineImpl implements systemengine {
         });
 
     }
+    @Override
+    public DTORolesList getDTORolesListPerUser(String userName){
+        UserDefinition user = userManagerObject.getUsers().stream().filter(u -> u.getUsername().equals(userName)).findFirst().get();
+        List<Role> rolesList = new ArrayList<>();
+        user.getRoles().forEach(role -> {
+            Role role1 = roles.stream().filter(r -> r.getName().equals(role)).findFirst().get();
+            rolesList.add(role1);
+        });
+        return new DTORolesList(rolesList);
+    }
 }

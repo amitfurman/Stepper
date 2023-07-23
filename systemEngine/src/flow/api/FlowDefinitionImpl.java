@@ -190,7 +190,7 @@ public class FlowDefinitionImpl implements FlowDefinition, Serializable {
 
     @Override
     public boolean checkIfFlowIsReadOnly() {
-        return steps.stream().anyMatch(step -> !(step.getStepDefinition().isReadonly()));
+        return !(steps.stream().anyMatch(step -> !(step.getStepDefinition().isReadonly())));
     }
     @Override
     public boolean stepExist(String stepName){
