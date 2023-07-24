@@ -3,11 +3,13 @@ package systemengine;
 import dto.*;
 import exceptions.*;
 import flow.api.FlowDefinition;
+import flow.api.FlowIO.IO;
 import flow.api.FlowIO.SingleFlowIOData;
 import flow.execution.FlowExecution;
 import flow.execution.runner.FlowExecutor;
 import flow.impl.FlowsManager;
 import flow.mapping.FlowContinuationMapping;
+import javafx.scene.control.TreeItem;
 import jaxb.schema.SchemaBasedJAXBMain;
 import roles.Role;
 import statistic.FlowAndStepStatisticData;
@@ -391,12 +393,76 @@ public class systemengineImpl implements systemengine {
 
         Set<DTOFlowDefinitionInRoles> flowsInRoles = new HashSet<>();
         flowDefinitionList.stream().forEach(flow -> {
-            DTOFlowDefinitionInRoles flows = new DTOFlowDefinitionInRoles(flow.getName(), flow.getDescription(), flow.getFlowSteps().size(), flow.getFlowFreeInputs().size(), flow.getNumOfContinuation());
+
+            DTOFlowDefinitionInRoles flows = new DTOFlowDefinitionInRoles(flow.getName(), flow.getDescription(), flow.getFlowSteps().size(), flow.getFlowFreeInputs().size(), flow.getNumOfContinuation(),
+                    flow.getFlowReadOnly(),flow.getFlowFormalOutputs(),createDTOListStep(flow),createDTOListFlowOutputs(flow), createDTOListFreeInputs(flow));
             flowsInRoles.add(flows);
         });
 
         System.out.println("1" + flowsInRoles);
         return new DTOFlowsDefinitionInRoles(flowsInRoles);
+    }
+    @Override
+    public List<DTOStepUsageDeclaration> createDTOListStep(FlowDefinition flow){
+        List<DTOStepUsageDeclaration> stepUsageDeclarationList = new ArrayList<>();
+        flow.getFlowSteps().forEach(step -> {
+            DTOStepUsageDeclaration stepUsageDeclaration = new DTOStepUsageDeclaration(step.getStepDefinition().name(),step.getFinalStepName(), step.getStepDefinition().isReadonly());
+            stepUsageDeclarationList.add(stepUsageDeclaration);
+        });
+
+        return stepUsageDeclarationList;
+    }
+    @Override
+    public List<DTOFlowOutputs> createDTOListFlowOutputs(FlowDefinition flow){
+        List<DTOFlowOutputs> flowOutputsList = new ArrayList<>();
+        flow.getIOlist().stream().filter(io-> io.getIOType().equals(IO.OUTPUT)).forEach(output -> {
+            DTOFlowOutputs flowOutputs = new DTOFlowOutputs(output.getFinalName(),output.getDD().toString(),output.getStepName());
+            flowOutputsList.add(flowOutputs);
+        });
+
+        return flowOutputsList;
+    }
+
+    @Override
+    public  List<DTOFreeInputs> createDTOListFreeInputs(FlowDefinition flow){
+
+        List<DTOFreeInputs> freeInputsList = new ArrayList<>();
+        flow.getFlowFreeInputs().stream().forEach(node -> {
+            List<String> stepOfInput = new ArrayList<>();
+            flow.getListOfStepsWithCurrInput(node.getFinalName()).stream().forEach(step -> {
+                stepOfInput.add(step);
+            });
+
+            DTOFreeInputs freeInputs = new DTOFreeInputs(node.getFinalName(),node.getDD().toString(),stepOfInput, node.getNecessity().toString());
+            freeInputsList.add(freeInputs);
+        });
+
+        return freeInputsList;
+    }
+
+    @Override
+    public List<DTOFlowFreeInputs> getDTOFlowFreeInputs(String flowName) {
+        FlowDefinition flow = flowDefinitionList.stream().filter(flowD -> flowD.getName().equals(flowName)).findFirst().get();
+        List<DTOFlowFreeInputs> freeInputsList = new ArrayList<>();
+        flow.getFlowFreeInputs().stream().forEach(node -> {
+            DTOFlowFreeInputs freeInputs = new DTOFlowFreeInputs(node.getFinalName(), node.getOriginalName(), node.getDD().toString(),node.getStepName(), node.getNecessity().toString());
+            freeInputsList.add(freeInputs);
+        });
+
+        List<DTOFlowFreeInputs> sortedList = freeInputsList.stream()
+                .sorted(Comparator.comparing(obj -> obj.getNecessity().equals(DataNecessity.MANDATORY) ? 0 : 1))
+                .collect(Collectors.toList());
+
+        return sortedList;
+    }
+
+    @Override
+    public DTOAllFlowsNames getAllFlowsList() {
+        Set<String> flowsList = new HashSet<>();
+        flowDefinitionList.stream().forEach(flow -> {
+            flowsList.add(flow.getName());
+        });
+        return new DTOAllFlowsNames(flowsList);
     }
 
 /*    @Override

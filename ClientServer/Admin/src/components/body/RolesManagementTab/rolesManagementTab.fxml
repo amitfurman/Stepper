@@ -10,7 +10,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import org.controlsfx.control.CheckListView?>
 
 <Tab styleClass="tabs" text="Roles Management" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="components.body.RolesManagementTab.RolesManagementController">
    <content>
@@ -25,7 +24,7 @@
                   <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" valignment="CENTER" vgrow="ALWAYS" />
                </rowConstraints>
                <children>
-                  <GridPane prefHeight="233.0" prefWidth="282.0" GridPane.columnIndex="1">
+                  <GridPane fx:id="checkBoxGridPane" prefHeight="233.0" prefWidth="282.0" GridPane.columnIndex="1">
                      <columnConstraints>
                         <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
                      </columnConstraints>
@@ -45,8 +44,6 @@
                            </children>
                         </HBox>
                         <TreeView fx:id="roleDetailsTree" prefHeight="197.0" prefWidth="282.0" />
-                        <CheckListView fx:id="flowsCheckList" GridPane.rowIndex="1" />
-                        <CheckListView fx:id="usersCheckList" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
                   <GridPane alignment="CENTER" prefHeight="267.0" prefWidth="594.0">

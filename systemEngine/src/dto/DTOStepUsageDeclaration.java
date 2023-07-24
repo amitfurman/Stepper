@@ -12,6 +12,11 @@ public class DTOStepUsageDeclaration{
         this.finalName = step.getFinalStepName();
         this.isReadOnly = step.getStepDefinition().isReadonly();
     }
+    public DTOStepUsageDeclaration(String OriginalName,String FinalName,boolean IsReadOnly) {
+        this.originalName = OriginalName;
+        this.finalName = FinalName;
+        this.isReadOnly = IsReadOnly;
+    }
     public String getOriginalStepName() {
         return originalName;
     }

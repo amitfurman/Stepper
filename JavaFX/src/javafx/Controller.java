@@ -165,7 +165,7 @@ public class Controller {
             flowDefinitionTabController.setFlowDetailsTree();
     }
     public void goToFlowExecutionTab(String chosenFlowName) {
-        flowName = chosenFlowName;
+/*        flowName = chosenFlowName;
 
         Tab flowExecutionTab = tabPane.getTabs().stream()
                 .filter(tab -> tab.getId().equals("flowExecutionTab"))
@@ -180,7 +180,7 @@ public class Controller {
         List<DTOSingleFlowIOData> sortedList = freeInputs.stream()
                 .sorted(Comparator.comparing(obj -> obj.getNecessity().equals(DataNecessity.MANDATORY) ? 0 : 1))
                 .collect(Collectors.toList());
-        flowExecutionTabController.initInputsTable(sortedList);
+        flowExecutionTabController.initInputsTable(sortedList);*/
     }
     public void goToStatisticsTab() {
         DTOFlowAndStepStatisticData statisticData = systemEngineInterface.getStatisticData();
@@ -197,4 +197,20 @@ public class Controller {
     public RolesManagementController getRolesManagementController() {
         return rolesManagementTabController;
     }
+
+    public void goToClientFlowExecutionTab(String chosenFlowName) {
+        flowName = chosenFlowName;
+
+        Tab ClientFlowExecutionTab = tabPane.getTabs().stream()
+                .filter(tab -> tab.getId().equals("flowExecutionTab"))
+                .findFirst()
+                .orElse(null);
+
+        if (ClientFlowExecutionTab != null) {
+            tabPane.getSelectionModel().select(ClientFlowExecutionTab);
+        }
+
+        clientFlowExecutionTabController.getFreeInputs(flowName);}
+
 }
+

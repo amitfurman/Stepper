@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -41,31 +42,43 @@ public class RolesManagementController {
     @FXML private TreeView<String> rolesTree;
     @FXML private TreeView<String> roleDetailsTree;
     @FXML private Button newButton;
-    @FXML private CheckListView flowsCheckList;
-    @FXML private CheckListView usersCheckList;
+    @FXML private GridPane checkBoxGridPane;
+    private CheckListView flowsCheckList = new CheckListView();
+    private CheckListView usersCheckList = new CheckListView();
     private DTORolesList returnedRolesList = new DTORolesList();
     private String currRole;
     private Set<String> usersList;
-
+    Set<String> allFlows;
 
     public void setMainController(Controller mainController) {
         this.mainController = mainController;
     }
+    @FXML
+    public void initialize() {
+        checkBoxGridPane.add(flowsCheckList,0,1);
+        checkBoxGridPane.add(usersCheckList,0,2);
+        getAllFlows();
+    }
+
+    public void getAllFlows() {
+        HttpClientUtil.runAsync(Constants.ALL_FLOWS_SERVLET, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String jsonArrayOfRoles = response.body().string();
+                DTOAllFlowsNames allFlowsNames = GSON_INSTANCE.fromJson(jsonArrayOfRoles, DTOAllFlowsNames.class);
+                allFlows = allFlowsNames.getAllFlowsNames();
+            }
+        });
+    }
 
     @FXML
     public void setPressOnSave() {
-        System.out.println(currRole + "currRole");
- /*
- ObservableList<String> checkedItems = FXCollections.observableArrayList();
-
-        for (Object index : flowsCheckList.getCheckModel().getCheckedIndices()) {
-            checkedItems.add((String) flowsCheckList.getItems().get(Integer.parseInt((String) index)));
-        }
-*/
-
-
         ObservableList<String> checkedItems = flowsCheckList.getCheckModel().getCheckedItems();
-        System.out.println("checkedItems: " + checkedItems);
         ObservableList<String> checkedUsersItems = usersCheckList.getCheckModel().getCheckedItems();
         updateRoles(checkedItems,checkedUsersItems);
 
@@ -77,7 +90,6 @@ public class RolesManagementController {
         currentRole.getUsers().clear();
         currentRole.getUsers().addAll(checkedUsersItems);
         updateRole(currentRole);
-        System.out.println(currentRole.getFlowsInRole());
     }
     @FXML
     public void setPressOnNewButton(ActionEvent actionEvent) {
@@ -120,8 +132,6 @@ public class RolesManagementController {
         Button saveButton = new Button("Press to create a new role");
         saveButton.getStyleClass().add("role-button");
         saveButton.setOnAction(e -> {
-            // Get the entered description and chosen items
-
             String name = nameTextField.getText();
             String description = descriptionTextField.getText();
             List<String> chosenItems = new ArrayList<>(checkedItems);
@@ -137,7 +147,6 @@ public class RolesManagementController {
 
             createNewRole(jsonPayload);
             initRolesTree();
-
 
             // Close the popup window
             popupWindow.close();
@@ -292,10 +301,8 @@ public class RolesManagementController {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String jsonArrayOfRoles = response.body().string();
-                System.out.println(jsonArrayOfRoles + "jsonArrayOfRoles");
                 //String[] roles = GSON_INSTANCE.fromJson(jsonArrayOfRoles, String[].class);
                 returnedRolesList = GSON_INSTANCE.fromJson(jsonArrayOfRoles, DTORolesList.class);
-                System.out.println(returnedRolesList.getRoles().size() + "returnedRolesList.getRoles().size()");
                 Platform.runLater(() -> {
                     initRolesTree();
                 });
@@ -359,11 +366,10 @@ public class RolesManagementController {
         SaveButton.setDisable(isEmptyFlowDetailsTree);
     }
     public void showFlowsToEachRole(DTORole role){
-        flowsCheckList.getItems().clear();
-        flowsCheckList.getCheckModel().clearChecks();
-        Set<String> allFlows = returnedRolesList.getRoles().get(0).getFlowsInRole().stream().collect(Collectors.toSet());
-        //flowsCheckList.getCheckModel().clearCheck(allFlows.iterator().next());
+        flowsCheckList = new CheckListView();
+
         for (String currFlow : allFlows) {
+            System.out.println(currFlow);
             flowsCheckList.getItems().add(currFlow);
         }
 
@@ -372,11 +378,12 @@ public class RolesManagementController {
                 flowsCheckList.getCheckModel().check(currFlow);
             }
         }
+        checkBoxGridPane.add(flowsCheckList, 0, 1);
     }
 
     public void showUsersToEachRole(DTORole role){
+        usersCheckList = new CheckListView();
         usersList = mainController.getUsersManagementTabController().getUsers();
-        usersCheckList.getItems().clear();
         for (String user : usersList) {
             usersCheckList.getItems().add(user);
         }
@@ -385,7 +392,7 @@ public class RolesManagementController {
                 usersCheckList.getCheckModel().check(user);
             }
         }
-
+        checkBoxGridPane.add(usersCheckList,0,2);
     }
 
 }

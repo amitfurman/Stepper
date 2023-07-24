@@ -29,7 +29,8 @@ public class RolesListPerUserServlet extends HttpServlet {
             out.println(json);
             out.flush();
         }
-    }}
+    }
+}
 
 /*    @WebServlet(name = "RolesListPerUserServlet", urlPatterns = "/roles-list-per-user")
     public class RolesListPerUserServlet extends HttpServlet {

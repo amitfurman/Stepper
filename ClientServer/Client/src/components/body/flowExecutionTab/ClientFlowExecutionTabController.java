@@ -1,8 +1,10 @@
 
 package components.body.flowExecutionTab;
 
+import com.google.gson.Gson;
 import components.body.flowExecutionTab.MasterDetail.MasterDetailController;
 import dto.DTOFlowExecution;
+import dto.DTOFlowsDefinitionInRoles;
 import dto.DTOFreeInputsFromUser;
 import dto.DTOSingleFlowIOData;
 import flow.mapping.FlowContinuationMapping;
@@ -27,14 +29,18 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import okhttp3.*;
 import org.controlsfx.control.MasterDetailPane;
+import org.jetbrains.annotations.NotNull;
 import systemengine.Input;
+import util.Constants;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ClientFlowExecutionTabController {
     private Controller mainController;
@@ -115,8 +121,9 @@ public class ClientFlowExecutionTabController {
         executeButton.setDisable(true);
         inputValuesHBox.getChildren().clear();
     }
-    public void initInputsTable(List<DTOSingleFlowIOData> freeInputs) {
-        executeButton.setDisable(true);
+/*
+    public void initInputsTable(String flowName) {
+       executeButton.setDisable(true);
         inputValuesHBox.getChildren().clear();
 
         freeInputs.forEach(freeInput -> {// Populate inputList from freeInputs
@@ -164,6 +171,31 @@ public class ClientFlowExecutionTabController {
             });
             inputValuesHBox.getChildren().add(vbox);
             inputValuesHBox.setSpacing(50);
+        });
+    }
+*/
+    public void getFreeInputs(String flowName) {
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.FLOWS_IN_ROLES_SERVLET).newBuilder();
+        urlBuilder.addQueryParameter("flow_name", flowName);
+        String finalUrl = urlBuilder.build().toString();
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .build();
+
+        OkHttpClient HTTP_CLIENT = new OkHttpClient();
+        Call call = HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String jsonResponse = response.body().string();
+                Gson gson = new Gson();
+/*                DTOFlowsDefinitionInRoles dtoFlowsDefinition = gson.fromJson(jsonResponse, DTOFlowsDefinitionInRoles.class);
+                initInputsTable();*/
+            }
         });
     }
     public void setInputValues(Input input, DTOSingleFlowIOData freeInput){

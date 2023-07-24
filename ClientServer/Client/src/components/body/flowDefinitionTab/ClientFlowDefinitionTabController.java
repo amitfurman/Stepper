@@ -32,10 +32,8 @@ public class ClientFlowDefinitionTabController {
     private Button ExecuteFlowButton;
     private String chosenFlowName;
     private TreeItem<String> rootItem;
-
     private Set<String> allFlows = new HashSet<>();
-
-
+    private Set<String> currSelectedFlows = new HashSet<>();
 
     @FXML
     public void initialize() {
@@ -44,8 +42,9 @@ public class ClientFlowDefinitionTabController {
     }
     @FXML
     public void setPressOnExecuteFlowButton() {
-        mainController.goToFlowExecutionTab(chosenFlowName);
+        mainController.goToClientFlowExecutionTab(chosenFlowName);
         mainController.initDataInFlowExecutionTab();
+
     }
     public void setMainController(Controller mainController) {
         this.mainController = mainController;
@@ -54,82 +53,61 @@ public class ClientFlowDefinitionTabController {
         return flowsTree;
     }
     public void showFlowsTree(List<String> roles) {
-        getAllFlows(roles);
-    }
-    public void getAllFlows(List<String> roles) {
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.FLOWS_IN_ROLES_SERVLET).newBuilder();
-        String rolesString = roles.stream().collect(Collectors.joining(","));
-        if (!rolesString.isEmpty()) {
-            urlBuilder.addQueryParameter("roles_list", rolesString);
-            String finalUrl = urlBuilder.build().toString();
-            Request request = new Request.Builder()
-                    .url(finalUrl)
-                    .build();
-
-            OkHttpClient HTTP_CLIENT = new OkHttpClient();
-            Call call = HTTP_CLIENT.newCall(request);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                }
-
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    String jsonResponse = response.body().string();
-                    Gson gson = new Gson();
-                    DTOFlowsDefinitionInRoles dtoFlowsDefinition = gson.fromJson(jsonResponse, DTOFlowsDefinitionInRoles.class);
-                    if (dtoFlowsDefinition!=null && dtoFlowsDefinition.getFlowsDefinitionInRoles()!=null) {
-                        updateFlowsTree(dtoFlowsDefinition);
-                    }
-                }
-            });
-        }
+        System.out.println(roles.size());
+        System.out.println(roles);
+        if (roles.size() != 0)
+            getAllFlows(roles);
         else{
-            urlBuilder.addQueryParameter("roles_list", "");
-            //rootItem.getChildren().clear();
+            System.out.println("roles is null");
+            allFlows.clear();
+            System.out.println(allFlows.size());
+            rootItem.getChildren().clear();
             rootItem.setExpanded(true);
             Platform.runLater(() -> {
                 flowsTree.setRoot(rootItem);
             });
-
         }
+    }
+    public void getAllFlows(List<String> roles) {
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.FLOWS_IN_ROLES_SERVLET).newBuilder();
+        String rolesString = roles.stream().collect(Collectors.joining(","));
+        urlBuilder.addQueryParameter("roles_list", rolesString);
+        String finalUrl = urlBuilder.build().toString();
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .build();
 
+        OkHttpClient HTTP_CLIENT = new OkHttpClient();
+        Call call = HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            }
 
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String jsonResponse = response.body().string();
+                Gson gson = new Gson();
+                DTOFlowsDefinitionInRoles dtoFlowsDefinition = gson.fromJson(jsonResponse, DTOFlowsDefinitionInRoles.class);
+                if (dtoFlowsDefinition!=null && dtoFlowsDefinition.getFlowsDefinitionInRoles()!=null) {
+                    updateFlowsTree(dtoFlowsDefinition);
+                }
+            }
+        });
     }
     public void updateFlowsTree(DTOFlowsDefinitionInRoles dtoFlowsDefinition) {
-/*
-        rootItem.getChildren().clear();
-*/
         rootItem.setExpanded(true);
         for (DTOFlowDefinitionInRoles flowDefinition: dtoFlowsDefinition.getFlowsDefinitionInRoles()) {
-            System.out.println("flowDefinition: " + flowDefinition.getFlowName());
             if (!(allFlows.contains(flowDefinition.getFlowName()))) {
                 allFlows.add(flowDefinition.getFlowName());
                 TreeItem<String> branchItem = createBranchItem(flowDefinition);
                 rootItem.getChildren().add(branchItem);
-                System.out.println("inside if");
             }
         }
-        Platform.runLater(() -> {
-            flowsTree.setRoot(rootItem);
-        });
-    }
-
-/*
-    public void updateFlowsTree(DTOFlowsDefinitionInRoles dtoFlowsDefinition) {
-        Map<String, TreeItem<String>> existingItems = new HashMap<>();
-        collectExistingItems(rootItem, existingItems);
-        System.out.println("existingItems: " + existingItems);
-
-        rootItem = new TreeItem<>("Flows");
-        rootItem.getChildren().clear();
-        rootItem.setExpanded(true);
-
-        for (DTOFlowDefinitionInRoles flowDefinition : dtoFlowsDefinition.getFlowsDefinitionInRoles()) {
-
-            if (!(existingItems.containsKey(flowDefinition.getFlowName()))) {
-                TreeItem<String> branchItem = createBranchItem(flowDefinition);
-                rootItem.getChildren().add(branchItem);
+        for (String flow : allFlows) {
+            if (dtoFlowsDefinition.getFlowsDefinitionInRoles().stream().noneMatch(flowDefinition -> flowDefinition.getFlowName().equals(flow))) {
+                allFlows.remove(flow);
+                rootItem.getChildren().removeIf(item -> item.getValue().equals(flow));
             }
         }
 
@@ -137,25 +115,12 @@ public class ClientFlowDefinitionTabController {
             flowsTree.setRoot(rootItem);
         });
     }
-*/
-
-    // Helper method to collect existing items in the tree recursively
     private void collectExistingItems(TreeItem<String> item, Map<String, TreeItem<String>> existingItems) {
         existingItems.put(item.getValue(), item);
         for (TreeItem<String> child : item.getChildren()) {
             collectExistingItems(child, existingItems);
         }
     }
-
-/*    // Helper method to compare data between two TreeItem<String> objects
-    private boolean isDifferent(TreeItem<String> item1, TreeItem<String> item2) {
-        // Compare data in the DTOFlowDefinitionInRoles objects (You may need to adjust this based on your data structure)
-        String data1 = item1.getValue();
-        String data2 = item2.getValue();
-
-        return !data1.equals(data2); // You can perform more sophisticated comparisons if needed
-    }*/
-
     public TreeItem<String> createBranchItem(DTOFlowDefinitionInRoles flowDefinition) {
         TreeItem<String> branchItem = new TreeItem<>(flowDefinition.getFlowName());
         TreeItem<String> leafItem1 = new TreeItem<>("Description: " + flowDefinition.getDescription());
@@ -168,7 +133,7 @@ public class ClientFlowDefinitionTabController {
         pressToSeeFullDetailsButton.setId("pressToSeeFullDetailsButton");
 
         pressToSeeFullDetailsButton.setOnAction(event -> {
-            //showChosenFlow(flowDefinition);
+             showChosenFlow(flowDefinition);
         });
         TreeItem<String> buttonItem = new TreeItem<>(" ");
         buttonItem.setGraphic(pressToSeeFullDetailsButton);
@@ -177,14 +142,12 @@ public class ClientFlowDefinitionTabController {
 
         return branchItem;
     }
-
-    /*
     public void showChosenFlow(DTOFlowDefinitionInRoles flowDefinition) {
         TreeItem<String> rootItem = new TreeItem<>("Chosen Flow Details - " + flowDefinition.getFlowName());
         rootItem.setExpanded(true); // Set the root item to be initially expanded
 
         TreeItem<String> branchName = new TreeItem<>("Flow Name");
-        chosenFlowName = flowDefinition.getName();
+        chosenFlowName = flowDefinition.getFlowName();
         TreeItem<String> nameItem = new TreeItem<>(chosenFlowName);
         branchName.getChildren().addAll(nameItem);
 
@@ -199,29 +162,29 @@ public class ClientFlowDefinitionTabController {
         }
 
         TreeItem<String> branchReadOnly = new TreeItem<>("Is The Flow Read Only?");
-        TreeItem<String> readOnlyItem = new TreeItem<>(Boolean.toString(flowDefinition.getFlowReadOnly()));
+        TreeItem<String> readOnlyItem = new TreeItem<>(Boolean.toString(flowDefinition.getIsReadOnly()));
         branchReadOnly.getChildren().addAll(readOnlyItem);
 
         // Add the green "V" or red "X" graphic
-        Label statusLabel = new Label(flowDefinition.getFlowReadOnly() ? "V" : "X");
-        statusLabel.setTextFill(flowDefinition.getFlowReadOnly() ? Color.GREEN : Color.RED);
+        Label statusLabel = new Label(flowDefinition.getIsReadOnly() ? "V" : "X");
+        statusLabel.setTextFill(flowDefinition.getIsReadOnly()? Color.GREEN : Color.RED);
         readOnlyItem.setGraphic(statusLabel);
 
-        TreeItem<String> branchSteps = showStepsOfChosenFlow(flowDefinition);
+       TreeItem<String> branchSteps = showStepsOfChosenFlow(flowDefinition);
         TreeItem<String> branchFreeInputs = showFreeInputsOfChosenFlow(flowDefinition);
         TreeItem<String> branchFlowOutputs = showFlowOutputsOfChosenFlow(flowDefinition);
 
-        rootItem.getChildren().addAll(branchName, branchDescription, branchFormalOutputs, branchReadOnly, branchSteps, branchFreeInputs, branchFlowOutputs);
+        rootItem.getChildren().addAll(branchName, branchDescription, branchFormalOutputs, branchReadOnly,branchSteps, branchFreeInputs ,branchFlowOutputs);
         flowDetailsTree.setRoot(rootItem);
 
         boolean isEmptyFlowDetailsTree = (flowDetailsTree.getRoot() == null || flowDetailsTree.getRoot().getChildren().isEmpty());
         ExecuteFlowButton.setDisable(isEmptyFlowDetailsTree);
     }
-    public TreeItem<String> showStepsOfChosenFlow(DTOFlowDefinition flowDefinition){
+    public TreeItem<String> showStepsOfChosenFlow(DTOFlowDefinitionInRoles flowDefinition){
         AtomicInteger stepIndex = new AtomicInteger(1);
         TreeItem<String> branchSteps = new TreeItem<>("Steps in the current flow");
         flowDefinition
-                .getFlowStepsData()
+                .getStepsInFlow()
                 .stream()
                 .forEach(node -> {
                     TreeItem<String> branchStep = new TreeItem<>("Step " + stepIndex.getAndIncrement() + " - " + node.getFinalStepName());
@@ -253,43 +216,44 @@ public class ClientFlowDefinitionTabController {
         return branchSteps;
 
     }
-    public TreeItem<String> showFreeInputsOfChosenFlow(DTOFlowDefinition flowDefinition){
+    public TreeItem<String> showFreeInputsOfChosenFlow(DTOFlowDefinitionInRoles flowDefinition){
         AtomicInteger freeInputIndex = new AtomicInteger(1);
         TreeItem<String> branchFreeInputs = new TreeItem<>("Free inputs in the current flow");
         flowDefinition
-                .getFlowFreeInputs()
+                .getFreeInputs()
                 .stream()
                 .forEach(node -> {
                     TreeItem<String> branchFreeInput = new TreeItem<>("Free Input " + freeInputIndex.getAndIncrement());
 
                     TreeItem<String> FinalName = new TreeItem<>("Final Name");
-                    TreeItem<String> FinalNameItem = new TreeItem<>(node.getFinalName());
+                    TreeItem<String> FinalNameItem = new TreeItem<>(node.getName());
                     FinalName.getChildren().addAll(FinalNameItem);
 
                     TreeItem<String> Type = new TreeItem<>("Type");
-                    TreeItem<String> TypeItem = new TreeItem<>(node.getType().getName());
+                    TreeItem<String> TypeItem = new TreeItem<>(node.getType());
                     Type.getChildren().addAll(TypeItem);
 
                     TreeItem<String> ConnectedSteps = new TreeItem<>("Connected Steps");
-                    flowDefinition.getListOfStepsWithCurrInput(node.getFinalName()).stream().forEach(step -> {
+                    node.getConnectedSteps().stream().forEach(step-> {
                         TreeItem<String> ConnectedStepsItem = new TreeItem<>(step);
-                        ConnectedSteps.getChildren().addAll(ConnectedStepsItem);
+                        ConnectedSteps.getChildren().add(ConnectedStepsItem);
                     });
 
                     TreeItem<String> Necessity = new TreeItem<>("Necessity");
-                    TreeItem<String> NecessityItem = new TreeItem<>(node.getNecessity().toString());
+                    TreeItem<String> NecessityItem = new TreeItem<>(node.getNecessity());
                     Necessity.getChildren().addAll(NecessityItem);
 
                     branchFreeInput.getChildren().addAll(FinalName, Type, ConnectedSteps, Necessity);
                     branchFreeInputs.getChildren().addAll(branchFreeInput);
+
                 });
         return branchFreeInputs;
     }
-    public TreeItem<String> showFlowOutputsOfChosenFlow(DTOFlowDefinition flowDefinition){
+    public TreeItem<String> showFlowOutputsOfChosenFlow(DTOFlowDefinitionInRoles flowDefinition){
         AtomicInteger flowOutputIndex = new AtomicInteger(1);
         TreeItem<String> branchFlowOutputs = new TreeItem<>("Flow Outputs");
-        List<DTOSingleFlowIOData> outputs = flowDefinition.getIOlist().stream().filter(io -> io.getIOType().equals(IO.OUTPUT)).collect(Collectors.toList());
-        for(DTOSingleFlowIOData output: outputs) {
+        List<DTOFlowOutputs> outputs = flowDefinition.getAllOutputs();
+        for(DTOFlowOutputs output: outputs) {
             TreeItem<String> branchFlowOutput = new TreeItem<>("Flow Output " + flowOutputIndex.getAndIncrement());
 
             TreeItem<String> FinalName = new TreeItem<>("Final Name");
@@ -297,11 +261,11 @@ public class ClientFlowDefinitionTabController {
             FinalName.getChildren().addAll(FinalNameItem);
 
             TreeItem<String> Type = new TreeItem<>("Type");
-            TreeItem<String> TypeItem = new TreeItem<>(output.getType().getName());
+            TreeItem<String> TypeItem = new TreeItem<>(output.getType());
             Type.getChildren().addAll(TypeItem);
 
             TreeItem<String> CreatedStep = new TreeItem<>("Creating Step");
-            TreeItem<String> CreatedStepItem = new TreeItem<>(output.getStepName());
+            TreeItem<String> CreatedStepItem = new TreeItem<>(output.getCreatingStep());
             CreatedStep.getChildren().addAll(CreatedStepItem);
 
             branchFlowOutput.getChildren().addAll(FinalName, Type, CreatedStep);
@@ -309,10 +273,11 @@ public class ClientFlowDefinitionTabController {
         }
         return branchFlowOutputs;
     }
+
     public void setFlowDetailsTree(){
         TreeItem<String> rootItem = new TreeItem<>();
         flowDetailsTree.setRoot(rootItem);
         ExecuteFlowButton.setDisable(true);
-    }*/
+    }
 
 }

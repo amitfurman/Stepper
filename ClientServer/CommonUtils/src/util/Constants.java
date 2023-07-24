@@ -28,6 +28,7 @@ public class Constants {
     public final static String UPDATE_ROLE = FULL_SERVER_PATH + "/update-role";
     public final static String ROLES_LIST_PER_USER = FULL_SERVER_PATH + "/roles-list-per-user";
     public final static String FLOWS_IN_ROLES_SERVLET = FULL_SERVER_PATH + "/flows-in-roles";
+    public final static String ALL_FLOWS_SERVLET = FULL_SERVER_PATH + "/all-flows";
 
 
     // GSON instance

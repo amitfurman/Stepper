@@ -10,10 +10,7 @@ import javax.xml.bind.JAXBException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public interface systemengine {
     void cratingFlowFromXml(String filePath) throws DuplicateFlowsNames, JAXBException, UnExistsStep, FileNotFoundException, OutputsWithSameName, MandatoryInputsIsntUserFriendly, UnExistsData, SourceStepBeforeTargetStep, TheSameDD,
@@ -51,4 +48,10 @@ public interface systemengine {
     void updateFlowsInRole(DTORole dtoRole);
     DTORolesList getDTORolesListPerUser(String userName);
     DTOFlowsDefinitionInRoles getDtoFlowsDefinition(List<String> rolesNames);
+    List<DTOStepUsageDeclaration> createDTOListStep(FlowDefinition flow);
+    List<DTOFlowOutputs> createDTOListFlowOutputs(FlowDefinition flow);
+    List<DTOFreeInputs> createDTOListFreeInputs(FlowDefinition flow);
+    List<DTOFlowFreeInputs> getDTOFlowFreeInputs(String flowName);
+
+    DTOAllFlowsNames getAllFlowsList();
 }
