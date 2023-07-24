@@ -18,7 +18,10 @@ public class DTORole {
             this.name = name;
             this.description = description;
             this.flowsInRole = new ArrayList<>(flows);
-            this.users = new ArrayList<>(users);
+            if (users == null)
+                this.users = new ArrayList<>();
+            else
+                this.users = new ArrayList<>(users);
          }
 
         public String getName() {

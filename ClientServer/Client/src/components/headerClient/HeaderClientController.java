@@ -17,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 import java.util.List;
 import java.util.Timer;
@@ -35,6 +36,8 @@ public class HeaderClientController {
     private ClientController clientController;
     private Label nameLabel;
     private String currentUserName;
+    private Label rolesLabel;
+    private Text textRolesLabel;
 
     @FXML
     private void initialize() {
@@ -61,11 +64,11 @@ public class HeaderClientController {
         managerCheckbox.setSelected(false);
         managerCheckbox.setDisable(true);
 
-        Text textRolesLabel = new Text("   Assigned Roles:");
+        textRolesLabel = new Text("   Assigned Roles:");
         textRolesLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
         textRolesLabel.setFill(Color.PINK);
 
-        Label rolesLabel = new Label();
+        rolesLabel = new Label();
         rolesLabel.setGraphic(textRolesLabel);
 
         HBox managerBox = new HBox(managerLabel, managerCheckbox, rolesLabel);
@@ -87,11 +90,14 @@ public class HeaderClientController {
 
     public void updateNameLabel() {
         currentUserName = clientController.getCurrentUserNameProperty().getValue();
-        System.out.println("updateNameLabel" + currentUserName);
+        System.out.println("updateNameLabel " + currentUserName);
+
         nameLabel.setText(currentUserName);
         nameLabel.setVisible(true);
-        nameLabel.setStyle("-fx-text-fill: BLACK; -fx-font-size: 13"); // Apply CSS styling
 
+        Font font = Font.font("Arial", FontWeight.NORMAL, 13);
+        nameLabel.setFont(font);
+        nameLabel.setStyle("-fx-text-fill: BLACK;");
     }
 
     public void updateManagerLabel() {
@@ -106,16 +112,39 @@ public class HeaderClientController {
 
     public void updateRolesLabel(List<String> roles) {
         Platform.runLater(() -> {
-            componentContainer.getChildren().clear();
             if (roles.isEmpty()) {
-                componentContainer.getChildren().add(new Label("   You have no roles"));
+                Text noRolesText = new Text(" You have no roles");
+                noRolesText.setFill(Color.BLACK);
+                noRolesText.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
+                rolesLabel.setGraphic(new TextFlow(textRolesLabel, noRolesText));
             } else {
+                StringBuilder rolesText = new StringBuilder(" ");
                 for (String role : roles) {
-                    componentContainer.getChildren().add(new Label("   " + role));
+                    rolesText.append(role).append(", ");
                 }
+                rolesText.delete(rolesText.length() - 2, rolesText.length());
+
+                Text rolesTextFormatted = new Text(rolesText.toString());
+                rolesTextFormatted.setFill(Color.BLACK);
+                rolesTextFormatted.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
+                rolesLabel.setGraphic(new TextFlow(textRolesLabel, rolesTextFormatted));
             }
         });
     }
+/*    public void updateRolesLabel(List<String> roles) {
+        Platform.runLater(() -> {
+            if (roles.isEmpty()) {
+                textRolesLabel.setText("   Assigned Roles: You have no roles");
+            } else {
+                StringBuilder rolesText = new StringBuilder("   Assigned Roles:");
+                for (String role : roles) {
+                    rolesText.append(role).append(", ");
+                }
+                rolesText.delete(rolesText.length() - 2, rolesText.length());
+                textRolesLabel.setText(rolesText.toString());
+            }
+        });
+    }*/
 
     private void updateClientData(List<String> roles) {
         updateManagerLabel();
