@@ -10,10 +10,10 @@ import java.util.Set;
 public class Role {
     private String name;
     private String description;
-    private List<String> flowsInRole;
+    private Set<String> flowsInRole;
     private Set<String> users;
 
-    public Role(String name, String description, List<String> flowsInRole) {
+    public Role(String name, String description, Set<String> flowsInRole) {
         this.name = name;
         this.description = description;
         this.flowsInRole = flowsInRole;
@@ -26,11 +26,11 @@ public class Role {
     public String getDescription() {
         return description;
     }
-    public List<String> getFlowsInRole() {
+    public Set<String> getFlowsInRole() {
         return flowsInRole;
     }
     public Set<String> getUsersInRole() { return users;}
     public void addUserToRole(String userName) {this.users.add(userName);}
-    public void setFlowsInRole(List<String> flowsInRole) {this.flowsInRole = flowsInRole;}
+    public void setFlowsInRole(Set<String> flowsInRole) {this.flowsInRole = flowsInRole;}
     public void setUsersInRole(List<String> users) {this.users = new HashSet<>(users);}
 }

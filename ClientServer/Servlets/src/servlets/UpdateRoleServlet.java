@@ -14,6 +14,7 @@ import utils.ServletUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @WebServlet("/update-role")
 public class UpdateRoleServlet extends HttpServlet {
@@ -36,7 +37,7 @@ public class UpdateRoleServlet extends HttpServlet {
 
         String name = currentRole.getName();
         String description =  currentRole.getDescription();
-        List<String> chosenFlows =  currentRole.getFlowsInRole();
+        Set<String> chosenFlows =  currentRole.getFlowsInRole();
         List<String> chosenUsers =  currentRole.getUsers();
         systemengine systemEngine = ServletUtils.getSystemEngine(getServletContext());
         systemEngine.updateFlowsInRole(new DTORole(name, description, chosenFlows, chosenUsers));

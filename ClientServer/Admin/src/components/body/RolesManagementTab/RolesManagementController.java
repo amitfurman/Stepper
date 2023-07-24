@@ -54,7 +54,18 @@ public class RolesManagementController {
 
     @FXML
     public void setPressOnSave() {
+        System.out.println(currRole + "currRole");
+ /*
+ ObservableList<String> checkedItems = FXCollections.observableArrayList();
+
+        for (Object index : flowsCheckList.getCheckModel().getCheckedIndices()) {
+            checkedItems.add((String) flowsCheckList.getItems().get(Integer.parseInt((String) index)));
+        }
+*/
+
+
         ObservableList<String> checkedItems = flowsCheckList.getCheckModel().getCheckedItems();
+        System.out.println("checkedItems: " + checkedItems);
         ObservableList<String> checkedUsersItems = usersCheckList.getCheckModel().getCheckedItems();
         updateRoles(checkedItems,checkedUsersItems);
 
@@ -66,6 +77,7 @@ public class RolesManagementController {
         currentRole.getUsers().clear();
         currentRole.getUsers().addAll(checkedUsersItems);
         updateRole(currentRole);
+        System.out.println(currentRole.getFlowsInRole());
     }
     @FXML
     public void setPressOnNewButton(ActionEvent actionEvent) {
@@ -113,8 +125,9 @@ public class RolesManagementController {
             String name = nameTextField.getText();
             String description = descriptionTextField.getText();
             List<String> chosenItems = new ArrayList<>(checkedItems);
+            Set<String> flowsInRole = new HashSet<>(chosenItems);
 
-            returnedRolesList.getRoles().add(new DTORole(name, description, chosenItems, null));
+            returnedRolesList.getRoles().add(new DTORole(name, description, flowsInRole, null));
 
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("name", name);
@@ -346,8 +359,10 @@ public class RolesManagementController {
         SaveButton.setDisable(isEmptyFlowDetailsTree);
     }
     public void showFlowsToEachRole(DTORole role){
-        Set<String> allFlows = returnedRolesList.getRoles().get(0).getFlowsInRole().stream().collect(Collectors.toSet());
         flowsCheckList.getItems().clear();
+        flowsCheckList.getCheckModel().clearChecks();
+        Set<String> allFlows = returnedRolesList.getRoles().get(0).getFlowsInRole().stream().collect(Collectors.toSet());
+        //flowsCheckList.getCheckModel().clearCheck(allFlows.iterator().next());
         for (String currFlow : allFlows) {
             flowsCheckList.getItems().add(currFlow);
         }

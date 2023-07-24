@@ -12,12 +12,13 @@ public class DTORole {
         private String name;
         private String description;
         private List<String> users;
-        private List<String> flowsInRole;
+        private Set<String> flowsInRole;
 
-        public DTORole(String name, String description, List<String> flows, List<String> users) {
+        public DTORole(String name, String description, Set<String> flows, List<String> users) {
             this.name = name;
             this.description = description;
-            this.flowsInRole = new ArrayList<>(flows);
+            this.flowsInRole = new HashSet<String>(flows) {
+            };
             if (users == null)
                 this.users = new ArrayList<>();
             else
@@ -32,7 +33,7 @@ public class DTORole {
             return description;
         }
 
-        public List<String> getFlowsInRole() {
+        public Set<String> getFlowsInRole() {
             return flowsInRole;
         }
 

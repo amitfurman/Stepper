@@ -113,8 +113,10 @@ public class systemengineImpl implements systemengine {
     public void initRoles() {
         roles = new ArrayList<>();
 
-        roles.add(new Role("All Flows", "all flows", flowDefinitionList.stream().map(FlowDefinition::getName).collect(Collectors.toList())));
-        roles.add(new Role("Read Only Flows", "all flows that are read only",flowDefinitionList.stream().filter(flow -> flow.checkIfFlowIsReadOnly()).map(FlowDefinition::getName).collect(Collectors.toList())));
+        roles.add(new Role("All Flows", "all flows", flowDefinitionList.stream().map(FlowDefinition::getName).collect(Collectors.toSet())));
+        roles.add(new Role("Read Only Flows", "all flows that are read only",flowDefinitionList.stream().filter(flow -> flow.checkIfFlowIsReadOnly()).map(FlowDefinition::getName).collect(Collectors.toSet())));
+        System.out.println("Roles initialized");
+        System.out.println("All Flows: " + roles.get(1).getFlowsInRole());
     }
 
     @Override
@@ -322,6 +324,10 @@ public class systemengineImpl implements systemengine {
     @Override
     public void updateFlowsInRole(DTORole dtoRole) {
         Role role = roles.stream().filter(r -> r.getName().equals(dtoRole.getName())).findFirst().get();
+        System.out.println("1" + dtoRole.getName());
+        System.out.println("2" + dtoRole.getFlowsInRole());
+        System.out.println("3" +role.getName());
+        System.out.println("4" +role.getFlowsInRole());
         role.setFlowsInRole(dtoRole.getFlowsInRole());
         role.setUsersInRole(dtoRole.getUsers());
 
@@ -355,14 +361,54 @@ public class systemengineImpl implements systemengine {
             Role role1 = roles.stream().filter(r -> r.getName().equals(role)).findFirst().get();
             rolesList.add(role1);
         });
+        System.out.println(user.getUsername() + " " + user.getRoles());
         return new DTORolesList(rolesList);
     }
     @Override
-    public DTOFlowsDefinitionInRoles getDtoFlowsDefinition(){
+    public DTOFlowsDefinitionInRoles getDtoFlowsDefinition(List<String> rolesNames) {
+        List<Role> filteredRoles = roles.stream()
+                .filter(role -> rolesNames.contains(role.getName()))
+                .collect(Collectors.toList());
+
+        System.out.println("filteredRoles: " + filteredRoles);
+        System.out.println(filteredRoles.get(0).getFlowsInRole());
+        List<FlowDefinition> flowDefinitionList = new ArrayList<>();
+
+        System.out.println("roles in system: " + roles);
+
+
+        filteredRoles.forEach(role -> {
+            role.getFlowsInRole().forEach(flowName -> {
+                FlowDefinition flowDefinition = this.flowDefinitionList.stream()
+                        .filter(flowD -> flowD.getName().equals(flowName))
+                        .findFirst()
+                        .orElse(null); // Handle the case when the flow with the given name is not found
+                if (flowDefinition != null) {
+                    flowDefinitionList.add(flowDefinition);
+                }
+            });
+        });
+
+        Set<DTOFlowDefinitionInRoles> flowsInRoles = new HashSet<>();
+        flowDefinitionList.stream().forEach(flow -> {
+            DTOFlowDefinitionInRoles flows = new DTOFlowDefinitionInRoles(flow.getName(), flow.getDescription(), flow.getFlowSteps().size(), flow.getFlowFreeInputs().size(), flow.getNumOfContinuation());
+            flowsInRoles.add(flows);
+        });
+
+        System.out.println("1" + flowsInRoles);
+        return new DTOFlowsDefinitionInRoles(flowsInRoles);
+    }
+
+/*    @Override
+    public DTOFlowsDefinitionInRoles getDtoFlowsDefinition(List<String> rolesNames){
 
         List<FlowDefinition> flowDefinitionList = new ArrayList<>();
-        roles.forEach(role -> {
-            role.getFlowsInRole().forEach(flowName -> {
+
+        roles.stream().forEach(role->rolesNames.stream().anyMatch());
+
+
+        roles.stream().filter(role->role.getName().equals).forEach(role -> {
+            role.forEach(flowName -> {
                 FlowDefinition flowDefinition = this.flowDefinitionList.stream().filter(flow -> flow.getName().equals(flowName)).findFirst().get();
                 flowDefinitionList.add(flowDefinition);
             });
@@ -372,6 +418,8 @@ public class systemengineImpl implements systemengine {
             DTOFlowDefinitionInRoles flows = new DTOFlowDefinitionInRoles(flow.getName(), flow.getDescription(), flow.getFlowSteps().size(), flow.getFlowFreeInputs().size(), flow.getNumOfContinuation());
             flowsInRoles.add(flows);
             });
+
+        System.out.println(flowsInRoles);
         return new DTOFlowsDefinitionInRoles(flowsInRoles);
-    }
+    }*/
 }

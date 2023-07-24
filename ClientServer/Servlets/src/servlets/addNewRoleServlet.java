@@ -20,9 +20,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 @WebServlet("/new-role")
 public class addNewRoleServlet extends HttpServlet  {
@@ -46,8 +44,9 @@ public class addNewRoleServlet extends HttpServlet  {
         String description = jsonObject.get("description").getAsString();
         String chosenItemsJson = jsonObject.get("chosenItems").getAsString();
         List<String> chosenItems = new Gson().fromJson(chosenItemsJson, new TypeToken<List<String>>(){}.getType());
+        Set<String> flows =  new HashSet<>(chosenItems);
         systemengine systemEngine = ServletUtils.getSystemEngine(getServletContext());
-        systemEngine.addNewRole(new DTORole(name, description, chosenItems, null));
+        systemEngine.addNewRole(new DTORole(name, description, flows, null));
 
     }
 }

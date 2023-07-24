@@ -131,20 +131,6 @@ public class HeaderClientController {
             }
         });
     }
-/*    public void updateRolesLabel(List<String> roles) {
-        Platform.runLater(() -> {
-            if (roles.isEmpty()) {
-                textRolesLabel.setText("   Assigned Roles: You have no roles");
-            } else {
-                StringBuilder rolesText = new StringBuilder("   Assigned Roles:");
-                for (String role : roles) {
-                    rolesText.append(role).append(", ");
-                }
-                rolesText.delete(rolesText.length() - 2, rolesText.length());
-                textRolesLabel.setText(rolesText.toString());
-            }
-        });
-    }*/
 
     private void updateClientData(List<String> roles) {
         updateManagerLabel();
