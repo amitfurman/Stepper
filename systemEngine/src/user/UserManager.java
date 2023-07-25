@@ -1,8 +1,13 @@
 package user;
 
+import dto.DTORole;
+import dto.DTOUserInfo;
+
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class UserManager {
 
@@ -34,5 +39,22 @@ public class UserManager {
 
     public boolean isUserExists(String username) {
         return usersSet.contains(username);
+    }
+
+    public DTOUserInfo getUserInfo(String userName) {
+        UserDefinition user =  usersDefinitionSet.stream().filter(user1 -> user1.getUsername().equals(userName)).findFirst().get();
+
+        Set<DTORole> roles = new HashSet<DTORole>();
+
+        user.getRoles().stream().forEach(role ->{
+            roles.add(new DTORole( role.getName(), role.getFlowsInRole()));
+
+        });
+        return new DTOUserInfo(user.getUsername(),roles, user.getExecutedFlows());
+    }
+
+    public Boolean getIfUserIsManager(String userName) {
+        UserDefinition user =  usersDefinitionSet.stream().filter(user1 -> user1.getUsername().equals(userName)).findFirst().get();
+        return user.isManager();
     }
 }

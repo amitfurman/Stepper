@@ -1,11 +1,10 @@
+import commonComponents.CommonController;
 import components.body.RolesManagementTab.RolesManagementController;
 import components.body.StatisticsTab.AdminStatisticsTabController;
 import components.body.UsersManagementTab.UsersManagementTabController;
 import components.body.executionsHistoryTab.AdminExecutionsHistoryTabController;
 import components.header.AdminHeaderController;
-import javafx.Controller;
 import javafx.application.Application;
-import javafx.executionsHistoryTab.ExecutionsHistoryTabController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
@@ -22,7 +21,7 @@ public class AdminMain extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Stepper");
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/javafx/heaart.png")));
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/commonComponents/heaart.png")));
 
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = getClass().getResource("/components/header/Adminheader.fxml");
@@ -32,10 +31,10 @@ public class AdminMain extends Application {
 
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("/javafx/source.fxml");
+        url = getClass().getResource("/commonComponents/commonSource.fxml");
         fxmlLoader.setLocation(url);
         ScrollPane mainComponent = fxmlLoader.load(url.openStream());
-        Controller mainController = fxmlLoader.getController();
+        CommonController mainController = fxmlLoader.getController();
 
         BorderPane borderPane = (BorderPane)mainComponent.getContent();
         borderPane.setTop(headerComponent);

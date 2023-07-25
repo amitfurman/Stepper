@@ -40,10 +40,7 @@ public class Controller {
     private UsersManagementTabController usersManagementTabController;
     @FXML
     private RolesManagementController rolesManagementTabController;
-    @FXML
-    private AdminHeaderController headerAdminComponentController;
-    @FXML
-    private HeaderClientController headerClientComponentController;
+
     @FXML
     private FlowDefinitionTabController flowDefinitionTabController;
     @FXML
@@ -122,57 +119,22 @@ public class Controller {
         this.headerComponentController = headerComponentController;
         headerComponentController.setMainController(this);
     }
-    public void setAdminHeaderComponentController(AdminHeaderController headerComponentController) {
-        this.headerAdminComponentController = headerComponentController;
-        headerAdminComponentController.setMainController(this);
-    }
-    public void setHeaderComponentController(HeaderClientController headerClientComponentController) {
-        this.headerClientComponentController = headerClientComponentController;
-        headerClientComponentController.setMainController(this);
-    }
+
     public void setFlowDefinitionTabController(FlowDefinitionTabController flowDefinitionTabComponentController) {
         this.flowDefinitionTabController = flowDefinitionTabComponentController;
         flowDefinitionTabController.setMainController(this);
-    }
-    public void setClientFlowDefinitionTabController(ClientFlowDefinitionTabController flowDefinitionTabComponentController) {
-        this.clientFlowDefinitionTabController = flowDefinitionTabComponentController;
-        clientFlowDefinitionTabController.setMainController(this);
     }
     public void setFlowExecutionTabController(FlowExecutionTabController flowExecutionTabComponentController) {
         this.flowExecutionTabController = flowExecutionTabComponentController;
         flowExecutionTabController.setMainController(this);
     }
-    public void setClientFlowExecutionTabController(ClientFlowExecutionTabController flowExecutionTabComponentController) {
-        this.clientFlowExecutionTabController = flowExecutionTabComponentController;
-        clientFlowExecutionTabController.setMainController(this);
-    }
-    public void setUsersManagementTabController(UsersManagementTabController usersManagementTabController) {
-        this.usersManagementTabController = usersManagementTabController;
-        usersManagementTabController.setMainController(this);
-    }
-    public void setRolesManagementTabController(RolesManagementController rolesManagementTabController) {
-        this.rolesManagementTabController = rolesManagementTabController;
-        rolesManagementTabController.setMainController(this);
-    }
-    public void setClientExecutionsHistoryTabController(ClientExecutionsHistoryTabController executionsHistoryTabController) {
-        this.clientExecutionsHistoryTabController = executionsHistoryTabController;
-        executionsHistoryTabController.setMainController(this);
-    }
     public void setExecutionsHistoryTabController(ExecutionsHistoryTabController executionsHistoryTabController) {
         this.executionsHistoryTabController = executionsHistoryTabController;
         executionsHistoryTabController.setMainController(this);
     }
-    public void setAdminExecutionsHistoryTabController(AdminExecutionsHistoryTabController executionsHistoryTabController) {
-        this.adminExecutionsHistoryTabController = executionsHistoryTabController;
-        adminExecutionsHistoryTabController.setMainController(this);
-    }
     public void setStatisticsTabController(StatisticsTabController statisticsTabComponentController) {
         this.statisticsTabController = statisticsTabComponentController;
         statisticsTabController.setMainController(this);
-    }
-    public void setAdminStatisticsTabController(AdminStatisticsTabController statisticsTabComponentController) {
-        this.adminStatisticsTabController = statisticsTabComponentController;
-        adminStatisticsTabController.setMainController(this);
     }
     public void setFlowDetailsTree() {
         if (flowDefinitionTabController!=null)

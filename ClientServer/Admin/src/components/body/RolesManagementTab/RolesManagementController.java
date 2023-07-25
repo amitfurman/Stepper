@@ -2,9 +2,9 @@ package components.body.RolesManagementTab;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import commonComponents.CommonController;
 import dto.*;
 import flow.api.FlowIO.IO;
-import javafx.Controller;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 import static util.Constants.*;
 
 public class RolesManagementController {
-    private Controller mainController;
+    private CommonController mainController;
     @FXML private Button SaveButton;
     @FXML private TreeView<String> rolesTree;
     @FXML private TreeView<String> roleDetailsTree;
@@ -45,12 +45,12 @@ public class RolesManagementController {
     @FXML private GridPane checkBoxGridPane;
     private CheckListView flowsCheckList = new CheckListView();
     private CheckListView usersCheckList = new CheckListView();
-    private DTORolesList returnedRolesList = new DTORolesList();
+    private DTORolesList returnedRolesList;
     private String currRole;
     private Set<String> usersList;
     Set<String> allFlows;
 
-    public void setMainController(Controller mainController) {
+    public void setMainController(CommonController mainController) {
         this.mainController = mainController;
     }
     @FXML
@@ -120,7 +120,9 @@ public class RolesManagementController {
         CheckListView<String> flowsForNewRoleListView = new CheckListView<>();
         Label flowsLabel = new Label("Choose flows: ");
         flowsLabel.getStyleClass().add("data-label");
-        returnedRolesList.getRoles().get(0).getFlowsInRole().forEach(flow -> flowsForNewRoleListView.getItems().add(flow));
+        //returnedRolesList.getRoles().get(0).getFlowsInRole().forEach(flow -> flowsForNewRoleListView.getItems().add(flow));
+        returnedRolesList.getRoles().stream().filter(role->role.getName().equals("All Flows")).findFirst().get().getFlowsInRole().forEach(flow -> flowsForNewRoleListView.getItems().add(flow));
+
         flowsForNewRoleListView.setMaxHeight(100);
         flowsForNewRoleListView.setPrefWidth(200);
         flowVBox.getChildren().addAll(flowsLabel, flowsForNewRoleListView);

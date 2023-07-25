@@ -1,11 +1,9 @@
 package components.body.executionsHistoryTab;
 
+import commonComponents.CommonController;
 import components.body.executionsHistoryTab.MasterDetail.AdminMasterDetailController;
-import dto.DTOFlowExecution;
-import dto.DTOFlowsExecutionList;
-import javafx.Controller;
+
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
@@ -23,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class AdminExecutionsHistoryTabController {
-    private Controller mainController;
+    private CommonController mainController;
     @FXML
     private TableView executionHistoryTable;
     @FXML
@@ -48,12 +46,12 @@ public class AdminExecutionsHistoryTabController {
     @FXML
     void rerunCurrentFlow(ActionEvent event) {
         RerunFlow.setOnMouseClicked(e -> {
-            mainController.getFlowExecutionTabController().initDataInFlowExecutionTab();
-            mainController.goToFlowExecutionTab(currFlowName);
-            List<Input> inputsValues = mainController.getSystemEngineInterface().getFreeInputsFromCurrFlow(currFlowName);
+            //mainController.getFlowExecutionTabController().initDataInFlowExecutionTab();
+            //mainController.goToFlowExecutionTab(currFlowName);
+           // List<Input> inputsValues = mainController.getSystemEngineInterface().getFreeInputsFromCurrFlow(currFlowName);
         });
     }
-    public void setMainController(Controller mainController) {this.mainController = mainController;}
+    public void setMainController(CommonController mainController) {this.mainController = mainController;}
     @FXML
     public void initialize() throws IOException {
         RerunFlow.setDisable(true);
@@ -95,7 +93,7 @@ public class AdminExecutionsHistoryTabController {
         initializeExecutionHistoryTable();
         addFilteringFunctionality();
     }
-    public void initExecutionHistoryDataList() {
+    /*public void initExecutionHistoryDataList() {
         executionHistoryData = FXCollections.observableArrayList();
         DTOFlowsExecutionList flowsExecutionList = mainController.getSystemEngineInterface().getFlowsExecutionList();
 
@@ -159,9 +157,9 @@ public class AdminExecutionsHistoryTabController {
                 }
             }
         });
-    }
+    }*/
     private void initializeExecutionHistoryTable() {
-        initExecutionHistoryDataList();
+        //initExecutionHistoryDataList();
         Platform.runLater(() -> {
             flowNameColumn.setCellValueFactory(new PropertyValueFactory<>("flowName"));
             startDateColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
@@ -186,9 +184,11 @@ public class AdminExecutionsHistoryTabController {
         }
     }
     public void initMasterDetails(String flowName) {
+/*
         DTOFlowExecution executedData = mainController.getSystemEngineInterface().getDTOFlowExecutionByName(flowName);
+
         masterDetailController.initMasterDetailPaneController(executedData);
         masterDetailController.updateFlowLabel(executedData);
         masterDetailController.addStepsToMasterDetail(executedData);
-    }
-}
+    }*/
+}}

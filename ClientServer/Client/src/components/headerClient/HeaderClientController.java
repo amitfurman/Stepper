@@ -1,9 +1,10 @@
 package components.headerClient;
 
+import com.google.gson.Gson;
+import commonComponents.CommonController;
 import components.body.flowDefinitionTab.ClientFlowDefinitionTabController;
-import dto.DTORole;
-import javafx.Controller;
 import components.mainClient.ClientController;
+import dto.DTOUserInfo;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -18,7 +19,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import okhttp3.*;
+import org.jetbrains.annotations.NotNull;
+import util.Constants;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,7 +33,7 @@ import static util.Constants.REFRESH_RATE;
 public class HeaderClientController {
     private Timer timer;
     private TimerTask clientRefresher;
-    private Controller mainController;
+    private CommonController mainController;
     private ClientFlowDefinitionTabController clientFlowDefinitionTabController;
     @FXML
     GridPane HeaderClientGridPane;
@@ -38,6 +43,7 @@ public class HeaderClientController {
     private String currentUserName;
     private Label rolesLabel;
     private Text textRolesLabel;
+    private CheckBox managerCheckbox;
 
     @FXML
     private void initialize() {
@@ -60,7 +66,7 @@ public class HeaderClientController {
 
         Label managerLabel = new Label();
         managerLabel.setGraphic(textManagerLabel);
-        CheckBox managerCheckbox = new CheckBox();
+        managerCheckbox = new CheckBox();
         managerCheckbox.setSelected(false);
         managerCheckbox.setDisable(true);
 
@@ -80,7 +86,7 @@ public class HeaderClientController {
 
     }
 
-    public void setMainController(Controller mainController) {
+    public void setMainController(CommonController mainController) {
         this.mainController = mainController;
     }
 
@@ -99,14 +105,14 @@ public class HeaderClientController {
         nameLabel.setStyle("-fx-text-fill: BLACK;");
     }
 
-    public void updateManagerLabel() {
-/*        Platform.runLater(() -> {
-            if (clientController.isManager()) {
-                componentContainer.getChildren().add(new Label("   You are a manager"));
+    public void updateManagerLabel(Boolean isManager) {
+        Platform.runLater(() -> {
+            if (isManager) {
+                managerCheckbox.setSelected(true);
             } else {
-                componentContainer.getChildren().add(new Label("   You are not a manager"));
+                managerCheckbox.setSelected(false);
             }
-        });*/
+        });
     }
 
     public void updateRolesLabel(List<String> roles) {
@@ -132,15 +138,38 @@ public class HeaderClientController {
     }
 
     private void updateClientData(List<String> roles) {
-        updateManagerLabel();
-        if(roles != null){
-            updateRolesLabel(roles);
-            clientFlowDefinitionTabController.showFlowsTree(roles);
-        }
+        updateRolesLabel(roles);
+        clientFlowDefinitionTabController.showFlowsTree(roles);
+        getIfManager();
     }
+    private void getIfManager() {
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.IS_MANAGER_SERVLET).newBuilder();
+        urlBuilder.addQueryParameter("userName", currentUserName);
+        String finalUrl = urlBuilder.build().toString();
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .build();
+
+        OkHttpClient HTTP_CLIENT = new OkHttpClient();
+        Call call = HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String jsonResponse = response.body().string();
+                Gson gson = new Gson();
+                Boolean isManager = gson.fromJson(jsonResponse, Boolean.class);
+                updateManagerLabel(isManager);
+
+            }
+        });
+
+      }
 
     public void startRolesListRefresher() {
-        System.out.println("startRolesListRefresher" + currentUserName);
         this.clientRefresher = new ClientRefresher(
                 currentUserName , this::updateClientData);
         timer = new Timer();

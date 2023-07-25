@@ -24,10 +24,13 @@ public class RolesListPerUserServlet extends HttpServlet {
             systemengine system = ServletUtils.getSystemEngine(getServletContext());
             DTORolesList rolesList = system.getDTORolesListPerUser(userName);
             Set<String> roles = rolesList.getRoles().stream().map(role -> role.getName()).collect(java.util.stream.Collectors.toSet());
+            System.out.println("RolesListPerUserServlet: " + roles);
             List<String> rolesListAsArray = new ArrayList<>(roles);
             String json = gson.toJson(rolesListAsArray);
             out.println(json);
             out.flush();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

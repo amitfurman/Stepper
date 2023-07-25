@@ -4,11 +4,11 @@ package components.body.flowExecutionTab;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import commonComponents.CommonController;
 import components.body.flowExecutionTab.MasterDetail.ClientMasterDetailController;
 
 import dto.*;
 import flow.mapping.FlowContinuationMapping;
-import javafx.Controller;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 import static util.Constants.*;
 
 public class ClientFlowExecutionTabController {
-    private Controller mainController;
+    private CommonController mainController;
     @FXML
     private GridPane flowExecutionGridPane;
     @FXML
@@ -107,10 +107,10 @@ public class ClientFlowExecutionTabController {
         if (continuationTableView != null)
             continuationTableView.getItems().clear();
     }
-    public void setMainController(Controller mainController) {
+    public void setMainController(CommonController mainController) {
         this.mainController = mainController;
     }
-    public Controller getMainController() {
+    public CommonController getMainController() {
         return mainController;
     }
     public void setMasterDetailsController(ClientMasterDetailController masterDetailComponentController) {
@@ -473,10 +473,10 @@ public class ClientFlowExecutionTabController {
                                 FlowContinuationMapping mapping = getTableView().getItems().get(getIndex());
                                 String targetFlow = mapping.getTargetFlow();
                                 String sourceFlow = mapping.getSourceFlow();
-                                getMainController().goToFlowExecutionTab(targetFlow);
-                                getMainController().initDataInFlowExecutionTab();
+                                getMainController().goToClientFlowExecutionTab(targetFlow);
+                            /*    getMainController().initDataInFlowExecutionTab();
                                 List<Input> valuesList = getMainController().getSystemEngineInterface().getValuesListFromContinuationMap(sourceFlow, targetFlow);
-                                setInputValuesFromContinuationMap(valuesList);
+                                setInputValuesFromContinuationMap(valuesList);*/
                                 initContinuationVbox();
                     });
                 }
@@ -532,8 +532,8 @@ public class ClientFlowExecutionTabController {
     }
 
     public void backToFlowExecutionTabAfterExecution() {
-        getMainController().initExecutionHistoryTableInExecutionsHistoryTab();
-        getMainController().goToStatisticsTab();
-        initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(mainController.getFlowName()));
+        //getMainController().initExecutionHistoryTableInExecutionsHistoryTab();
+        //getMainController().goToStatisticsTab();
+        //initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(mainController.getFlowName()));
     }
 }

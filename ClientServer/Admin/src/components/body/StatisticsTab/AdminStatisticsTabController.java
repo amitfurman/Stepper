@@ -1,9 +1,9 @@
 
 package components.body.StatisticsTab;
 
+import commonComponents.CommonController;
 import dto.DTOFlowAndStepStatisticData;
 import dto.DTOStatisticData;
-import javafx.Controller;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
@@ -19,7 +19,7 @@ import java.util.Optional;
 
 public class AdminStatisticsTabController {
 
-    private Controller mainController;
+    private CommonController mainController;
     @FXML
     private BarChart<String, Number> FlowNumberOfRunsChart;
     @FXML
@@ -157,7 +157,7 @@ public class AdminStatisticsTabController {
             AverageStepsRunTimeChart.setAnimated(false);
         });
     }
-    public void setMainController(Controller mainController) {
+    public void setMainController(CommonController mainController) {
         this.mainController = mainController;
     }
 }

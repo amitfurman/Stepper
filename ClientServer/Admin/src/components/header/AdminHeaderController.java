@@ -1,7 +1,7 @@
 package components.header;
 
+import commonComponents.CommonController;
 import components.body.RolesManagementTab.RolesManagementController;
-import javafx.Controller;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -23,7 +23,7 @@ import java.net.HttpURLConnection;
 import static util.Constants.UPLOAD_FILE;
 
 public class AdminHeaderController {
-    private Controller mainController;
+    private CommonController mainController;
     @FXML
     private Button chooseXMLFileButton;
     @FXML
@@ -43,8 +43,8 @@ public class AdminHeaderController {
 
     @FXML
     void clickToChooseXMLFileButton(ActionEvent event) throws IOException {
-        mainController.initDataInFlowExecutionTab();
-        mainController.initInputsInFlowExecutionTab();
+/*        mainController.initDataInFlowExecutionTab();
+        mainController.initInputsInFlowExecutionTab();*/
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose XML File");
@@ -112,7 +112,7 @@ public class AdminHeaderController {
     void viewChosenXmlFilePath(ActionEvent event) {
         chosenXmlFilePath.setText(filePath.toString());
     }
-    public void setMainController(Controller mainController) {
+    public void setMainController(CommonController mainController) {
         this.mainController = mainController;
     }
     private void showError(String message) {

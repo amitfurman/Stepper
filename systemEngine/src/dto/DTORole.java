@@ -23,7 +23,11 @@ public class DTORole {
                 this.users = new ArrayList<>();
             else
                 this.users = new ArrayList<>(users);
-         }
+        }
+        public DTORole(String name, Set<String> flows) {
+            this.name = name;
+            this.flowsInRole = new HashSet<String>(flows);
+        }
 
         public String getName() {
             return name;

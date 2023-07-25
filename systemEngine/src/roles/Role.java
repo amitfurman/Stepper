@@ -12,7 +12,6 @@ public class Role {
     private String description;
     private Set<String> flowsInRole;
     private Set<String> users;
-
     public Role(String name, String description, Set<String> flowsInRole) {
         this.name = name;
         this.description = description;
@@ -30,6 +29,7 @@ public class Role {
         return flowsInRole;
     }
     public Set<String> getUsersInRole() { return users;}
+
     public void addUserToRole(String userName) {this.users.add(userName);}
     public void setFlowsInRole(Set<String> flowsInRole) {this.flowsInRole = flowsInRole;}
     public void setUsersInRole(List<String> users) {this.users = new HashSet<>(users);}

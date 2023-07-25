@@ -21,7 +21,7 @@ public class ClientMain extends Application {
         primaryStage.setMinWidth(600);
         primaryStage.setTitle("Stepper Client");
 
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/javafx/heaart.png")));
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/commonComponents/heaart.png")));
 
         URL loginPage = getClass().getResource("/components/login/login.fxml");
         try {

@@ -1,14 +1,13 @@
 package components.mainClient;
 
+import commonComponents.CommonController;
 import components.body.executionsHistoryTab.ClientExecutionsHistoryTabController;
 import components.body.flowDefinitionTab.ClientFlowDefinitionTabController;
 import components.body.flowExecutionTab.ClientFlowExecutionTabController;
 import components.headerClient.HeaderClientController;
 import components.login.LoginController;
-import javafx.Controller;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.executionsHistoryTab.ExecutionsHistoryTabController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -50,10 +49,10 @@ public class ClientController{
         headerController.startRolesListRefresher();
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("/javafx/source.fxml");
+        url = getClass().getResource("/commonComponents/commonSource.fxml");
         fxmlLoader.setLocation(url);
         mainComponent = fxmlLoader.load(url.openStream());
-        Controller mainController = fxmlLoader.getController();
+        CommonController mainController = fxmlLoader.getController();
 
         BorderPane borderPane = (BorderPane)mainComponent.getContent();
         borderPane.setTop(headerComponent);

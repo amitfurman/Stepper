@@ -35,5 +35,8 @@
         <jarDirectory url="file://$MODULE_DIR$/../../3rd/okHttp" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="Admin" />
+    <orderEntry type="module" module-name="Client" />
+    <orderEntry type="module" module-name="systemEngine" />
   </component>
 </module>
