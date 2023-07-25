@@ -3,6 +3,7 @@ package servlets;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dto.DTOFlowExecution;
+import dto.DTOFlowID;
 import dto.DTOFreeInputsFromUser;
 import dto.DTORole;
 import jakarta.servlet.ServletException;
@@ -41,10 +42,11 @@ public class activateFlowServlet extends HttpServlet {
         freeInputs.getFreeInputMap().forEach((key, value) -> System.out.println(value));
 
         systemengine systemEngine = ServletUtils.getSystemEngine(getServletContext());
-        DTOFlowExecution flowExecution = systemEngine.activateFlowByName(flowName, freeInputs);
-/*        String json = gson.toJson(flowExecution);
+        //DTOFlowExecution flowExecution = systemEngine.activateFlowByName(flowName, freeInputs);
+        DTOFlowID flowExecution = systemEngine.activateFlowByName(flowName, freeInputs);
+        String json = gson.toJson(flowExecution);
         response.getWriter().println(json);
-        response.getWriter().flush();*/
+        response.getWriter().flush();/**/
     }
 
 }

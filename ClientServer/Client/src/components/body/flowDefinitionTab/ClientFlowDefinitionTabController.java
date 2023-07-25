@@ -53,14 +53,10 @@ public class ClientFlowDefinitionTabController {
         return flowsTree;
     }
     public void showFlowsTree(List<String> roles) {
-        System.out.println(roles.size());
-        System.out.println(roles);
         if (roles.size() != 0)
             getAllFlows(roles);
         else{
-            System.out.println("roles is null");
             allFlows.clear();
-            System.out.println(allFlows.size());
             rootItem.getChildren().clear();
             rootItem.setExpanded(true);
             Platform.runLater(() -> {

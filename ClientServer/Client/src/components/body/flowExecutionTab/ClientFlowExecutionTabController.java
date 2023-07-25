@@ -143,7 +143,6 @@ public class ClientFlowExecutionTabController {
 
             //String simpleName = input.getType().getType().getSimpleName();
             String simpleName = input.getIoType();
-            System.out.println("simpleName: " + simpleName);
             VBox vbox = new VBox();
             setVBoxSetting(vbox, label);
 
@@ -304,7 +303,6 @@ public class ClientFlowExecutionTabController {
             if (!isNowFocused && spinner.isEditable()) {
                 String text = spinner.getEditor().getText();
                 Integer newValue = text.isEmpty() ? 0 : Integer.parseInt(text);
-                System.out.println(newValue);
                 commitEdit(newValue, input);
             }
         });
@@ -312,17 +310,11 @@ public class ClientFlowExecutionTabController {
     }
     public void commitEdit(Object newValue, Input input) {
         input.setValue(newValue);
-        System.out.println(input.getFinalName());
-        System.out.println("*"+input.getValue().getClass());
-        System.out.println("**"+newValue.getClass());
         updateFreeInputMap(input, newValue);
         boolean hasAllMandatoryInputs = hasAllMandatoryInputs(freeInputMap);
         executeButton.setDisable(!hasAllMandatoryInputs);
     }
     public void updateFreeInputMap(Input input, Object newValue) {
-        System.out.println("updateFreeInputMap");
-        System.out.println(newValue.getClass());
-        System.out.println(newValue);
         freeInputMap.put(input.getStepName() + "." + input.getOriginalName(), newValue);
     }
     public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
@@ -374,11 +366,7 @@ public class ClientFlowExecutionTabController {
     @FXML
     void StartExecuteFlowButton(ActionEvent event){
         masterDetailPane = new MasterDetailPane();
-        System.out.println("1");
-        freeInputMap.forEach((key, value) -> System.out.println(value));
         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
-        System.out.println("2");
-        freeInputs.getFreeInputMap().forEach((key, value) -> System.out.println(value));
         activateFlow(mainController.getFlowName(), freeInputs);
 
     }
@@ -414,6 +402,19 @@ public class ClientFlowExecutionTabController {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
 
+                    DTOFlowID flowExecution = new Gson().fromJson(response.body().string(), DTOFlowID.class);
+
+                    System.out.println("flow UUID: " + flowExecution.getUniqueIdByUUID());
+                    System.out.println("flow ID: " +flowExecution.getUniqueId());
+
+                    setExecutedFlowID(flowExecution.getUniqueIdByUUID());
+
+                    freeInputMap = new HashMap<>();
+                    ExecuteFlowTask currentRunningTask = new ExecuteFlowTask(UUID.fromString(executedFlowIDProperty.getValue()),
+                            masterDetailController,executedFlowIDProperty, new SimpleBooleanProperty(false));
+
+                    new Thread(currentRunningTask).start();
+/*
                     DTOFlowExecution flowExecution = new Gson().fromJson(response.body().string(), DTOFlowExecution.class);
 
                     System.out.println(flowExecution.getUniqueIdByUUID());
@@ -426,7 +427,7 @@ public class ClientFlowExecutionTabController {
                             masterDetailController,executedFlowIDProperty, new SimpleBooleanProperty(false));
 
                     new Thread(currentRunningTask).start();
-
+*/
                 } else {
                     String errorMessage = response.body().string();
 

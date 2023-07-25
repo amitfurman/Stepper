@@ -65,7 +65,7 @@ public class systemengineImpl implements systemengine {
         return new DTOFlowExecution(flowExecution);
     }
 
-    @Override
+   /* @Override
     synchronized public DTOFlowExecution activateFlowByName(String flowName, DTOFreeInputsFromUser freeInputs) {
         System.out.println("flowName: " + flowName);
         System.out.println("flowDL: " + flowDefinitionList);
@@ -79,7 +79,18 @@ public class systemengineImpl implements systemengine {
         flowExecutionList.addFirst(flowExecution);
 
         threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
-        return new DTOFlowExecution(flowExecution);
+       return new DTOFlowExecution(flowExecution);
+    }*/
+
+    @Override
+    synchronized public DTOFlowID activateFlowByName(String flowName, DTOFreeInputsFromUser freeInputs) {
+        FlowDefinition currFlow = flowDefinitionList.stream().filter(flow -> flow.getName().equals(flowName)).findFirst().get();
+        FlowExecution flowExecution = new FlowExecution(currFlow);
+        flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
+        flowExecutionList.addFirst(flowExecution);
+
+        threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
+        return new DTOFlowID(flowExecution.getUniqueIdByUUID());
     }
 
     @Override
@@ -123,8 +134,6 @@ public class systemengineImpl implements systemengine {
 
         roles.add(new Role("All Flows", "all flows", flowDefinitionList.stream().map(FlowDefinition::getName).collect(Collectors.toSet())));
         roles.add(new Role("Read Only Flows", "all flows that are read only",flowDefinitionList.stream().filter(flow -> flow.checkIfFlowIsReadOnly()).map(FlowDefinition::getName).collect(Collectors.toSet())));
-        System.out.println("Roles initialized");
-        System.out.println("All Flows: " + roles.get(1).getFlowsInRole());
     }
 
     @Override

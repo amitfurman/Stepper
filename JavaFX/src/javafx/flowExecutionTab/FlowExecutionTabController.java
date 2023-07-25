@@ -333,8 +333,8 @@ public class FlowExecutionTabController {
         masterDetailPane = new MasterDetailPane();
         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
 
-        DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
-        setExecutedFlowID(flowExecution.getUniqueIdByUUID());
+     //   DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
+       // setExecutedFlowID(flowExecution.getUniqueIdByUUID());
 
         freeInputMap = new HashMap<>();
         ExecuteFlowTask currentRunningTask = new ExecuteFlowTask(UUID.fromString(executedFlowIDProperty.getValue()),

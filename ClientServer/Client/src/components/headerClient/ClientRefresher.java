@@ -21,7 +21,6 @@ public class ClientRefresher extends TimerTask {
 
     public ClientRefresher(String userName, Consumer<List<String>> rolesList) {
         this.userName = userName;
-        System.out.println("userName: " + userName);
         this.rolesListConsumer = rolesList;
     }
 
