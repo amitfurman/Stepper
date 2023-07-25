@@ -31,7 +31,7 @@ public class Constants {
     public final static String ALL_FLOWS_SERVLET = FULL_SERVER_PATH + "/all-flows";
     public final static String FREE_INPUTS_BY_FLOW_NAME = FULL_SERVER_PATH + "/free-inputs-by-flow-name";
     public final static String ACTIVATE_FLOW = FULL_SERVER_PATH + "/activate-flow";
-
+    public final static String GET_DTO_FLOW_EXECUTION_SERVLET = FULL_SERVER_PATH + "/flow-execution-data";
 
     // GSON instance
     public final static Gson GSON_INSTANCE = new Gson();

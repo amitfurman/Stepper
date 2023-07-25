@@ -55,4 +55,5 @@ public interface systemengine {
     List<DTOFlowFreeInputs> getDTOFlowFreeInputs(String flowName);
 
     DTOAllFlowsNames getAllFlowsList();
+    List<DTOStepsInFlow> getDTOStepsInFlow(UUID flowId);
 }

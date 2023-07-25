@@ -255,6 +255,15 @@ public class systemengineImpl implements systemengine {
         FlowExecution executedFlow = flowExecutionList.stream().filter(flow -> flow.getUniqueId().equals(flowId)).findFirst().get();
         return new DTOFlowExecution(executedFlow);
     }
+    @Override
+    public List<DTOStepsInFlow> getDTOStepsInFlow(UUID flowId) {
+        FlowExecution executedFlow = flowExecutionList.stream().filter(flow -> flow.getUniqueId().equals(flowId)).findFirst().get();
+        List<DTOStepsInFlow> stepsInFlow = new ArrayList<>();
+        executedFlow.getStepExecutionDataList().stream().forEach(step -> {
+            stepsInFlow.add(new DTOStepsInFlow(step.getOriginalName(), step.getFinalNameStep(),step.getResult().toString()));
+        });
+        return stepsInFlow;
+    }
 
     @Override
     public DTOFlowExecution getDTOFlowExecutionByName(String flowName) {
