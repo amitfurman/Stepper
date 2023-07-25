@@ -1,6 +1,7 @@
 import components.body.RolesManagementTab.RolesManagementController;
 import components.body.StatisticsTab.AdminStatisticsTabController;
 import components.body.UsersManagementTab.UsersManagementTabController;
+import components.body.executionsHistoryTab.AdminExecutionsHistoryTabController;
 import components.header.AdminHeaderController;
 import javafx.Controller;
 import javafx.application.Application;
@@ -52,10 +53,10 @@ public class AdminMain extends Application {
         RolesManagementController rolesManagementTabController =  fxmlLoader.getController();
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("/javafx/executionsHistoryTab/executionsHistoryTab.fxml");
+        url = getClass().getResource("/components/body/executionsHistoryTab/executionsHistoryTab.fxml");
         fxmlLoader.setLocation(url);
         Tab executionsHistoryTabComponent = fxmlLoader.load(url.openStream());
-        ExecutionsHistoryTabController executionsHistoryTabController =  fxmlLoader.getController();
+        AdminExecutionsHistoryTabController executionsHistoryTabController =  fxmlLoader.getController();
 
         fxmlLoader = new FXMLLoader();
         url = getClass().getResource("/components/body/StatisticsTab/StatisticsTab.fxml");
@@ -70,7 +71,7 @@ public class AdminMain extends Application {
         mainController.setAdminHeaderComponentController(headerController);
         mainController.setUsersManagementTabController(usersManagementTabController);
         mainController.setRolesManagementTabController(rolesManagementTabController);
-        mainController.setExecutionsHistoryTabController(executionsHistoryTabController);
+        mainController.setAdminExecutionsHistoryTabController(executionsHistoryTabController);
         mainController.setAdminStatisticsTabController(StatisticsTabController);
         Scene scene = new Scene(mainComponent, 600, 400);
         primaryStage.setScene(scene);

@@ -3,6 +3,8 @@ package javafx;
 import components.body.RolesManagementTab.RolesManagementController;
 import components.body.StatisticsTab.AdminStatisticsTabController;
 import components.body.UsersManagementTab.UsersManagementTabController;
+import components.body.executionsHistoryTab.AdminExecutionsHistoryTabController;
+import components.body.executionsHistoryTab.ClientExecutionsHistoryTabController;
 import components.body.flowDefinitionTab.ClientFlowDefinitionTabController;
 import components.body.flowExecutionTab.ClientFlowExecutionTabController;
 import components.header.AdminHeaderController;
@@ -50,6 +52,10 @@ public class Controller {
     private FlowExecutionTabController flowExecutionTabController;
     @FXML
     private ClientFlowExecutionTabController clientFlowExecutionTabController;
+    @FXML
+    private ClientExecutionsHistoryTabController clientExecutionsHistoryTabController;
+   @FXML
+    private AdminExecutionsHistoryTabController adminExecutionsHistoryTabController;
     @FXML
     private ExecutionsHistoryTabController executionsHistoryTabController;
     @FXML
@@ -148,9 +154,17 @@ public class Controller {
         this.rolesManagementTabController = rolesManagementTabController;
         rolesManagementTabController.setMainController(this);
     }
+    public void setClientExecutionsHistoryTabController(ClientExecutionsHistoryTabController executionsHistoryTabController) {
+        this.clientExecutionsHistoryTabController = executionsHistoryTabController;
+        executionsHistoryTabController.setMainController(this);
+    }
     public void setExecutionsHistoryTabController(ExecutionsHistoryTabController executionsHistoryTabController) {
         this.executionsHistoryTabController = executionsHistoryTabController;
         executionsHistoryTabController.setMainController(this);
+    }
+    public void setAdminExecutionsHistoryTabController(AdminExecutionsHistoryTabController executionsHistoryTabController) {
+        this.adminExecutionsHistoryTabController = executionsHistoryTabController;
+        adminExecutionsHistoryTabController.setMainController(this);
     }
     public void setStatisticsTabController(StatisticsTabController statisticsTabComponentController) {
         this.statisticsTabController = statisticsTabComponentController;
@@ -165,7 +179,7 @@ public class Controller {
             flowDefinitionTabController.setFlowDetailsTree();
     }
     public void goToFlowExecutionTab(String chosenFlowName) {
-/*        flowName = chosenFlowName;
+    flowName = chosenFlowName;
 
         Tab flowExecutionTab = tabPane.getTabs().stream()
                 .filter(tab -> tab.getId().equals("flowExecutionTab"))
@@ -180,7 +194,7 @@ public class Controller {
         List<DTOSingleFlowIOData> sortedList = freeInputs.stream()
                 .sorted(Comparator.comparing(obj -> obj.getNecessity().equals(DataNecessity.MANDATORY) ? 0 : 1))
                 .collect(Collectors.toList());
-        flowExecutionTabController.initInputsTable(sortedList);*/
+        flowExecutionTabController.initInputsTable(sortedList);
     }
     public void goToStatisticsTab() {
         DTOFlowAndStepStatisticData statisticData = systemEngineInterface.getStatisticData();

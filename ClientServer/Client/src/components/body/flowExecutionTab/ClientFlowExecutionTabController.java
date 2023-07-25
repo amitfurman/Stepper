@@ -4,7 +4,8 @@ package components.body.flowExecutionTab;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import components.body.flowExecutionTab.MasterDetail.MasterDetailController;
+import components.body.flowExecutionTab.MasterDetail.ClientMasterDetailController;
+
 import dto.*;
 import flow.mapping.FlowContinuationMapping;
 import javafx.Controller;
@@ -60,7 +61,7 @@ public class ClientFlowExecutionTabController {
 
     private ObservableList<Input> inputList = FXCollections.observableArrayList();
 
-    private MasterDetailController masterDetailController;
+    private ClientMasterDetailController clientMasterDetailController;
 
     private MasterDetailPane masterDetailPane;
 
@@ -84,10 +85,10 @@ public class ClientFlowExecutionTabController {
         executeButton.setDisable(true);
         flowExecutionGridPane.setVgap(5);
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = getClass().getResource("MasterDetail/masterDetails.fxml");
+        URL url = getClass().getResource("MasterDetail/ClientMasterDetails.fxml");
         fxmlLoader.setLocation(url);
         MasterDetailPane MasterDetailComponent = fxmlLoader.load(url.openStream());
-        MasterDetailController masterDetailController = fxmlLoader.getController();
+        ClientMasterDetailController masterDetailController = fxmlLoader.getController();
         this.setMasterDetailsController(masterDetailController);
         this.masterDetailPane = MasterDetailComponent;
         if (masterDetailController != null) {
@@ -112,12 +113,12 @@ public class ClientFlowExecutionTabController {
     public Controller getMainController() {
         return mainController;
     }
-    public void setMasterDetailsController(MasterDetailController masterDetailComponentController) {
-        this.masterDetailController = masterDetailComponentController;
+    public void setMasterDetailsController(ClientMasterDetailController masterDetailComponentController) {
+        this.clientMasterDetailController = masterDetailComponentController;
         masterDetailComponentController.setFlowExecutionTabController(this);
     }
     public void initDataInFlowExecutionTab() {
-        masterDetailController.initMasterDetailPaneController();
+        clientMasterDetailController.initMasterDetailPaneController();
         initContinuationVbox();
     }
     public void initInputsInFlowExecutionTab() {
@@ -411,7 +412,7 @@ public class ClientFlowExecutionTabController {
 
                     freeInputMap = new HashMap<>();
                     ExecuteFlowTask currentRunningTask = new ExecuteFlowTask(UUID.fromString(executedFlowIDProperty.getValue()),
-                            masterDetailController,executedFlowIDProperty, new SimpleBooleanProperty(false));
+                            clientMasterDetailController,executedFlowIDProperty, new SimpleBooleanProperty(false));
 
                     new Thread(currentRunningTask).start();
 /*

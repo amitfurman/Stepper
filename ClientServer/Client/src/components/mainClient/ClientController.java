@@ -1,5 +1,6 @@
 package components.mainClient;
 
+import components.body.executionsHistoryTab.ClientExecutionsHistoryTabController;
 import components.body.flowDefinitionTab.ClientFlowDefinitionTabController;
 import components.body.flowExecutionTab.ClientFlowExecutionTabController;
 import components.headerClient.HeaderClientController;
@@ -71,10 +72,10 @@ public class ClientController{
         ClientFlowExecutionTabController flowExecutionTabController =  fxmlLoader.getController();
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("/javafx/executionsHistoryTab/executionsHistoryTab.fxml");
+        url = getClass().getResource("/components/body/executionsHistoryTab/executionsHistoryTab.fxml");
         fxmlLoader.setLocation(url);
         Tab executionsHistoryTabComponent = fxmlLoader.load(url.openStream());
-        ExecutionsHistoryTabController executionsHistoryTabController =  fxmlLoader.getController();
+        ClientExecutionsHistoryTabController executionsHistoryTabController =  fxmlLoader.getController();
 
         TabPane tabPane = (TabPane) borderPane.getCenter();
         tabPane.getTabs().addAll(flowDefinitionTabComponent,flowExecutionTabComponent,executionsHistoryTabComponent);
@@ -82,7 +83,7 @@ public class ClientController{
         mainController.setHeaderComponentController(headerController);
         mainController.setClientFlowDefinitionTabController(flowDefinitionTabController);
         mainController.setClientFlowExecutionTabController(flowExecutionTabController);
-        mainController.setExecutionsHistoryTabController(executionsHistoryTabController);
+        mainController.setClientExecutionsHistoryTabController(executionsHistoryTabController);
 
     }
 

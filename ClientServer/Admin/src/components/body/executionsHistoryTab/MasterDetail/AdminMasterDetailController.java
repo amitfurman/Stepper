@@ -1,6 +1,6 @@
-package components.body.flowExecutionTab.MasterDetail;
+package components.body.executionsHistoryTab.MasterDetail;
 
-import components.body.flowExecutionTab.ClientFlowExecutionTabController;
+import components.body.executionsHistoryTab.AdminExecutionsHistoryTabController;
 import datadefinition.impl.list.FileListData;
 import datadefinition.impl.list.StringListData;
 import datadefinition.impl.mapping.NumberMappingData;
@@ -13,7 +13,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.executionsHistoryTab.ExecutionsHistoryTabController;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -40,29 +39,22 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class MasterDetailController {
+public class AdminMasterDetailController {
     @FXML
     private MasterDetailPane FlowMasterDetails;
-    private ClientFlowExecutionTabController flowExecutionTabController;
-    private ExecutionsHistoryTabController flowExecutionHistoryTabController;
+    private AdminExecutionsHistoryTabController flowExecutionHistoryTabController;
     private DTOFlowExecution flowExecution;
     private VBox detailPane;
     private List<String> addedStepNames = new ArrayList<>();
     private int stepCounter;
 
     public MasterDetailPane getFlowMasterDetails() {return FlowMasterDetails;}
-    public ClientFlowExecutionTabController getFlowExecutionTabController() {
-        return flowExecutionTabController;
-    }
     @FXML
     public void initialize() {
         FlowMasterDetails.setDetailSide(Side.LEFT);
         FlowMasterDetails.setDividerPosition(0.3);
     }
-    public void setFlowExecutionTabController(ClientFlowExecutionTabController clientFlowExecutionTabController) {
-        this.flowExecutionTabController = clientFlowExecutionTabController;
-    }
-    public void setExecutionsHistoryTabController(ExecutionsHistoryTabController flowExecutionHistoryTabController) {
+    public void setExecutionsHistoryTabController(AdminExecutionsHistoryTabController flowExecutionHistoryTabController) {
         this.flowExecutionHistoryTabController = flowExecutionHistoryTabController;
     }
     public void initMasterDetailPaneController(){

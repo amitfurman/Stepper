@@ -1,9 +1,8 @@
 package components.body.flowExecutionTab;
 
 import com.google.gson.reflect.TypeToken;
-import components.body.flowExecutionTab.MasterDetail.MasterDetailController;
+import components.body.flowExecutionTab.MasterDetail.ClientMasterDetailController;
 import dto.DTOFlowExecution;
-import dto.DTOFlowFreeInputs;
 import dto.DTOStepsInFlow;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -23,12 +22,12 @@ import static util.Constants.GSON_INSTANCE;
 
 public class ExecuteFlowTask extends Task<Boolean> {
     private final systemengine engineManager = systemengineImpl.getInstance();
-    private final MasterDetailController masterDetailController;
+    private final ClientMasterDetailController masterDetailController;
     private final UUID flowId;
     private final SimpleStringProperty currentFlowId;
     private final SimpleBooleanProperty isTaskFinished;
 
-    public ExecuteFlowTask(UUID flowId, MasterDetailController masterDetailController, SimpleStringProperty currentFlowId, SimpleBooleanProperty isTaskFinished) {
+    public ExecuteFlowTask(UUID flowId, ClientMasterDetailController masterDetailController, SimpleStringProperty currentFlowId, SimpleBooleanProperty isTaskFinished) {
         this.flowId = flowId;
         this.masterDetailController = masterDetailController;
         this.currentFlowId = currentFlowId;
