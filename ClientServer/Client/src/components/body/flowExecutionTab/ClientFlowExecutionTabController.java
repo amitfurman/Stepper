@@ -2,11 +2,10 @@
 package components.body.flowExecutionTab;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import components.body.flowExecutionTab.MasterDetail.MasterDetailController;
-import dto.DTOFlowExecution;
-import dto.DTOFlowsDefinitionInRoles;
-import dto.DTOFreeInputsFromUser;
-import dto.DTOSingleFlowIOData;
+import dto.*;
 import flow.mapping.FlowContinuationMapping;
 import javafx.Controller;
 import javafx.application.Platform;
@@ -34,13 +33,17 @@ import org.controlsfx.control.MasterDetailPane;
 import org.jetbrains.annotations.NotNull;
 import systemengine.Input;
 import util.Constants;
+import util.http.HttpClientUtil;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static util.Constants.*;
 
 public class ClientFlowExecutionTabController {
     private Controller mainController;
@@ -121,9 +124,8 @@ public class ClientFlowExecutionTabController {
         executeButton.setDisable(true);
         inputValuesHBox.getChildren().clear();
     }
-/*
-    public void initInputsTable(String flowName) {
-       executeButton.setDisable(true);
+    public void initInputsTable(List<DTOFlowFreeInputs> freeInputs) {
+        executeButton.setDisable(true);
         inputValuesHBox.getChildren().clear();
 
         freeInputs.forEach(freeInput -> {// Populate inputList from freeInputs
@@ -139,14 +141,16 @@ public class ClientFlowExecutionTabController {
                 label.setGraphic(asterisk1);
             }
 
-            String simpleName = input.getType().getType().getSimpleName();
+            //String simpleName = input.getType().getType().getSimpleName();
+            String simpleName = input.getIoType();
+            System.out.println("simpleName: " + simpleName);
             VBox vbox = new VBox();
             setVBoxSetting(vbox, label);
 
             Spinner<Integer> spinner = new Spinner<>();
             TextField textField = new TextField();
             
-            if(simpleName.equals("String")) {
+            if(simpleName.equals("STRING")) {
                 setTextFieldSetting(textField, input);
                     if(input.getOriginalName().equals("FOLDER_NAME")){
                     openDirectoryChooser(textField);
@@ -173,9 +177,8 @@ public class ClientFlowExecutionTabController {
             inputValuesHBox.setSpacing(50);
         });
     }
-*/
     public void getFreeInputs(String flowName) {
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.FLOWS_IN_ROLES_SERVLET).newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.FREE_INPUTS_BY_FLOW_NAME).newBuilder();
         urlBuilder.addQueryParameter("flow_name", flowName);
         String finalUrl = urlBuilder.build().toString();
         Request request = new Request.Builder()
@@ -192,18 +195,19 @@ public class ClientFlowExecutionTabController {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String jsonResponse = response.body().string();
-                Gson gson = new Gson();
-/*                DTOFlowsDefinitionInRoles dtoFlowsDefinition = gson.fromJson(jsonResponse, DTOFlowsDefinitionInRoles.class);
-                initInputsTable();*/
+                List<DTOFlowFreeInputs> flowFreeInputs = GSON_INSTANCE.fromJson(jsonResponse, new TypeToken<List<DTOFlowFreeInputs>>(){}.getType());
+                Platform.runLater(() -> {
+                    initInputsTable(flowFreeInputs);
+                });
             }
         });
     }
-    public void setInputValues(Input input, DTOSingleFlowIOData freeInput){
+    public void setInputValues(Input input, DTOFlowFreeInputs freeInput){
         input.setFinalName(freeInput.getFinalName());
         input.setOriginalName(freeInput.getOriginalName());
         input.setStepName(freeInput.getStepName());
-        input.setMandatory(freeInput.getNecessity().toString());
-        input.setType(freeInput.getType());
+        input.setMandatory(freeInput.getNecessity());
+        input.setIoType(freeInput.getType());
     }
     public void openChooseDialog(TextField textField) {
         textField.setOnMouseClicked(e -> {
@@ -299,7 +303,8 @@ public class ClientFlowExecutionTabController {
         spinner.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (!isNowFocused && spinner.isEditable()) {
                 String text = spinner.getEditor().getText();
-                int newValue = text.isEmpty() ? 0 : Integer.parseInt(text);
+                Integer newValue = text.isEmpty() ? 0 : Integer.parseInt(text);
+                System.out.println(newValue);
                 commitEdit(newValue, input);
             }
         });
@@ -307,11 +312,17 @@ public class ClientFlowExecutionTabController {
     }
     public void commitEdit(Object newValue, Input input) {
         input.setValue(newValue);
+        System.out.println(input.getFinalName());
+        System.out.println("*"+input.getValue().getClass());
+        System.out.println("**"+newValue.getClass());
         updateFreeInputMap(input, newValue);
         boolean hasAllMandatoryInputs = hasAllMandatoryInputs(freeInputMap);
         executeButton.setDisable(!hasAllMandatoryInputs);
     }
     public void updateFreeInputMap(Input input, Object newValue) {
+        System.out.println("updateFreeInputMap");
+        System.out.println(newValue.getClass());
+        System.out.println(newValue);
         freeInputMap.put(input.getStepName() + "." + input.getOriginalName(), newValue);
     }
     public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
@@ -363,16 +374,71 @@ public class ClientFlowExecutionTabController {
     @FXML
     void StartExecuteFlowButton(ActionEvent event){
         masterDetailPane = new MasterDetailPane();
+        System.out.println("1");
+        freeInputMap.forEach((key, value) -> System.out.println(value));
         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
+        System.out.println("2");
+        freeInputs.getFreeInputMap().forEach((key, value) -> System.out.println(value));
+        activateFlow(mainController.getFlowName(), freeInputs);
 
-        DTOFlowExecution flowExecution = mainController.getSystemEngineInterface().activateFlowByName(mainController.getFlowName(), freeInputs);
-        setExecutedFlowID(flowExecution.getUniqueIdByUUID());
+    }
 
-        freeInputMap = new HashMap<>();
-        ExecuteFlowTask currentRunningTask = new ExecuteFlowTask(UUID.fromString(executedFlowIDProperty.getValue()),
-                masterDetailController,executedFlowIDProperty, new SimpleBooleanProperty(false));
+    public void activateFlow(String flowName, DTOFreeInputsFromUser freeInputs) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("flowName", flowName);
+        jsonObject.add("freeInputs", new Gson().toJsonTree(freeInputs));
+        String jsonPayload = new Gson().toJson(jsonObject);
+        RequestBody body = RequestBody.create(jsonPayload, MediaType.parse("application/json"));
 
-        new Thread(currentRunningTask).start();
+        Request request = new Request.Builder()
+                .url(ACTIVATE_FLOW)
+                .post(body)
+                .build();
+
+        String finalUrl = HttpUrl
+                .parse(ACTIVATE_FLOW)
+                .newBuilder()
+                .build()
+                .toString();
+
+        HttpClientUtil.runAsyncPost(finalUrl, request.body(), new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() -> {
+                    System.out.println("Something went wrong: " + e.getMessage());
+                });
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.code() == HttpURLConnection.HTTP_OK) {
+
+                    DTOFlowExecution flowExecution = new Gson().fromJson(response.body().string(), DTOFlowExecution.class);
+
+                    System.out.println(flowExecution.getUniqueIdByUUID());
+                    System.out.println(flowExecution.getFlowName());
+
+                    setExecutedFlowID(flowExecution.getUniqueIdByUUID());
+
+                    freeInputMap = new HashMap<>();
+                    ExecuteFlowTask currentRunningTask = new ExecuteFlowTask(UUID.fromString(executedFlowIDProperty.getValue()),
+                            masterDetailController,executedFlowIDProperty, new SimpleBooleanProperty(false));
+
+                    new Thread(currentRunningTask).start();
+
+                } else {
+                    String errorMessage = response.body().string();
+
+                    Platform.runLater(() -> {
+                        System.out.println("Received message from server: " + errorMessage);
+
+                    });
+                }
+
+            }
+        });
+
     }
     public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings) {
         Platform.runLater(() -> {

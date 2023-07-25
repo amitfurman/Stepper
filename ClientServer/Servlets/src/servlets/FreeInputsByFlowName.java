@@ -19,7 +19,7 @@ import java.util.Set;
 @WebServlet(name = "FreeInputsByFlowName", urlPatterns = "/free-inputs-by-flow-name")
 public class FreeInputsByFlowName extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String flowName = request.getParameter("flowName");
+        String flowName = request.getParameter("flow_name");
         response.setContentType("application/json");
         try (PrintWriter out = response.getWriter()) {
             Gson gson = new Gson();

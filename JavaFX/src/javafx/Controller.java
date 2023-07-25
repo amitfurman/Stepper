@@ -211,6 +211,5 @@ public class Controller {
         }
 
         clientFlowExecutionTabController.getFreeInputs(flowName);}
-
 }
 

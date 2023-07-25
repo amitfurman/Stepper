@@ -90,7 +90,6 @@ public class HeaderClientController {
 
     public void updateNameLabel() {
         currentUserName = clientController.getCurrentUserNameProperty().getValue();
-        System.out.println("updateNameLabel " + currentUserName);
 
         nameLabel.setText(currentUserName);
         nameLabel.setVisible(true);

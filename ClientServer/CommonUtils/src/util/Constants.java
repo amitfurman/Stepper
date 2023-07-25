@@ -29,6 +29,8 @@ public class Constants {
     public final static String ROLES_LIST_PER_USER = FULL_SERVER_PATH + "/roles-list-per-user";
     public final static String FLOWS_IN_ROLES_SERVLET = FULL_SERVER_PATH + "/flows-in-roles";
     public final static String ALL_FLOWS_SERVLET = FULL_SERVER_PATH + "/all-flows";
+    public final static String FREE_INPUTS_BY_FLOW_NAME = FULL_SERVER_PATH + "/free-inputs-by-flow-name";
+    public final static String ACTIVATE_FLOW = FULL_SERVER_PATH + "/activate-flow";
 
 
     // GSON instance

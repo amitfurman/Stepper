@@ -12,6 +12,7 @@ public class Input {
     private final StringProperty mandatory = new SimpleStringProperty();
     private  Object value ;
     private DataDefinitions type;
+    private String ioType;
 
     public StringProperty finalNameProperty() {
         return finalName;
@@ -59,5 +60,7 @@ public class Input {
     public void setType(DataDefinitions type) {
         this.type = type;
     }
+    public String getIoType() {return ioType;}
+    public void setIoType(String ioType) {this.ioType = ioType;}
 }
 

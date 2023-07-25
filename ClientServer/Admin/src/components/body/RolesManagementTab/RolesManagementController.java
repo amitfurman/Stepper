@@ -68,15 +68,12 @@ public class RolesManagementController {
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                System.out.println("Got all flows");
                 String jsonArrayOfRoles = response.body().string();
                 DTOAllFlowsNames allFlowsNames = GSON_INSTANCE.fromJson(jsonArrayOfRoles, DTOAllFlowsNames.class);
                 allFlows = allFlowsNames.getAllFlowsNames();
-                System.out.println(allFlows.size());
             }
         });
     }
-
     @FXML
     public void setPressOnSave() {
         ObservableList<String> checkedItems = flowsCheckList.getCheckModel().getCheckedItems();
@@ -316,7 +313,6 @@ public class RolesManagementController {
     public void showRolesTree() {
         TreeItem<String> rootItem = new TreeItem<>("Roles");
         rootItem.setExpanded(true);
-        System.out.println(returnedRolesList.getRoles().size());
 
         for (DTORole role : returnedRolesList.getRoles()) {
             Button pressToSeeFullDetailsButton = new Button("Press to see full details");
@@ -370,7 +366,6 @@ public class RolesManagementController {
         flowsCheckList = new CheckListView();
 
         for (String currFlow : allFlows) {
-            System.out.println(currFlow);
             flowsCheckList.getItems().add(currFlow);
         }
 
@@ -382,7 +377,6 @@ public class RolesManagementController {
         }
         checkBoxGridPane.add(flowsCheckList, 0, 1);
     }
-
     public void showUsersToEachRole(DTORole role){
         usersCheckList = new CheckListView();
         usersList = mainController.getUsersManagementTabController().getUsers();

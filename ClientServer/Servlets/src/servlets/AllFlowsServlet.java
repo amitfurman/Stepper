@@ -18,15 +18,11 @@ import java.util.Set;
 public class AllFlowsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
-        System.out.println("AllFlowsServlet");
         try (PrintWriter out = response.getWriter()) {
             Gson gson = new Gson();
             systemengine system = ServletUtils.getSystemEngine(getServletContext());
             DTOAllFlowsNames allFlows = system.getAllFlowsList();
-            System.out.println(allFlows.getAllFlowsNames());
-            System.out.println(allFlows.getAllFlowsNames().size());
             String json = gson.toJson(allFlows);
-            System.out.println(json);
             out.println(json);
             out.flush();
         }

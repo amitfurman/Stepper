@@ -123,6 +123,7 @@ public class StepExecutionContextImpl implements StepExecutionContext {
 
     @Override
     public boolean storeDataValue(String dataName, Object value) {
+        System.out.println("storeDataValue: " + dataName + " value: " + value);
         String ioAlias;
         DataDefinitions theData;
         if(currInvokingStep != null){
@@ -138,8 +139,16 @@ public class StepExecutionContextImpl implements StepExecutionContext {
                 ioAlias = outputName2alias.get(dataName);
             }
             theData = stepAndIOName2DD.get(dataName);
+            System.out.println("theData: " + theData);
+            System.out.println("ioAlias: " + ioAlias);
+            System.out.println(theData.getType());
+            System.out.println(theData.getName());
+            System.out.println(value.getClass());
         }
 
+        if (value.getClass().equals(Double.class)) {
+            value = ((Double) value).intValue();
+        }
         if (theData.getType().isAssignableFrom(value.getClass())) {
             dataValues.put(ioAlias, value);
         } else if (theData.getType().getSimpleName().equals("ZipEnumeratorData") && value.getClass().getSimpleName().equals("String")) { /////no neede

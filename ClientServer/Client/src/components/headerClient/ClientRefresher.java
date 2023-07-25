@@ -30,7 +30,6 @@ public class ClientRefresher extends TimerTask {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.ROLES_LIST_PER_USER).newBuilder();
         urlBuilder.addQueryParameter("user", userName);
         String finalUrl = urlBuilder.build().toString();
-        System.out.println("finalUrl: " + finalUrl);
 
         Request request = new Request.Builder()
                 .url(finalUrl)
@@ -47,9 +46,7 @@ public class ClientRefresher extends TimerTask {
             public void onResponse(Call call, Response response) throws IOException {
 
                 String jsonArrayOfUsersRoles = response.body().string();
-                System.out.println("jsonArrayOfUsersRoles: " + jsonArrayOfUsersRoles);
                 Set<String> userRolesNames = GSON_INSTANCE.fromJson(jsonArrayOfUsersRoles, new TypeToken<Set<String>>(){}.getType());
-                System.out.println("userRolesNames: " + userRolesNames);
                 rolesListConsumer.accept(userRolesNames != null ? new ArrayList<>(userRolesNames) : Collections.emptyList());
 
                /* String jsonArrayOfUsersRoles = response.body().string();
