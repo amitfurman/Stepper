@@ -4,6 +4,7 @@ import dto.*;
 import exceptions.*;
 import flow.api.FlowDefinition;
 import flow.mapping.FlowContinuationMapping;
+import javafx.collections.ObservableList;
 import user.UserManager;
 
 import javax.xml.bind.JAXBException;
@@ -55,4 +56,7 @@ public interface systemengine {
     List<DTOFlowFreeInputs> getDTOFlowFreeInputs(String flowName);
 
     DTOAllFlowsNames getAllFlowsList();
+    List<DTOStepsInFlow> getDTOStepsInFlow(UUID flowId);
+
+    void updateUser(String userName, Set<String> checkedItems, Boolean isManager);
 }

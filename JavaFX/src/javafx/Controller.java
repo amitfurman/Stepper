@@ -3,6 +3,8 @@ package javafx;
 import components.body.RolesManagementTab.RolesManagementController;
 import components.body.StatisticsTab.AdminStatisticsTabController;
 import components.body.UsersManagementTab.UsersManagementTabController;
+import components.body.executionsHistoryTab.AdminExecutionsHistoryTabController;
+import components.body.executionsHistoryTab.ClientExecutionsHistoryTabController;
 import components.body.flowDefinitionTab.ClientFlowDefinitionTabController;
 import components.body.flowExecutionTab.ClientFlowExecutionTabController;
 import components.header.AdminHeaderController;
@@ -38,10 +40,7 @@ public class Controller {
     private UsersManagementTabController usersManagementTabController;
     @FXML
     private RolesManagementController rolesManagementTabController;
-    @FXML
-    private AdminHeaderController headerAdminComponentController;
-    @FXML
-    private HeaderClientController headerClientComponentController;
+
     @FXML
     private FlowDefinitionTabController flowDefinitionTabController;
     @FXML
@@ -50,6 +49,10 @@ public class Controller {
     private FlowExecutionTabController flowExecutionTabController;
     @FXML
     private ClientFlowExecutionTabController clientFlowExecutionTabController;
+    @FXML
+    private ClientExecutionsHistoryTabController clientExecutionsHistoryTabController;
+   @FXML
+    private AdminExecutionsHistoryTabController adminExecutionsHistoryTabController;
     @FXML
     private ExecutionsHistoryTabController executionsHistoryTabController;
     @FXML
@@ -116,37 +119,14 @@ public class Controller {
         this.headerComponentController = headerComponentController;
         headerComponentController.setMainController(this);
     }
-    public void setAdminHeaderComponentController(AdminHeaderController headerComponentController) {
-        this.headerAdminComponentController = headerComponentController;
-        headerAdminComponentController.setMainController(this);
-    }
-    public void setHeaderComponentController(HeaderClientController headerClientComponentController) {
-        this.headerClientComponentController = headerClientComponentController;
-        headerClientComponentController.setMainController(this);
-    }
+
     public void setFlowDefinitionTabController(FlowDefinitionTabController flowDefinitionTabComponentController) {
         this.flowDefinitionTabController = flowDefinitionTabComponentController;
         flowDefinitionTabController.setMainController(this);
     }
-    public void setClientFlowDefinitionTabController(ClientFlowDefinitionTabController flowDefinitionTabComponentController) {
-        this.clientFlowDefinitionTabController = flowDefinitionTabComponentController;
-        clientFlowDefinitionTabController.setMainController(this);
-    }
     public void setFlowExecutionTabController(FlowExecutionTabController flowExecutionTabComponentController) {
         this.flowExecutionTabController = flowExecutionTabComponentController;
         flowExecutionTabController.setMainController(this);
-    }
-    public void setClientFlowExecutionTabController(ClientFlowExecutionTabController flowExecutionTabComponentController) {
-        this.clientFlowExecutionTabController = flowExecutionTabComponentController;
-        clientFlowExecutionTabController.setMainController(this);
-    }
-    public void setUsersManagementTabController(UsersManagementTabController usersManagementTabController) {
-        this.usersManagementTabController = usersManagementTabController;
-        usersManagementTabController.setMainController(this);
-    }
-    public void setRolesManagementTabController(RolesManagementController rolesManagementTabController) {
-        this.rolesManagementTabController = rolesManagementTabController;
-        rolesManagementTabController.setMainController(this);
     }
     public void setExecutionsHistoryTabController(ExecutionsHistoryTabController executionsHistoryTabController) {
         this.executionsHistoryTabController = executionsHistoryTabController;
@@ -156,16 +136,12 @@ public class Controller {
         this.statisticsTabController = statisticsTabComponentController;
         statisticsTabController.setMainController(this);
     }
-    public void setAdminStatisticsTabController(AdminStatisticsTabController statisticsTabComponentController) {
-        this.adminStatisticsTabController = statisticsTabComponentController;
-        adminStatisticsTabController.setMainController(this);
-    }
     public void setFlowDetailsTree() {
         if (flowDefinitionTabController!=null)
             flowDefinitionTabController.setFlowDetailsTree();
     }
     public void goToFlowExecutionTab(String chosenFlowName) {
-/*        flowName = chosenFlowName;
+    flowName = chosenFlowName;
 
         Tab flowExecutionTab = tabPane.getTabs().stream()
                 .filter(tab -> tab.getId().equals("flowExecutionTab"))
@@ -180,7 +156,7 @@ public class Controller {
         List<DTOSingleFlowIOData> sortedList = freeInputs.stream()
                 .sorted(Comparator.comparing(obj -> obj.getNecessity().equals(DataNecessity.MANDATORY) ? 0 : 1))
                 .collect(Collectors.toList());
-        flowExecutionTabController.initInputsTable(sortedList);*/
+        flowExecutionTabController.initInputsTable(sortedList);
     }
     public void goToStatisticsTab() {
         DTOFlowAndStepStatisticData statisticData = systemEngineInterface.getStatisticData();

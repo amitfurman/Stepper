@@ -39,6 +39,7 @@ public class ClientRefresher extends TimerTask {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                System.out.println("on failure");
             }
 
             @Override

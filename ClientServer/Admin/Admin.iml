@@ -8,7 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="CommonUtils" />
-    <orderEntry type="module" module-name="JavaFX" />
     <orderEntry type="module" module-name="systemEngine" />
     <orderEntry type="module-library">
       <library>

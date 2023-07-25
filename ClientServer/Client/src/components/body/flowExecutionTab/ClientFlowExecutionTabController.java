@@ -4,10 +4,11 @@ package components.body.flowExecutionTab;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import components.body.flowExecutionTab.MasterDetail.MasterDetailController;
+import commonComponents.CommonController;
+import components.body.flowExecutionTab.MasterDetail.ClientMasterDetailController;
+
 import dto.*;
 import flow.mapping.FlowContinuationMapping;
-import javafx.Controller;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -46,7 +47,7 @@ import java.util.stream.Collectors;
 import static util.Constants.*;
 
 public class ClientFlowExecutionTabController {
-    private Controller mainController;
+    private CommonController mainController;
     @FXML
     private GridPane flowExecutionGridPane;
     @FXML
@@ -60,7 +61,7 @@ public class ClientFlowExecutionTabController {
 
     private ObservableList<Input> inputList = FXCollections.observableArrayList();
 
-    private MasterDetailController masterDetailController;
+    private ClientMasterDetailController clientMasterDetailController;
 
     private MasterDetailPane masterDetailPane;
 
@@ -84,10 +85,10 @@ public class ClientFlowExecutionTabController {
         executeButton.setDisable(true);
         flowExecutionGridPane.setVgap(5);
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = getClass().getResource("MasterDetail/masterDetails.fxml");
+        URL url = getClass().getResource("MasterDetail/ClientMasterDetails.fxml");
         fxmlLoader.setLocation(url);
         MasterDetailPane MasterDetailComponent = fxmlLoader.load(url.openStream());
-        MasterDetailController masterDetailController = fxmlLoader.getController();
+        ClientMasterDetailController masterDetailController = fxmlLoader.getController();
         this.setMasterDetailsController(masterDetailController);
         this.masterDetailPane = MasterDetailComponent;
         if (masterDetailController != null) {
@@ -106,18 +107,18 @@ public class ClientFlowExecutionTabController {
         if (continuationTableView != null)
             continuationTableView.getItems().clear();
     }
-    public void setMainController(Controller mainController) {
+    public void setMainController(CommonController mainController) {
         this.mainController = mainController;
     }
-    public Controller getMainController() {
+    public CommonController getMainController() {
         return mainController;
     }
-    public void setMasterDetailsController(MasterDetailController masterDetailComponentController) {
-        this.masterDetailController = masterDetailComponentController;
+    public void setMasterDetailsController(ClientMasterDetailController masterDetailComponentController) {
+        this.clientMasterDetailController = masterDetailComponentController;
         masterDetailComponentController.setFlowExecutionTabController(this);
     }
     public void initDataInFlowExecutionTab() {
-        masterDetailController.initMasterDetailPaneController();
+        clientMasterDetailController.initMasterDetailPaneController();
         initContinuationVbox();
     }
     public void initInputsInFlowExecutionTab() {
@@ -411,7 +412,7 @@ public class ClientFlowExecutionTabController {
 
                     freeInputMap = new HashMap<>();
                     ExecuteFlowTask currentRunningTask = new ExecuteFlowTask(UUID.fromString(executedFlowIDProperty.getValue()),
-                            masterDetailController,executedFlowIDProperty, new SimpleBooleanProperty(false));
+                            clientMasterDetailController,executedFlowIDProperty, new SimpleBooleanProperty(false));
 
                     new Thread(currentRunningTask).start();
 /*
@@ -472,10 +473,10 @@ public class ClientFlowExecutionTabController {
                                 FlowContinuationMapping mapping = getTableView().getItems().get(getIndex());
                                 String targetFlow = mapping.getTargetFlow();
                                 String sourceFlow = mapping.getSourceFlow();
-                                getMainController().goToFlowExecutionTab(targetFlow);
-                                getMainController().initDataInFlowExecutionTab();
+                                getMainController().goToClientFlowExecutionTab(targetFlow);
+                            /*    getMainController().initDataInFlowExecutionTab();
                                 List<Input> valuesList = getMainController().getSystemEngineInterface().getValuesListFromContinuationMap(sourceFlow, targetFlow);
-                                setInputValuesFromContinuationMap(valuesList);
+                                setInputValuesFromContinuationMap(valuesList);*/
                                 initContinuationVbox();
                     });
                 }
@@ -531,8 +532,8 @@ public class ClientFlowExecutionTabController {
     }
 
     public void backToFlowExecutionTabAfterExecution() {
-        getMainController().initExecutionHistoryTableInExecutionsHistoryTab();
-        getMainController().goToStatisticsTab();
-        initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(mainController.getFlowName()));
+        //getMainController().initExecutionHistoryTableInExecutionsHistoryTab();
+        //getMainController().goToStatisticsTab();
+        //initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(mainController.getFlowName()));
     }
 }

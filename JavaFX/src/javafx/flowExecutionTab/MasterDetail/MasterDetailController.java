@@ -1,5 +1,6 @@
 package javafx.flowExecutionTab.MasterDetail;
 
+import components.body.executionsHistoryTab.ClientExecutionsHistoryTabController;
 import datadefinition.impl.list.FileListData;
 import datadefinition.impl.list.StringListData;
 import datadefinition.impl.mapping.NumberMappingData;

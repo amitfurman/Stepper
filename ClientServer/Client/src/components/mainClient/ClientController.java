@@ -1,13 +1,13 @@
 package components.mainClient;
 
+import commonComponents.CommonController;
+import components.body.executionsHistoryTab.ClientExecutionsHistoryTabController;
 import components.body.flowDefinitionTab.ClientFlowDefinitionTabController;
 import components.body.flowExecutionTab.ClientFlowExecutionTabController;
 import components.headerClient.HeaderClientController;
 import components.login.LoginController;
-import javafx.Controller;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.executionsHistoryTab.ExecutionsHistoryTabController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -49,10 +49,10 @@ public class ClientController{
         headerController.startRolesListRefresher();
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("/javafx/source.fxml");
+        url = getClass().getResource("/commonComponents/commonSource.fxml");
         fxmlLoader.setLocation(url);
         mainComponent = fxmlLoader.load(url.openStream());
-        Controller mainController = fxmlLoader.getController();
+        CommonController mainController = fxmlLoader.getController();
 
         BorderPane borderPane = (BorderPane)mainComponent.getContent();
         borderPane.setTop(headerComponent);
@@ -71,10 +71,10 @@ public class ClientController{
         ClientFlowExecutionTabController flowExecutionTabController =  fxmlLoader.getController();
 
         fxmlLoader = new FXMLLoader();
-        url = getClass().getResource("/javafx/executionsHistoryTab/executionsHistoryTab.fxml");
+        url = getClass().getResource("/components/body/executionsHistoryTab/executionsHistoryTab.fxml");
         fxmlLoader.setLocation(url);
         Tab executionsHistoryTabComponent = fxmlLoader.load(url.openStream());
-        ExecutionsHistoryTabController executionsHistoryTabController =  fxmlLoader.getController();
+        ClientExecutionsHistoryTabController executionsHistoryTabController =  fxmlLoader.getController();
 
         TabPane tabPane = (TabPane) borderPane.getCenter();
         tabPane.getTabs().addAll(flowDefinitionTabComponent,flowExecutionTabComponent,executionsHistoryTabComponent);
@@ -82,7 +82,7 @@ public class ClientController{
         mainController.setHeaderComponentController(headerController);
         mainController.setClientFlowDefinitionTabController(flowDefinitionTabController);
         mainController.setClientFlowExecutionTabController(flowExecutionTabController);
-        mainController.setExecutionsHistoryTabController(executionsHistoryTabController);
+        mainController.setClientExecutionsHistoryTabController(executionsHistoryTabController);
 
     }
 

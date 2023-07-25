@@ -1,8 +1,8 @@
 package components.body.flowDefinitionTab;
 import com.google.gson.Gson;
+import commonComponents.CommonController;
 import dto.*;
 import flow.api.FlowIO.IO;
-import javafx.Controller;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import static util.Constants.GSON_INSTANCE;
 
 public class ClientFlowDefinitionTabController {
-    private Controller mainController;
+    private CommonController mainController;
     @FXML
     private TreeView<String> flowsTree;
     @FXML
@@ -43,10 +43,10 @@ public class ClientFlowDefinitionTabController {
     @FXML
     public void setPressOnExecuteFlowButton() {
         mainController.goToClientFlowExecutionTab(chosenFlowName);
-        mainController.initDataInFlowExecutionTab();
+       // mainController.initDataInFlowExecutionTab();
 
     }
-    public void setMainController(Controller mainController) {
+    public void setMainController(CommonController mainController) {
         this.mainController = mainController;
     }
     public TreeView<String> getFlowsTree(){
