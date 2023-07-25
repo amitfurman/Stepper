@@ -87,6 +87,7 @@ public class AdminHeaderController {
                             hideError();
                             System.out.println("File uploaded successfully: " + response.message());
                             rolesManagementController = mainController.getRolesManagementController();
+                            rolesManagementController.getAllFlows();
                             rolesManagementController.initDataInRolesManagementTab();                        });
                     } else {
                         String errorMessage = response.body().string();

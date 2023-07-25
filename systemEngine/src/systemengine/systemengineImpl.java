@@ -104,8 +104,8 @@ public class systemengineImpl implements systemengine {
             UnExistsOutput, FreeInputsWithSameNameAndDifferentType, InitialInputIsNotExist, UnExistsFlow, UnExistsDataInTargetFlow, FileNotExistsException, FileIsNotXmlTypeException {
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         FlowsManager flows = schema.schemaBasedJAXB(inputStream);
-        flowDefinitionList.addAll(flows.getAllFlows());
-        //flowDefinitionList = flows.getAllFlows();
+        //flowDefinitionList.addAll(flows.getAllFlows());
+        flowDefinitionList = flows.getAllFlows();
         numberOfThreads = flows.getNumberOfThreads();
         allContinuationMappings = new LinkedList<>(flows.getAllContinuationMappings());
         threadPool = Executors.newFixedThreadPool(numberOfThreads);
@@ -458,10 +458,13 @@ public class systemengineImpl implements systemengine {
 
     @Override
     public DTOAllFlowsNames getAllFlowsList() {
+        System.out.println("in system");
         Set<String> flowsList = new HashSet<>();
+        System.out.println(flowDefinitionList);
         flowDefinitionList.stream().forEach(flow -> {
             flowsList.add(flow.getName());
         });
+        System.out.println(flowsList);
         return new DTOAllFlowsNames(flowsList);
     }
 

@@ -57,21 +57,22 @@ public class RolesManagementController {
     public void initialize() {
         checkBoxGridPane.add(flowsCheckList,0,1);
         checkBoxGridPane.add(usersCheckList,0,2);
-        getAllFlows();
     }
 
     public void getAllFlows() {
         HttpClientUtil.runAsync(Constants.ALL_FLOWS_SERVLET, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-
+                System.out.println("Failed to get all flows");
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                System.out.println("Got all flows");
                 String jsonArrayOfRoles = response.body().string();
                 DTOAllFlowsNames allFlowsNames = GSON_INSTANCE.fromJson(jsonArrayOfRoles, DTOAllFlowsNames.class);
                 allFlows = allFlowsNames.getAllFlowsNames();
+                System.out.println(allFlows.size());
             }
         });
     }
@@ -375,6 +376,7 @@ public class RolesManagementController {
 
         for (String currFlow : allFlows) {
             if (role.getFlowsInRole().contains(currFlow)) {
+
                 flowsCheckList.getCheckModel().check(currFlow);
             }
         }
