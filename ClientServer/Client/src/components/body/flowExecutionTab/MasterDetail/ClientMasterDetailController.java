@@ -107,10 +107,10 @@ public class ClientMasterDetailController {
                 ImageView statusImage = new ImageView();
                 System.out.println("Step result: " + stepExecution.getResult());
                 System.out.println("Step result: " + stepExecution.getResult().toString());
-                if (stepExecution.getResult().toString().equals(StepResult.FAILURE)) {
+                if (stepExecution.getResult().equals(StepResult.FAILURE)) {
                     statusImage.setImage(new Image(getClass().getResource("icons8-close-16.png").toString()));
                     detailLabel.setGraphic(statusImage);
-                } else if (stepExecution.getResult().toString().equals(StepResult.SUCCESS)) {
+                } else if (stepExecution.getResult().equals(StepResult.SUCCESS)) {
                     statusImage.setImage(new Image(getClass().getResource("icons8-checkmark-16.png").toString()));
                     detailLabel.setGraphic(statusImage);
                 } else {
