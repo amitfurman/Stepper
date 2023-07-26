@@ -42,7 +42,6 @@ public class ExecuteFlowTask extends Task<Boolean> {
     }
 
     protected Boolean call() throws IOException {
-        System.out.println("ExecuteFlowTask.call");
 /*      //  DTOFlowExecution executedData = engineManager.getDTOFlowExecutionById(this.flowId);
         masterDetailController.initMasterDetailPaneController(executedData);
         DTOFlowExecution finalExecutedData2 = executedData;
@@ -122,26 +121,29 @@ public class ExecuteFlowTask extends Task<Boolean> {
         Response response = call.execute();
 
         if (response.isSuccessful()) {
-
-            System.out.println("response.isSuccessful()");
             String rawBody = response.body().string();
-            System.out.println("rawBody : " + rawBody);
-            DTOFlowExeInfo dtoFlowExecution = GSON_INSTANCE.fromJson(rawBody, new TypeToken<DTOFlowExeInfo>() {}.getType());
-            System.out.println("name : " + dtoFlowExecution.getFlowName());
-            masterDetailController.initMasterDetailPaneController(dtoFlowExecution);
-            Platform.runLater(() -> masterDetailController.updateFlowLabel(dtoFlowExecution));
-
-            while (dtoFlowExecution.getResultExecute() == null) {
-                DTOFlowExeInfo executedData =  makeSyncHttpRequest(this.flowId);
+            DTOFlowExeInfo executedData = GSON_INSTANCE.fromJson(rawBody, new TypeToken<DTOFlowExeInfo>() {}.getType());
+            System.out.println("name : " + executedData.getFlowName());
+            System.out.println("id " + executedData.getID());
+            System.out.println("before initMasterDetailPaneController");
+            masterDetailController.initMasterDetailPaneController(executedData);
+            System.out.println("after initMasterDetailPaneController");
+            DTOFlowExeInfo finalExecutedData2 = executedData;
+            Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData2));
+            while (executedData.getResultExecute() == null) {
+                System.out.println("in while");
+                System.out.println("executedData.getResultExecute() : " + executedData.getResultExecute());
+                System.out.println("executedData.getFlowName() : " + executedData.getFlowName());
+                executedData =  makeSyncHttpRequest(this.flowId);
                 if (currentFlowId.getValue().equals(flowId.toString())) {
-                    Platform.runLater(() -> masterDetailController.addStepsToMasterDetail(executedData));
+                    DTOFlowExeInfo finalExecutedData = executedData;
+                    Platform.runLater(() -> masterDetailController.addStepsToMasterDetail(finalExecutedData));
                 }
                 try {
                     Thread.sleep(SLEEP_TIME);
                 } catch (InterruptedException ignored) {}
             }
-
-            finalRequest();
+             finalRequest();
 
         } else {
             System.err.println("Error: " + response.code() + " " + response.message());
@@ -169,6 +171,7 @@ public class ExecuteFlowTask extends Task<Boolean> {
         }
     }
     private void finalRequest() {
+        System.out.println("finalRequest");
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.GET_DTO_FLOW_EXECUTION_SERVLET).newBuilder();
         urlBuilder.addQueryParameter("uuid", String.valueOf(UUID.fromString(currentFlowId.getValue())));
         String finalUrl = urlBuilder.build().toString();
@@ -184,8 +187,9 @@ public class ExecuteFlowTask extends Task<Boolean> {
             if (response.isSuccessful()) {
                 String rawBody = response.body().string();
                 DTOFlowExeInfo FlowExecution = GSON_INSTANCE.fromJson(rawBody, new TypeToken<DTOFlowExeInfo>() {}.getType());
+                System.out.println("FlowExecution.getResultExecute() : " + FlowExecution.getResultExecute());
                 Platform.runLater(() -> masterDetailController.updateFlowLabel(FlowExecution));
-                masterDetailController.getFlowExecutionTabController().backToFlowExecutionTabAfterExecution();
+                masterDetailController.getFlowExecutionTabController().backToFlowExecutionTabAfterExecution(FlowExecution.getFlowName());
 
             } else {
                 System.err.println("Error: " + response.code() + " " + response.message());

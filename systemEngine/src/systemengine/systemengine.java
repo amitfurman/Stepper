@@ -41,8 +41,10 @@ public interface systemengine {
     DTOFlowExecution getDTOFlowExecutionByName(String flowName);
 
     LinkedList<FlowContinuationMapping> getAllContinuationMappingsWithSameSourceFlow(String currFlowName);
+    LinkedList<DTOContinuationMapping> getDTOAllContinuationMappingsWithSameSourceFlow(String currFlowName);
     List<Input> getFreeInputsFromCurrFlow (String flowName);
     Map<String , Object> continuationFlowExecution(String sourceFlow, String targetFlow);
+    LinkedList<DTOInput> getDTOValuesListFromContinuationMap(String sourceFlowName, String targetFlowName);
     List<Input> getValuesListFromContinuationMap(String sourceFlowName, String targetFlowName);
     UserManager getUserMangerObject();
     DTORolesList getDTORolesList();

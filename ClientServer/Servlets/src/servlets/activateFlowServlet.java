@@ -42,6 +42,7 @@ public class activateFlowServlet extends HttpServlet {
 
         systemengine systemEngine = ServletUtils.getSystemEngine(getServletContext());
         DTOFlowID flowExecution = systemEngine.activateFlowByName(flowName, freeInputs);
+        System.out.println("flowExecution: " + flowExecution.getUniqueId());
         String json = gson.toJson(flowExecution);
         response.getWriter().println(json);
         response.getWriter().flush();/**/

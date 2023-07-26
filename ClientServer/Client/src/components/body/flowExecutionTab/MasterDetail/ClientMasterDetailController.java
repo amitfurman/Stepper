@@ -1,7 +1,9 @@
 package components.body.flowExecutionTab.MasterDetail;
 
+import com.google.gson.internal.LinkedTreeMap;
 import components.body.executionsHistoryTab.ClientExecutionsHistoryTabController;
 import components.body.flowExecutionTab.ClientFlowExecutionTabController;
+import datadefinition.impl.file.FileData;
 import datadefinition.impl.list.FileListData;
 import datadefinition.impl.list.StringListData;
 import datadefinition.impl.mapping.NumberMappingData;
@@ -64,6 +66,7 @@ public class ClientMasterDetailController {
         this.flowExecutionHistoryTabController = flowExecutionHistoryTabController;
     }
     public void initMasterDetailPaneController(){
+        System.out.println("1initMasterDetailPaneController");
         detailPane = new VBox();
         ScrollPane scrollPane = new ScrollPane(detailPane);
         scrollPane.setFitToWidth(true);
@@ -72,12 +75,13 @@ public class ClientMasterDetailController {
         FlowMasterDetails.setMasterNode(stackPane);
     }
     public void initMasterDetailPaneController(DTOFlowExeInfo flowExecution) {
-        System.out.println("initMasterDetailPaneController");
+        System.out.println("2initMasterDetailPaneController");
         this.flowExecution = flowExecution;
         detailPane = new VBox();
         detailPane.setPadding(new Insets(10));
         detailPane.setSpacing(5);
         Label flowDetailLabel = createDetailLabel(flowExecution.getFlowName(), FlowMasterDetails, true, detailPane);
+        System.out.println("flowDetailLabel: " + flowDetailLabel);
         detailPane.getChildren().add(flowDetailLabel);
         flowDetailLabel.getStyleClass().add("label-selected");
         addedStepNames = new ArrayList<>();
@@ -98,6 +102,7 @@ public class ClientMasterDetailController {
         }
     }
     public void addStepsToMasterDetail(DTOFlowExeInfo flowExecution) {
+        System.out.println("addStepsToMasterDetail");
         this.flowExecution = flowExecution;
         for (DTOStepsInFlow stepExecution : flowExecution.getSteps()) {
             String stepName = stepExecution.getFinalName();
@@ -128,6 +133,7 @@ public class ClientMasterDetailController {
         FlowMasterDetails.setDividerPosition(0.3);
     }
     private Label createDetailLabel(String text, MasterDetailPane masterDetailPane, boolean isFirstLabel, VBox detailPane) {
+        System.out.println("createDetailLabel");
         Label detailLabel = new Label(text);
         if (isFirstLabel) {
             detailLabel.getStyleClass().add("first-label");
@@ -148,6 +154,7 @@ public class ClientMasterDetailController {
         return detailLabel;
     }
     private void showDetails(String text, boolean isFirstLabel) {
+        System.out.println("showDetails");
         for (Node child : detailPane.getChildren()) {
             if (child instanceof Label) {
                 Label label = (Label) child;
@@ -187,6 +194,7 @@ public class ClientMasterDetailController {
         }
     }
     TreeView<Object> cratingStepsExecutionDetail(String dataName) {
+        System.out.println("cratingStepsExecutionDetail");
         TreeItem<Object> rootItem = new TreeItem<>("Step Details");
         rootItem.setExpanded(true);
 
@@ -234,9 +242,10 @@ public class ClientMasterDetailController {
                     TreeItem<Object> input = new TreeItem<>("Input " + inputIndex.getAndIncrement());
                     inputItem.getChildren().add(input);
                     input.getChildren().add(new TreeItem<>("Final Name: " + ioInput.getFinalName()));
+                    System.out.println("ioInput.getType() " + ioInput.getType());
 
-                    if (ioInput.getType().toString().equals("RELATION") || ioInput.getType().toString().equals("STRING_LIST")
-                            || ioInput.getType().toString().equals("FILE_LIST") || ioInput.getType().toString().equals("MAPPING2NUMBERS")) {
+                    if (ioInput.getType().equals("RELATION") || ioInput.getType().equals("STRING_LIST")
+                            || ioInput.getType().equals("FILE_LIST") || ioInput.getType().equals("MAPPING2NUMBERS")) {
                         input.getChildren().add(new TreeItem<>(showOutputValue(ioInput.getType(),ioInput.getValue())));
                     } else {
                         if (ioInput.getValue() != null) {
@@ -251,13 +260,15 @@ public class ClientMasterDetailController {
             TreeItem<Object> output = new TreeItem<>("Output " + outputIndex.getAndIncrement());
             outputItem.getChildren().add(output);
 
+            System.out.println("ioOutput.getType() " + ioOutput.getType());
+
             output.getChildren().add(new TreeItem<>("Final Name: " + ioOutput.getFinalName()));
-            if (ioOutput.getType().toString().equals("RELATION") || ioOutput.getType().toString().equals("STRING_LIST")
-                    || ioOutput.getType().toString().equals("FILE_LIST") || ioOutput.getType().toString().equals("MAPPING2NUMBERS")) {
+            if (ioOutput.getType().equals("RELATION") || ioOutput.getType().equals("STRING_LIST")
+                    || ioOutput.getType().equals("FILE_LIST") || ioOutput.getType().equals("MAPPING2NUMBERS")) {
                 output.getChildren().add(new TreeItem<>(showOutputValue(ioOutput.getType(),ioOutput.getValue())));
             } else {
                 if (ioOutput.getValue() != null) {
-                    output.getChildren().add(new TreeItem<>("Value: " + ioOutput.getValue().toString()));
+                    output.getChildren().add(new TreeItem<>("Value: " + ioOutput.getValue()));
                 } else {
                     output.getChildren().add(new TreeItem<>("Value: Not created due to failure in flow"));
                 }
@@ -299,6 +310,19 @@ public class ClientMasterDetailController {
         TreeItem<Object> startTimeItem = new TreeItem<>("Start Time: " + flowExecution.getStartTime());
         rootItem.getChildren().add(startTimeItem);
 
+
+        if (flowExecution.getResultExecute() != null) {
+            // Add Flow Result
+            TreeItem<Object> flowResultItem = new TreeItem<>("Flow Result: " + flowExecution.getResultExecute());
+            rootItem.getChildren().add(flowResultItem);
+
+        }
+        if (flowExecution.getTotalTime() != null) {
+            // Add Total Running Time
+            TreeItem<Object> totalTimeItem = new TreeItem<>("Total Running Time: " + String.format("%d ms", flowExecution.getTotalTime().toMillis()));
+            rootItem.getChildren().add(totalTimeItem);
+        }
+
         // Add Flow's Free Inputs
         TreeItem<Object> freeInputsItem = new TreeItem<>("Flow's Free Inputs");
         rootItem.getChildren().add(freeInputsItem);
@@ -322,17 +346,6 @@ public class ClientMasterDetailController {
         });
 
         if (flowExecution.getResultExecute() != null) {
-            // Add Flow Result
-            TreeItem<Object> flowResultItem = new TreeItem<>("Flow Result: " + flowExecution.getResultExecute().toString());
-            rootItem.getChildren().add(flowResultItem);
-
-        }
-        if (flowExecution.getTotalTime() != null) {
-            // Add Total Running Time
-            TreeItem<Object> totalTimeItem = new TreeItem<>("Total Running Time: " + String.format("%d ms", flowExecution.getTotalTime().toString()));
-            rootItem.getChildren().add(totalTimeItem);
-        }
-        if (flowExecution.getResultExecute() != null) {
             // Add Flow's Outputs
             TreeItem<Object> outputsItem = new TreeItem<>("Flow's Outputs");
             rootItem.getChildren().add(outputsItem);
@@ -344,13 +357,14 @@ public class ClientMasterDetailController {
             for (DTOOutput output : outputs) {
                 TreeItem<Object> outputItem = new TreeItem<>("Output " + outputIndex.getAndIncrement());
                 outputsItem.getChildren().add(outputItem);
+                System.out.println("Output: " + output.getFinalName() + " output.getType() " + output.getType());
 
                 outputItem.getChildren().addAll(
                         new TreeItem<>("Final Name: " + output.getFinalName()),
                         new TreeItem<>("Type: " + output.getType().toString()),
                         output.getValue() == null ?  new TreeItem<>( "Value: N/A") :
-                        output.getType().toString().equals("RELATION") || output.getType().toString().equals("STRING_LIST")
-                                || output.getType().toString().equals("FILE_LIST") || output.getType().toString().equals("MAPPING2NUMBERS")
+                        output.getType().equals("RELATION") || output.getType().equals("STRING_LIST")
+                                || output.getType().equals("FILE_LIST") || output.getType().equals("MAPPING2NUMBERS")
                                 ? new TreeItem<>(showOutputValue(output.getType(), output.getValue())) : new TreeItem<>("Value: " + output.getValue().toString())
                 );
             }
@@ -362,7 +376,7 @@ public class ClientMasterDetailController {
         return treeView;
     }
     public Hyperlink showOutputValue(String type,Object io) {
-
+        System.out.println("Showing Output Value");
         Hyperlink viewDataLink = new Hyperlink("View Data");
         viewDataLink.setOnAction(event -> {
             Stage popupWindow = new Stage();
@@ -372,7 +386,7 @@ public class ClientMasterDetailController {
             Label label1 = new Label("Data Values");
             label1.getStyleClass().add("data-values-label");
             VBox layout = new VBox(10);
-            
+
             if (type.equals("RELATION")) {
                 TableView table = showRelationData(io);
                 layout.getChildren().addAll(label1, table);
@@ -394,6 +408,7 @@ public class ClientMasterDetailController {
     }
 
     public TableView showMappingData(Object io) {
+        System.out.println("Showing Mapping Data");
         TableView<Map.Entry<Number, Number>> table = new TableView<>();
         table.setEditable(false);
 
@@ -424,13 +439,27 @@ public class ClientMasterDetailController {
         return table;
     }
     public ListView<String> showListData(Object io , String type){
+        System.out.println("Showing List Data");
         ListView<String> list = new ListView<>();
 
         ObservableList<String> items = FXCollections.observableArrayList();
         int index =1;
+        System.out.println("type: " + type);
+        System.out.println("io: " + io.getClass().getSimpleName());
 
         if(type.equals("FILE_LIST")) {
-            for (File value :((FileListData)io).getItems()) {
+/*            LinkedTreeMap tempMap = (LinkedTreeMap) io;
+            if (tempMap.get("hash") != null && tempMap.get("value") != null) {
+                io = tempMap.get("value");
+            }
+            List<FileData> FilesList = new ArrayList<>();
+            for (int j = 0; j < ((ArrayList) io).size(); j++) {
+                Object tempValue = ((ArrayList) io).get(j);
+                if (tempValue instanceof LinkedTreeMap && ((LinkedTreeMap) tempValue).get("path") != null) {
+                    FilesList.add(new FileData(((LinkedTreeMap) tempValue).get("path").toString()));
+                }
+            }*/
+            for (File value : ((FileListData) io).getItems()) {
                 String name = index +". " + value.getAbsolutePath();
                 index++;
                 items.add(name);
@@ -448,6 +477,7 @@ public class ClientMasterDetailController {
         return list;
     }
     public TableView showRelationData(Object io) {
+        System.out.println("Showing Relation Data");
         TableView<Map<String, String>> table = new TableView<>();
         table.setEditable(false);
         table.setSelectionModel(null);

@@ -88,12 +88,16 @@ public class systemengineImpl implements systemengine {
     @Override
     synchronized public DTOFlowID activateFlowByName(String flowName, DTOFreeInputsFromUser freeInputs) {
         FlowDefinition currFlow = flowDefinitionList.stream().filter(flow -> flow.getName().equals(flowName)).findFirst().get();
+        out.println(currFlow.getName());
+        freeInputs.getFreeInputMap().forEach((key, value) -> out.println(value));
         FlowExecution flowExecution = new FlowExecution(currFlow);
+        out.println("1flowExecution.getUniqueIdByUUID(): " + flowExecution.getUniqueIdByUUID());
         flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
         flowExecutionList.addFirst(flowExecution);
         threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
         //return new DTOFlowExecution(flowExecution);
 
+        out.println("2flowExecution.getUniqueIdByUUID(): " + flowExecution.getUniqueIdByUUID());
         return new DTOFlowID(flowExecution.getUniqueIdByUUID());
     }
 
@@ -150,6 +154,17 @@ public class systemengineImpl implements systemengine {
             }
         }
         return sortedContinuationMappings;
+    }
+
+    @Override
+    public LinkedList<DTOContinuationMapping> getDTOAllContinuationMappingsWithSameSourceFlow(String currFlowName) {
+        LinkedList<DTOContinuationMapping> dtoSortedContinuationMappings = new LinkedList<>();
+        for (FlowContinuationMapping mapping : allContinuationMappings) {
+            if (currFlowName.equals(mapping.getSourceFlow())) {
+                dtoSortedContinuationMappings.add(new DTOContinuationMapping(mapping.getSource2targetDataMapping(), mapping.getSourceFlow(), mapping.getTargetFlow()));
+            }
+        }
+        return dtoSortedContinuationMappings;
     }
 
     @Override
@@ -294,7 +309,7 @@ public class systemengineImpl implements systemengine {
                     .forEach(ioInput -> {
                                 if (ioInput.getIOType().equals(IO.INPUT)) {
                                     Object inputValue = IOlist.stream().filter(i-> (i.getFinalName().equals(ioInput.getFinalName()) && i.getStepName().equals(ioInput.getStepName()))).findFirst().get().getValue();
-                                   inputs.add(new DTOInput(ioInput.getOriginalName(),ioInput.getFinalName(),inputValue,ioInput.getStepName(), ioInput.getType().toString()));
+                                   inputs.add(new DTOInput(ioInput.getOriginalName(),ioInput.getFinalName(),inputValue,ioInput.getStepName(), ioInput.getDD().toString()));
                                 }
                             });
             out.println("inputs of steps: " +inputs );
@@ -304,7 +319,7 @@ public class systemengineImpl implements systemengine {
                     .forEach(ioOutput -> {
                         if (ioOutput.getIOType().equals(IO.OUTPUT)) {
                             Object outputValue = IOlist.stream().filter(i-> (i.getFinalName().equals(ioOutput.getFinalName()) && i.getStepName().equals(ioOutput.getStepName()))).findFirst().get().getValue();
-                            outputs.add(new DTOOutput(ioOutput.getOriginalName(),ioOutput.getFinalName(), outputValue ,ioOutput.getStepName(), ioOutput.getType().toString() ));
+                            outputs.add(new DTOOutput(ioOutput.getOriginalName(),ioOutput.getFinalName(), outputValue ,ioOutput.getStepName(), ioOutput.getDD().toString() ));
                         }
                     });
             out.println("outputs of steps: " +outputs );
@@ -324,7 +339,7 @@ public class systemengineImpl implements systemengine {
                 .forEach(io -> {
                     if (io.getIOType().equals(IO.OUTPUT)) {
                         Object outputValue = IOlist.stream().filter(i-> (i.getFinalName().equals(io.getFinalName()))).findFirst().get().getValue();
-                        outputsOfFlow.add(new DTOOutput(io.getOriginalName(),io.getFinalName(), outputValue , io.getStepName(), io.getType().toString() ));
+                        outputsOfFlow.add(new DTOOutput(io.getOriginalName(),io.getFinalName(), outputValue , io.getStepName(), io.getDD().toString() ));
                     }
                 });
         out.println("outputsOfFlow: " + outputsOfFlow);
@@ -409,6 +424,27 @@ public class systemengineImpl implements systemengine {
             input.setType(IO.getDD());
             input.setMandatory(IO.getNecessity().toString());
             valuesList.add(input);
+        }
+
+        return valuesList;
+    }
+
+    @Override
+    public LinkedList<DTOInput> getDTOValuesListFromContinuationMap(String sourceFlowName, String targetFlowName) {
+        FlowDefinition targetFlow = flowDefinitionList.stream().filter(flow -> flow.getName().equals(targetFlowName)).findFirst().get();
+        Map<String, Object> valuesMap = continuationFlowExecution(sourceFlowName, targetFlowName);
+        LinkedList<DTOInput> valuesList = new LinkedList<>();
+
+        for (Map.Entry<String, Object> entry : valuesMap.entrySet()) {
+            Input input = new Input();
+            input.setFinalName(entry.getKey());
+            input.setValue(entry.getValue());
+            SingleFlowIOData IO = targetFlow.getIOlist().stream().filter(io -> io.getFinalName().equals(entry.getKey())).findFirst().get();
+            input.setOriginalName(IO.getOriginalName());
+            input.setStepName(IO.getStepName());
+            input.setType(IO.getDD());
+            input.setMandatory(IO.getNecessity().toString());
+            valuesList.add(new DTOInput(input.getOriginalName(), input.getFinalName(), input.getValue(),input.getStepName() ,input.getType().toString()));
         }
 
         return valuesList;
