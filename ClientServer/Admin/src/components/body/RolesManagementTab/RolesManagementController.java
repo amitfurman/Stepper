@@ -2,6 +2,7 @@ package components.body.RolesManagementTab;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import commonComponents.CommonController;
 import dto.*;
 import flow.api.FlowIO.IO;
@@ -44,11 +45,16 @@ public class RolesManagementController {
     @FXML private Button newButton;
     @FXML private GridPane checkBoxGridPane;
     private CheckListView flowsCheckList = new CheckListView();
+    private ListView<String> usersListView = new ListView<>();
+/*
     private CheckListView usersCheckList = new CheckListView();
+*/
     private DTORolesList returnedRolesList;
     private String currRole;
     private Set<String> usersList;
     Set<String> allFlows;
+    private VBox usersListvbox;
+    private Label titleLabel;
 
     public void setMainController(CommonController mainController) {
         this.mainController = mainController;
@@ -56,7 +62,14 @@ public class RolesManagementController {
     @FXML
     public void initialize() {
         checkBoxGridPane.add(flowsCheckList,0,1);
-        checkBoxGridPane.add(usersCheckList,0,2);
+
+        titleLabel = new Label("Users List:");
+        titleLabel.setTextFill(Color.web("#0076a3"));
+        titleLabel.setStyle("-fx-font-weight: bold");
+        titleLabel.setAlignment(Pos.CENTER);
+        usersListvbox = new VBox(titleLabel, usersListView);
+        checkBoxGridPane.add(usersListvbox, 0, 2);
+
     }
 
     public void getAllFlows() {
@@ -77,8 +90,8 @@ public class RolesManagementController {
     @FXML
     public void setPressOnSave() {
         ObservableList<String> checkedItems = flowsCheckList.getCheckModel().getCheckedItems();
-        ObservableList<String> checkedUsersItems = usersCheckList.getCheckModel().getCheckedItems();
-        updateRoles(checkedItems,checkedUsersItems);
+        //ObservableList<String> checkedUsersItems = usersCheckList.getCheckModel().getCheckedItems();
+        //updateRoles(checkedItems,checkedUsersItems);
 
     }
     public void updateRoles(ObservableList<String> checkedItems, ObservableList<String> checkedUsersItems) {
@@ -326,6 +339,7 @@ public class RolesManagementController {
 
 
             pressToSeeFullDetailsButton.setOnAction(event -> {
+
                 currRole = role.getName();
                 showChosenRole(role);
                 flowsCheckList.getItems().clear();
@@ -379,7 +393,49 @@ public class RolesManagementController {
         }
         checkBoxGridPane.add(flowsCheckList, 0, 1);
     }
+
+
     public void showUsersToEachRole(DTORole role){
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.GET_USERS_PER_ROLE).newBuilder();
+        urlBuilder.addQueryParameter("roleName", role.getName());
+        String finalUrl = urlBuilder.build().toString();
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .build();
+
+        OkHttpClient HTTP_CLIENT = new OkHttpClient();
+        Call call = HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String jsonResponse = response.body().string();
+                Gson gson = new Gson();
+                List<String> users = GSON_INSTANCE.fromJson(jsonResponse, new TypeToken<List<String>>(){}.getType());
+                if (users !=null) {
+                    updateUserList(users);
+                }
+
+            }
+        });
+
+    }
+
+    public void updateUserList(List<String> users){
+        Platform.runLater(() -> {
+            usersListView = new ListView<>();
+            for (String user : users) {
+                usersListView.getItems().add(user);
+            }
+            usersListvbox = new VBox(titleLabel, usersListView);
+            checkBoxGridPane.add(usersListvbox, 0, 2);        });
+    }
+
+/*
         usersCheckList = new CheckListView();
         usersList = mainController.getUsersManagementTabController().getUsers();
         for (String user : usersList) {
@@ -391,6 +447,7 @@ public class RolesManagementController {
             }
         }
         checkBoxGridPane.add(usersCheckList,0,2);
-    }
+
+ */
 
 }

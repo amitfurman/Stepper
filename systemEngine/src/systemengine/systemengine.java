@@ -56,7 +56,9 @@ public interface systemengine {
     List<DTOFlowFreeInputs> getDTOFlowFreeInputs(String flowName);
 
     DTOAllFlowsNames getAllFlowsList();
-    List<DTOStepsInFlow> getDTOStepsInFlow(UUID flowId);
+    DTOFlowExeInfo getAllFlowExecutionData(UUID flowId);
 
     void updateUser(String userName, Set<String> checkedItems, Boolean isManager);
+
+    Set<String> getUsersOfRoles(String roleName);
 }

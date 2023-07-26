@@ -316,6 +316,7 @@ public class ClientFlowExecutionTabController {
         executeButton.setDisable(!hasAllMandatoryInputs);
     }
     public void updateFreeInputMap(Input input, Object newValue) {
+        System.out.println(input.getStepName() + "." + input.getOriginalName() + " = " + newValue);
         freeInputMap.put(input.getStepName() + "." + input.getOriginalName(), newValue);
     }
     public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
@@ -368,11 +369,16 @@ public class ClientFlowExecutionTabController {
     void StartExecuteFlowButton(ActionEvent event){
         masterDetailPane = new MasterDetailPane();
         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
+        System.out.println("before active flow!!! ");
+        System.out.println("freeInputsMap: " + freeInputMap);
+        System.out.println("freeInputs: " + freeInputs);
         activateFlow(mainController.getFlowName(), freeInputs);
 
     }
 
     public void activateFlow(String flowName, DTOFreeInputsFromUser freeInputs) {
+        System.out.println("active flow freeinputs: " + freeInputs);
+
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("flowName", flowName);
         jsonObject.add("freeInputs", new Gson().toJsonTree(freeInputs));
@@ -403,11 +409,8 @@ public class ClientFlowExecutionTabController {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
 
+                    //DTOFlowID flowExecution = new Gson().fromJson(response.body().string(), DTOFlowID.class);
                     DTOFlowID flowExecution = new Gson().fromJson(response.body().string(), DTOFlowID.class);
-
-                    System.out.println("flow UUID: " + flowExecution.getUniqueIdByUUID());
-                    System.out.println("flow ID: " +flowExecution.getUniqueId());
-
                     setExecutedFlowID(flowExecution.getUniqueIdByUUID());
 
                     freeInputMap = new HashMap<>();
@@ -532,8 +535,10 @@ public class ClientFlowExecutionTabController {
     }
 
     public void backToFlowExecutionTabAfterExecution() {
+        System.out.println("backToFlowExecutionTabAfterExecution");
         //getMainController().initExecutionHistoryTableInExecutionsHistoryTab();
         //getMainController().goToStatisticsTab();
         //initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(mainController.getFlowName()));
+
     }
 }

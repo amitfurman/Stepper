@@ -36,6 +36,7 @@ public class Constants {
     public final static String UPDATE_USER = FULL_SERVER_PATH + "/update-user";
 
     public final static String IS_MANAGER_SERVLET = FULL_SERVER_PATH + "/is-manager";
+    public final static String GET_USERS_PER_ROLE = FULL_SERVER_PATH + "/users-ro-each-role";
 
     // GSON instance
     public final static Gson GSON_INSTANCE = new Gson();

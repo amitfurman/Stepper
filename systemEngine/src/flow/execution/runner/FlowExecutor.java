@@ -28,7 +28,6 @@ public class FlowExecutor implements Runnable {
     private Map<String, Object> initialInputs;
     private FlowAndStepStatisticData flowStatisticData;
     private FlowExecutionResult flowExecutionResult;
-
     private  Map<String, Object> FEdataValues;
 
     public FlowExecutor(FlowExecution flowExecution, DTOFreeInputsFromUser freeInputs, Map<String, Object> initialInputs, FlowAndStepStatisticData flowStatisticData) {
@@ -65,7 +64,6 @@ public class FlowExecutor implements Runnable {
         for (int i = 0; i < flowExecution.getFlowDefinition().getFlowSteps().size(); i++) {
             context.setCurrInvokingStep(flowExecution.getFlowDefinition().getFlowSteps().get(i).getFinalStepName(), flowExecution.getFlowDefinition().getFlowSteps().get(i).getStepDefinition().name());
             StepUsageDeclaration stepUsageDeclaration = flowExecution.getFlowDefinition().getFlowSteps().get(i);
-
             StepResult stepResult = stepUsageDeclaration.getStepDefinition().invoke(context);
             context.setFinishToExecutionStep();
 
