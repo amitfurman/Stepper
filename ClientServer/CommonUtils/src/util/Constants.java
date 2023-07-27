@@ -34,8 +34,8 @@ public class Constants {
     public final static String USER_INFO_SERVLET = FULL_SERVER_PATH + "/user-info";
     public final static String GET_DTO_FLOW_EXECUTION_SERVLET = FULL_SERVER_PATH + "/flow-execution-data";
     public final static String UPDATE_USER = FULL_SERVER_PATH + "/update-user";
-
     public final static String IS_MANAGER_SERVLET = FULL_SERVER_PATH + "/is-manager";
+    public final static String USERS_OF_ROLE_SERVLET = FULL_SERVER_PATH + "/users-of-role";
 
     // GSON instance
     public final static Gson GSON_INSTANCE = new Gson();

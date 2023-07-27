@@ -2,6 +2,7 @@ package components.body.RolesManagementTab;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import commonComponents.CommonController;
 import dto.*;
 import flow.api.FlowIO.IO;
@@ -43,6 +44,7 @@ public class RolesManagementController {
     @FXML private TreeView<String> roleDetailsTree;
     @FXML private Button newButton;
     @FXML private GridPane checkBoxGridPane;
+   @FXML private ListView usersOfRole;
     private CheckListView flowsCheckList = new CheckListView();
     private CheckListView usersCheckList = new CheckListView();
     private DTORolesList returnedRolesList;
@@ -330,7 +332,7 @@ public class RolesManagementController {
                 showChosenRole(role);
                 flowsCheckList.getItems().clear();
                 showFlowsToEachRole(role);
-                showUsersToEachRole(role);
+                getUserOfRole(role);
             });
 
             rootItem.getChildren().add(branchItem);
@@ -365,7 +367,7 @@ public class RolesManagementController {
         SaveButton.setDisable(isEmptyFlowDetailsTree);
     }
     public void showFlowsToEachRole(DTORole role){
-        flowsCheckList = new CheckListView();
+       flowsCheckList = new CheckListView();
 
         for (String currFlow : allFlows) {
             flowsCheckList.getItems().add(currFlow);
@@ -378,9 +380,40 @@ public class RolesManagementController {
             }
         }
         checkBoxGridPane.add(flowsCheckList, 0, 1);
+
     }
-    public void showUsersToEachRole(DTORole role){
-        usersCheckList = new CheckListView();
+
+    public void getUserOfRole(DTORole role){
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.USERS_OF_ROLE_SERVLET).newBuilder();
+        urlBuilder.addQueryParameter("roleName", role.getName());
+        String finalUrl = urlBuilder.build().toString();
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .build();
+
+        OkHttpClient HTTP_CLIENT = new OkHttpClient();
+        Call call = HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String jsonResponse = response.body().string();
+                Gson gson = new Gson();
+                //List<String> users = gson.fromJson(jsonResponse, List<String>.class);
+                List<String> users = GSON_INSTANCE.fromJson(jsonResponse, new TypeToken<List<String>>(){}.getType());
+                //rolesListConsumer.accept(userRolesNames != null ? new ArrayList<>(userRolesNames) : Collections.emptyList());
+                if (users !=null) {
+                   showUsersToEachRole(users);
+                }
+
+            }
+        });
+    }
+    public void showUsersToEachRole(List<String> users){
+       /* usersCheckList = new CheckListView();
         usersList = mainController.getUsersManagementTabController().getUsers();
         for (String user : usersList) {
             usersCheckList.getItems().add(user);
@@ -391,6 +424,13 @@ public class RolesManagementController {
             }
         }
         checkBoxGridPane.add(usersCheckList,0,2);
+        */
+        System.out.println("*******************************" + users);
+        Platform.runLater(() -> {
+            for (String user : users) {
+                usersOfRole.getItems().add(user);
+            }
+        });
     }
 
 }

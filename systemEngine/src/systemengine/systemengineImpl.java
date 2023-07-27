@@ -348,7 +348,7 @@ public class systemengineImpl implements systemengine {
 
     @Override
     public DTORolesList getDTORolesList() {
-        return new DTORolesList(roles.stream().collect(Collectors.toSet()));
+      return new DTORolesList(roles.stream().collect(Collectors.toSet()));
     }
 
     @Override
@@ -505,7 +505,7 @@ public class systemengineImpl implements systemengine {
             Role role1 = roles.stream().filter(r -> r.getName().equals(role)).findFirst().get();
             rolesList.add(role1);
         });
-
+/*
         //add user to new roles
         rolesList.stream().forEach(role -> {
             boolean userFound = role.getUsersInRole().stream().anyMatch(username -> username.equals(user.getUsername()));
@@ -513,7 +513,18 @@ public class systemengineImpl implements systemengine {
             if (!userFound) {
                 role.getUsersInRole().add(user.getUsername());
             }
-        });
+        });*/
+
+        roles.stream()
+                .filter(role -> checkedItems.stream().anyMatch(item -> item.equals(role.getName())))
+                .forEach(currRole -> {
+                    boolean userFound = currRole.getUsersInRole().stream().anyMatch(username -> username.equals(user.getUsername()));
+
+                    if (!userFound) {
+                        currRole.getUsersInRole().add(user.getUsername());
+                    }
+                });
+
 
         //remove user from roles
         user.getRoles().stream().forEach(role ->
@@ -524,7 +535,11 @@ public class systemengineImpl implements systemengine {
             }
         });
         user.setRoles(rolesList);
-
+    }
+    @Override
+    public List<String> getUsersOfRole(String roleName) {
+        return roles.stream().filter(cureRole ->cureRole.getName().equals(roleName)).findFirst().get().getUsersInRole().stream().collect(Collectors.toList());
+    }
 /*    @Override
     public DTOFlowsDefinitionInRoles getDtoFlowsDefinition(List<String> rolesNames){
 
@@ -548,5 +563,5 @@ public class systemengineImpl implements systemengine {
         System.out.println(flowsInRoles);
         return new DTOFlowsDefinitionInRoles(flowsInRoles);
     }*/
-    }
+
 }

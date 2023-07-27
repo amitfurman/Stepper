@@ -59,4 +59,6 @@ public interface systemengine {
     List<DTOStepsInFlow> getDTOStepsInFlow(UUID flowId);
 
     void updateUser(String userName, Set<String> checkedItems, Boolean isManager);
+
+    List<String> getUsersOfRole(String roleName);
 }
