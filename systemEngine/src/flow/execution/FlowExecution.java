@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.util.*;
 
 public class FlowExecution  implements Serializable {
+    private String userName;
     private final UUID uniqueId;
     private String flowName;
     private final FlowDefinition flowDefinition;
@@ -24,7 +25,6 @@ public class FlowExecution  implements Serializable {
     private final List<SingleFlowIOData> IOlist;
 
 
-
     public FlowExecution(FlowDefinition flowDefinition) {
         this.uniqueId = UUID.randomUUID();
         this.flowName = flowDefinition.getName();
@@ -36,6 +36,19 @@ public class FlowExecution  implements Serializable {
         this.IOlist = new LinkedList<>(flowDefinition.getIOlist());
     }
 
+    public FlowExecution(String userName, FlowDefinition flowDefinition) {
+        this.userName = userName;
+        this.uniqueId = UUID.randomUUID();
+        this.flowName = flowDefinition.getName();
+        this.flowDefinition = flowDefinition;
+        this.dataValues = new HashMap<>();
+        this.stepExecutionDataList = new LinkedList<>();
+        this.freeInputsValues = new HashMap<>();
+        this.freeInputsList = new LinkedList<>(flowDefinition.getFlowFreeInputs());
+        this.IOlist = new LinkedList<>(flowDefinition.getIOlist());
+    }
+
+    public String getUserName() {return userName;}
     public UUID getUniqueId() {
         return uniqueId;
     }

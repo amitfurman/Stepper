@@ -152,13 +152,16 @@ public class ClientFlowExecutionTabController {
             
             if(simpleName.equals("STRING")) {
                 setTextFieldSetting(textField, input);
-                    if(input.getOriginalName().equals("FOLDER_NAME")){
+                if(input.getOriginalName().equals("FOLDER_NAME")){
                     openDirectoryChooser(textField);
                     textField.setCursor(Cursor.HAND);
-
                 }
                 else if(input.getOriginalName().equals("SOURCE")){
                     openChooseDialog(textField);
+                    textField.setCursor(Cursor.HAND);
+                }
+                else if(input.getOriginalName().equals("FILE_NAME")){
+                    openFileChooser(textField);
                     textField.setCursor(Cursor.HAND);
                 }
                 vbox.getChildren().addAll(label, textField);
@@ -316,11 +319,9 @@ public class ClientFlowExecutionTabController {
         executeButton.setDisable(!hasAllMandatoryInputs);
     }
     public void updateFreeInputMap(Input input, Object newValue) {
-        System.out.println(input.getStepName() + "." + input.getOriginalName() + " = " + newValue);
         freeInputMap.put(input.getStepName() + "." + input.getOriginalName(), newValue);
     }
     public void updateFreeInputMap(DTOInput input, Object newValue) {
-        System.out.println(input.getStepName() + "." + input.getOriginalName() + " = " + newValue);
         freeInputMap.put(input.getStepName() + "." + input.getOriginalName(), newValue);
     }
     public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
@@ -373,9 +374,6 @@ public class ClientFlowExecutionTabController {
     void StartExecuteFlowButton(ActionEvent event){
         masterDetailPane = new MasterDetailPane();
         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
-        System.out.println("before active flow!!! ");
-        System.out.println("freeInputsMap: " + freeInputMap);
-        System.out.println("freeInputs: " + freeInputs);
         activateFlow(mainController.getFlowName(), freeInputs);
 
     }
@@ -385,6 +383,7 @@ public class ClientFlowExecutionTabController {
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("flowName", flowName);
+        jsonObject.addProperty("userName", mainController.getHeaderClientComponentController().getUserName());
         jsonObject.add("freeInputs", new Gson().toJsonTree(freeInputs));
         String jsonPayload = new Gson().toJson(jsonObject);
         RequestBody body = RequestBody.create(jsonPayload, MediaType.parse("application/json"));
@@ -450,8 +449,7 @@ public class ClientFlowExecutionTabController {
 
     }
     public void backToFlowExecutionTabAfterExecution(String flowName) {
-             System.out.println("backToFlowExecutionTabAfterExecution");
-        //getMainController().initExecutionHistoryTableInExecutionsHistoryTab();
+        System.out.println("backToFlowExecutionTabAfterExecution");
         //getMainController().goToStatisticsTab();
         getAllContinuationMap(flowName);
     }
@@ -530,6 +528,7 @@ public class ClientFlowExecutionTabController {
             actionColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
             continuationTableView.getColumns().setAll(targetFlowColumn, actionColumn);
             continuationTableView.setItems(FXCollections.observableArrayList(mappings));
+            getMainController().initExecutionHistoryTableInExecutionsHistoryTab();
         });
     }
 
@@ -564,6 +563,7 @@ public class ClientFlowExecutionTabController {
 
     public void setInputValuesFromContinuationMap(List<DTOInput> valuesList) {
         System.out.println("value List: " + valuesList);
+        valuesList.stream().forEach(io-> System.out.println(io.getValue()+ " " + io.getOriginalName()));
         for (Node node : inputValuesHBox.getChildren()) {
             if (node instanceof VBox) {
                 VBox vbox = (VBox) node;

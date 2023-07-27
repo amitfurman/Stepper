@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.util.List;
 
 public class DTOFlowExeInfo {
+    String userName;
     String flowName;
     String ID;
     String startTime;
@@ -15,8 +16,10 @@ public class DTOFlowExeInfo {
     List<DTOStepsInFlow> steps;
     List<DTOOutput> outputs;
 
-    public DTOFlowExeInfo(String flowName, String ID, String startTime, Duration totalTime, FlowExecutionResult resultExecute, List<DTOFreeInputs> freeInputs, List<DTOStepsInFlow> steps, List<DTOOutput> outputs){
-        System.out.println("DTO name "+flowName);
+    public DTOFlowExeInfo(String userName,String flowName, String ID, String startTime, Duration totalTime, FlowExecutionResult resultExecute, List<DTOFreeInputs> freeInputs, List<DTOStepsInFlow> steps, List<DTOOutput> outputs){
+        System.out.println("DTO Username "+userName);
+        this.userName = userName;
+        System.out.println("DTO Flowname "+flowName);
         this.flowName = flowName;
         System.out.println("DTO id "+ID);
         this.ID = ID;
@@ -37,6 +40,13 @@ public class DTOFlowExeInfo {
         System.out.println("end of DTOFlowExeInfo constructor");
     }
 
+    public DTOFlowExeInfo(String userName, String flowName, String startTime, FlowExecutionResult resultExecute){
+        this.userName = userName;
+        this.flowName = flowName;
+        this.startTime = startTime;
+        this.resultExecute = resultExecute;
+    }
+    public String getUserName() {return userName;}
     public String getFlowName() {return flowName;}
     public String getID() {return ID;}
     public String getStartTime() {return startTime;}

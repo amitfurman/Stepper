@@ -104,8 +104,13 @@ public class HeaderClientController {
         nameLabel.setFont(font);
         nameLabel.setStyle("-fx-text-fill: BLACK;");
     }
-
-    public void updateManagerLabel(Boolean isManager) {
+     public String getUserName(){
+            return nameLabel.getText();
+     }
+     public Boolean getIsManager(){
+            return managerCheckbox.isSelected();
+     }
+    public void updateManagerLabel(Boolean isManager, List<String> roles) {
         if (isManager != null) {
             Platform.runLater(() -> {
                 if (isManager) {
@@ -113,6 +118,7 @@ public class HeaderClientController {
                 } else {
                     managerCheckbox.setSelected(false);
                 }
+                clientFlowDefinitionTabController.showFlowsTree(roles);
             });
         }
     }
@@ -141,10 +147,10 @@ public class HeaderClientController {
 
     private void updateClientData(List<String> roles) {
         updateRolesLabel(roles);
-        clientFlowDefinitionTabController.showFlowsTree(roles);
-        getIfManager();
+        getIfManager(roles);
     }
-    private void getIfManager() {
+
+    private void getIfManager(List<String> roles) {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.IS_MANAGER_SERVLET).newBuilder();
         urlBuilder.addQueryParameter("userName", currentUserName);
         String finalUrl = urlBuilder.build().toString();
@@ -164,8 +170,7 @@ public class HeaderClientController {
                 String jsonResponse = response.body().string();
                 Gson gson = new Gson();
                 Boolean isManager = gson.fromJson(jsonResponse, Boolean.class);
-                updateManagerLabel(isManager);
-
+                updateManagerLabel(isManager, roles);
             }
         });
 

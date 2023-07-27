@@ -244,16 +244,16 @@ public class ClientMasterDetailController {
                     input.getChildren().add(new TreeItem<>("Final Name: " + ioInput.getFinalName()));
                     System.out.println("ioInput.getType() " + ioInput.getType());
 
-                    if (ioInput.getType().equals("RELATION") || ioInput.getType().equals("STRING_LIST")
+              /*      if (ioInput.getType().equals("RELATION") || ioInput.getType().equals("STRING_LIST")
                             || ioInput.getType().equals("FILE_LIST") || ioInput.getType().equals("MAPPING2NUMBERS")) {
                         input.getChildren().add(new TreeItem<>(showOutputValue(ioInput.getType(),ioInput.getValue())));
-                    } else {
+                    } else {*/
                         if (ioInput.getValue() != null) {
                             input.getChildren().add(new TreeItem<>("Value: " + ioInput.getValue().toString()));
                         } else {
                             input.getChildren().add(new TreeItem<>("Value: N/A"));
                         }
-                    };
+                    //};
         });
 
         step.getOutputs().stream().forEach(ioOutput -> {
@@ -263,16 +263,16 @@ public class ClientMasterDetailController {
             System.out.println("ioOutput.getType() " + ioOutput.getType());
 
             output.getChildren().add(new TreeItem<>("Final Name: " + ioOutput.getFinalName()));
-            if (ioOutput.getType().equals("RELATION") || ioOutput.getType().equals("STRING_LIST")
+            /*if (ioOutput.getType().equals("RELATION") || ioOutput.getType().equals("STRING_LIST")
                     || ioOutput.getType().equals("FILE_LIST") || ioOutput.getType().equals("MAPPING2NUMBERS")) {
                 output.getChildren().add(new TreeItem<>(showOutputValue(ioOutput.getType(),ioOutput.getValue())));
-            } else {
+            } else {*/
                 if (ioOutput.getValue() != null) {
                     output.getChildren().add(new TreeItem<>("Value: " + ioOutput.getValue()));
                 } else {
                     output.getChildren().add(new TreeItem<>("Value: Not created due to failure in flow"));
                 }
-            }
+            //}
         });
 
         TreeItem<Object> logsItem = new TreeItem<>("Step's Logs:");
@@ -362,11 +362,13 @@ public class ClientMasterDetailController {
                 outputItem.getChildren().addAll(
                         new TreeItem<>("Final Name: " + output.getFinalName()),
                         new TreeItem<>("Type: " + output.getType().toString()),
-                        output.getValue() == null ?  new TreeItem<>( "Value: N/A") :
+                        output.getValue() == null ?  new TreeItem<>( "Value: N/A") :new TreeItem<>("Value: " + output.getValue().toString()));
+                        /*,
+                       output.getValue() == null ?  new TreeItem<>( "Value: N/A") :
                         output.getType().equals("RELATION") || output.getType().equals("STRING_LIST")
                                 || output.getType().equals("FILE_LIST") || output.getType().equals("MAPPING2NUMBERS")
-                                ? new TreeItem<>(showOutputValue(output.getType(), output.getValue())) : new TreeItem<>("Value: " + output.getValue().toString())
-                );
+                                ? new TreeItem<>(showOutputValue(output.getType(), output.getValue())) : new TreeItem<>("Value: " + output.getValue().toString())*/
+                //)
             }
         }
 
@@ -391,11 +393,11 @@ public class ClientMasterDetailController {
                 TableView table = showRelationData(io);
                 layout.getChildren().addAll(label1, table);
             }else if(type.equals("STRING_LIST") || type.equals("FILE_LIST")){
-                ListView<String> list = showListData(io , type);
-                layout.getChildren().addAll(label1, list);
+               ListView<String> list = showListData(io , type);
+               layout.getChildren().addAll(label1, list);
             }else if(type.equals("MAPPING2NUMBERS")){
-                TableView table = showMappingData(io);
-                layout.getChildren().addAll(label1, table);
+               TableView table = showMappingData(io);
+               layout.getChildren().addAll(label1, table);
             }
             layout.setAlignment(Pos.CENTER);
             Scene scene1 = new Scene(layout, 700, 400);

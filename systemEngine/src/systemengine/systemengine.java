@@ -26,15 +26,16 @@ public interface systemengine {
     boolean hasAllMandatoryInputs(int flowChoice, Map<String, Object> freeInputMap);
     DTOFlowExecution activateFlow(int flowChoice, DTOFreeInputsFromUser freeInputs);
     //DTOFlowExecution activateFlowByName(String flowName, DTOFreeInputsFromUser freeInputs);
-    DTOFlowID activateFlowByName(String flowName, DTOFreeInputsFromUser freeInputs);
-    DTOFreeInputsByUserString printFreeInputsByUserString(int choice);
+    DTOFlowID activateFlowByName(String userName, String flowName, DTOFreeInputsFromUser freeInputs);
     DTOSingleFlowIOData getSpecificFreeInput(int flowChoice, int freeInputChoice);
     DTOFlowsExecutionList getFlowsExecutionList();
+    List<DTOFlowExeInfo> getDTOFlowsExecutionList();
     DTOFlowAndStepStatisticData getStatisticData();
     void saveToFile(String path);
     void loadFromFile(String path);
     Boolean isCurrFlowExecutionDone(String currFlowName);
     DTOFlowExecution getFlowExecutionStatus(UUID flowSessionId);
+    DTOFreeInputsByUserString printFreeInputsByUserString(int choice);
 
     DTOFlowExecution getFlowExecutionDetails(int flowExecutionChoice);
     DTOFlowExecution getDTOFlowExecutionById(UUID flowId);
@@ -51,7 +52,7 @@ public interface systemengine {
     void addNewRole(DTORole dtoRole);
     void updateFlowsInRole(DTORole dtoRole);
     DTORolesList getDTORolesListPerUser(String userName);
-    DTOFlowsDefinitionInRoles getDtoFlowsDefinition(List<String> rolesNames);
+    DTOFlowsDefinitionInRoles getDtoFlowsDefinition(Boolean isManager, List<String> rolesNames);
     List<DTOStepUsageDeclaration> createDTOListStep(FlowDefinition flow);
     List<DTOFlowOutputs> createDTOListFlowOutputs(FlowDefinition flow);
     List<DTOFreeInputs> createDTOListFreeInputs(FlowDefinition flow);
@@ -61,6 +62,10 @@ public interface systemengine {
     DTOFlowExeInfo getAllFlowExecutionData(UUID flowId);
 
     void updateUser(String userName, Set<String> checkedItems, Boolean isManager);
-
+    DTOFlowExeInfo getAllFlowExecutionDataNyName(String flowName);
     Set<String> getUsersOfRoles(String roleName);
+
+    List<DTOInput> getDTOFlowFreeInputsToSrevlet(String flowName);
+    DTOFlowsDefinitionInRoles getFlowsToUserFromRole(List<String> rolesNames);
+    DTOFlowsDefinitionInRoles  getFlowsToManager();
 }
