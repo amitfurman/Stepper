@@ -3,7 +3,10 @@ public class AdminExecutionHistoryEntry {
     private String flowName;
     private String startDate;
     private String runResult;
-    public AdminExecutionHistoryEntry(String flowName, String startDate, String runResult) {
+    private String userName;
+
+
+    public AdminExecutionHistoryEntry(String flowName, String startDate, String runResult, String userName) {
         this.flowName = flowName;
         this.startDate = startDate;
         this.runResult = runResult;

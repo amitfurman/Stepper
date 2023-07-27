@@ -1,9 +1,13 @@
 package components.body.executionsHistoryTab;
 
+import com.google.gson.reflect.TypeToken;
 import commonComponents.CommonController;
 import components.body.executionsHistoryTab.MasterDetail.AdminMasterDetailController;
 
+import dto.DTOFlowExeInfo;
+import dto.DTOInput;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
@@ -12,13 +16,21 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import okhttp3.*;
 import org.controlsfx.control.MasterDetailPane;
+import org.jetbrains.annotations.NotNull;
 import systemengine.Input;
+import util.Constants;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
 import java.util.stream.Collectors;
+
+import static util.Constants.GSON_INSTANCE;
+import static util.Constants.REFRESH_RATE;
 
 public class AdminExecutionsHistoryTabController {
     private CommonController mainController;
@@ -31,48 +43,45 @@ public class AdminExecutionsHistoryTabController {
     @FXML
     private TableColumn resultColumn;
     @FXML
+    private TableColumn userColumn;
+    @FXML
     private TableColumn chooseOldFlowExecutions;
     @FXML
     private ComboBox resultFilterComboBox;
     @FXML
     private GridPane executionHistoryGrid;
-    @FXML
-    private Button RerunFlow;
     private ObservableList<AdminExecutionHistoryEntry> executionHistoryData;
     private AdminMasterDetailController masterDetailController;
     private MasterDetailPane masterDetailPane;
     private String currFlowName;
+    private Timer timer;
+    private AdminRefresher adminRefresher;
 
-    @FXML
-    void rerunCurrentFlow(ActionEvent event) {
-        RerunFlow.setOnMouseClicked(e -> {
-            //mainController.getFlowExecutionTabController().initDataInFlowExecutionTab();
-            //mainController.goToFlowExecutionTab(currFlowName);
-           // List<Input> inputsValues = mainController.getSystemEngineInterface().getFreeInputsFromCurrFlow(currFlowName);
-        });
-    }
+
     public void setMainController(CommonController mainController) {this.mainController = mainController;}
     @FXML
     public void initialize() throws IOException {
-        RerunFlow.setDisable(true);
         executionHistoryTable.getStyleClass().add("execution-history-table");
         double tableWidth = executionHistoryTable.getWidth();
-        double columnWidth = tableWidth / 4;
+        double columnWidth = tableWidth /5;
         flowNameColumn.setPrefWidth(columnWidth);
         startDateColumn.setPrefWidth(columnWidth);
         resultColumn.setPrefWidth(columnWidth);
+        userColumn.setPrefWidth(columnWidth);
         chooseOldFlowExecutions.setPrefWidth(columnWidth);
 
         executionHistoryTable.widthProperty().addListener((obs, oldWidth, newWidth) -> {
-            double newColumnWidth = newWidth.doubleValue() / 4;
+            double newColumnWidth = newWidth.doubleValue() / 5;
             flowNameColumn.setPrefWidth(newColumnWidth);
             startDateColumn.setPrefWidth(newColumnWidth);
             resultColumn.setPrefWidth(newColumnWidth);
+            userColumn.setPrefWidth(newColumnWidth);
             chooseOldFlowExecutions.setPrefWidth(newColumnWidth);
         });
         executionHistoryTable.getSortOrder().add(flowNameColumn);
         executionHistoryTable.getSortOrder().add(startDateColumn);
         executionHistoryTable.getSortOrder().add(resultColumn);
+        executionHistoryTable.getSortOrder().add(userColumn);
         executionHistoryTable.getSortOrder().add(chooseOldFlowExecutions);
 
         FXMLLoader fxmlLoader = new FXMLLoader();
@@ -85,29 +94,31 @@ public class AdminExecutionsHistoryTabController {
         if (masterDetailController != null) {
             masterDetailController.setExecutionsHistoryTabController(this);
         }
-        masterDetailPane.getStylesheets().add("/components/body/executionsHistoryTab/flowExecutionTab.css");
+        masterDetailPane.getStylesheets().add("/components/body/flowExecutionTab/flowExecutionTab.css");
         executionHistoryGrid.add(masterDetailPane, 0 , 2);
+        startExecutionTableRefresher();
     }
     private void setMasterDetailsController(AdminMasterDetailController masterDetailController) {this.masterDetailController = masterDetailController;}
-    public void initExecutionHistoryTable() {
+/*    public void initExecutionHistoryTable() {
+        System.out.println("initExecutionHistoryTable");
         initializeExecutionHistoryTable();
         addFilteringFunctionality();
-    }
-    /*public void initExecutionHistoryDataList() {
+    }*/
+    public void initExecutionHistoryDataList(List<DTOFlowExeInfo> flowExeList ) {
+        System.out.println("initExecutionHistoryDataList");
         executionHistoryData = FXCollections.observableArrayList();
-        DTOFlowsExecutionList flowsExecutionList = mainController.getSystemEngineInterface().getFlowsExecutionList();
-
-        List<DTOFlowExecution> executedFlows = flowsExecutionList.getFlowsExecutionNamesList().stream().filter(flow-> flow.getFlowExecutionResult() != null).collect(Collectors.toList());
+        List<DTOFlowExeInfo> executedFlows = flowExeList.stream().filter(flow-> flow.getResultExecute() != null).collect(Collectors.toList());
         executedFlows.stream().forEach(
-                    flow -> {
+                flow -> {
                     String flowName = flow.getFlowName();
-                    String startDate = flow.getStartTimeFormatted();
-                    String runResult = flow.getFlowExecutionResult().toString();
-                    AdminExecutionHistoryEntry historyEntry = new AdminExecutionHistoryEntry(flowName, startDate, runResult);
+                    String startDate = flow.getStartTime();
+                    String runResult = flow.getResultExecute().toString();
+                    String userName = flow.getUserName();
+                    AdminExecutionHistoryEntry historyEntry = new AdminExecutionHistoryEntry(flowName, startDate, runResult, userName );
                     executionHistoryData.add(historyEntry);
                 }
         );
-        resultColumn.setCellFactory(column -> new TableCell<AdminExecutionHistoryEntry, String>() {
+        resultColumn.setCellFactory(column -> new TableCell<AdminExecutionHistoryEntry, String>(){
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -141,11 +152,12 @@ public class AdminExecutionsHistoryTabController {
                     AdminExecutionHistoryEntry entry = (AdminExecutionHistoryEntry) getTableRow().getItem();
                     if (entry != null) {
                         currFlowName = entry.getFlowName();
+                        System.out.println("currFlowName: " + currFlowName);
                         initMasterDetails(currFlowName);
-                        RerunFlow.setDisable(false);
                     }
                 });
             }
+
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -157,19 +169,21 @@ public class AdminExecutionsHistoryTabController {
                 }
             }
         });
-    }*/
-    private void initializeExecutionHistoryTable() {
-        //initExecutionHistoryDataList();
+
         Platform.runLater(() -> {
             flowNameColumn.setCellValueFactory(new PropertyValueFactory<>("flowName"));
             startDateColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
             resultColumn.setCellValueFactory(new PropertyValueFactory<>("runResult"));
+            userColumn.setCellValueFactory(new PropertyValueFactory<>("userName"));
             chooseOldFlowExecutions.setCellValueFactory(new PropertyValueFactory<>(""));
 
             executionHistoryTable.setItems(executionHistoryData);
         });
     }
-    private void addFilteringFunctionality() {
+   /* private void initializeExecutionHistoryTable() {
+        getFlowsExecutionList();
+    }*/
+    public void addFilteringFunctionality() {
         resultFilterComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             filterExecutionHistoryTable((String) newValue);
         });
@@ -184,11 +198,63 @@ public class AdminExecutionsHistoryTabController {
         }
     }
     public void initMasterDetails(String flowName) {
-/*
-        DTOFlowExecution executedData = mainController.getSystemEngineInterface().getDTOFlowExecutionByName(flowName);
+        getDTOFlowExecutionByName(flowName);
 
-        masterDetailController.initMasterDetailPaneController(executedData);
-        masterDetailController.updateFlowLabel(executedData);
-        masterDetailController.addStepsToMasterDetail(executedData);
+    }
+/*    public void getFlowsExecutionList() {
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.GET_FLOW_EXECUTION_LIST_SERVLET).newBuilder();
+        String finalUrl = urlBuilder.build().toString();
+
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .build();
+
+        OkHttpClient HTTP_CLIENT = new OkHttpClient();
+        Call call = HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println("on failure");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String jsonArrayOfUsersRoles = response.body().string();
+                LinkedList<DTOFlowExeInfo> flowExeList = GSON_INSTANCE.fromJson(jsonArrayOfUsersRoles, new TypeToken<LinkedList<DTOFlowExeInfo>>(){}.getType());
+                if(flowExeList != null)
+                    initExecutionHistoryDataList(flowExeList);
+
+            }
+        });
     }*/
-}}
+    public void getDTOFlowExecutionByName(String currFlowName) {
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.GET_FLOW_EXECUTION_BY_NAME).newBuilder();
+        urlBuilder.addQueryParameter("flowName", currFlowName);
+        String finalUrl = urlBuilder.build().toString();
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .build();
+
+        OkHttpClient HTTP_CLIENT = new OkHttpClient();
+        Call call = HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println("on failure");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String rawBody = response.body().string();
+                DTOFlowExeInfo executedData = GSON_INSTANCE.fromJson(rawBody,DTOFlowExeInfo.class);
+                Platform.runLater(() -> {
+                    masterDetailController.initMasterDetailPaneController(executedData);
+                    masterDetailController.updateFlowLabel(executedData);
+                    masterDetailController.addStepsToMasterDetail(executedData);
+                    addFilteringFunctionality();
+                });
+            }
+        });
+    }
+
+}
