@@ -3,6 +3,8 @@ package flow.execution;
 import dto.DTOStepExecutionData;
 import flow.api.FlowDefinition;
 import flow.api.FlowIO.SingleFlowIOData;
+import statistic.FlowAndStepStatisticData;
+import statistic.StatisticData;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -23,7 +25,6 @@ public class FlowExecution  implements Serializable {
     private Map<String, Object > freeInputsValues;
     private List<SingleFlowIOData> freeInputsList;
     private final List<SingleFlowIOData> IOlist;
-
 
     public FlowExecution(FlowDefinition flowDefinition) {
         this.uniqueId = UUID.randomUUID();

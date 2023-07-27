@@ -3,6 +3,7 @@ package flow.api;
 import datadefinition.api.DataDefinitions;
 import exceptions.*;
 import flow.api.FlowIO.SingleFlowIOData;
+import statistic.StatisticData;
 
 import java.util.List;
 import java.util.Map;

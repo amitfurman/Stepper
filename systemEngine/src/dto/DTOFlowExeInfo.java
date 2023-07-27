@@ -30,7 +30,7 @@ public class DTOFlowExeInfo {
         this.outputs = outputs;
     }
 
-    public DTOFlowExeInfo(String userName, String flowName, String startTime, FlowExecutionResult resultExecute,DTOFlowAndStepStatisticData statisticData ){
+    public DTOFlowExeInfo(String userName, String flowName, String startTime, FlowExecutionResult resultExecute ,DTOFlowAndStepStatisticData statisticData ){
         this.userName = userName;
         this.flowName = flowName;
         this.startTime = startTime;
