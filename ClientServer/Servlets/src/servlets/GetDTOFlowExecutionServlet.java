@@ -23,14 +23,11 @@ import java.util.UUID;
 @WebServlet(name = "GetDTOFlowExecutionServlet", urlPatterns = "/flow-execution-data")
 public class GetDTOFlowExecutionServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("GetDTOFlowExecutionServlet: doGet");
         UUID uuid = UUID.fromString(request.getParameter("uuid"));
-        System.out.println("GetDTOFlowExecutionServlet: uuid = " + uuid);
         response.setContentType("application/json");
         try (PrintWriter out = response.getWriter()) {
             systemengine system = ServletUtils.getSystemEngine(getServletContext());
             DTOFlowExeInfo dtoFlowExecution = system.getAllFlowExecutionData(uuid);
-            System.out.println("GetDTOFlowExecutionServlet: dtoFlowExecution = " + dtoFlowExecution.getFlowName());
             Gson gson = new Gson();
             String json = gson.toJson(dtoFlowExecution);
             out.println(json);

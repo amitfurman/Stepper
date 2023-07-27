@@ -123,17 +123,11 @@ public class ExecuteFlowTask extends Task<Boolean> {
         if (response.isSuccessful()) {
             String rawBody = response.body().string();
             DTOFlowExeInfo executedData = GSON_INSTANCE.fromJson(rawBody, new TypeToken<DTOFlowExeInfo>() {}.getType());
-            System.out.println("name : " + executedData.getFlowName());
-            System.out.println("id " + executedData.getID());
-            System.out.println("before initMasterDetailPaneController");
             masterDetailController.initMasterDetailPaneController(executedData);
-            System.out.println("after initMasterDetailPaneController");
             DTOFlowExeInfo finalExecutedData2 = executedData;
             Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData2));
             while (executedData.getResultExecute() == null) {
-                System.out.println("in while");
-                System.out.println("executedData.getResultExecute() : " + executedData.getResultExecute());
-                System.out.println("executedData.getFlowName() : " + executedData.getFlowName());
+                System.out.println(executedData.getResultExecute());
                 executedData =  makeSyncHttpRequest(this.flowId);
                 if (currentFlowId.getValue().equals(flowId.toString())) {
                     DTOFlowExeInfo finalExecutedData = executedData;

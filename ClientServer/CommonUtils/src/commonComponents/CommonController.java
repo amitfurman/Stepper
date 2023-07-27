@@ -150,9 +150,7 @@ public class CommonController {
         statisticsTabController.initCharts(statisticData);
     }*/
     public String getFlowName() { return flowName; }
-/*
-    public void initExecutionHistoryTableInExecutionsHistoryTab() { executionsHistoryTabController.initExecutionHistoryTable();}
-*/
+    public void initExecutionHistoryTableInExecutionsHistoryTab() { clientExecutionsHistoryTabController.initExecutionHistoryTable();}
 
     public UsersManagementTabController getUsersManagementTabController() {
         return usersManagementTabController;
@@ -171,6 +169,11 @@ public class CommonController {
         if (ClientFlowExecutionTab != null) {
             tabPane.getSelectionModel().select(ClientFlowExecutionTab);
         }
-        clientFlowExecutionTabController.getFreeInputs(flowName);}
+        clientFlowExecutionTabController.getFreeInputs(flowName);
+    }
+    public ClientFlowExecutionTabController getClientFlowExecutionTabController(){ return clientFlowExecutionTabController;};
+    public HeaderClientController getHeaderClientComponentController() {return headerClientComponentController;}
+
+    public ClientExecutionsHistoryTabController getClientExecutionsHistoryTabController() {return clientExecutionsHistoryTabController;}
 }
 

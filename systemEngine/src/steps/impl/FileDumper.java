@@ -31,12 +31,12 @@ public class FileDumper extends AbstractStepDefinition {
 
         File file = new File(fileName);
 
-        if (file.exists()) {
+/*        if (file.exists()) {
             context.storeLogLineAndSummaryLine("Step failed because the target file path already exists.");
             context.storeDataValue("RESULT", StepResult.FAILURE.toString() + "! Failed because the target file path already exists");
             context.storeStepTotalTime(start);
             return StepResult.FAILURE;
-        }
+        }*/
 
         context.storeLogLine("About to create file named " + fileName);
         try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8")))

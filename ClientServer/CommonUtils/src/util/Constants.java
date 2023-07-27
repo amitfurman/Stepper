@@ -39,6 +39,10 @@ public class Constants {
     public final static String GET_CONTINUATION = FULL_SERVER_PATH + "/get-continuation";
     public final static String  GET_CONTINUATION_VALUES = FULL_SERVER_PATH + "/get-continuation-values";
 
+    public final static String   GET_FLOW_EXECUTION_LIST_SERVLET = FULL_SERVER_PATH + "/get-flow-execution-list";
+    public final static String   GET_FLOW_EXECUTION_BY_NAME = FULL_SERVER_PATH + "/get-flow-execution-by-name";
+    public final static String   GET_DTO_FREE_INPUTS_BY_FLOW_NAME = FULL_SERVER_PATH + "/dto-free-inputs-by-flow-name";
+
     // GSON instance
     public final static Gson GSON_INSTANCE = new Gson();
 }

@@ -37,7 +37,10 @@ public class UsersManagementTabController {
     private Set<String> users;
     private CheckListView rolesCheckList = new CheckListView();
     @FXML private GridPane GridPaneUsers;
+/*
     @FXML private CheckBox isManagerCheckBox;
+*/
+    private CheckBox isManagerCheckBox = new CheckBox();
     private Set<String> usersList;
     private Set<String> allRoles;
     private String UserName;
@@ -47,8 +50,17 @@ public class UsersManagementTabController {
     public void initialize() {
         usersListComponentController = new UsersListController(this);
         usersListComponentController.startListRefresher();
+        isManagerCheckBox.textProperty().set("Set if Manager");
+        isManagerCheckBox.setText("Set if Manager");
+        isManagerCheckBox.setTextFill(Color.PINK);
+        isManagerCheckBox.setFont(new javafx.scene.text.Font("Bold Italic", 16));
         GridPaneUsers.add(rolesCheckList,0,1);
+        GridPaneUsers.add(isManagerCheckBox,0,2);
 
+    }
+
+    public void setIsManagerCheckBox(Boolean isManager) {
+        isManagerCheckBox.setSelected(isManager);
     }
 
     public Set<String> getUsers() {

@@ -52,10 +52,10 @@ public class ClientFlowDefinitionTabController {
     public TreeView<String> getFlowsTree(){
         return flowsTree;
     }
-    public void showFlowsTree(List<String> roles) {
-        if (roles.size() != 0)
-            getAllFlows(roles);
-        else{
+/*    public void showFlowsTree(List<String> roles) {
+        if (roles.size() != 0) {
+           getAllFlows(roles);
+        }else{
             allFlows.clear();
             rootItem.getChildren().clear();
             rootItem.setExpanded(true);
@@ -63,11 +63,31 @@ public class ClientFlowDefinitionTabController {
                 flowsTree.setRoot(rootItem);
             });
         }
+    }*/
+    public void showFlowsTree(List<String> roles) {
+/*        if(roles.size()==0) {
+            allFlows.clear();
+            rootItem.getChildren().clear();
+            rootItem.setExpanded(true);
+            Platform.runLater(() -> {
+                flowsTree.setRoot(rootItem);
+            });
+        }*/
+        getAllFlows(roles);
     }
     public void getAllFlows(List<String> roles) {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.FLOWS_IN_ROLES_SERVLET).newBuilder();
-        String rolesString = roles.stream().collect(Collectors.joining(","));
-        urlBuilder.addQueryParameter("roles_list", rolesString);
+        System.out.println("before roles");
+        if(roles.size()!=0) {
+            String rolesString = roles.stream().collect(Collectors.joining(","));
+            System.out.println("1after roles");
+            urlBuilder.addQueryParameter("roles_list", rolesString);
+        }else {
+            urlBuilder.addQueryParameter("roles_list","" );
+            System.out.println("2after roles");
+
+        }
+        urlBuilder.addQueryParameter("is_manager", mainController.getHeaderClientComponentController().getIsManager().toString());
         String finalUrl = urlBuilder.build().toString();
         Request request = new Request.Builder()
                 .url(finalUrl)
@@ -87,6 +107,7 @@ public class ClientFlowDefinitionTabController {
                 DTOFlowsDefinitionInRoles dtoFlowsDefinition = gson.fromJson(jsonResponse, DTOFlowsDefinitionInRoles.class);
                 if (dtoFlowsDefinition!=null && dtoFlowsDefinition.getFlowsDefinitionInRoles()!=null) {
                     updateFlowsTree(dtoFlowsDefinition);
+                    mainController.getClientExecutionsHistoryTabController().initExecutionHistoryTable();
                 }
             }
         });
