@@ -36,9 +36,11 @@ public class AdminStatisticsTabController {
     private CategoryAxis AverageFlowsRunTimeChartXAxis;
     @FXML
     private CategoryAxis AverageStepsRunTimeChartXAxis;
+    int numberOfExecutedFlows;
 
     @FXML
     private void initialize() {
+        numberOfExecutedFlows =0;
         Node label1 = FlowNumberOfRunsChartXAxis.lookup(".axis-label");
         label1.setTranslateY(10);
         Node label2 = StepNumberOfRunsChartXAxis.lookup(".axis-label");
@@ -48,9 +50,12 @@ public class AdminStatisticsTabController {
         Node label4 = AverageStepsRunTimeChartXAxis.lookup(".axis-label");
         label4.setTranslateY(10);
     }
-    public void initCharts(DTOFlowAndStepStatisticData statisticData) {
-        initFlowsChart(statisticData.getFlowsStatisticData());
-        initStepsChart(statisticData.getStepsStatisticData());
+    public void initCharts(DTOFlowAndStepStatisticData statisticData){
+        if(statisticData.getFlowsStatisticData().size() != numberOfExecutedFlows){
+            initFlowsChart(statisticData.getFlowsStatisticData());
+            initStepsChart(statisticData.getStepsStatisticData());
+            numberOfExecutedFlows = statisticData.getFlowsStatisticData().size();
+        }
     }
     public void initFlowsChart(List<DTOStatisticData> flowsStatisticData) {
         Platform.runLater(() -> {

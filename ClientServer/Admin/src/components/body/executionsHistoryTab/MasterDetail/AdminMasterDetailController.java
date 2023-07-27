@@ -41,7 +41,7 @@ public class AdminMasterDetailController {
     @FXML
     private MasterDetailPane FlowMasterDetails;
     private AdminExecutionsHistoryTabController flowExecutionHistoryTabController;
-    private DTOFlowExecution flowExecution;
+    private DTOFlowExeInfo flowExecution;
     private VBox detailPane;
     private List<String> addedStepNames = new ArrayList<>();
     private int stepCounter;

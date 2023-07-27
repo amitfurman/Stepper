@@ -54,7 +54,7 @@ public class LoginController {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Platform.runLater(() ->
-                        errorMessageProperty.set("Something went wrong1: " + e.getMessage())
+                        errorMessageProperty.set("Something went wrong: " + e.getMessage())
                 );
             }
 
@@ -63,7 +63,7 @@ public class LoginController {
                 if (response.code() != 200) {
                     String responseBody = response.body().string();
                     Platform.runLater(() ->
-                            errorMessageProperty.set("Something went wrong2: " + responseBody+ " " + response.code())
+                            errorMessageProperty.set("Something went wrong: " + responseBody+ " " + response.code())
                     );
                 } else {
                     Platform.runLater(() -> {

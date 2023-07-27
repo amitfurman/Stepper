@@ -46,4 +46,6 @@ public class DTOFlowExeInfo {
     public List<DTOFreeInputs> getFreeInputs() {return freeInputs;}
     public List<DTOStepsInFlow> getSteps() {return steps;}
     public List<DTOOutput> getOutputs() {return outputs;}
+    public DTOFlowAndStepStatisticData getStatisticData() {return statisticData;}
+
 }

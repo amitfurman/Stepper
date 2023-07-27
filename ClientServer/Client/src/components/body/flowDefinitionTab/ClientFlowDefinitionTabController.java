@@ -43,7 +43,7 @@ public class ClientFlowDefinitionTabController {
     @FXML
     public void setPressOnExecuteFlowButton() {
         mainController.goToClientFlowExecutionTab(chosenFlowName);
-       // mainController.initDataInFlowExecutionTab();
+        mainController.initDataInFlowExecutionTab();
 
     }
     public void setMainController(CommonController mainController) {

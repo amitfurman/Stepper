@@ -10,6 +10,7 @@ public class AdminExecutionHistoryEntry {
         this.flowName = flowName;
         this.startDate = startDate;
         this.runResult = runResult;
+        this.userName = userName;
     }
     public String getFlowName() {
         return flowName;
@@ -17,10 +18,10 @@ public class AdminExecutionHistoryEntry {
     public void setFlowName(String flowName) {this.flowName = flowName; }
     public String getStartDate() {return startDate;}
     public void setStartDate(String startDate) {this.startDate = startDate;}
-    public String getRunResult() {
-        return runResult;
-    }
-    public void setRunResult(String runResult) {
-        this.runResult = runResult;
-    }
+    public String getRunResult(){return runResult;}
+    public void setRunResult(String runResult) {this.runResult = runResult;}
+    public String getUserName(){return userName;}
+    public void setUserName(String runResult) {this.userName = userName;}
+
+
 }

@@ -10,6 +10,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import okhttp3.*;
 import org.controlsfx.control.CheckListView;
 import org.jetbrains.annotations.NotNull;
@@ -52,8 +55,8 @@ public class UsersManagementTabController {
         usersListComponentController.startListRefresher();
         isManagerCheckBox.textProperty().set("Set if Manager");
         isManagerCheckBox.setText("Set if Manager");
-        isManagerCheckBox.setTextFill(Color.PINK);
-        isManagerCheckBox.setFont(new javafx.scene.text.Font("Bold Italic", 16));
+        isManagerCheckBox.setTextFill(Color.BLACK);
+        isManagerCheckBox.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 16));
         GridPaneUsers.add(rolesCheckList,0,1);
         GridPaneUsers.add(isManagerCheckBox,0,2);
 

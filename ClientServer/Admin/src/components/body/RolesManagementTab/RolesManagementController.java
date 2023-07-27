@@ -64,7 +64,7 @@ public class RolesManagementController {
         checkBoxGridPane.add(flowsCheckList,0,1);
 
         titleLabel = new Label("Users List:");
-        titleLabel.setTextFill(Color.web("#0076a3"));
+        titleLabel.setTextFill(Color.web("#ffa6c5"));
         titleLabel.setStyle("-fx-font-weight: bold");
         titleLabel.setAlignment(Pos.CENTER);
         usersListvbox = new VBox(titleLabel, usersListView);

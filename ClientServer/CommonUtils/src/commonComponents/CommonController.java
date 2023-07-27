@@ -175,5 +175,7 @@ public class CommonController {
     public HeaderClientController getHeaderClientComponentController() {return headerClientComponentController;}
 
     public ClientExecutionsHistoryTabController getClientExecutionsHistoryTabController() {return clientExecutionsHistoryTabController;}
+    public AdminStatisticsTabController getAdminStatisticsTabController() {return adminStatisticsTabController;}
+
 }
 

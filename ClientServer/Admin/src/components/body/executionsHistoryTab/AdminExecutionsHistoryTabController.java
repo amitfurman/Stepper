@@ -98,6 +98,22 @@ public class AdminExecutionsHistoryTabController {
         executionHistoryGrid.add(masterDetailPane, 0 , 2);
         startExecutionTableRefresher();
     }
+
+    public void startExecutionTableRefresher() {
+        this.adminRefresher = new AdminRefresher(this::updateClientData);
+        timer = new Timer();
+        timer.schedule(adminRefresher, REFRESH_RATE, REFRESH_RATE);
+    }
+
+    private void updateClientData(List<DTOFlowExeInfo> flowExeList) {
+        //initExecutionHistoryTable();
+        initExecutionHistoryDataList(flowExeList);
+        addFilteringFunctionality();
+        if(flowExeList.size()!=0) {
+            mainController.getAdminStatisticsTabController().initCharts(flowExeList.get(0).getStatisticData());
+        }
+
+    }
     private void setMasterDetailsController(AdminMasterDetailController masterDetailController) {this.masterDetailController = masterDetailController;}
 /*    public void initExecutionHistoryTable() {
         System.out.println("initExecutionHistoryTable");
@@ -188,7 +204,7 @@ public class AdminExecutionsHistoryTabController {
             filterExecutionHistoryTable((String) newValue);
         });
     }
-    private void filterExecutionHistoryTable(String filterValue) {
+    public void filterExecutionHistoryTable(String filterValue) {
         if (filterValue.equals("All")) {
             executionHistoryTable.setItems(executionHistoryData);
         } else {
