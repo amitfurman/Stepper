@@ -33,6 +33,8 @@ public class CollectFilesInFolder extends AbstractStepDefinition {
         Instant start = Instant.now();
         String folderPath = context.getDataValue(IO_NAMES.FOLDER_NAME, String.class);
         String filter = context.getDataValue(IO_NAMES.FILTER, String.class);
+        System.out.println("filter: " + filter);
+        System.out.println("folderPath: " + folderPath);
         FileListData FILES_LIST = new FileListData(new ArrayList<File>());
         int TotalFound = 0 ;
         File folder = new File(folderPath);

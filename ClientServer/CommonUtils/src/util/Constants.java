@@ -35,7 +35,9 @@ public class Constants {
     public final static String GET_DTO_FLOW_EXECUTION_SERVLET = FULL_SERVER_PATH + "/flow-execution-data";
     public final static String UPDATE_USER = FULL_SERVER_PATH + "/update-user";
     public final static String IS_MANAGER_SERVLET = FULL_SERVER_PATH + "/is-manager";
-    public final static String USERS_OF_ROLE_SERVLET = FULL_SERVER_PATH + "/users-of-role";
+    public final static String GET_USERS_PER_ROLE = FULL_SERVER_PATH + "/users-ro-each-role";
+    public final static String GET_CONTINUATION = FULL_SERVER_PATH + "/get-continuation";
+    public final static String  GET_CONTINUATION_VALUES = FULL_SERVER_PATH + "/get-continuation-values";
 
     // GSON instance
     public final static Gson GSON_INSTANCE = new Gson();

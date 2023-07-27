@@ -140,25 +140,10 @@ public class CommonController {
         this.adminStatisticsTabController = statisticsTabComponentController;
         adminStatisticsTabController.setMainController(this);
     }
-/*    public void goToFlowExecutionTab(String chosenFlowName) {
-    flowName = chosenFlowName;
 
-        Tab flowExecutionTab = tabPane.getTabs().stream()
-                .filter(tab -> tab.getId().equals("flowExecutionTab"))
-                .findFirst()
-                .orElse(null);
+    public void initDataInFlowExecutionTab() {if (clientFlowExecutionTabController!=null) clientFlowExecutionTabController.initDataInFlowExecutionTab();}
 
-        if (flowExecutionTab != null) {
-            tabPane.getSelectionModel().select(flowExecutionTab);
-        }
-
-        List<DTOSingleFlowIOData> freeInputs = systemEngineInterface.getAllFlows().getFlowByName(chosenFlowName).getFlowFreeInputs();
-        List<DTOSingleFlowIOData> sortedList = freeInputs.stream()
-                .sorted(Comparator.comparing(obj -> obj.getNecessity().equals(DataNecessity.MANDATORY) ? 0 : 1))
-                .collect(Collectors.toList());
-        flowExecutionTabController.initInputsTable(sortedList);
-    }*/
-   /* public void goToStatisticsTab() {
+    /* public void goToStatisticsTab() {
 
         DTOFlowAndStepStatisticData statisticData = systemEngineInterface.getStatisticData();
 

@@ -60,7 +60,7 @@ public class FlowExecution  implements Serializable {
     public Instant getStartTime() { return startTime; }
     public Duration getTotalTime() { return totalTime; }
     public Map<String, Object> getFreeInputsValues() { return freeInputsValues; }
-    public void setFreeInputsValues(Map<String, Object> freeInputs) { this.freeInputsValues = freeInputs; }
+    public void setFreeInputsValues(Map<String, Object> freeInputs) { this.freeInputsValues =new HashMap<>(freeInputs); }
     public List<SingleFlowIOData> getFreeInputsList() { return freeInputsList; }
     public List<SingleFlowIOData> getIOlist() { return IOlist; }
 

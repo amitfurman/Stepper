@@ -44,13 +44,17 @@ public class RolesManagementController {
     @FXML private TreeView<String> roleDetailsTree;
     @FXML private Button newButton;
     @FXML private GridPane checkBoxGridPane;
-   @FXML private ListView usersOfRole;
     private CheckListView flowsCheckList = new CheckListView();
+    private ListView<String> usersListView = new ListView<>();
+/*
     private CheckListView usersCheckList = new CheckListView();
+*/
     private DTORolesList returnedRolesList;
     private String currRole;
     private Set<String> usersList;
     Set<String> allFlows;
+    private VBox usersListvbox;
+    private Label titleLabel;
 
     public void setMainController(CommonController mainController) {
         this.mainController = mainController;
@@ -58,7 +62,14 @@ public class RolesManagementController {
     @FXML
     public void initialize() {
         checkBoxGridPane.add(flowsCheckList,0,1);
-        checkBoxGridPane.add(usersCheckList,0,2);
+
+        titleLabel = new Label("Users List:");
+        titleLabel.setTextFill(Color.web("#0076a3"));
+        titleLabel.setStyle("-fx-font-weight: bold");
+        titleLabel.setAlignment(Pos.CENTER);
+        usersListvbox = new VBox(titleLabel, usersListView);
+        checkBoxGridPane.add(usersListvbox, 0, 2);
+
     }
 
     public void getAllFlows() {
@@ -79,8 +90,8 @@ public class RolesManagementController {
     @FXML
     public void setPressOnSave() {
         ObservableList<String> checkedItems = flowsCheckList.getCheckModel().getCheckedItems();
-        ObservableList<String> checkedUsersItems = usersCheckList.getCheckModel().getCheckedItems();
-        updateRoles(checkedItems,checkedUsersItems);
+        //ObservableList<String> checkedUsersItems = usersCheckList.getCheckModel().getCheckedItems();
+        //updateRoles(checkedItems,checkedUsersItems);
 
     }
     public void updateRoles(ObservableList<String> checkedItems, ObservableList<String> checkedUsersItems) {
@@ -328,11 +339,12 @@ public class RolesManagementController {
 
 
             pressToSeeFullDetailsButton.setOnAction(event -> {
+
                 currRole = role.getName();
                 showChosenRole(role);
                 flowsCheckList.getItems().clear();
                 showFlowsToEachRole(role);
-                getUserOfRole(role);
+                showUsersToEachRole(role);
             });
 
             rootItem.getChildren().add(branchItem);
@@ -367,7 +379,7 @@ public class RolesManagementController {
         SaveButton.setDisable(isEmptyFlowDetailsTree);
     }
     public void showFlowsToEachRole(DTORole role){
-       flowsCheckList = new CheckListView();
+        flowsCheckList = new CheckListView();
 
         for (String currFlow : allFlows) {
             flowsCheckList.getItems().add(currFlow);
@@ -380,11 +392,11 @@ public class RolesManagementController {
             }
         }
         checkBoxGridPane.add(flowsCheckList, 0, 1);
-
     }
 
-    public void getUserOfRole(DTORole role){
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.USERS_OF_ROLE_SERVLET).newBuilder();
+
+    public void showUsersToEachRole(DTORole role){
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.GET_USERS_PER_ROLE).newBuilder();
         urlBuilder.addQueryParameter("roleName", role.getName());
         String finalUrl = urlBuilder.build().toString();
         Request request = new Request.Builder()
@@ -396,24 +408,35 @@ public class RolesManagementController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String jsonResponse = response.body().string();
                 Gson gson = new Gson();
-                //List<String> users = gson.fromJson(jsonResponse, List<String>.class);
                 List<String> users = GSON_INSTANCE.fromJson(jsonResponse, new TypeToken<List<String>>(){}.getType());
-                //rolesListConsumer.accept(userRolesNames != null ? new ArrayList<>(userRolesNames) : Collections.emptyList());
                 if (users !=null) {
-                   showUsersToEachRole(users);
+                    updateUserList(users);
                 }
 
             }
         });
+
     }
-    public void showUsersToEachRole(List<String> users){
-       /* usersCheckList = new CheckListView();
+
+    public void updateUserList(List<String> users){
+        Platform.runLater(() -> {
+            usersListView = new ListView<>();
+            for (String user : users) {
+                usersListView.getItems().add(user);
+            }
+            usersListvbox = new VBox(titleLabel, usersListView);
+            checkBoxGridPane.add(usersListvbox, 0, 2);        });
+    }
+
+/*
+        usersCheckList = new CheckListView();
         usersList = mainController.getUsersManagementTabController().getUsers();
         for (String user : usersList) {
             usersCheckList.getItems().add(user);
@@ -424,13 +447,7 @@ public class RolesManagementController {
             }
         }
         checkBoxGridPane.add(usersCheckList,0,2);
-        */
-        System.out.println("*******************************" + users);
-        Platform.runLater(() -> {
-            for (String user : users) {
-                usersOfRole.getItems().add(user);
-            }
-        });
-    }
+
+ */
 
 }

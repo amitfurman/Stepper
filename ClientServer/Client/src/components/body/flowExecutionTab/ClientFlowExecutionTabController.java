@@ -67,7 +67,7 @@ public class ClientFlowExecutionTabController {
 
     private final SimpleStringProperty executedFlowIDProperty;
 
-    private TableView<FlowContinuationMapping> continuationTableView;
+    private TableView<DTOContinuationMapping> continuationTableView;
 
     @FXML
     private AnchorPane continuationAnchorPane;
@@ -316,6 +316,11 @@ public class ClientFlowExecutionTabController {
         executeButton.setDisable(!hasAllMandatoryInputs);
     }
     public void updateFreeInputMap(Input input, Object newValue) {
+        System.out.println(input.getStepName() + "." + input.getOriginalName() + " = " + newValue);
+        freeInputMap.put(input.getStepName() + "." + input.getOriginalName(), newValue);
+    }
+    public void updateFreeInputMap(DTOInput input, Object newValue) {
+        System.out.println(input.getStepName() + "." + input.getOriginalName() + " = " + newValue);
         freeInputMap.put(input.getStepName() + "." + input.getOriginalName(), newValue);
     }
     public boolean hasAllMandatoryInputs(Map<String, Object> freeInputMap) {
@@ -368,11 +373,16 @@ public class ClientFlowExecutionTabController {
     void StartExecuteFlowButton(ActionEvent event){
         masterDetailPane = new MasterDetailPane();
         DTOFreeInputsFromUser freeInputs = new DTOFreeInputsFromUser(freeInputMap);
+        System.out.println("before active flow!!! ");
+        System.out.println("freeInputsMap: " + freeInputMap);
+        System.out.println("freeInputs: " + freeInputs);
         activateFlow(mainController.getFlowName(), freeInputs);
 
     }
 
     public void activateFlow(String flowName, DTOFreeInputsFromUser freeInputs) {
+        System.out.println("active flow freeinputs: " + freeInputs);
+
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("flowName", flowName);
         jsonObject.add("freeInputs", new Gson().toJsonTree(freeInputs));
@@ -403,11 +413,8 @@ public class ClientFlowExecutionTabController {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
 
+                    //DTOFlowID flowExecution = new Gson().fromJson(response.body().string(), DTOFlowID.class);
                     DTOFlowID flowExecution = new Gson().fromJson(response.body().string(), DTOFlowID.class);
-
-                    System.out.println("flow UUID: " + flowExecution.getUniqueIdByUUID());
-                    System.out.println("flow ID: " +flowExecution.getUniqueId());
-
                     setExecutedFlowID(flowExecution.getUniqueIdByUUID());
 
                     freeInputMap = new HashMap<>();
@@ -442,7 +449,39 @@ public class ClientFlowExecutionTabController {
         });
 
     }
-    public void initFlowContinuationTableView(List<FlowContinuationMapping> mappings) {
+    public void backToFlowExecutionTabAfterExecution(String flowName) {
+             System.out.println("backToFlowExecutionTabAfterExecution");
+        //getMainController().initExecutionHistoryTableInExecutionsHistoryTab();
+        //getMainController().goToStatisticsTab();
+        getAllContinuationMap(flowName);
+    }
+    public void getAllContinuationMap(String flowName) {
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.GET_CONTINUATION).newBuilder();
+        urlBuilder.addQueryParameter("flowName", flowName);
+        String finalUrl = urlBuilder.build().toString();
+
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .build();
+
+        OkHttpClient HTTP_CLIENT = new OkHttpClient();
+        Call call = HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println("on failure");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String jsonArrayOfUsersRoles = response.body().string();
+                LinkedList<DTOContinuationMapping> continuationMapping = GSON_INSTANCE.fromJson(jsonArrayOfUsersRoles, new TypeToken<LinkedList<DTOContinuationMapping>>(){}.getType());
+                initFlowContinuationTableView(continuationMapping);
+            }
+        });
+    }
+
+    public void initFlowContinuationTableView(List<DTOContinuationMapping> mappings) {
         Platform.runLater(() -> {
             if (continuationTableView == null) {
 
@@ -460,28 +499,26 @@ public class ClientFlowExecutionTabController {
                 continuationTableView.getItems().clear();
             }
 
-            TableColumn<FlowContinuationMapping, String> targetFlowColumn = new TableColumn<>("Target Flow");
+            TableColumn<DTOContinuationMapping, String> targetFlowColumn = new TableColumn<>("Target Flow");
             targetFlowColumn.setCellValueFactory(new PropertyValueFactory<>("targetFlow"));
             targetFlowColumn.prefWidthProperty().bind(continuationTableView.widthProperty().multiply(0.5)); // Set to 50% width
-            TableColumn<FlowContinuationMapping, FlowContinuationMapping> actionColumn = new TableColumn<>("");
-            actionColumn.setCellFactory(param -> new TableCell<FlowContinuationMapping, FlowContinuationMapping>() {
+            TableColumn<DTOContinuationMapping, DTOContinuationMapping> actionColumn = new TableColumn<>("");
+            actionColumn.setCellFactory(param -> new TableCell<DTOContinuationMapping, DTOContinuationMapping>() {
                 private final Button btn = new Button("Continue To Flow");
                 {
 
                     btn.getStyleClass().add("continue-to-flow-button");
                     btn.setOnAction(event -> {
-                                FlowContinuationMapping mapping = getTableView().getItems().get(getIndex());
+                                DTOContinuationMapping mapping = getTableView().getItems().get(getIndex());
                                 String targetFlow = mapping.getTargetFlow();
                                 String sourceFlow = mapping.getSourceFlow();
                                 getMainController().goToClientFlowExecutionTab(targetFlow);
-                            /*    getMainController().initDataInFlowExecutionTab();
-                                List<Input> valuesList = getMainController().getSystemEngineInterface().getValuesListFromContinuationMap(sourceFlow, targetFlow);
-                                setInputValuesFromContinuationMap(valuesList);*/
-                                initContinuationVbox();
+                                getMainController().initDataInFlowExecutionTab();
+                                getValueList(sourceFlow, targetFlow);
                     });
                 }
                 @Override
-                protected void updateItem(FlowContinuationMapping item, boolean empty) {
+                protected void updateItem(DTOContinuationMapping item, boolean empty) {
                     super.updateItem(item, empty);
                     if (empty) {
                         setGraphic(null);
@@ -495,7 +532,38 @@ public class ClientFlowExecutionTabController {
             continuationTableView.setItems(FXCollections.observableArrayList(mappings));
         });
     }
-    public void setInputValuesFromContinuationMap(List<Input> valuesList) {
+
+    public void getValueList(String sourceFlow, String targetFlow){
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.GET_CONTINUATION_VALUES).newBuilder();
+        urlBuilder.addQueryParameter("sourceFlow", sourceFlow);
+        urlBuilder.addQueryParameter("targetFlow", targetFlow);
+        String finalUrl = urlBuilder.build().toString();
+
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .build();
+
+        OkHttpClient HTTP_CLIENT = new OkHttpClient();
+        Call call = HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println("on failure");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String jsonArrayOfUsersRoles = response.body().string();
+                List<DTOInput> valuesList  = GSON_INSTANCE.fromJson(jsonArrayOfUsersRoles, new TypeToken<List<DTOInput>>(){}.getType());
+                setInputValuesFromContinuationMap(valuesList);
+                initContinuationVbox();
+            }
+        });
+
+    }
+
+    public void setInputValuesFromContinuationMap(List<DTOInput> valuesList) {
+        System.out.println("value List: " + valuesList);
         for (Node node : inputValuesHBox.getChildren()) {
             if (node instanceof VBox) {
                 VBox vbox = (VBox) node;
@@ -507,10 +575,12 @@ public class ClientFlowExecutionTabController {
                     originalName = "TIME_TO_SPEND";
                 }
                 String finalOriginalName = originalName;
+                System.out.println("original name: " + finalOriginalName);
                 valuesList.stream()
                         .filter(data -> data.getOriginalName().equals(finalOriginalName))
                         .findFirst()
                         .ifPresent(input -> {
+                            System.out.println(inputNode.getClass().getName());
                             if (inputNode instanceof TextField) {
                                 TextField textField = (TextField) inputNode;
                                 Object value = input.getValue();
@@ -521,19 +591,23 @@ public class ClientFlowExecutionTabController {
                             } else if (inputNode instanceof Spinner) {
                                 Spinner<Integer> spinner = (Spinner<Integer>) inputNode;
                                 Object value = input.getValue();
+/*                                if (value instanceof Integer || value instanceof Double) {
+                                    spinner.getValueFactory().setValue((Integer) value);
+                                    updateFreeInputMap(input, value);
+                                }*/
                                 if (value instanceof Integer) {
                                     spinner.getValueFactory().setValue((Integer) value);
                                     updateFreeInputMap(input, value);
+                                } else if (value instanceof Double) {
+                                    int roundedValue = (int) Math.round((Double) value);
+                                    spinner.getValueFactory().setValue(roundedValue);
+                                    updateFreeInputMap(input, roundedValue);
                                 }
                             }
-                        });
+                        } );
             }
         }
     }
 
-    public void backToFlowExecutionTabAfterExecution() {
-        //getMainController().initExecutionHistoryTableInExecutionsHistoryTab();
-        //getMainController().goToStatisticsTab();
-        //initFlowContinuationTableView(mainController.getSystemEngineInterface().getAllContinuationMappingsWithSameSourceFlow(mainController.getFlowName()));
-    }
+
 }

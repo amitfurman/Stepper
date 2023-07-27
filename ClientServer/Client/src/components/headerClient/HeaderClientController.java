@@ -106,13 +106,15 @@ public class HeaderClientController {
     }
 
     public void updateManagerLabel(Boolean isManager) {
-        Platform.runLater(() -> {
-            if (isManager) {
-                managerCheckbox.setSelected(true);
-            } else {
-                managerCheckbox.setSelected(false);
-            }
-        });
+        if (isManager != null) {
+            Platform.runLater(() -> {
+                if (isManager) {
+                    managerCheckbox.setSelected(true);
+                } else {
+                    managerCheckbox.setSelected(false);
+                }
+            });
+        }
     }
 
     public void updateRolesLabel(List<String> roles) {

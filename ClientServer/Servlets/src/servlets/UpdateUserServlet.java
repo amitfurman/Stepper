@@ -30,7 +30,6 @@ public class UpdateUserServlet extends HttpServlet {
         }
         String jsonPayload = payloadBuilder.toString();
         Set<String> checkedItems = new Gson().fromJson(jsonPayload, new TypeToken<Set<String>>() {}.getType());
-        System.out.println("checkedItems in servlet: " + checkedItems);
         systemengine systemEngine = ServletUtils.getSystemEngine(getServletContext());
         systemEngine.updateUser(userName, checkedItems, isManager);
 

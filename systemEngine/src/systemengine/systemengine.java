@@ -41,8 +41,10 @@ public interface systemengine {
     DTOFlowExecution getDTOFlowExecutionByName(String flowName);
 
     LinkedList<FlowContinuationMapping> getAllContinuationMappingsWithSameSourceFlow(String currFlowName);
+    LinkedList<DTOContinuationMapping> getDTOAllContinuationMappingsWithSameSourceFlow(String currFlowName);
     List<Input> getFreeInputsFromCurrFlow (String flowName);
     Map<String , Object> continuationFlowExecution(String sourceFlow, String targetFlow);
+    LinkedList<DTOInput> getDTOValuesListFromContinuationMap(String sourceFlowName, String targetFlowName);
     List<Input> getValuesListFromContinuationMap(String sourceFlowName, String targetFlowName);
     UserManager getUserMangerObject();
     DTORolesList getDTORolesList();
@@ -56,9 +58,9 @@ public interface systemengine {
     List<DTOFlowFreeInputs> getDTOFlowFreeInputs(String flowName);
 
     DTOAllFlowsNames getAllFlowsList();
-    List<DTOStepsInFlow> getDTOStepsInFlow(UUID flowId);
+    DTOFlowExeInfo getAllFlowExecutionData(UUID flowId);
 
     void updateUser(String userName, Set<String> checkedItems, Boolean isManager);
 
-    List<String> getUsersOfRole(String roleName);
+    Set<String> getUsersOfRoles(String roleName);
 }

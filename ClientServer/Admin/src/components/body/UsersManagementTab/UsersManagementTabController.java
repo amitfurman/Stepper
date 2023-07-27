@@ -220,17 +220,19 @@ public class UsersManagementTabController {
     }
     public void showRolesToEachRole(DTORolesList returnedRolesList){
         rolesCheckList = new CheckListView();
-        if (returnedRolesList.getRoles().size()!=0) {
+        if(returnedRolesList!=null) {
+            if (returnedRolesList.getRoles().size() != 0) {
+                for (DTORole role : returnedRolesList.getRoles()) {
+                    rolesCheckList.getItems().add(role.getName());
+                }
+            }
             for (DTORole role : returnedRolesList.getRoles()) {
-                rolesCheckList.getItems().add(role.getName());
+                if (role.getUsers().contains(UserName)) {
+                    rolesCheckList.getCheckModel().check(role.getName());
+                }
             }
+            GridPaneUsers.add(rolesCheckList, 0, 1);
         }
-        for (DTORole role : returnedRolesList.getRoles()) {
-           if (role.getUsers().contains(UserName)) {
-                rolesCheckList.getCheckModel().check(role.getName());
-            }
-        }
-        GridPaneUsers.add(rolesCheckList,0,1);
     }
 
     /*

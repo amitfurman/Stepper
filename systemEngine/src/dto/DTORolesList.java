@@ -13,12 +13,8 @@ public class DTORolesList {
     private Set<DTORole> rolesList;
 
     public DTORolesList(Set<Role> roles) {
-        System.out.println("roles: "+roles);
         rolesList = new HashSet<>();
         for (Role role : roles) {
-            System.out.println("1.role name: " + role.getName());
-            System.out.println("2.flow list: " + role.getFlowsInRole());
-            System.out.println("3.user list: "+role.getUsersInRole().stream().collect(Collectors.toList()));
             rolesList.add(new DTORole(role.getName(), role.getDescription(),role.getFlowsInRole(), role.getUsersInRole().stream().collect(Collectors.toList())));
         }
     }
