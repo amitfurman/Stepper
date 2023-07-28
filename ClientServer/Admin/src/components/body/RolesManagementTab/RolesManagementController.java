@@ -152,29 +152,40 @@ public class RolesManagementController {
 
         Button saveButton = new Button("Press to create a new role");
         saveButton.getStyleClass().add("role-button");
+        Label errorLabel = new Label();
+        errorLabel.getStyleClass().add("data-label");
         saveButton.setOnAction(e -> {
+            errorLabel.setText("");
+            System.out.println("innnnnnn the ");
             String name = nameTextField.getText();
             String description = descriptionTextField.getText();
             List<String> chosenItems = new ArrayList<>(checkedItems);
             Set<String> flowsInRole = new HashSet<>(chosenItems);
 
-            returnedRolesList.getRoles().add(new DTORole(name, description, flowsInRole, null));
+            String finalName = name;
+            System.out.println("roles: " + returnedRolesList );
+            if(returnedRolesList.getRoles().stream().anyMatch(r->r.getName().equals(finalName))) {
+                errorLabel.setText("There is already role with this name. Please choose a new one.");
+            }else {
+                returnedRolesList.getRoles().add(new DTORole(name, description, flowsInRole, null));
 
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("name", name);
-            jsonObject.addProperty("description", description);
-            jsonObject.addProperty("chosenItems", new Gson().toJson(chosenItems));
-            String jsonPayload = jsonObject.toString();
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("name", name);
+                jsonObject.addProperty("description", description);
+                jsonObject.addProperty("chosenItems", new Gson().toJson(chosenItems));
+                String jsonPayload = jsonObject.toString();
 
-            createNewRole(jsonPayload);
-            initRolesTree();
+                createNewRole(jsonPayload);
+                initRolesTree();
 
-            // Close the popup window
-            popupWindow.close();
+                // Close the popup window
+                popupWindow.close();
+            }
+
         });
 
 
-        layout.getChildren().addAll(labelHbox,nameHbox, descriptionHbox, flowVBox, saveButton);
+        layout.getChildren().addAll(labelHbox,nameHbox, descriptionHbox, flowVBox, saveButton, errorLabel);
 
         layout.setAlignment(Pos.CENTER);
         Scene scene1 = new Scene(layout, 700, 400);
@@ -351,6 +362,8 @@ public class RolesManagementController {
                 currRole = role.getName();
                 showChosenRole(role);
                 flowsCheckList.getItems().clear();
+                usersListvbox.getChildren().clear();
+                usersListView.getItems().clear();
                 showFlowsToEachRole(role);
                 showUsersToEachRole(role);
             });
@@ -434,18 +447,20 @@ public class RolesManagementController {
 
     }
 
-    public void updateUserList(List<String> users){
-        Platform.runLater(() -> {
+    public void updateUserList(List<String> users) {
+
+       Platform.runLater(() -> {
             System.out.println("user list in roleM: " + users);
-            ObservableList<String> Users= (ObservableList<String>) users;
-            usersListView.setItems(Users);
-            /*
             usersListView = new ListView<>();
+
             for (String user : users) {
                 usersListView.getItems().add(user);
-            }*/
+            }
+
             usersListvbox = new VBox(titleLabel, usersListView);
-            checkBoxGridPane.add(usersListvbox, 0, 2);        });
+            checkBoxGridPane.add(usersListvbox, 0, 2);
+       });
+
     }
 
 /*
