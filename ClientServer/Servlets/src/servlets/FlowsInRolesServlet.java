@@ -21,11 +21,8 @@ import java.util.List;
 @WebServlet(name = "FlowsInRolesServlet", urlPatterns = "/flows-in-roles")
 public class FlowsInRolesServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("in servlet");
         String roles = request.getParameter("roles_list");
-        System.out.println(roles + " in servlet");
         Boolean isManager = Boolean.parseBoolean(request.getParameter("is_manager"));
-        System.out.println("is manager in servlet: " + isManager);
         response.setContentType("application/json");
        // if (roles!="") {
             List<String> rolesList = Arrays.asList(roles.split(","));

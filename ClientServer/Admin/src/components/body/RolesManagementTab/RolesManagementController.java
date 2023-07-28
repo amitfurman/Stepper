@@ -71,6 +71,14 @@ public class RolesManagementController {
         checkBoxGridPane.add(usersListvbox, 0, 2);
 
     }
+    public Integer getNumberOfAllFlows(){
+        return allFlows.size();
+    }
+
+    public void setAllFlows(Set<String> flows){
+        allFlows = flows;
+    }
+
 
     public void getAllFlows() {
         HttpClientUtil.runAsync(Constants.ALL_FLOWS_SERVLET, new Callback() {
@@ -416,6 +424,7 @@ public class RolesManagementController {
                 String jsonResponse = response.body().string();
                 Gson gson = new Gson();
                 List<String> users = GSON_INSTANCE.fromJson(jsonResponse, new TypeToken<List<String>>(){}.getType());
+                System.out.println("in the requset the user list is: " + users);
                 if (users !=null) {
                     updateUserList(users);
                 }
@@ -427,10 +436,14 @@ public class RolesManagementController {
 
     public void updateUserList(List<String> users){
         Platform.runLater(() -> {
+            System.out.println("user list in roleM: " + users);
+            ObservableList<String> Users= (ObservableList<String>) users;
+            usersListView.setItems(Users);
+            /*
             usersListView = new ListView<>();
             for (String user : users) {
                 usersListView.getItems().add(user);
-            }
+            }*/
             usersListvbox = new VBox(titleLabel, usersListView);
             checkBoxGridPane.add(usersListvbox, 0, 2);        });
     }

@@ -131,7 +131,6 @@ public class ClientExecutionsHistoryTabController {
     }
     private void setMasterDetailsController(ClientMasterDetailController masterDetailController) {this.masterDetailController = masterDetailController;}
     public void initExecutionHistoryTable() {
-        System.out.println("initExecutionHistoryTable");
         initializeExecutionHistoryTable();
         addFilteringFunctionality();
     }

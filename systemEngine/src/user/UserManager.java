@@ -45,20 +45,14 @@ public class UserManager {
     }
 
     public DTOUserInfo getUserInfo(String userName) {
-        System.out.println("in get user info");
         UserDefinition user =  usersDefinitionSet.stream().filter(user1 -> user1.getUsername().equals(userName)).findFirst().get();
-        System.out.println("user: " + user);
         Set<DTORole> roles = new HashSet<>();
 
-        System.out.println("user roles: " + user.getRoles());
         user.getRoles().stream().forEach(role ->{
-            System.out.println("role info: " + role.getName() +" "+ role.getFlowsInRole());
             roles.add(new DTORole( role.getName(), role.getFlowsInRole()));
 
         });
-        System.out.println("roles:" + roles);
 
-        System.out.println("end user info");
         return new DTOUserInfo(user.getUsername(),roles, user.getExecutedFlows());
     }
 

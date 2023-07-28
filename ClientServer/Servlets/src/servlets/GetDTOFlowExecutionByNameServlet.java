@@ -20,9 +20,7 @@ public class GetDTOFlowExecutionByNameServlet extends HttpServlet {
         response.setContentType("application/json");
         try (PrintWriter out = response.getWriter()) {
             systemengine system = ServletUtils.getSystemEngine(getServletContext());
-            System.out.println("flowName: " + flowName);
             DTOFlowExeInfo dtoFlowExecution = system.getAllFlowExecutionDataNyName(flowName);
-            System.out.println("dtoFlowExecution: " + dtoFlowExecution.getFlowName());
             Gson gson = new Gson();
             String json = gson.toJson(dtoFlowExecution);
             out.println(json);

@@ -25,7 +25,6 @@ public class RolesServlet extends HttpServlet{
             Gson gson = new Gson();
             systemengine system = ServletUtils.getSystemEngine(getServletContext());
             DTORolesList rolesList = system.getDTORolesList();
-            System.out.println("innnnnnnnnnnnnnn ");
             rolesList.getRoles().stream().forEach(i-> System.out.println(i.getUsers()));
             String json = gson.toJson(rolesList);
             out.println(json);

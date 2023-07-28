@@ -24,7 +24,9 @@ public class UsersToEachRoleServlet extends HttpServlet {
             Gson gson = new Gson();
             systemengine system = ServletUtils.getSystemEngine(getServletContext());
             Set<String> usersSet = system.getUsersOfRoles(roleName);
+            System.out.println("in servlet set users: " + usersSet);
             List<String> usersList = new ArrayList<>(usersSet);
+            System.out.println("in servlet list users: " + usersList);
             String json = gson.toJson(usersList);
             out.println(json);
             out.flush();

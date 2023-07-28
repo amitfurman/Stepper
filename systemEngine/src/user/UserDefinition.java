@@ -12,6 +12,8 @@ public class UserDefinition {
     Set<Role> roles;
     Set<String> executedFlows;
 
+    Set<String> flows; //i add this set for when the user is manager and need all the flows
+
     public UserDefinition(String username, boolean isManager) {
         this.username = username;
         this.isManager = isManager;
@@ -29,5 +31,13 @@ public class UserDefinition {
 
     public void setRoles(List<Role> rolesList) {
         this.roles = new HashSet<>(rolesList);
+    }
+
+    public void setFlows(Set<String> flows) {
+        this.flows = flows;
+    }
+
+    public Set<String> getFlows() {
+        return flows;
     }
 }

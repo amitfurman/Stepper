@@ -121,7 +121,6 @@ public class AdminExecutionsHistoryTabController {
         addFilteringFunctionality();
     }*/
     public void initExecutionHistoryDataList(List<DTOFlowExeInfo> flowExeList ) {
-        System.out.println("initExecutionHistoryDataList");
         executionHistoryData = FXCollections.observableArrayList();
         List<DTOFlowExeInfo> executedFlows = flowExeList.stream().filter(flow-> flow.getResultExecute() != null).collect(Collectors.toList());
         executedFlows.stream().forEach(

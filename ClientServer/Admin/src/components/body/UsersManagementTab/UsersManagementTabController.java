@@ -175,7 +175,6 @@ public class UsersManagementTabController {
                 String jsonResponse = response.body().string();
                 Gson gson = new Gson();
                 DTOUserInfo dtoUserInfo = gson.fromJson(jsonResponse, DTOUserInfo.class);
-                System.out.println("dtoUserInfo: "+ dtoUserInfo);
                 if (dtoUserInfo!=null) {
                     showDetailsInTree(dtoUserInfo);
                 }
@@ -217,16 +216,27 @@ public class UsersManagementTabController {
              branchRoles.getChildren().add(formalRole);
          }
 
-        System.out.println( "Flows:  " + dtoUserInfo.getAllFlows());
          TreeItem<String> branchFlows = new TreeItem<>("Number Of Flows: ");
-        TreeItem<String> formalFlow = new TreeItem<>(String.valueOf(dtoUserInfo.getAllFlows().size()));
+        TreeItem<String> formalFlow;
+        if(isManagerCheckBox.isSelected()) {
+           formalFlow= new TreeItem<>(String.valueOf( mainController.getRolesManagementController().getNumberOfAllFlows()));
+        }else {
+          formalFlow= new TreeItem<>(String.valueOf(dtoUserInfo.getAllFlows().size()));
+
+        }
+        /* if(isManagerCheckBox.isSelected()){
+             formalFlow = new TreeItem<>(String.valueOf(dtoUserInfo.getAllFlows().size()))
+         }else {
+             formalFlow = new TreeItem<>(String.valueOf(dtoUserInfo.getAllFlows().size()));
+         }*/
+
+
         branchFlows.getChildren().add(formalFlow);
         /* for (String flow :dtoUserInfo.getAllFlows()) {
              TreeItem<String> formalFlow = new TreeItem<>(flow);
              branchFlows.getChildren().add(formalFlow);
          }*/
 
-        System.out.println( "Number Of Flows Executed By User: " + dtoUserInfo.getExecutedFlows().size());
         TreeItem<String> branchExecutedFlows = new TreeItem<>("Number Of  Flows Executed By User: ");
         TreeItem<String> formalExecutedFlow = new TreeItem<>(String.valueOf(dtoUserInfo.getExecutedFlows().size()));
         branchExecutedFlows.getChildren().add(formalExecutedFlow);

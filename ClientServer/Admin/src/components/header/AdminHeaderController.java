@@ -2,6 +2,7 @@ package components.header;
 
 import commonComponents.CommonController;
 import components.body.RolesManagementTab.RolesManagementController;
+import dto.DTOAllFlowsNames;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -14,12 +15,14 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
+import util.Constants;
 import util.http.HttpClientUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+import static util.Constants.GSON_INSTANCE;
 import static util.Constants.UPLOAD_FILE;
 
 public class AdminHeaderController {
@@ -88,7 +91,8 @@ public class AdminHeaderController {
                             System.out.println("File uploaded successfully: " + response.message());
                             rolesManagementController = mainController.getRolesManagementController();
                             rolesManagementController.getAllFlows();
-                            rolesManagementController.initDataInRolesManagementTab();                        });
+                            rolesManagementController.initDataInRolesManagementTab();
+                        });
                     } else {
                         String errorMessage = response.body().string();
 

@@ -48,6 +48,7 @@ public class systemengineImpl implements systemengine {
     public List<Role> roles;
 
     public systemengineImpl() {
+        numberOfThreads =0;
         this.flowDefinitionList = new LinkedList<>();
         this.flowExecutionList = new LinkedList<>();
         this.statisticData = new FlowAndStepStatisticData();
@@ -96,24 +97,16 @@ public class systemengineImpl implements systemengine {
         out.println(currFlow.getName());
         freeInputs.getFreeInputMap().forEach((key, value) -> out.println(value));
         FlowExecution flowExecution = new FlowExecution(userName, currFlow);
-        out.println("1flowExecution.getUniqueIdByUUID(): " + flowExecution.getUniqueIdByUUID());
         flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
         flowExecutionList.addFirst(flowExecution);
 
-        out.println("1: " + getUserMangerObject());
-        out.println("2: " + getUserMangerObject().getUsers());
-        out.println("3: " + getUserMangerObject().getUsers().stream().filter(name->name.equals(userName)));
-        out.println("4: " + userName);
+    //add the number of Executed Flows to the user
         UserDefinition user = getUserMangerObject().getUsers().stream().filter(i->i.getUsername().equals(userName)).findFirst().get();
-        out.println("USER:" +user );
         user.getExecutedFlows().add(flowName);
-        out.println("FLOW_NAME:" +flowName );
-        out.println("ExecutedFlows():" +user.getExecutedFlows() );
 
         threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
         //return new DTOFlowExecution(flowExecution);
 
-        out.println("2flowExecution.getUniqueIdByUUID(): " + flowExecution.getUniqueIdByUUID());
         return new DTOFlowID(flowExecution.getUniqueIdByUUID());
     }
 
@@ -135,7 +128,8 @@ public class systemengineImpl implements systemengine {
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         FlowsManager flows = schema.schemaBasedJAXB(filePath);
         flowDefinitionList = flows.getAllFlows();
-        numberOfThreads = flows.getNumberOfThreads();
+        if(numberOfThreads ==0){
+        numberOfThreads = flows.getNumberOfThreads();}
         allContinuationMappings = new LinkedList<>(flows.getAllContinuationMappings());
         threadPool = Executors.newFixedThreadPool(numberOfThreads);
     }
@@ -145,11 +139,15 @@ public class systemengineImpl implements systemengine {
             UnExistsOutput, FreeInputsWithSameNameAndDifferentType, InitialInputIsNotExist, UnExistsFlow, UnExistsDataInTargetFlow, FileNotExistsException, FileIsNotXmlTypeException {
         SchemaBasedJAXBMain schema = new SchemaBasedJAXBMain();
         FlowsManager flows = schema.schemaBasedJAXB(inputStream);
-        //flowDefinitionList.addAll(flows.getAllFlows());
-        flowDefinitionList = flows.getAllFlows();
-        numberOfThreads = flows.getNumberOfThreads();
+        flowDefinitionList.addAll(flows.getAllFlows());
+      //  flowDefinitionList = flows.getAllFlows();
+        if(numberOfThreads==0) {
+            numberOfThreads = flows.getNumberOfThreads();
+        }
         allContinuationMappings = new LinkedList<>(flows.getAllContinuationMappings());
+
         threadPool = Executors.newFixedThreadPool(numberOfThreads);
+
         initRoles();
     }
 
@@ -720,32 +718,43 @@ public class systemengineImpl implements systemengine {
             rolesNames.add(role);
         });
 
-        //create new roles list to user
+        out.println("the roles i choose: " + rolesNames);
+
         List<Role> rolesList = new ArrayList<>();
-        rolesNames.stream().forEach(role -> {
-            Role role1 = roles.stream().filter(r -> r.getName().equals(role)).findFirst().get();
-            rolesList.add(role1);
-        });
+            //List<Role>  rolesList = new ArrayList<>();
+            //create new roles list to user
+            rolesNames.stream().forEach(role -> {
+                Role role1 = roles.stream().filter(r -> r.getName().equals(role)).findFirst().get();
+                rolesList.add(role1);
 
-        ////////!!!!!!!!////////////
-        //add user to new roles
-        rolesList.stream().forEach(role -> {
-            Role role1 = roles.stream().filter(r -> r.getName().equals(role.getName())).findFirst().get();
-            boolean userFound = role1.getUsersInRole().stream().anyMatch(username -> username.equals(user.getUsername()));
+                //add user to new roles
+                role1.getUsersInRole().add(userName);
+                out.println("add user to role" + role1.getName() + " now the list is: " + role1.getUsersInRole() );
 
-            if (!userFound) {
-                role1.getUsersInRole().add(user.getUsername());
-            }
-        });
+            });
+
+            /*
+            ////////!!!!!!!!////////////
+            //add user to new roles
+            rolesList.stream().forEach(role -> {
+                Role role1 = roles.stream().filter(r -> r.getName().equals(role.getName())).findFirst().get();
+                boolean userFound = role1.getUsersInRole().stream().anyMatch(username -> username.equals(user.getUsername()));
+
+                if (!userFound) {
+                    role1.getUsersInRole().add(user.getUsername());
+                }
+            });*/
 
         //remove user from roles
         user.getRoles().stream().forEach(role ->
         {
             boolean roleFound = checkedItems.stream().anyMatch(newRole -> newRole.equals(role.getName()));
             if (!roleFound) {
-                role.getUsersInRole().remove(user);
+                role.getUsersInRole().remove(userName);
+                out.println("remove user from role: " + role.getName() + " now the users: " + role.getUsersInRole());
             }
         });
+
         user.setRoles(rolesList);
 
     }

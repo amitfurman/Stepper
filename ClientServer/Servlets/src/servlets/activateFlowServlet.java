@@ -37,13 +37,9 @@ public class activateFlowServlet extends HttpServlet {
         String flowName = jsonObject.get("flowName").getAsString();
         String userName = jsonObject.get("userName").getAsString();
         DTOFreeInputsFromUser freeInputs = gson.fromJson(jsonObject.get("freeInputs"), DTOFreeInputsFromUser.class);
-        freeInputs.getFreeInputMap().forEach((k,v)->{
-            System.out.println("key: " + k + " value: " + v);
-        });
 
         systemengine systemEngine = ServletUtils.getSystemEngine(getServletContext());
         DTOFlowID flowExecution = systemEngine.activateFlowByName(userName, flowName, freeInputs);
-        System.out.println("flowExecution: " + flowExecution.getUniqueId());
         String json = gson.toJson(flowExecution);
         response.getWriter().println(json);
         response.getWriter().flush();/**/
