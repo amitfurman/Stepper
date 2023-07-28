@@ -68,7 +68,6 @@ public class FlowExecutor implements Runnable {
             context.setFinishToExecutionStep();
 
             if (stepResult.equals(StepResult.FAILURE)) {
-                System.out.println("in failure");
                 flowExecutionResult = FlowExecutionResult.FAILURE;
                 StatisticData stepStatistic = new StatisticData(flowExecution.getFlowDefinition().getFlowSteps().get(i).getStepDefinition().name(), context.getCurrInvokingStep().getTotalStepTime());
                 updateStepStatisticData(flowStatisticData, stepStatistic);
@@ -81,20 +80,15 @@ public class FlowExecutor implements Runnable {
                     break;
                 }
             }else if (stepResult.equals(StepResult.WARNING)) {
-                System.out.println("in warning");
                 flowExecutionResult =  flowExecutionResult != FlowExecutionResult.FAILURE ?  FlowExecutionResult.WARNING : FlowExecutionResult.FAILURE;
                 StatisticData stepStatistic = new StatisticData(flowExecution.getFlowDefinition().getFlowSteps().get(i).getStepDefinition().name(), context.getCurrInvokingStep().getTotalStepTime());
                 updateStepStatisticData(flowStatisticData, stepStatistic);
             }else {
-                System.out.println("in success");
                 StatisticData stepStatistic = new StatisticData(flowExecution.getFlowDefinition().getFlowSteps().get(i).getStepDefinition().name(), context.getCurrInvokingStep().getTotalStepTime());
                 updateStepStatisticData(flowStatisticData, stepStatistic);
             }
 
             context.setStepResultToCurrInvokingStep(stepResult);
-            System.out.println("before addCurrInvokingStepToStepExecutionList");
-            System.out.println("context.getCurrInvokingStep() = " + context.getCurrInvokingStep());
-            System.out.println("stepResult " + stepResult);
             context.addCurrInvokingStepToStepExecutionList();
             flowExecution.addStepExecution(context.getCurrInvokingStep());
             flowExecution.setDataValues(context.getDataValues());
@@ -103,7 +97,6 @@ public class FlowExecutor implements Runnable {
             FEdataValues = context.getDataValues();
         }
 
-        System.out.println("before set flowExecutionResult");
         flowExecution.setFlowExecutionResult(flowExecutionResult);
 
         //statistics
@@ -114,7 +107,6 @@ public class FlowExecutor implements Runnable {
         flowExecution.setTotalTime(Duration.ofMillis(totalTimeMillis));
         StatisticData currFlowStatistic = new StatisticData(flowExecution.getFlowDefinition().getName(), totalTime);
         updateFlowStatisticData(flowStatisticData, currFlowStatistic, totalTime);
-        System.out.println("Finished execution of flow " + flowExecution.getFlowDefinition().getName() + " [ID: " + flowExecution.getUniqueId() + "]");
     }
 
     void updateStepStatisticData (FlowAndStepStatisticData flowStatisticData, StatisticData stepStatistic){

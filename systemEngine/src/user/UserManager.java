@@ -30,11 +30,14 @@ public class UserManager {
     }
 
     public synchronized Set<String> getUsersNames() {
-        return Collections.unmodifiableSet(usersSet);
+        return usersSet;
+        //return Collections.unmodifiableSet(usersSet);
     }
 
     public synchronized Set<UserDefinition> getUsers() {
-        return Collections.unmodifiableSet(usersDefinitionSet);
+       return usersDefinitionSet;
+
+       // return Collections.unmodifiableSet(usersDefinitionSet);
     }
 
     public boolean isUserExists(String username) {
@@ -42,14 +45,20 @@ public class UserManager {
     }
 
     public DTOUserInfo getUserInfo(String userName) {
+        System.out.println("in get user info");
         UserDefinition user =  usersDefinitionSet.stream().filter(user1 -> user1.getUsername().equals(userName)).findFirst().get();
+        System.out.println("user: " + user);
+        Set<DTORole> roles = new HashSet<>();
 
-        Set<DTORole> roles = new HashSet<DTORole>();
-
+        System.out.println("user roles: " + user.getRoles());
         user.getRoles().stream().forEach(role ->{
+            System.out.println("role info: " + role.getName() +" "+ role.getFlowsInRole());
             roles.add(new DTORole( role.getName(), role.getFlowsInRole()));
 
         });
+        System.out.println("roles:" + roles);
+
+        System.out.println("end user info");
         return new DTOUserInfo(user.getUsername(),roles, user.getExecutedFlows());
     }
 

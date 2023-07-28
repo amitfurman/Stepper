@@ -379,8 +379,6 @@ public class ClientFlowExecutionTabController {
     }
 
     public void activateFlow(String flowName, DTOFreeInputsFromUser freeInputs) {
-        System.out.println("active flow freeinputs: " + freeInputs);
-
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("flowName", flowName);
         jsonObject.addProperty("userName", mainController.getHeaderClientComponentController().getUserName());
@@ -449,7 +447,6 @@ public class ClientFlowExecutionTabController {
 
     }
     public void backToFlowExecutionTabAfterExecution(String flowName) {
-        System.out.println("backToFlowExecutionTabAfterExecution");
         //getMainController().goToStatisticsTab();
         getAllContinuationMap(flowName);
     }
@@ -562,8 +559,6 @@ public class ClientFlowExecutionTabController {
     }
 
     public void setInputValuesFromContinuationMap(List<DTOInput> valuesList) {
-        System.out.println("value List: " + valuesList);
-        valuesList.stream().forEach(io-> System.out.println(io.getValue()+ " " + io.getOriginalName()));
         for (Node node : inputValuesHBox.getChildren()) {
             if (node instanceof VBox) {
                 VBox vbox = (VBox) node;
@@ -575,12 +570,10 @@ public class ClientFlowExecutionTabController {
                     originalName = "TIME_TO_SPEND";
                 }
                 String finalOriginalName = originalName;
-                System.out.println("original name: " + finalOriginalName);
                 valuesList.stream()
                         .filter(data -> data.getOriginalName().equals(finalOriginalName))
                         .findFirst()
                         .ifPresent(input -> {
-                            System.out.println(inputNode.getClass().getName());
                             if (inputNode instanceof TextField) {
                                 TextField textField = (TextField) inputNode;
                                 Object value = input.getValue();

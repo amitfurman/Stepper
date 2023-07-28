@@ -44,6 +44,7 @@ public class systemengineImpl implements systemengine {
     public int numberOfThreads;
     public LinkedList<FlowContinuationMapping> allContinuationMappings;
     public UserManager userManagerObject;
+
     public List<Role> roles;
 
     public systemengineImpl() {
@@ -98,6 +99,17 @@ public class systemengineImpl implements systemengine {
         out.println("1flowExecution.getUniqueIdByUUID(): " + flowExecution.getUniqueIdByUUID());
         flowExecution.setFreeInputsValues(freeInputs.getFreeInputMap());
         flowExecutionList.addFirst(flowExecution);
+
+        out.println("1: " + getUserMangerObject());
+        out.println("2: " + getUserMangerObject().getUsers());
+        out.println("3: " + getUserMangerObject().getUsers().stream().filter(name->name.equals(userName)));
+        out.println("4: " + userName);
+        UserDefinition user = getUserMangerObject().getUsers().stream().filter(i->i.getUsername().equals(userName)).findFirst().get();
+        out.println("USER:" +user );
+        user.getExecutedFlows().add(flowName);
+        out.println("FLOW_NAME:" +flowName );
+        out.println("ExecutedFlows():" +user.getExecutedFlows() );
+
         threadPool.execute(new FlowExecutor(flowExecution, freeInputs, currFlow.getInitialInputMap(), statisticData));
         //return new DTOFlowExecution(flowExecution);
 
@@ -519,9 +531,7 @@ public class systemengineImpl implements systemengine {
     }
 
     @Override
-    public DTORolesList getDTORolesList() {
-        return new DTORolesList(roles.stream().collect(Collectors.toSet()));
-    }
+    public DTORolesList getDTORolesList() {return new DTORolesList(roles.stream().collect(Collectors.toSet()));}
 
     @Override
     public void addNewRole(DTORole role) {

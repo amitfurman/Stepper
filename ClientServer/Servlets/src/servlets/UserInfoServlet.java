@@ -20,8 +20,12 @@ public class UserInfoServlet extends HttpServlet {
         response.setContentType("application/json");
         try (PrintWriter out = response.getWriter()) {
             Gson gson = new Gson();
+
             UserManager userManager = ServletUtils.getSystemEngine(getServletContext()).getUserMangerObject();
+            System.out.println("userName: " + userName);
+            System.out.println("userD: " + userManager.getUsers());
             DTOUserInfo userInfo = userManager.getUserInfo(userName);
+            System.out.println("userInfo in servlet: " + userInfo);
             String json = gson.toJson(userInfo);
             out.println(json);
             out.flush();

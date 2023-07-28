@@ -177,7 +177,6 @@ public class AdminMasterDetailController {
         }
     }
     TreeView<Object> cratingStepsExecutionDetail(String dataName) {
-        System.out.println("cratingStepsExecutionDetail");
         TreeItem<Object> rootItem = new TreeItem<>("Step Details");
         rootItem.setExpanded(true);
 
@@ -225,8 +224,6 @@ public class AdminMasterDetailController {
             TreeItem<Object> input = new TreeItem<>("Input " + inputIndex.getAndIncrement());
             inputItem.getChildren().add(input);
             input.getChildren().add(new TreeItem<>("Final Name: " + ioInput.getFinalName()));
-            System.out.println("ioInput.getType() " + ioInput.getType());
-
               /*      if (ioInput.getType().equals("RELATION") || ioInput.getType().equals("STRING_LIST")
                             || ioInput.getType().equals("FILE_LIST") || ioInput.getType().equals("MAPPING2NUMBERS")) {
                         input.getChildren().add(new TreeItem<>(showOutputValue(ioInput.getType(),ioInput.getValue())));
@@ -242,8 +239,6 @@ public class AdminMasterDetailController {
         step.getOutputs().stream().forEach(ioOutput -> {
             TreeItem<Object> output = new TreeItem<>("Output " + outputIndex.getAndIncrement());
             outputItem.getChildren().add(output);
-
-            System.out.println("ioOutput.getType() " + ioOutput.getType());
 
             output.getChildren().add(new TreeItem<>("Final Name: " + ioOutput.getFinalName()));
             /*if (ioOutput.getType().equals("RELATION") || ioOutput.getType().equals("STRING_LIST")
@@ -278,9 +273,6 @@ public class AdminMasterDetailController {
         return treeView;
     }
     TreeView<Object> cratingGeneralFlowExecutionDetail() {
-        System.out.println("Creating General Flow Execution Details");
-        System.out.println("Flow Name: " + flowExecution.getFlowName());
-        System.out.println("Flow ID: " + flowExecution.getID());
         TreeItem<Object> rootItem = new TreeItem<>("Flow Details");
         rootItem.setExpanded(true);
 
@@ -340,7 +332,6 @@ public class AdminMasterDetailController {
             for (DTOOutput output : outputs) {
                 TreeItem<Object> outputItem = new TreeItem<>("Output " + outputIndex.getAndIncrement());
                 outputsItem.getChildren().add(outputItem);
-                System.out.println("Output: " + output.getFinalName() + " output.getType() " + output.getType());
 
                 outputItem.getChildren().addAll(
                         new TreeItem<>("Final Name: " + output.getFinalName()),
@@ -361,7 +352,6 @@ public class AdminMasterDetailController {
         return treeView;
     }
     public Hyperlink showOutputValue(String type,Object io) {
-        System.out.println("Showing Output Value");
         Hyperlink viewDataLink = new Hyperlink("View Data");
         viewDataLink.setOnAction(event -> {
             Stage popupWindow = new Stage();
@@ -393,7 +383,6 @@ public class AdminMasterDetailController {
     }
 
     public TableView showMappingData(Object io) {
-        System.out.println("Showing Mapping Data");
         TableView<Map.Entry<Number, Number>> table = new TableView<>();
         table.setEditable(false);
 
@@ -424,13 +413,10 @@ public class AdminMasterDetailController {
         return table;
     }
     public ListView<String> showListData(Object io , String type){
-        System.out.println("Showing List Data");
         ListView<String> list = new ListView<>();
 
         ObservableList<String> items = FXCollections.observableArrayList();
         int index =1;
-        System.out.println("type: " + type);
-        System.out.println("io: " + io.getClass().getSimpleName());
 
         if(type.equals("FILE_LIST")) {
 /*            LinkedTreeMap tempMap = (LinkedTreeMap) io;
@@ -462,7 +448,6 @@ public class AdminMasterDetailController {
         return list;
     }
     public TableView showRelationData(Object io) {
-        System.out.println("Showing Relation Data");
         TableView<Map<String, String>> table = new TableView<>();
         table.setEditable(false);
         table.setSelectionModel(null);

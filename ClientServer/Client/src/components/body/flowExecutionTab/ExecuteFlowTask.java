@@ -127,7 +127,6 @@ public class ExecuteFlowTask extends Task<Boolean> {
             DTOFlowExeInfo finalExecutedData2 = executedData;
             Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData2));
             while (executedData.getResultExecute() == null) {
-                System.out.println(executedData.getResultExecute());
                 executedData =  makeSyncHttpRequest(this.flowId);
                 if (currentFlowId.getValue().equals(flowId.toString())) {
                     DTOFlowExeInfo finalExecutedData = executedData;
@@ -165,7 +164,6 @@ public class ExecuteFlowTask extends Task<Boolean> {
         }
     }
     private void finalRequest() {
-        System.out.println("finalRequest");
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.GET_DTO_FLOW_EXECUTION_SERVLET).newBuilder();
         urlBuilder.addQueryParameter("uuid", String.valueOf(UUID.fromString(currentFlowId.getValue())));
         String finalUrl = urlBuilder.build().toString();
@@ -181,7 +179,6 @@ public class ExecuteFlowTask extends Task<Boolean> {
             if (response.isSuccessful()) {
                 String rawBody = response.body().string();
                 DTOFlowExeInfo FlowExecution = GSON_INSTANCE.fromJson(rawBody, new TypeToken<DTOFlowExeInfo>() {}.getType());
-                System.out.println("FlowExecution.getResultExecute() : " + FlowExecution.getResultExecute());
                 Platform.runLater(() -> masterDetailController.updateFlowLabel(FlowExecution));
                 masterDetailController.getFlowExecutionTabController().backToFlowExecutionTabAfterExecution(FlowExecution.getFlowName());
 

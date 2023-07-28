@@ -77,15 +77,11 @@ public class ClientFlowDefinitionTabController {
     }
     public void getAllFlows(List<String> roles) {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.FLOWS_IN_ROLES_SERVLET).newBuilder();
-        System.out.println("before roles");
         if(roles.size()!=0) {
             String rolesString = roles.stream().collect(Collectors.joining(","));
-            System.out.println("1after roles");
             urlBuilder.addQueryParameter("roles_list", rolesString);
         }else {
             urlBuilder.addQueryParameter("roles_list","" );
-            System.out.println("2after roles");
-
         }
         urlBuilder.addQueryParameter("is_manager", mainController.getHeaderClientComponentController().getIsManager().toString());
         String finalUrl = urlBuilder.build().toString();

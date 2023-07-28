@@ -136,11 +136,9 @@ public class ClientExecutionsHistoryTabController {
         addFilteringFunctionality();
     }
     public void initExecutionHistoryDataList(LinkedList<DTOFlowExeInfo> flowExeList ) {
-        System.out.println("initExecutionHistoryDataList");
         executionHistoryData = FXCollections.observableArrayList();
         List<DTOFlowExeInfo> executedFlows = flowExeList.stream().filter(flow-> flow.getResultExecute() != null).collect(Collectors.toList());
        if(!(mainController.getHeaderClientComponentController().getIsManager())) {
-           System.out.println("inside nor manager");
            executedFlows = executedFlows.stream().filter(f -> f.getUserName().equals(mainController.getHeaderClientComponentController().getUserName())).collect(Collectors.toList());
        }
         executedFlows.stream().forEach(
