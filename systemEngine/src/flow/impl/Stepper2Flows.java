@@ -76,6 +76,7 @@ public class Stepper2Flows {
             if(currFlow.getSTFlowLevelAliasing()!=null) {
                 for (STFlowLevelAlias flowLevelAlias : currFlow.getSTFlowLevelAliasing().getSTFlowLevelAlias()) {
                     if (!flow.stepExist(flowLevelAlias.getStep())){
+                        System.out.println("Step " + flowLevelAlias.getStep() + " is not exist in flow " + flow.getName() + " stepperToFlow");
                         throw new UnExistsStep();
                     }
                     else if(!flow.dataExist(flowLevelAlias.getStep(), flowLevelAlias.getSourceDataName())){

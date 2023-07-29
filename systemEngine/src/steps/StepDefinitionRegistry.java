@@ -16,7 +16,7 @@ public enum StepDefinitionRegistry {
     COMMAND_LINE(new CommandLine()),
     HTTP_CALL(new HTTPCall()),
     TO_JSON(new ToJson()),
-    JAVA_DATA_EXTRACTOR(new JsonDataExtractor())
+    JSON_DATA_EXTRACTOR(new JsonDataExtractor())
 
     ;
 

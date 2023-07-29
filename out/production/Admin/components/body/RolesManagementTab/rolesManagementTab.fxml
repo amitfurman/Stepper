@@ -16,7 +16,7 @@
    <content>
       <AnchorPane stylesheets="@rolesManagementTab.css">
          <children>
-            <GridPane alignment="CENTER" prefHeight="267.0" prefWidth="594.0">
+            <GridPane alignment="CENTER" prefHeight="267.0" prefWidth="594.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <columnConstraints>
                   <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="294.6666259765625" minWidth="10.0" percentWidth="50.0" prefWidth="282.66668701171875" />
                   <ColumnConstraints hgrow="ALWAYS" maxWidth="336.0" minWidth="10.0" percentWidth="50.0" prefWidth="317.33331298828125" />

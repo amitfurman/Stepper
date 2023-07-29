@@ -55,7 +55,6 @@ public class AdminMain extends Application {
             GridPane headerComponent = fxmlLoader.load(url.openStream());
             AdminHeaderController headerController = fxmlLoader.getController();
 
-
             fxmlLoader = new FXMLLoader();
             url = getClass().getResource("/commonComponents/commonSource.fxml");
             fxmlLoader.setLocation(url);

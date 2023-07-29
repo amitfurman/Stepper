@@ -12,6 +12,7 @@ public class FlowCustomMapping {
     public FlowCustomMapping(FlowDefinition flow) throws UnExistsStep, UnExistsData, SourceStepBeforeTargetStep, TheSameDD {
         for (CustomMapping currCustom: flow.getCustomMappingList()) {
             if (!(flow.stepExist(currCustom.getTargetStep())) || !(flow.stepExist(currCustom.getSourceStep()))){
+                System.out.println("Invalid flow! There is a reference to UnExists step in custom mapping\n" + currCustom.getSourceStep() + " " + currCustom.getTargetStep());
                throw new UnExistsStep();
             }else if(!(flow.dataExist(currCustom.getSourceStep(), currCustom.getSourceData())) || !(flow.dataExist(currCustom.getTargetStep(), currCustom.getTargetData()))) {
                 throw new UnExistsData();
