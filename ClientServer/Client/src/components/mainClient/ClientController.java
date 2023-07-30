@@ -26,7 +26,7 @@ import java.net.URL;
 
 import static util.Constants.LOGIN_PAGE_FXML_RESOURCE_LOCATION;
 
-public class ClientController{
+public class ClientController {
     private GridPane loginComponent;
     private LoginController logicController;
     private final StringProperty currentUserName;
@@ -38,7 +38,6 @@ public class ClientController{
     }
 
     public void init() throws IOException {
-       // userGreetingLabel.textProperty().bind(Bindings.concat("Hello ", currentUserName));
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = getClass().getResource("/components/headerClient/headerClient.fxml");
         fxmlLoader.setLocation(url);
@@ -54,30 +53,30 @@ public class ClientController{
         mainComponent = fxmlLoader.load(url.openStream());
         CommonController mainController = fxmlLoader.getController();
 
-        BorderPane borderPane = (BorderPane)mainComponent.getContent();
+        BorderPane borderPane = (BorderPane) mainComponent.getContent();
         borderPane.setTop(headerComponent);
 
         fxmlLoader = new FXMLLoader();
         url = getClass().getResource("/components/body/flowDefinitionTab/flowDefinitionTab.fxml");
         fxmlLoader.setLocation(url);
         Tab flowDefinitionTabComponent = fxmlLoader.load(url.openStream());
-        ClientFlowDefinitionTabController flowDefinitionTabController =  fxmlLoader.getController();
+        ClientFlowDefinitionTabController flowDefinitionTabController = fxmlLoader.getController();
         headerController.setFlowDefinitionTabController(flowDefinitionTabController);
 
         fxmlLoader = new FXMLLoader();
         url = getClass().getResource("/components/body/flowExecutionTab/flowExecutionTab.fxml");
         fxmlLoader.setLocation(url);
         Tab flowExecutionTabComponent = fxmlLoader.load(url.openStream());
-        ClientFlowExecutionTabController flowExecutionTabController =  fxmlLoader.getController();
+        ClientFlowExecutionTabController flowExecutionTabController = fxmlLoader.getController();
 
         fxmlLoader = new FXMLLoader();
         url = getClass().getResource("/components/body/executionsHistoryTab/executionsHistoryTab.fxml");
         fxmlLoader.setLocation(url);
         Tab executionsHistoryTabComponent = fxmlLoader.load(url.openStream());
-        ClientExecutionsHistoryTabController executionsHistoryTabController =  fxmlLoader.getController();
+        ClientExecutionsHistoryTabController executionsHistoryTabController = fxmlLoader.getController();
 
         TabPane tabPane = (TabPane) borderPane.getCenter();
-        tabPane.getTabs().addAll(flowDefinitionTabComponent,flowExecutionTabComponent,executionsHistoryTabComponent);
+        tabPane.getTabs().addAll(flowDefinitionTabComponent, flowExecutionTabComponent, executionsHistoryTabComponent);
 
         mainController.setHeaderComponentController(headerController);
         mainController.setClientFlowDefinitionTabController(flowDefinitionTabController);
@@ -105,8 +104,6 @@ public class ClientController{
     }
 
     private void setMainPanelTo(Parent pane) {
-       // mainPanel.getChildren().clear();
-       // mainPanel.getChildren().add(pane);
         AnchorPane.setBottomAnchor(pane, 1.0);
         AnchorPane.setTopAnchor(pane, 1.0);
         AnchorPane.setLeftAnchor(pane, 1.0);
@@ -116,66 +113,4 @@ public class ClientController{
     public StringProperty getCurrentUserNameProperty() {
         return currentUserName;
     }
-
-/*    @Override
-    public void close() throws IOException {
-        chatRoomComponentController.close();
-    }*/
-
-
-/*    private void loadLoginPage() {
-        URL loginPageUrl = getClass().getResource(LOGIN_PAGE_FXML_RESOURCE_LOCATION);
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(loginPageUrl);
-            loginComponent = fxmlLoader.load();
-            logicController = fxmlLoader.getController();
-            logicController.setClientMainController(this);
-            setMainPanelTo(loginComponent);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
-
-
-
-/*
-    private void loadChatRoomPage() {
-        URL loginPageUrl = getClass().getResource(CHAT_ROOM_FXML_RESOURCE_LOCATION);
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(loginPageUrl);
-            chatRoomComponent = fxmlLoader.load();
-            chatRoomComponentController = fxmlLoader.getController();
-            chatRoomComponentController.setChatAppMainController(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-*/
-/*
-
-    @Override
-    public void updateHttpLine(String line) {
-        httpStatusComponentController.addHttpStatusLine(line);
-    }*/
-
-/*
-
-    public void switchToChatRoom() {
-        setMainPanelTo(chatRoomComponent);
-        chatRoomComponentController.setActive();
-    }
-*/
-
-
-/*    public void switchToLogin() {
-        Platform.runLater(() -> {
-            currentUserName.set(JHON_DOE);
-            chatRoomComponentController.setInActive();
-            setMainPanelTo(loginComponent);
-        });
-    }*/
-
-
 }

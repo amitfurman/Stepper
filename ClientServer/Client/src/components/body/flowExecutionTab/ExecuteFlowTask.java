@@ -42,71 +42,9 @@ public class ExecuteFlowTask extends Task<Boolean> {
     }
 
     protected Boolean call() throws IOException {
-/*      //  DTOFlowExecution executedData = engineManager.getDTOFlowExecutionById(this.flowId);
-        masterDetailController.initMasterDetailPaneController(executedData);
-        DTOFlowExecution finalExecutedData2 = executedData;
-        Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData2));*/
-
         getStepsFirstData(flowId);
-/*        while (executedData.getFlowExecutionResult() == null) {
-            executedData = engineManager.getDTOFlowExecutionById(this.flowId);
-            if (currentFlowId.getValue().equals(flowId.toString())) {
-                DTOFlowExecution finalExecutedData = executedData;
-                Platform.runLater(() -> masterDetailController.addStepsToMasterDetail(finalExecutedData));
-            }
-            try {
-                Thread.sleep(SLEEP_TIME);
-            } catch (InterruptedException ignored) {}
-        }
-
-        executedData = engineManager.getDTOFlowExecutionById(UUID.fromString(currentFlowId.getValue()));
-        DTOFlowExecution finalExecutedData1 = executedData;
-        Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData1));
-*/
         return Boolean.TRUE;
     }
-
-   /* public void getStepsFirstData(UUID flowId) throws IOException {
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.GET_DTO_FLOW_EXECUTION_SERVLET).newBuilder();
-        urlBuilder.addQueryParameter("uuid", String.valueOf(flowId));
-        String finalUrl = urlBuilder.build().toString();
-        Request request = new Request.Builder()
-                .url(finalUrl)
-                .build();
-        HttpClientUtil.runAsyncPost(finalUrl, request.body(), new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                System.out.println("onFailure");
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                System.out.println("response.isSuccessful()");
-                String rawBody = response.body().string();
-                System.out.println("rawBody : " + rawBody);
-                DTOFlowExeInfo dtoFlowExecution = GSON_INSTANCE.fromJson(rawBody, new TypeToken<DTOFlowExecution>() {
-                }.getType());
-                System.out.println("name : " + dtoFlowExecution.getFlowName());
-                masterDetailController.initMasterDetailPaneController(dtoFlowExecution);
-                Platform.runLater(() -> masterDetailController.updateFlowLabel(dtoFlowExecution));
-
-                while (dtoFlowExecution.getResultExecute() == null) {
-                    DTOFlowExeInfo executedData = makeSyncHttpRequest(flowId);
-                    if (currentFlowId.getValue().equals(flowId.toString())) {
-                        Platform.runLater(() -> masterDetailController.addStepsToMasterDetail(executedData));
-                    }
-                    try {
-                        Thread.sleep(SLEEP_TIME);
-                    } catch (InterruptedException ignored) {
-
-                    }
-
-                }
-                // finalRequest();
-            }
-        });
-    }*/
-
     public void getStepsFirstData(UUID flowId) throws IOException {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.GET_DTO_FLOW_EXECUTION_SERVLET).newBuilder();
         urlBuilder.addQueryParameter("uuid", String.valueOf(flowId));

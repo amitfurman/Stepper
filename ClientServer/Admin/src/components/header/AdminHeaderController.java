@@ -46,8 +46,6 @@ public class AdminHeaderController {
 
     @FXML
     void clickToChooseXMLFileButton(ActionEvent event) throws IOException {
-/*        mainController.initDataInFlowExecutionTab();
-        mainController.initInputsInFlowExecutionTab();*/
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose XML File");
@@ -77,7 +75,7 @@ public class AdminHeaderController {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     Platform.runLater(() -> {
-                        System.out.println("Something went wrong: " + e.getMessage());
+                        System.out.println("Something went wrong: " + e.getMessage() );
                         showError(e.getMessage());
                     });
                     e.printStackTrace();
@@ -108,8 +106,6 @@ public class AdminHeaderController {
 
         }
             viewChosenXmlFilePath(event);
-
-
     }
 
     @FXML

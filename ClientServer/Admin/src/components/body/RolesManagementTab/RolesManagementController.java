@@ -46,9 +46,6 @@ public class RolesManagementController {
     @FXML private GridPane checkBoxGridPane;
     private CheckListView flowsCheckList = new CheckListView();
     private ListView<String> usersListView = new ListView<>();
-/*
-    private CheckListView usersCheckList = new CheckListView();
-*/
     private DTORolesList returnedRolesList;
     private String currRole;
     private Set<String> usersList;
@@ -84,7 +81,7 @@ public class RolesManagementController {
         HttpClientUtil.runAsync(Constants.ALL_FLOWS_SERVLET, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                System.out.println("Failed to get all flows");
+                System.out.println("Failed in getAllFlows");
             }
 
             @Override
@@ -141,7 +138,6 @@ public class RolesManagementController {
         CheckListView<String> flowsForNewRoleListView = new CheckListView<>();
         Label flowsLabel = new Label("Choose flows: ");
         flowsLabel.getStyleClass().add("data-label");
-        //returnedRolesList.getRoles().get(0).getFlowsInRole().forEach(flow -> flowsForNewRoleListView.getItems().add(flow));
         returnedRolesList.getRoles().stream().filter(role->role.getName().equals("All Flows")).findFirst().get().getFlowsInRole().forEach(flow -> flowsForNewRoleListView.getItems().add(flow));
 
         flowsForNewRoleListView.setMaxHeight(100);
@@ -156,14 +152,12 @@ public class RolesManagementController {
         errorLabel.getStyleClass().add("data-label");
         saveButton.setOnAction(e -> {
             errorLabel.setText("");
-            System.out.println("innnnnnn the ");
             String name = nameTextField.getText();
             String description = descriptionTextField.getText();
             List<String> chosenItems = new ArrayList<>(checkedItems);
             Set<String> flowsInRole = new HashSet<>(chosenItems);
 
             String finalName = name;
-            System.out.println("roles: " + returnedRolesList );
             if(returnedRolesList.getRoles().stream().anyMatch(r->r.getName().equals(finalName))) {
                 errorLabel.setText("There is already role with this name. Please choose a new one.");
             }else {
@@ -211,7 +205,7 @@ public class RolesManagementController {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Platform.runLater(() -> {
-                    System.out.println("Something went wrong: " + e.getMessage());
+                    System.out.println("Something went wrong: " + e.getMessage()+ " in createNewRole");
                 });
                 e.printStackTrace();
             }
@@ -254,7 +248,7 @@ public class RolesManagementController {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Platform.runLater(() -> {
-                    System.out.println("Something went wrong: " + e.getMessage());
+                    System.out.println("Something went wrong: " + e.getMessage() + "in updateRole");
                 });
                 e.printStackTrace();
             }
@@ -278,62 +272,16 @@ public class RolesManagementController {
             }
         });
     }
-/*
-    public void updateUsersInRole(DTORole currentRole){
-        String jsonPayload = new Gson().toJson(currentRole);
-        RequestBody body = RequestBody.create(jsonPayload, MediaType.parse("application/json"));
-
-        Request request = new Request.Builder()
-                .url(UPDATE_USERS_IN_ROLE)
-                .post(body)
-                .build();
-
-        String finalUrl = HttpUrl
-                .parse(UPDATE_USERS_IN_ROLE)
-                .newBuilder()
-                .build()
-                .toString();
-
-        HttpClientUtil.runAsyncPost(finalUrl, request.body(), new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Platform.runLater(() -> {
-                    System.out.println("Something went wrong: " + e.getMessage());
-                });
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response.code() == HttpURLConnection.HTTP_OK) {
-                    Platform.runLater(() -> {
-
-
-                    });
-                } else {
-                    String errorMessage = response.body().string();
-
-                    Platform.runLater(() -> {
-                        System.out.println("Received message from server: " + errorMessage);
-
-                    });
-                }
-
-            }
-        });
-    }
-*/
     public void initDataInRolesManagementTab() {
         HttpClientUtil.runAsync(Constants.ROLES_LIST, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-
+                System.out.println("onFailure in initDataInRolesManagementTab");
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String jsonArrayOfRoles = response.body().string();
-                //String[] roles = GSON_INSTANCE.fromJson(jsonArrayOfRoles, String[].class);
                 returnedRolesList = GSON_INSTANCE.fromJson(jsonArrayOfRoles, DTORolesList.class);
                 Platform.runLater(() -> {
                     initRolesTree();
@@ -429,7 +377,7 @@ public class RolesManagementController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-
+                System.out.println(e.getMessage() + " in showUsersToEachRole");
             }
 
             @Override
@@ -437,7 +385,6 @@ public class RolesManagementController {
                 String jsonResponse = response.body().string();
                 Gson gson = new Gson();
                 List<String> users = GSON_INSTANCE.fromJson(jsonResponse, new TypeToken<List<String>>(){}.getType());
-                System.out.println("in the requset the user list is: " + users);
                 if (users !=null) {
                     updateUserList(users);
                 }
@@ -448,9 +395,7 @@ public class RolesManagementController {
     }
 
     public void updateUserList(List<String> users) {
-
        Platform.runLater(() -> {
-            System.out.println("user list in roleM: " + users);
             usersListView = new ListView<>();
 
             for (String user : users) {
@@ -460,22 +405,6 @@ public class RolesManagementController {
             usersListvbox = new VBox(titleLabel, usersListView);
             checkBoxGridPane.add(usersListvbox, 0, 2);
        });
-
     }
-
-/*
-        usersCheckList = new CheckListView();
-        usersList = mainController.getUsersManagementTabController().getUsers();
-        for (String user : usersList) {
-            usersCheckList.getItems().add(user);
-        }
-        for (String user : usersList) {
-            if (role.getUsers().contains(user)) {
-                usersCheckList.getCheckModel().check(user);
-            }
-        }
-        checkBoxGridPane.add(usersCheckList,0,2);
-
- */
 
 }

@@ -106,7 +106,6 @@ public class AdminExecutionsHistoryTabController {
     }
 
     private void updateClientData(List<DTOFlowExeInfo> flowExeList) {
-        //initExecutionHistoryTable();
         initExecutionHistoryDataList(flowExeList);
         addFilteringFunctionality();
         if(flowExeList.size()!=0) {
@@ -115,11 +114,6 @@ public class AdminExecutionsHistoryTabController {
 
     }
     private void setMasterDetailsController(AdminMasterDetailController masterDetailController) {this.masterDetailController = masterDetailController;}
-/*    public void initExecutionHistoryTable() {
-        System.out.println("initExecutionHistoryTable");
-        initializeExecutionHistoryTable();
-        addFilteringFunctionality();
-    }*/
     public void initExecutionHistoryDataList(List<DTOFlowExeInfo> flowExeList ) {
         executionHistoryData = FXCollections.observableArrayList();
         List<DTOFlowExeInfo> executedFlows = flowExeList.stream().filter(flow-> flow.getResultExecute() != null).collect(Collectors.toList());
@@ -195,9 +189,6 @@ public class AdminExecutionsHistoryTabController {
             executionHistoryTable.setItems(executionHistoryData);
         });
     }
-   /* private void initializeExecutionHistoryTable() {
-        getFlowsExecutionList();
-    }*/
     public void addFilteringFunctionality() {
         resultFilterComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             filterExecutionHistoryTable((String) newValue);
@@ -216,32 +207,6 @@ public class AdminExecutionsHistoryTabController {
         getDTOFlowExecutionByName(flowName);
 
     }
-/*    public void getFlowsExecutionList() {
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.GET_FLOW_EXECUTION_LIST_SERVLET).newBuilder();
-        String finalUrl = urlBuilder.build().toString();
-
-        Request request = new Request.Builder()
-                .url(finalUrl)
-                .build();
-
-        OkHttpClient HTTP_CLIENT = new OkHttpClient();
-        Call call = HTTP_CLIENT.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                System.out.println("on failure");
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String jsonArrayOfUsersRoles = response.body().string();
-                LinkedList<DTOFlowExeInfo> flowExeList = GSON_INSTANCE.fromJson(jsonArrayOfUsersRoles, new TypeToken<LinkedList<DTOFlowExeInfo>>(){}.getType());
-                if(flowExeList != null)
-                    initExecutionHistoryDataList(flowExeList);
-
-            }
-        });
-    }*/
     public void getDTOFlowExecutionByName(String currFlowName) {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.GET_FLOW_EXECUTION_BY_NAME).newBuilder();
         urlBuilder.addQueryParameter("flowName", currFlowName);
@@ -255,7 +220,7 @@ public class AdminExecutionsHistoryTabController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("on failure");
+                System.out.println("on failure in getDTOFlowExecutionByName");
             }
 
             @Override

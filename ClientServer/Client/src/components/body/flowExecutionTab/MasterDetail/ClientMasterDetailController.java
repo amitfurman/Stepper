@@ -354,9 +354,6 @@ public class ClientMasterDetailController {
         treeView.getStyleClass().add("tree-view-style");
         return treeView;
     }
-/*
-                        output.getValue() == null ?  new TreeItem<>( "Value: N/A") :new TreeItem<>("Value: " + output.getValue().toString()));
-*/
 
     public Hyperlink showOutputValue(String type,Object io) {
         Hyperlink viewDataLink = new Hyperlink("View Data");
@@ -457,7 +454,6 @@ public class ClientMasterDetailController {
             String val = index + ". " + dictionary;
             index++;
             items.add(val);
-
         }
 
         list.getStyleClass().add("list-view-style");
@@ -475,7 +471,6 @@ public class ClientMasterDetailController {
             String path = matcher.group(1);
             pathsList.add(path);
         }
-
         return pathsList;
     }
 
@@ -576,99 +571,3 @@ public class ClientMasterDetailController {
     }
 
 }
-
-        /*
-                ObservableList<Map<String, String>> data = FXCollections.observableArrayList();
-
-        for (RelationData.SingleRow singleRow : ((RelationData) io).getRows()) {
-            Map<String, String> row = singleRow.getRowData();
-            data.add(row);
-            table.setItems(data);
-        }*/
-
-      /*  for (String column : ((RelationData) io).getColumns()) {
-            TableColumn<Map<String, String>, String> tableColumn = new TableColumn<>(column);
-
-            if (column.equals(((RelationData) io).getColumns().get(0))) {
-                tableColumn.prefWidthProperty().bind(table.widthProperty().multiply(firstColumnWidth));
-            } else {
-                tableColumn.prefWidthProperty().bind(table.widthProperty().multiply(remainingColumnsWidth));
-            }
-
-            tableColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(column)));
-            table.getColumns().add(tableColumn);
-        }
-*/
-
-
-/*
-        flowExecution.getIOlist().stream()
-                .filter(io1 -> io1.getStepName().equals(step.getFinalName()))
-                .forEach(io -> {
-                    if(io.getIOType().equals(IO.INPUT)) {
-                        TreeItem<Object> input = new TreeItem<>("Input " + inputIndex.getAndIncrement());
-                        inputItem.getChildren().add(input);
-                        input.getChildren().add(new TreeItem<>("Final Name: " + io.getFinalName()));
-
-                        if (io.getType().toString().equals("RELATION") || io.getType().toString().equals("STRING_LIST")
-                                || io.getType().toString().equals("FILE_LIST") || io.getType().toString().equals("MAPPING2NUMBERS")) {
-                            input.getChildren().add(new TreeItem<>(showOutputValue(io)));
-                        } else {
-                            if (io.getValue() != null) {
-                                input.getChildren().add(new TreeItem<>("Value: " + io.getValue().toString()));
-                            } else {
-                                input.getChildren().add(new TreeItem<>("Value: N/A"));
-                            }
-                        }
-                    }
-
-                    if(io.getIOType().equals(IO.OUTPUT)) {
-                        TreeItem<Object> output = new TreeItem<>("Output " + outputIndex.getAndIncrement());
-                        outputItem.getChildren().add(output);
-
-                        output.getChildren().add(new TreeItem<>("Final Name: " + io.getFinalName()));
-                        if (io.getType().toString().equals("RELATION") || io.getType().toString().equals("STRING_LIST")
-                            || io.getType().toString().equals("FILE_LIST") || io.getType().toString().equals("MAPPING2NUMBERS")) {
-                        output.getChildren().add(new TreeItem<>(showOutputValue(io)));
-                        } else {
-                            if (io.getValue() != null) {
-                                output.getChildren().add(new TreeItem<>("Value: " + io.getValue().toString()));
-                            } else {
-                                output.getChildren().add(new TreeItem<>("Value: Not created due to failure in flow"));
-                            }
-                        }
-                    }
-                });
-*/
-
-    /*public Hyperlink showOutputValue(DTOSingleFlowIOData output) {
-
-        Hyperlink viewDataLink = new Hyperlink("View Data");
-        viewDataLink.setOnAction(event -> {
-            Stage popupWindow = new Stage();
-
-            popupWindow.initModality(Modality.APPLICATION_MODAL);
-            popupWindow.setTitle("Data Values");
-            Label label1 = new Label("Data Values");
-            label1.getStyleClass().add("data-values-label");
-            VBox layout = new VBox(10);
-
-            if (output.getType().toString().equals("RELATION")) {
-                TableView table = showRelationData(output);
-                layout.getChildren().addAll(label1, table);
-            }else if(output.getType().toString().equals("STRING_LIST") || output.getType().toString().equals("FILE_LIST")){
-                ListView<String> list = showListData(output);
-                layout.getChildren().addAll(label1, list);
-            }else if(output.getType().toString().equals("MAPPING2NUMBERS")){
-                TableView table = showMappingData(output);
-                layout.getChildren().addAll(label1, table);
-            }
-            layout.setAlignment(Pos.CENTER);
-            Scene scene1 = new Scene(layout, 700, 400);
-            scene1.getStylesheets().add(getClass().getResource("MasterDetail.css").toExternalForm());
-
-            popupWindow.setScene(scene1);
-            popupWindow.showAndWait();
-        });
-        return  viewDataLink;
-    }*/

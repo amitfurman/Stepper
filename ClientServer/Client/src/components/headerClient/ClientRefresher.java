@@ -39,7 +39,7 @@ public class ClientRefresher extends TimerTask {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("on failure");
+                System.out.println("on failure in ClientRefresher");
             }
 
             @Override
@@ -48,19 +48,6 @@ public class ClientRefresher extends TimerTask {
                 String jsonArrayOfUsersRoles = response.body().string();
                 Set<String> userRolesNames = GSON_INSTANCE.fromJson(jsonArrayOfUsersRoles, new TypeToken<Set<String>>(){}.getType());
                 rolesListConsumer.accept(userRolesNames != null ? new ArrayList<>(userRolesNames) : Collections.emptyList());
-
-               /* String jsonArrayOfUsersRoles = response.body().string();
-                System.out.println("jsonArrayOfUsersRoles: " + jsonArrayOfUsersRoles);
-                String[] userRolesNames = GSON_INSTANCE.fromJson(jsonArrayOfUsersRoles, String[].class);
-                System.out.println("userRolesNames: " + userRolesNames);
-                rolesListConsumer.accept(userRolesNames != null ? Arrays.asList(userRolesNames) : Collections.emptyList());
-
-                if (jsonArrayOfUsersRoles != null && !jsonArrayOfUsersRoles.isEmpty()) {
-                    rolesListConsumer.accept(null);
-                } else {
-                    String[] userRolesNames = GSON_INSTANCE.fromJson(jsonArrayOfUsersRoles, String[].class);
-                    rolesListConsumer.accept(userRolesNames != null ? Arrays.asList(userRolesNames) : Collections.emptyList());
-                }*/
             }
         });
     }

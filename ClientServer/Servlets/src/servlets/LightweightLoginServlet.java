@@ -21,7 +21,6 @@ public class LightweightLoginServlet extends HttpServlet {
         response.setContentType("text/plain;charset=UTF-8");
 
         String usernameFromSession = SessionUtils.getUsername(request);
-       // UserManager userManager = ServletUtils.getUserManager(getServletContext());
         UserManager userManager = ServletUtils.getSystemEngine(getServletContext()).getUserMangerObject();
 
         if (usernameFromSession == null) { //user is not logged in yet
@@ -30,7 +29,6 @@ public class LightweightLoginServlet extends HttpServlet {
             if (usernameFromParameter == null || usernameFromParameter.isEmpty()) {
                 //no username in session and no username in parameter - not standard situation. it's a conflict
 
-                // stands for conflict in server state
                 response.setStatus(HttpServletResponse.SC_CONFLICT);
             } else {
                 //normalize the username value

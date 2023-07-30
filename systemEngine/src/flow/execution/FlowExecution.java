@@ -9,6 +9,9 @@ import statistic.StatisticData;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class FlowExecution  implements Serializable {
@@ -87,6 +90,12 @@ public class FlowExecution  implements Serializable {
         return flowExecutionResult != null;
     }
 
+    public String getStartTimeFormatted() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(startTime, ZoneId.systemDefault());
+
+        return localDateTime.format(formatter);
+    }
     public void addStepExecution(StepExecutionData currInvokingStep) {
         stepExecutionDataList.add(currInvokingStep);
     }

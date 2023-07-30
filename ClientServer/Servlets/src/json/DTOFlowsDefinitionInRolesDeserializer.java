@@ -75,31 +75,3 @@ public class DTOFlowsDefinitionInRolesDeserializer implements JsonDeserializer<D
 }
 
 
-/*public class DTOFlowsDefinitionInRolesDeserializer implements JsonDeserializer<DTOFlowDefinitionInRoles> {
-    @Override
-    public DTOFlowDefinitionInRoles deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-
-        // extract raw data
-        String name = json.getAsJsonObject().get("flowName").getAsString();
-        String description = json.getAsJsonObject().get("description").getAsString();
-        Integer numberOfSteps = json.getAsJsonObject().get("numberOfSteps").getAsInt();
-        Integer numberOfFreeInputs = json.getAsJsonObject().get("numberOfFreeInputs").getAsInt();
-        Integer numberOfContinuations = json.getAsJsonObject().get("numberOfContinuations").getAsInt();
-
-
-        // build object manually
-        DTOFlowDefinitionInRoles result = new DTOFlowDefinitionInRoles(name, description, numberOfSteps, numberOfFreeInputs, numberOfContinuations);
-
-
-        // determine manually the interface concrete class
-        WindBlower windBlower = new WindBlower();
-        windBlower.setWindPower(windPower);
-
-        // or tell GSON exactly which object you would like to construct a specific object from the (sub) object
-        // that was originally declared through an interface reference
-        //WindBlower windBlower = context.deserialize(json.getAsJsonObject().get("windBlower"), WindBlower.class);
-
-        result.setWindBlower(windBlower);
-
-        return result;
-    }*/

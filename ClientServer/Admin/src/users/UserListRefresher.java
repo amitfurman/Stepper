@@ -22,8 +22,6 @@ import static util.Constants.GSON_INSTANCE;
 import java.util.Collections;
 
 public class UserListRefresher extends TimerTask {
-
-    //private final Consumer<String> httpRequestLoggerConsumer;
     private final Consumer<List<String>> usersListConsumer;
     private int requestNumber;
 
@@ -35,24 +33,19 @@ public class UserListRefresher extends TimerTask {
     @Override
     public void run() {
         final int finalRequestNumber = ++requestNumber;
-      //  httpRequestLoggerConsumer.accept("About to invoke: " + Constants.USERS_LIST + " | Users Request # " + finalRequestNumber);
         HttpClientUtil.runAsync(Constants.USERS_LIST, new Callback() {
 
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-               // httpRequestLoggerConsumer.accept("Users Request # " + finalRequestNumber + " | Ended with failure...");
+                System.out.println("Something went wrong.. " + e.getMessage() + " in UserListRefresher");
 
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String jsonArrayOfUsersNames = response.body().string();
-               //httpRequestLoggerConsumer.accept("Users Request # " + finalRequestNumber + " | Response: " + jsonArrayOfUsersNames);
                String[] usersNames = GSON_INSTANCE.fromJson(jsonArrayOfUsersNames, String[].class);
-              // usersListConsumer.accept(Arrays.asList(usersNames));
                 usersListConsumer.accept(usersNames != null ? Arrays.asList(usersNames) : Collections.emptyList());
-                //UsersManagementTabController.setUsersList(Arrays.asList(usersNames));
-
             }
         });
 

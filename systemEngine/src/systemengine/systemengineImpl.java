@@ -255,7 +255,7 @@ public class systemengineImpl implements systemengine {
     public List<DTOFlowExeInfo>getDTOFlowsExecutionList() {
         List<DTOFlowExeInfo> dtoFlowExeInfoList = new LinkedList<>();
         for (FlowExecution flowExecution : flowExecutionList) {
-            dtoFlowExeInfoList.add(new DTOFlowExeInfo(flowExecution.getUserName(),flowExecution.getFlowName() , flowExecution.getStartTime().toString() , flowExecution.getFlowExecutionResult(), getStatisticData()));
+            dtoFlowExeInfoList.add(new DTOFlowExeInfo(flowExecution.getUserName(),flowExecution.getFlowName() , flowExecution.getStartTimeFormatted() , flowExecution.getFlowExecutionResult(), getStatisticData()));
         }
         return dtoFlowExeInfoList;
     }

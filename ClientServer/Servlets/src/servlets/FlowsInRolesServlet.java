@@ -24,7 +24,6 @@ public class FlowsInRolesServlet extends HttpServlet {
         String roles = request.getParameter("roles_list");
         Boolean isManager = Boolean.parseBoolean(request.getParameter("is_manager"));
         response.setContentType("application/json");
-       // if (roles!="") {
             List<String> rolesList = Arrays.asList(roles.split(","));
             try (PrintWriter out = response.getWriter()) {
 
@@ -42,6 +41,5 @@ public class FlowsInRolesServlet extends HttpServlet {
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-       // }
     }
 }

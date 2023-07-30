@@ -3,6 +3,10 @@ package dto;
 import flow.execution.FlowExecutionResult;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class DTOFlowExeInfo {
@@ -40,7 +44,13 @@ public class DTOFlowExeInfo {
     public String getUserName() {return userName;}
     public String getFlowName() {return flowName;}
     public String getID() {return ID;}
-    public String getStartTime() {return startTime;}
+/*    public String getStartTimeFormatted() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(startTime, ZoneId.systemDefault());
+
+        return localDateTime.format(formatter);
+    }*/
+    public String getStartTime(){return startTime;}
     public Duration getTotalTime() {return totalTime;}
     public FlowExecutionResult getResultExecute() {return resultExecute;}
     public List<DTOFreeInputs> getFreeInputs() {return freeInputs;}

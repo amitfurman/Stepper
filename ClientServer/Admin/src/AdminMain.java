@@ -102,28 +102,6 @@ public class AdminMain extends Application {
             primaryStage.show();
         }
     }
-
-/*    private boolean checkIfFirstAdmin () {
-        // Check for the first admin flag
-        File flagFile = new File("first_admin_flag.txt");
-        // Check for the lock file indicating an admin instance is already running
-        File lockFile = new File("admin_lock.txt");
-
-        try {
-            if (flagFile.exists() || lockFile.exists()) {
-                return false; // The files exist, so the user is not the first admin or another admin instance is running
-            } else {
-                // The files don't exist, so this is the first admin and no other admin instance is running
-                flagFile.createNewFile(); // Create the flag file to mark the first admin
-                lockFile.createNewFile(); // Create the lock file to mark an active admin instance
-                return true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false; // Error occurred while checking the flags, consider user unauthorized
-        }
-    }*/
-
     private boolean isAnotherInstanceRunning() {
         // Check for the lock file indicating an admin instance is already running
         File lockFile = new File("admin_lock.txt");

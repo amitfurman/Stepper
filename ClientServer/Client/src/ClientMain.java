@@ -41,8 +41,6 @@ public class ClientMain extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public static void main(String[] args) {
