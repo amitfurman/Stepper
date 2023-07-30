@@ -1,5 +1,8 @@
 package systemengine;
 
+import datadefinition.impl.list.FileListData;
+import datadefinition.impl.mapping.NumberMappingData;
+import datadefinition.impl.relation.RelationData;
 import dto.*;
 import exceptions.*;
 import flow.api.FlowDefinition;
@@ -480,7 +483,6 @@ public class systemengineImpl implements systemengine {
 
         return continuationDataMap;
     }
-
     @Override
     public List<Input> getValuesListFromContinuationMap(String sourceFlowName, String targetFlowName) {
         FlowDefinition targetFlow = flowDefinitionList.stream().filter(flow -> flow.getName().equals(targetFlowName)).findFirst().get();
@@ -501,7 +503,6 @@ public class systemengineImpl implements systemengine {
 
         return valuesList;
     }
-
     @Override
     public LinkedList<DTOInput> getDTOValuesListFromContinuationMap(String sourceFlowName, String targetFlowName) {
         FlowDefinition targetFlow = flowDefinitionList.stream().filter(flow -> flow.getName().equals(targetFlowName)).findFirst().get();
@@ -522,20 +523,16 @@ public class systemengineImpl implements systemengine {
 
         return valuesList;
     }
-
     @Override
     public UserManager getUserMangerObject() {
         return userManagerObject;
     }
-
     @Override
     public DTORolesList getDTORolesList() {return new DTORolesList(roles.stream().collect(Collectors.toSet()));}
-
     @Override
     public void addNewRole(DTORole role) {
         this.roles.add(new Role(role.getName(), role.getDescription(), role.getFlowsInRole()));
     }
-
     @Override
     public void updateFlowsInRole(DTORole dtoRole) {
         Role role = roles.stream().filter(r -> r.getName().equals(dtoRole.getName())).findFirst().get();
@@ -558,28 +555,17 @@ public class systemengineImpl implements systemengine {
         });
 
     }
-
     @Override
     public DTORolesList getDTORolesListPerUser(String userName) {
         UserDefinition user = userManagerObject.getUsers().stream().filter(u -> u.getUsername().equals(userName)).findFirst().get();
-/*        List<Role> rolesList = new ArrayList<>();
-        user.getRoles().forEach(role -> {
-            Role role1 = roles.stream().filter(r -> r.getName().equals(role)).findFirst().get();
-            rolesList.add(role1);
-        });
-        out.println("****user name" + userName);
-        out.println("****" + rolesList);*/
         return new DTORolesList(user.getRoles());
 
     }
-
     @Override
     public DTOFlowsDefinitionInRoles getDtoFlowsDefinition(Boolean isManager ,List<String> rolesNames) {
-        out.println("**** " + isManager);
         if(!isManager) {
             return getFlowsToUserFromRole(rolesNames);
         }
-
         return getFlowsToManager();
     }
     @Override
@@ -617,7 +603,6 @@ public class systemengineImpl implements systemengine {
     }
     @Override
     public DTOFlowsDefinitionInRoles  getFlowsToManager(){
-        out.println("Flow DList: " + flowDefinitionList);
         Set<DTOFlowDefinitionInRoles> flowsInRoles = new HashSet<>();
         flowDefinitionList.stream().forEach(flow -> {
             DTOFlowDefinitionInRoles flows = new DTOFlowDefinitionInRoles(flow.getName(), flow.getDescription(), flow.getFlowSteps().size(), flow.getFlowFreeInputs().size(), flow.getNumOfContinuation(),
@@ -637,7 +622,6 @@ public class systemengineImpl implements systemengine {
 
         return stepUsageDeclarationList;
     }
-
     @Override
     public List<DTOFlowOutputs> createDTOListFlowOutputs(FlowDefinition flow) {
         List<DTOFlowOutputs> flowOutputsList = new ArrayList<>();
@@ -648,7 +632,6 @@ public class systemengineImpl implements systemengine {
 
         return flowOutputsList;
     }
-
     @Override
     public List<DTOFreeInputs> createDTOListFreeInputs(FlowDefinition flow) {
 
@@ -665,7 +648,6 @@ public class systemengineImpl implements systemengine {
 
         return freeInputsList;
     }
-
     @Override
     public List<DTOFlowFreeInputs> getDTOFlowFreeInputs(String flowName) {
         FlowDefinition flow = flowDefinitionList.stream().filter(flowD -> flowD.getName().equals(flowName)).findFirst().get();
@@ -697,7 +679,6 @@ public class systemengineImpl implements systemengine {
                 .collect(Collectors.toList());
         return sortedList;
     }
-
     @Override
     public DTOAllFlowsNames getAllFlowsList() {
         Set<String> flowsList = new HashSet<>();
@@ -706,8 +687,6 @@ public class systemengineImpl implements systemengine {
         });
         return new DTOAllFlowsNames(flowsList);
     }
-
-    //This function update the roled of the user and also if he's manager
     @Override
     public void updateUser(String userName, Set<String> checkedItems, Boolean isManager) {
         UserDefinition user = userManagerObject.getUsers().stream().filter(u -> u.getUsername().equals(userName)).findFirst().get();
@@ -717,10 +696,7 @@ public class systemengineImpl implements systemengine {
             rolesNames.add(role);
         });
 
-        out.println("the roles i choose: " + rolesNames);
-
         List<Role> rolesList = new ArrayList<>();
-            //List<Role>  rolesList = new ArrayList<>();
             //create new roles list to user
             rolesNames.stream().forEach(role -> {
                 Role role1 = roles.stream().filter(r -> r.getName().equals(role)).findFirst().get();
@@ -728,21 +704,8 @@ public class systemengineImpl implements systemengine {
 
                 //add user to new roles
                 role1.getUsersInRole().add(userName);
-                out.println("add user to role" + role1.getName() + " now the list is: " + role1.getUsersInRole() );
 
             });
-
-            /*
-            ////////!!!!!!!!////////////
-            //add user to new roles
-            rolesList.stream().forEach(role -> {
-                Role role1 = roles.stream().filter(r -> r.getName().equals(role.getName())).findFirst().get();
-                boolean userFound = role1.getUsersInRole().stream().anyMatch(username -> username.equals(user.getUsername()));
-
-                if (!userFound) {
-                    role1.getUsersInRole().add(user.getUsername());
-                }
-            });*/
 
         //remove user from roles
         user.getRoles().stream().forEach(role ->
@@ -750,12 +713,9 @@ public class systemengineImpl implements systemengine {
             boolean roleFound = checkedItems.stream().anyMatch(newRole -> newRole.equals(role.getName()));
             if (!roleFound) {
                 role.getUsersInRole().remove(userName);
-                out.println("remove user from role: " + role.getName() + " now the users: " + role.getUsersInRole());
             }
         });
-
         user.setRoles(rolesList);
-
     }
     @Override
     public Set<String> getUsersOfRoles(String roleName) {

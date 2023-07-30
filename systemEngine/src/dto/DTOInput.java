@@ -7,6 +7,7 @@ public class DTOInput {
     String stepName;
     String type;
     String necessity;
+    String valueString;
 
     public DTOInput(String originalName, String finalName,Object value,String stepName, String type , String necessity){
         this.originalName =originalName;
@@ -15,6 +16,7 @@ public class DTOInput {
         this.value =value;
         this.type = type;
         this.necessity = necessity;
+       // this.valueString = valueString;
     }
     public DTOInput(String originalName, String finalName,Object value,String stepName, String type){
         this.originalName =originalName;
@@ -22,6 +24,8 @@ public class DTOInput {
         this.value =value;
         this.stepName = stepName;
         this.type = type;
+        //this.necessity = necessity;
+        //  this.valueString = valueString;
     }
 
     public String getOriginalName() {
@@ -39,5 +43,6 @@ public class DTOInput {
 
     public String getStepName() {return stepName;}
     public String getNecessity() {return necessity;}
+    public String getValueString() {return valueString;}
 
 }

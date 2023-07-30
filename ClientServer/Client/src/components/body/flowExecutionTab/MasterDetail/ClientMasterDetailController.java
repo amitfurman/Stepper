@@ -31,6 +31,8 @@ import steps.api.StepResult;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ClientMasterDetailController {
@@ -244,16 +246,16 @@ public class ClientMasterDetailController {
             outputItem.getChildren().add(output);
 
             output.getChildren().add(new TreeItem<>("Final Name: " + ioOutput.getFinalName()));
-            /*if (ioOutput.getType().equals("RELATION") || ioOutput.getType().equals("STRING_LIST")
+            if (ioOutput.getType().equals("RELATION") || ioOutput.getType().equals("STRING_LIST")
                     || ioOutput.getType().equals("FILE_LIST") || ioOutput.getType().equals("MAPPING2NUMBERS")) {
-                output.getChildren().add(new TreeItem<>(showOutputValue(ioOutput.getType(),ioOutput.getValue())));
-            } else {*/
+                output.getChildren().add(new TreeItem<>(showOutputValue(ioOutput.getType(),ioOutput.getValueString())));
+            } else {
                 if (ioOutput.getValue() != null) {
                     output.getChildren().add(new TreeItem<>("Value: " + ioOutput.getValue()));
                 } else {
                     output.getChildren().add(new TreeItem<>("Value: Not created due to failure in flow"));
                 }
-            //}
+           }
         });
 
         TreeItem<Object> logsItem = new TreeItem<>("Step's Logs:");
@@ -339,13 +341,11 @@ public class ClientMasterDetailController {
                 outputItem.getChildren().addAll(
                         new TreeItem<>("Final Name: " + output.getFinalName()),
                         new TreeItem<>("Type: " + output.getType().toString()),
-                        output.getValue() == null ?  new TreeItem<>( "Value: N/A") :new TreeItem<>("Value: " + output.getValue().toString()));
-                        /*,
-                       output.getValue() == null ?  new TreeItem<>( "Value: N/A") :
+                output.getValue() == null ?  new TreeItem<>( "Value: N/A") :
                         output.getType().equals("RELATION") || output.getType().equals("STRING_LIST")
                                 || output.getType().equals("FILE_LIST") || output.getType().equals("MAPPING2NUMBERS")
-                                ? new TreeItem<>(showOutputValue(output.getType(), output.getValue())) : new TreeItem<>("Value: " + output.getValue().toString())*/
-                //)
+                                ? new TreeItem<>(showOutputValue(output.getType(), output.getValue())) : new TreeItem<>("Value: " + output.getValue().toString())
+                );
             }
         }
 
@@ -354,6 +354,10 @@ public class ClientMasterDetailController {
         treeView.getStyleClass().add("tree-view-style");
         return treeView;
     }
+/*
+                        output.getValue() == null ?  new TreeItem<>( "Value: N/A") :new TreeItem<>("Value: " + output.getValue().toString()));
+*/
+
     public Hyperlink showOutputValue(String type,Object io) {
         Hyperlink viewDataLink = new Hyperlink("View Data");
         viewDataLink.setOnAction(event -> {
@@ -372,8 +376,8 @@ public class ClientMasterDetailController {
                ListView<String> list = showListData(io , type);
                layout.getChildren().addAll(label1, list);
             }else if(type.equals("MAPPING2NUMBERS")){
-               TableView table = showMappingData(io);
-               layout.getChildren().addAll(label1, table);
+              TableView table = showMappingData(io);
+              layout.getChildren().addAll(label1, table);
             }
             layout.setAlignment(Pos.CENTER);
             Scene scene1 = new Scene(layout, 700, 400);
@@ -386,6 +390,7 @@ public class ClientMasterDetailController {
     }
 
     public TableView showMappingData(Object io) {
+        LinkedTreeMap<String, Object> linkedTreeMap = (LinkedTreeMap<String, Object>) io;
         TableView<Map.Entry<Number, Number>> table = new TableView<>();
         table.setEditable(false);
 
@@ -430,7 +435,16 @@ public class ClientMasterDetailController {
         table.setItems(items);
         return table;
     }
-    public ListView<String> showListData(Object io , String type){
+
+    public static Map<Integer, Double> parseStringToMap(String jsonString) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<Integer, Double>>() {}.getType();
+        return gson.fromJson(jsonString, type);
+    }
+
+    public ListView<String> showListData(Object io , String type) {
+        System.out.println("list data value: " + io);
+
         ListView<String> list = new ListView<>();
 
         ObservableList<String> items = FXCollections.observableArrayList();
@@ -450,6 +464,21 @@ public class ClientMasterDetailController {
         list.setItems(items);
         return list;
     }
+    public List<String> extractPathsFromList(String listString) {
+        List<String> pathsList = new ArrayList<>();
+
+        // Regular expression pattern to match the paths
+        Pattern pattern = Pattern.compile("path=([^,]+)");
+        Matcher matcher = pattern.matcher(listString);
+
+        while (matcher.find()) {
+            String path = matcher.group(1);
+            pathsList.add(path);
+        }
+
+        return pathsList;
+    }
+
     public TableView showRelationData(Object io) {
         TableView<Map<String, String>> table = new TableView<>();
         table.setEditable(false);
@@ -503,7 +532,73 @@ public class ClientMasterDetailController {
 
         return table;
     }
+
+    public static List<Map<String, String>> parseJsonStringToList(String jsonString) {
+        // Implement your custom parsing here
+        // For example, split the string and extract the data accordingly
+        // In this example, we are simply splitting the string by "}, {"
+        jsonString = jsonString.replace("[", "").replace("]", "");
+
+        String[] dataEntries = jsonString.split("\\}, \\{");
+
+        List<Map<String, String>> dataList = new ArrayList<>();
+
+        for (String dataEntry : dataEntries) {
+            // Remove the curly braces and split each entry by comma
+            String[] keyValuePairs = dataEntry.replace("{", "").replace("}", "").split(", ");
+
+            Map<String, String> dataMap = new HashMap<>();
+
+            for (String keyValuePair : keyValuePairs) {
+                System.out.println("keyValuePair " + keyValuePair);
+                String[] parts = keyValuePair.split("=");
+                System.out.println();
+                if (parts.length == 2) {
+                    String key = parts[0].trim();
+                    String value = parts[1].trim();
+                    System.out.println("key " + key);
+                    System.out.println("value "  + value);
+                    dataMap.put(key, value);
+                }
+                if (parts.length == 3) {
+                    String key = parts[1].trim();
+                    String value = parts[2].trim();
+                    System.out.println("key " + key);
+                    System.out.println("value "  + value);
+                    dataMap.put(key, value);
+                }
+            }
+
+            dataList.add(dataMap);
+        }
+
+        return dataList;
+    }
+
 }
+
+        /*
+                ObservableList<Map<String, String>> data = FXCollections.observableArrayList();
+
+        for (RelationData.SingleRow singleRow : ((RelationData) io).getRows()) {
+            Map<String, String> row = singleRow.getRowData();
+            data.add(row);
+            table.setItems(data);
+        }*/
+
+      /*  for (String column : ((RelationData) io).getColumns()) {
+            TableColumn<Map<String, String>, String> tableColumn = new TableColumn<>(column);
+
+            if (column.equals(((RelationData) io).getColumns().get(0))) {
+                tableColumn.prefWidthProperty().bind(table.widthProperty().multiply(firstColumnWidth));
+            } else {
+                tableColumn.prefWidthProperty().bind(table.widthProperty().multiply(remainingColumnsWidth));
+            }
+
+            tableColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(column)));
+            table.getColumns().add(tableColumn);
+        }
+*/
 
 
 /*

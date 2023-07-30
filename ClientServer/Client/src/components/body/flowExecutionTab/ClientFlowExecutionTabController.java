@@ -7,11 +7,14 @@ import com.google.gson.reflect.TypeToken;
 import commonComponents.CommonController;
 import components.body.flowExecutionTab.MasterDetail.ClientMasterDetailController;
 
+import datadefinition.impl.enumerator.method.MethodEnumeratorData;
 import dto.*;
 import flow.mapping.FlowContinuationMapping;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -36,6 +39,7 @@ import systemengine.Input;
 import util.Constants;
 import util.http.HttpClientUtil;
 
+import javax.naming.CompositeName;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -186,7 +190,11 @@ public class ClientFlowExecutionTabController {
             }
             Tooltip tooltip1 = new Tooltip(textField.getText().toString());
             textField.setTooltip(tooltip1);
+            comboBox.setTooltip(tooltip1);
             textField.textProperty().addListener((observable, oldValue, newValue) -> {
+                tooltip1.setText(newValue);
+            });
+            comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
                 tooltip1.setText(newValue);
             });
             inputValuesHBox.getChildren().add(vbox);
@@ -394,6 +402,12 @@ public class ClientFlowExecutionTabController {
                             if (spinner.getValue() == null) {
                                 return false;
                             }
+                        } else if(inputNode instanceof ComboBox) {
+                            ComboBox<String> comboBox = (ComboBox<String>) inputNode;
+                            if (comboBox.getItems().size() == 0) {
+                                return false;
+                            }
+
                         }
                     }
                 }
@@ -626,6 +640,15 @@ public class ClientFlowExecutionTabController {
                                     int roundedValue = (int) Math.round((Double) value);
                                     spinner.getValueFactory().setValue(roundedValue);
                                     updateFreeInputMap(input, roundedValue);
+                                }
+                            }
+                            else if (inputNode instanceof ComboBox) {
+                                ComboBox<String> comboBox = (ComboBox<String>) inputNode;
+                                Object value = input.getValue();
+                                System.out.println("value from combo " + value);
+                                if (value instanceof String) {
+                                    comboBox.setValue((String) value);
+                                    updateFreeInputMap(input, value);
                                 }
                             }
                         } );
