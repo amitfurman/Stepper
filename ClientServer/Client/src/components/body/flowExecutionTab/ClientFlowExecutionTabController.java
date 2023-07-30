@@ -232,6 +232,8 @@ public class ClientFlowExecutionTabController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("Something want wrong.. " + e.getMessage() + "in getFreeInputs");
+
             }
 
             @Override
@@ -446,7 +448,7 @@ public class ClientFlowExecutionTabController {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Platform.runLater(() -> {
-                    System.out.println("Something went wrong: " + e.getMessage());
+                    System.out.println("Something went wrong: " + e.getMessage() + "in activateFlow");
                 });
                 e.printStackTrace();
             }
@@ -454,8 +456,6 @@ public class ClientFlowExecutionTabController {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
-
-                    //DTOFlowID flowExecution = new Gson().fromJson(response.body().string(), DTOFlowID.class);
                     DTOFlowID flowExecution = new Gson().fromJson(response.body().string(), DTOFlowID.class);
                     setExecutedFlowID(flowExecution.getUniqueIdByUUID());
 
@@ -464,20 +464,6 @@ public class ClientFlowExecutionTabController {
                             clientMasterDetailController,executedFlowIDProperty, new SimpleBooleanProperty(false));
 
                     new Thread(currentRunningTask).start();
-/*
-                    DTOFlowExecution flowExecution = new Gson().fromJson(response.body().string(), DTOFlowExecution.class);
-
-                    System.out.println(flowExecution.getUniqueIdByUUID());
-                    System.out.println(flowExecution.getFlowName());
-
-                    setExecutedFlowID(flowExecution.getUniqueIdByUUID());
-
-                    freeInputMap = new HashMap<>();
-                    ExecuteFlowTask currentRunningTask = new ExecuteFlowTask(UUID.fromString(executedFlowIDProperty.getValue()),
-                            masterDetailController,executedFlowIDProperty, new SimpleBooleanProperty(false));
-
-                    new Thread(currentRunningTask).start();
-*/
                 } else {
                     String errorMessage = response.body().string();
 
@@ -492,7 +478,6 @@ public class ClientFlowExecutionTabController {
 
     }
     public void backToFlowExecutionTabAfterExecution(String flowName) {
-        //getMainController().goToStatisticsTab();
         getAllContinuationMap(flowName);
     }
     public void getAllContinuationMap(String flowName) {
@@ -589,7 +574,7 @@ public class ClientFlowExecutionTabController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("on failure");
+                System.out.println("on failure in getValueList");
             }
 
             @Override
@@ -629,10 +614,6 @@ public class ClientFlowExecutionTabController {
                             } else if (inputNode instanceof Spinner) {
                                 Spinner<Integer> spinner = (Spinner<Integer>) inputNode;
                                 Object value = input.getValue();
-/*                                if (value instanceof Integer || value instanceof Double) {
-                                    spinner.getValueFactory().setValue((Integer) value);
-                                    updateFreeInputMap(input, value);
-                                }*/
                                 if (value instanceof Integer) {
                                     spinner.getValueFactory().setValue((Integer) value);
                                     updateFreeInputMap(input, value);
@@ -645,7 +626,6 @@ public class ClientFlowExecutionTabController {
                             else if (inputNode instanceof ComboBox) {
                                 ComboBox<String> comboBox = (ComboBox<String>) inputNode;
                                 Object value = input.getValue();
-                                System.out.println("value from combo " + value);
                                 if (value instanceof String) {
                                     comboBox.setValue((String) value);
                                     updateFreeInputMap(input, value);

@@ -42,7 +42,7 @@ public class activateFlowServlet extends HttpServlet {
         DTOFlowID flowExecution = systemEngine.activateFlowByName(userName, flowName, freeInputs);
         String json = gson.toJson(flowExecution);
         response.getWriter().println(json);
-        response.getWriter().flush();/**/
+        response.getWriter().flush();
     }
 
 }

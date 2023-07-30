@@ -13,8 +13,6 @@ import static util.Constants.GSON_INSTANCE;
 
 public class AdminRefresher extends TimerTask {
     private final Consumer<List<DTOFlowExeInfo>> flowExeListConsumer;
-
-
     public AdminRefresher(Consumer<List<DTOFlowExeInfo>> flowExeListConsumer){
         this.flowExeListConsumer = flowExeListConsumer;
     }
@@ -41,10 +39,6 @@ public class AdminRefresher extends TimerTask {
                     String jsonArrayOfUsersRoles = response.body().string();
                     LinkedList<DTOFlowExeInfo> flowExeList = GSON_INSTANCE.fromJson(jsonArrayOfUsersRoles, new TypeToken<LinkedList<DTOFlowExeInfo>>() {}.getType());
                     flowExeListConsumer.accept(flowExeList != null ? new LinkedList<>(flowExeList) : Collections.emptyList());
-
-
-               /*     if (flowExeList != null) {
-                    }*/
 
                 }
             });

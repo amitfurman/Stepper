@@ -163,6 +163,7 @@ public class HeaderClientController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("Something went wrong.. " + e.getMessage() + " in getIfManager");
             }
 
             @Override

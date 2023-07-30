@@ -6,7 +6,6 @@ import datadefinition.impl.list.StringListData;
 import datadefinition.impl.mapping.NumberMappingData;
 import datadefinition.impl.relation.RelationData;
 import dto.*;
-import flow.api.FlowIO.IO;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -479,76 +478,3 @@ public class AdminMasterDetailController {
         return table;
     }
 }
-
-
-/*
-        flowExecution.getIOlist().stream()
-                .filter(io1 -> io1.getStepName().equals(step.getFinalName()))
-                .forEach(io -> {
-                    if(io.getIOType().equals(IO.INPUT)) {
-                        TreeItem<Object> input = new TreeItem<>("Input " + inputIndex.getAndIncrement());
-                        inputItem.getChildren().add(input);
-                        input.getChildren().add(new TreeItem<>("Final Name: " + io.getFinalName()));
-
-                        if (io.getType().toString().equals("RELATION") || io.getType().toString().equals("STRING_LIST")
-                                || io.getType().toString().equals("FILE_LIST") || io.getType().toString().equals("MAPPING2NUMBERS")) {
-                            input.getChildren().add(new TreeItem<>(showOutputValue(io)));
-                        } else {
-                            if (io.getValue() != null) {
-                                input.getChildren().add(new TreeItem<>("Value: " + io.getValue().toString()));
-                            } else {
-                                input.getChildren().add(new TreeItem<>("Value: N/A"));
-                            }
-                        }
-                    }
-
-                    if(io.getIOType().equals(IO.OUTPUT)) {
-                        TreeItem<Object> output = new TreeItem<>("Output " + outputIndex.getAndIncrement());
-                        outputItem.getChildren().add(output);
-
-                        output.getChildren().add(new TreeItem<>("Final Name: " + io.getFinalName()));
-                        if (io.getType().toString().equals("RELATION") || io.getType().toString().equals("STRING_LIST")
-                            || io.getType().toString().equals("FILE_LIST") || io.getType().toString().equals("MAPPING2NUMBERS")) {
-                        output.getChildren().add(new TreeItem<>(showOutputValue(io)));
-                        } else {
-                            if (io.getValue() != null) {
-                                output.getChildren().add(new TreeItem<>("Value: " + io.getValue().toString()));
-                            } else {
-                                output.getChildren().add(new TreeItem<>("Value: Not created due to failure in flow"));
-                            }
-                        }
-                    }
-                });
-*/
-
-    /*public Hyperlink showOutputValue(DTOSingleFlowIOData output) {
-
-        Hyperlink viewDataLink = new Hyperlink("View Data");
-        viewDataLink.setOnAction(event -> {
-            Stage popupWindow = new Stage();
-
-            popupWindow.initModality(Modality.APPLICATION_MODAL);
-            popupWindow.setTitle("Data Values");
-            Label label1 = new Label("Data Values");
-            label1.getStyleClass().add("data-values-label");
-            VBox layout = new VBox(10);
-
-            if (output.getType().toString().equals("RELATION")) {
-                TableView table = showRelationData(output);
-                layout.getChildren().addAll(label1, table);
-            }else if(output.getType().toString().equals("STRING_LIST") || output.getType().toString().equals("FILE_LIST")){
-                ListView<String> list = showListData(output);
-                layout.getChildren().addAll(label1, list);
-            }else if(output.getType().toString().equals("MAPPING2NUMBERS")){
-                TableView table = showMappingData(output);
-                layout.getChildren().addAll(label1, table);
-            }
-            layout.setAlignment(Pos.CENTER);
-            Scene scene1 = new Scene(layout, 700, 400);
-            scene1.getStylesheets().add(getClass().getResource("MasterDetail.css").toExternalForm());
-
-            popupWindow.setScene(scene1);
-            popupWindow.showAndWait();
-        });
-        return  viewDataLink;
-    }*/

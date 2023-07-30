@@ -30,8 +30,7 @@ public class FileDumper extends AbstractStepDefinition {
         String fileName = context.getDataValue(IO_NAMES.FILE_NAME, String.class);
 
         File file = new File(fileName);
-        System.out.println("content: " + content);
-        System.out.println("fileData: " + file.length());
+
 /*        if (file.exists()) {
             context.storeLogLineAndSummaryLine("Step failed because the target file path already exists.");
             context.storeDataValue("RESULT", StepResult.FAILURE.toString() + "! Failed because the target file path already exists");
@@ -40,9 +39,8 @@ public class FileDumper extends AbstractStepDefinition {
         }*/
 
         context.storeLogLine("About to create file named " + fileName);
-        try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8"))) {
-            out.write(content);
-        }
+        try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8")))
+        { out.write(content);}
         catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (UnsupportedEncodingException e) {

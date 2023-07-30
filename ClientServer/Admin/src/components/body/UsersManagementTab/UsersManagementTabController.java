@@ -98,7 +98,7 @@ public class UsersManagementTabController {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Platform.runLater(() -> {
-                    System.out.println("Something went wrong: " + e.getMessage());
+                    System.out.println("Something went wrong: " + e.getMessage() + "in updateUser");
                 });
                 e.printStackTrace();
             }
@@ -168,6 +168,8 @@ public class UsersManagementTabController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("Something went wrong: " + e.getMessage() + "in getAllUserInfo");
+
             }
 
             @Override
@@ -187,6 +189,7 @@ public class UsersManagementTabController {
         HttpClientUtil.runAsync(Constants.ROLES_LIST, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("Something went wrong: " + e.getMessage() + "in getAllRoles");
 
             }
 
@@ -224,27 +227,12 @@ public class UsersManagementTabController {
           formalFlow= new TreeItem<>(String.valueOf(dtoUserInfo.getAllFlows().size()));
 
         }
-        /* if(isManagerCheckBox.isSelected()){
-             formalFlow = new TreeItem<>(String.valueOf(dtoUserInfo.getAllFlows().size()))
-         }else {
-             formalFlow = new TreeItem<>(String.valueOf(dtoUserInfo.getAllFlows().size()));
-         }*/
-
 
         branchFlows.getChildren().add(formalFlow);
-        /* for (String flow :dtoUserInfo.getAllFlows()) {
-             TreeItem<String> formalFlow = new TreeItem<>(flow);
-             branchFlows.getChildren().add(formalFlow);
-         }*/
 
         TreeItem<String> branchExecutedFlows = new TreeItem<>("Number Of  Flows Executed By User: ");
         TreeItem<String> formalExecutedFlow = new TreeItem<>(String.valueOf(dtoUserInfo.getExecutedFlows().size()));
         branchExecutedFlows.getChildren().add(formalExecutedFlow);
-         /*
-         for (String ExeFlow :dtoUserInfo.getExecutedFlows()) {
-             TreeItem<String> formalExecutedFlow = new TreeItem<>(ExeFlow);
-             branchExecutedFlows.getChildren().add(formalExecutedFlow);
-         }*/
 
         rootItem.getChildren().addAll(branchName, branchRoles,branchFlows,branchExecutedFlows);
          Platform.runLater(() -> {
@@ -267,11 +255,4 @@ public class UsersManagementTabController {
             GridPaneUsers.add(rolesCheckList, 0, 1);
         }
     }
-
-    /*
-    public void setFlowDetailsTree() {
-        TreeItem<String> rootItem = new TreeItem<>();
-        userDetailsTree.setRoot(rootItem);
-        SaveButton.setDisable(true);
-    }*/
 }

@@ -75,6 +75,7 @@ public class ClientExecutionsHistoryTabController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("Something went wrong.." + e.getMessage() + "in getFreeInputsFromCurrFlow") ;
             }
 
             @Override
@@ -248,7 +249,8 @@ public class ClientExecutionsHistoryTabController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("on failure");
+
+                System.out.println("on failure in getFlowsExecutionList ");
             }
 
             @Override
@@ -276,7 +278,8 @@ public class ClientExecutionsHistoryTabController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("on failure");
+
+                System.out.println("on failure in getDTOFlowExecutionByName");
             }
 
             @Override

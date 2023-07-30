@@ -52,27 +52,8 @@ public class ClientFlowDefinitionTabController {
     public TreeView<String> getFlowsTree(){
         return flowsTree;
     }
-/*    public void showFlowsTree(List<String> roles) {
-        if (roles.size() != 0) {
-           getAllFlows(roles);
-        }else{
-            allFlows.clear();
-            rootItem.getChildren().clear();
-            rootItem.setExpanded(true);
-            Platform.runLater(() -> {
-                flowsTree.setRoot(rootItem);
-            });
-        }
-    }*/
+
     public void showFlowsTree(List<String> roles) {
-/*        if(roles.size()==0) {
-            allFlows.clear();
-            rootItem.getChildren().clear();
-            rootItem.setExpanded(true);
-            Platform.runLater(() -> {
-                flowsTree.setRoot(rootItem);
-            });
-        }*/
         getAllFlows(roles);
     }
     public void getAllFlows(List<String> roles) {
@@ -94,6 +75,7 @@ public class ClientFlowDefinitionTabController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("Something want wrong.. " + e.getMessage() + "in getAllFlows");
             }
 
             @Override
