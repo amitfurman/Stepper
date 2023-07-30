@@ -64,7 +64,6 @@ public class SchemaBasedJAXBMain {
 
     public void ReferenceToUnExistsStep(STStepper stepper) throws UnExistsStep {
         List<STFlow> stFlows = stepper.getSTFlows().getSTFlow();
-        System.out.println(stFlows);
         List<String> stepsNames = new ArrayList<>(Arrays.asList("Spend Some Time", "Collect Files In Folder", "Files Deleter", "Files Renamer", "Files Content Extractor", "CSV Exporter", "Properties Exporter", "File Dumper", "Zipper", "Command Line", "HTTP Call", "To Json", "Json Data Extractor"));
 
         for (STFlow flow : stFlows) {

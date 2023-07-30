@@ -90,9 +90,6 @@ public class JsonDataExtractor extends AbstractStepDefinition {
             } else {
                 context.storeDataValue("VALUE", result.toString());
             }*/
-            System.out.println("in jsonDataExt");
-            System.out.println(result);
-            System.out.println("jsonPath: " + jsonPath );
 
             // Log the extraction details
             context.storeLogLineAndSummaryLine("Extracting data " + jsonPath + ". Value: " + result);

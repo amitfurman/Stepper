@@ -57,7 +57,6 @@ public class HTTPCall  extends AbstractStepDefinition {
 
         try {
             URL url = new URL(protocol + "://" + address + "/" + resource);
-            System.out.println(url);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             if (method != null) {
                 connection.setRequestMethod(method);

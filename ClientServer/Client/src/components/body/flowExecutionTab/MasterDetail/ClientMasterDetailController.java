@@ -416,14 +416,12 @@ public class ClientMasterDetailController {
         int value0 = 0;
         if (resultMap.containsKey(0)) {
             value0 = resultMap.get(0).intValue();
-            System.out.println("Value for key 0: " + value0);
             items.add(new AbstractMap.SimpleEntry<>(0, value0));
         }
 
         int value1 = 0;
         if (resultMap.containsKey(1)) {
             value1 = resultMap.get(1).intValue();
-            System.out.println("Value for key 1: " + value1);
             items.add(new AbstractMap.SimpleEntry<>(1, value1));
         }
 
@@ -440,8 +438,6 @@ public class ClientMasterDetailController {
     }
 
     public ListView<String> showListData(Object io , String type) {
-        System.out.println("list data value: " + io);
-
         ListView<String> list = new ListView<>();
 
         ObservableList<String> items = FXCollections.observableArrayList();
@@ -450,7 +446,6 @@ public class ClientMasterDetailController {
         List<String> list1 = extractPathsFromList(linkedTreeMap.get("list").toString());
 
         for (String dictionary : list1) {
-            System.out.println(dictionary);
             String val = index + ". " + dictionary;
             index++;
             items.add(val);
@@ -490,10 +485,8 @@ public class ClientMasterDetailController {
 
             if (i == 0) {
                 tableColumn.prefWidthProperty().bind(table.widthProperty().multiply(firstColumnWidth));
-                System.out.println(tableColumn);
             } else {
                 tableColumn.prefWidthProperty().bind(table.widthProperty().multiply(remainingColumnsWidth));
-                System.out.println(tableColumn);
             }
 
             tableColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(column)));
@@ -501,12 +494,6 @@ public class ClientMasterDetailController {
         }
 
         LinkedTreeMap<String, Object> linkedTreeMap = (LinkedTreeMap<String, Object>) io;
-
-        for (Map.Entry<String, Object> entry : linkedTreeMap.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-            System.out.println("Key: " + key + ", Value: " + value);
-        }
 
         List<Map<String, String>> dataList = parseJsonStringToList(linkedTreeMap.get("rows").toString());
 
@@ -517,13 +504,15 @@ public class ClientMasterDetailController {
             String originalFileName = dataMap.get("Original file's name");
             String serialNumber = dataMap.get("Serial Number");
 
-            // Now you can use this information as needed.
-            System.out.println("File's name after change: " + fileNameAfterChange);
-            System.out.println("Original file's name: " + originalFileName);
-            System.out.println("Serial Number: " + serialNumber);
-            System.out.println("===============================");
+            Map<String, String> rowData = new HashMap<>();
+            rowData.put("Serial Number", serialNumber);
+            rowData.put("Original file's name", originalFileName);
+            rowData.put("file's name after change", fileNameAfterChange);
+
+            table.getItems().add(rowData);
         }
         table.getStyleClass().add("table-view-style");
+
 
         return table;
     }
@@ -545,21 +534,15 @@ public class ClientMasterDetailController {
             Map<String, String> dataMap = new HashMap<>();
 
             for (String keyValuePair : keyValuePairs) {
-                System.out.println("keyValuePair " + keyValuePair);
                 String[] parts = keyValuePair.split("=");
-                System.out.println();
                 if (parts.length == 2) {
                     String key = parts[0].trim();
                     String value = parts[1].trim();
-                    System.out.println("key " + key);
-                    System.out.println("value "  + value);
                     dataMap.put(key, value);
                 }
                 if (parts.length == 3) {
                     String key = parts[1].trim();
                     String value = parts[2].trim();
-                    System.out.println("key " + key);
-                    System.out.println("value "  + value);
                     dataMap.put(key, value);
                 }
             }

@@ -1,5 +1,8 @@
 package components.body.executionsHistoryTab.MasterDetail;
 
+import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import components.body.executionsHistoryTab.AdminExecutionsHistoryTabController;
 import datadefinition.impl.list.FileListData;
 import datadefinition.impl.list.StringListData;
@@ -29,11 +32,11 @@ import steps.api.DataNecessity;
 import steps.api.StepResult;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Type;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class AdminMasterDetailController {
@@ -223,16 +226,16 @@ public class AdminMasterDetailController {
             TreeItem<Object> input = new TreeItem<>("Input " + inputIndex.getAndIncrement());
             inputItem.getChildren().add(input);
             input.getChildren().add(new TreeItem<>("Final Name: " + ioInput.getFinalName()));
-              /*      if (ioInput.getType().equals("RELATION") || ioInput.getType().equals("STRING_LIST")
+                    if (ioInput.getType().equals("RELATION") || ioInput.getType().equals("STRING_LIST")
                             || ioInput.getType().equals("FILE_LIST") || ioInput.getType().equals("MAPPING2NUMBERS")) {
                         input.getChildren().add(new TreeItem<>(showOutputValue(ioInput.getType(),ioInput.getValue())));
-                    } else {*/
+                    } else {
             if (ioInput.getValue() != null) {
                 input.getChildren().add(new TreeItem<>("Value: " + ioInput.getValue().toString()));
             } else {
                 input.getChildren().add(new TreeItem<>("Value: N/A"));
             }
-            //};
+            };
         });
 
         step.getOutputs().stream().forEach(ioOutput -> {
@@ -240,16 +243,16 @@ public class AdminMasterDetailController {
             outputItem.getChildren().add(output);
 
             output.getChildren().add(new TreeItem<>("Final Name: " + ioOutput.getFinalName()));
-            /*if (ioOutput.getType().equals("RELATION") || ioOutput.getType().equals("STRING_LIST")
+            if (ioOutput.getType().equals("RELATION") || ioOutput.getType().equals("STRING_LIST")
                     || ioOutput.getType().equals("FILE_LIST") || ioOutput.getType().equals("MAPPING2NUMBERS")) {
                 output.getChildren().add(new TreeItem<>(showOutputValue(ioOutput.getType(),ioOutput.getValue())));
-            } else {*/
+            } else {
             if (ioOutput.getValue() != null) {
                 output.getChildren().add(new TreeItem<>("Value: " + ioOutput.getValue()));
             } else {
                 output.getChildren().add(new TreeItem<>("Value: Not created due to failure in flow"));
             }
-            //}
+            }
         });
 
         TreeItem<Object> logsItem = new TreeItem<>("Step's Logs:");
@@ -332,16 +335,16 @@ public class AdminMasterDetailController {
                 TreeItem<Object> outputItem = new TreeItem<>("Output " + outputIndex.getAndIncrement());
                 outputsItem.getChildren().add(outputItem);
 
+
                 outputItem.getChildren().addAll(
                         new TreeItem<>("Final Name: " + output.getFinalName()),
                         new TreeItem<>("Type: " + output.getType().toString()),
-                        output.getValue() == null ?  new TreeItem<>( "Value: N/A") :new TreeItem<>("Value: " + output.getValue().toString()));
-                        /*,
-                       output.getValue() == null ?  new TreeItem<>( "Value: N/A") :
-                        output.getType().equals("RELATION") || output.getType().equals("STRING_LIST")
-                                || output.getType().equals("FILE_LIST") || output.getType().equals("MAPPING2NUMBERS")
-                                ? new TreeItem<>(showOutputValue(output.getType(), output.getValue())) : new TreeItem<>("Value: " + output.getValue().toString())*/
-                //)
+                        output.getValue() == null ?  new TreeItem<>( "Value: N/A") :
+                                output.getType().equals("RELATION") || output.getType().equals("STRING_LIST")
+                                        || output.getType().equals("FILE_LIST") || output.getType().equals("MAPPING2NUMBERS")
+                                        ? new TreeItem<>(showOutputValue(output.getType(), output.getValue())) : new TreeItem<>("Value: " + output.getValue().toString())
+                );
+
             }
         }
 
@@ -382,6 +385,7 @@ public class AdminMasterDetailController {
     }
 
     public TableView showMappingData(Object io) {
+        LinkedTreeMap<String, Object> linkedTreeMap = (LinkedTreeMap<String, Object>) io;
         TableView<Map.Entry<Number, Number>> table = new TableView<>();
         table.setEditable(false);
 
@@ -400,52 +404,70 @@ public class AdminMasterDetailController {
 
         keyCol.prefWidthProperty().bind(table.widthProperty().multiply(columnWidth));
         valueCol.prefWidthProperty().bind(table.widthProperty().multiply(columnWidth));
-
         table.getColumns().addAll(keyCol, valueCol);
 
         ObservableList<Map.Entry<Number, Number>> items = FXCollections.observableArrayList();
-        items.addAll(((NumberMappingData) io).getItems().entrySet());
+
+
+        Map<Integer, Double> resultMap = parseStringToMap(linkedTreeMap.get("map").toString());
+
+        int value0 = 0;
+        if (resultMap.containsKey(0)) {
+            value0 = resultMap.get(0).intValue();
+            items.add(new AbstractMap.SimpleEntry<>(0, value0));
+        }
+
+        int value1 = 0;
+        if (resultMap.containsKey(1)) {
+            value1 = resultMap.get(1).intValue();
+            items.add(new AbstractMap.SimpleEntry<>(1, value1));
+        }
 
         table.getStyleClass().add("table-view-style");
 
         table.setItems(items);
         return table;
     }
-    public ListView<String> showListData(Object io , String type){
+
+    public static Map<Integer, Double> parseStringToMap(String jsonString) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<Integer, Double>>() {}.getType();
+        return gson.fromJson(jsonString, type);
+    }
+
+    public ListView<String> showListData(Object io , String type) {
         ListView<String> list = new ListView<>();
 
         ObservableList<String> items = FXCollections.observableArrayList();
-        int index =1;
+        int index = 1;
+        LinkedTreeMap<String, Object> linkedTreeMap = (LinkedTreeMap<String, Object>) io;
+        List<String> list1 = extractPathsFromList(linkedTreeMap.get("list").toString());
 
-        if(type.equals("FILE_LIST")) {
-/*            LinkedTreeMap tempMap = (LinkedTreeMap) io;
-            if (tempMap.get("hash") != null && tempMap.get("value") != null) {
-                io = tempMap.get("value");
-            }
-            List<FileData> FilesList = new ArrayList<>();
-            for (int j = 0; j < ((ArrayList) io).size(); j++) {
-                Object tempValue = ((ArrayList) io).get(j);
-                if (tempValue instanceof LinkedTreeMap && ((LinkedTreeMap) tempValue).get("path") != null) {
-                    FilesList.add(new FileData(((LinkedTreeMap) tempValue).get("path").toString()));
-                }
-            }*/
-            for (File value : ((FileListData) io).getItems()) {
-                String name = index +". " + value.getAbsolutePath();
-                index++;
-                items.add(name);
-            }
-        }else {//////////////////check in step 3
-            for (String value : ((StringListData) io).getItems()) {
-                String name = index +". " + value;
-                index++;
-                items.add(value);
-            }
+        for (String dictionary : list1) {
+            String val = index + ". " + dictionary;
+            index++;
+            items.add(val);
         }
 
         list.getStyleClass().add("list-view-style");
         list.setItems(items);
         return list;
     }
+
+    public List<String> extractPathsFromList(String listString) {
+        List<String> pathsList = new ArrayList<>();
+
+        // Regular expression pattern to match the paths
+        Pattern pattern = Pattern.compile("path=([^,]+)");
+        Matcher matcher = pattern.matcher(listString);
+
+        while (matcher.find()) {
+            String path = matcher.group(1);
+            pathsList.add(path);
+        }
+        return pathsList;
+    }
+
     public TableView showRelationData(Object io) {
         TableView<Map<String, String>> table = new TableView<>();
         table.setEditable(false);
@@ -454,10 +476,13 @@ public class AdminMasterDetailController {
         double firstColumnWidth = tableWidth * 0.15;
         double remainingColumnsWidth = (tableWidth - firstColumnWidth) / 2;
 
-        for (String column : ((RelationData) io).getColumns()) {
+        List<String> columns = Arrays.asList("Serial Number", "Original file's name", "file's name after change");
+
+        for (int i = 0; i < columns.size(); i++) {
+            String column = columns.get(i);
             TableColumn<Map<String, String>, String> tableColumn = new TableColumn<>(column);
 
-            if (column.equals(((RelationData) io).getColumns().get(0))) {
+            if (i == 0) {
                 tableColumn.prefWidthProperty().bind(table.widthProperty().multiply(firstColumnWidth));
             } else {
                 tableColumn.prefWidthProperty().bind(table.widthProperty().multiply(remainingColumnsWidth));
@@ -467,14 +492,63 @@ public class AdminMasterDetailController {
             table.getColumns().add(tableColumn);
         }
 
-        ObservableList<Map<String, String>> data = FXCollections.observableArrayList();
-        for (RelationData.SingleRow singleRow : ((RelationData) io).getRows()) {
-            Map<String, String> row = singleRow.getRowData();
-            data.add(row);
-            table.setItems(data);
+        LinkedTreeMap<String, Object> linkedTreeMap = (LinkedTreeMap<String, Object>) io;
+
+        List<Map<String, String>> dataList = parseJsonStringToList(linkedTreeMap.get("rows").toString());
+
+        // Now, you can work with the dataList to extract the relevant information.
+        // For example, you can iterate over the dataList and extract each entry's data.
+        for (Map<String, String> dataMap : dataList) {
+            String fileNameAfterChange = dataMap.get("file's name after change");
+            String originalFileName = dataMap.get("Original file's name");
+            String serialNumber = dataMap.get("Serial Number");
+
+            Map<String, String> rowData = new HashMap<>();
+            rowData.put("Serial Number", serialNumber);
+            rowData.put("Original file's name", originalFileName);
+            rowData.put("file's name after change", fileNameAfterChange);
+
+            table.getItems().add(rowData);
         }
         table.getStyleClass().add("table-view-style");
 
+
         return table;
+    }
+
+    public static List<Map<String, String>> parseJsonStringToList(String jsonString) {
+        // Implement your custom parsing here
+        // For example, split the string and extract the data accordingly
+        // In this example, we are simply splitting the string by "}, {"
+        jsonString = jsonString.replace("[", "").replace("]", "");
+
+        String[] dataEntries = jsonString.split("\\}, \\{");
+
+        List<Map<String, String>> dataList = new ArrayList<>();
+
+        for (String dataEntry : dataEntries) {
+            // Remove the curly braces and split each entry by comma
+            String[] keyValuePairs = dataEntry.replace("{", "").replace("}", "").split(", ");
+
+            Map<String, String> dataMap = new HashMap<>();
+
+            for (String keyValuePair : keyValuePairs) {
+                String[] parts = keyValuePair.split("=");
+                if (parts.length == 2) {
+                    String key = parts[0].trim();
+                    String value = parts[1].trim();
+                    dataMap.put(key, value);
+                }
+                if (parts.length == 3) {
+                    String key = parts[1].trim();
+                    String value = parts[2].trim();
+                    dataMap.put(key, value);
+                }
+            }
+
+            dataList.add(dataMap);
+        }
+
+        return dataList;
     }
 }
