@@ -1,15 +1,11 @@
 package components.body.flowExecutionTab.MasterDetail;
 
+import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 import components.body.executionsHistoryTab.ClientExecutionsHistoryTabController;
 import components.body.flowExecutionTab.ClientFlowExecutionTabController;
-import datadefinition.impl.file.FileData;
-import datadefinition.impl.list.FileListData;
-import datadefinition.impl.list.StringListData;
-import datadefinition.impl.mapping.NumberMappingData;
-import datadefinition.impl.relation.RelationData;
 import dto.*;
-import flow.api.FlowIO.IO;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -32,11 +28,8 @@ import org.controlsfx.control.MasterDetailPane;
 import steps.api.DataNecessity;
 import steps.api.StepResult;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Type;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -234,16 +227,16 @@ public class ClientMasterDetailController {
                     inputItem.getChildren().add(input);
                     input.getChildren().add(new TreeItem<>("Final Name: " + ioInput.getFinalName()));
 
-              /*      if (ioInput.getType().equals("RELATION") || ioInput.getType().equals("STRING_LIST")
+                   if (ioInput.getType().equals("RELATION") || ioInput.getType().equals("STRING_LIST")
                             || ioInput.getType().equals("FILE_LIST") || ioInput.getType().equals("MAPPING2NUMBERS")) {
                         input.getChildren().add(new TreeItem<>(showOutputValue(ioInput.getType(),ioInput.getValue())));
-                    } else {*/
+                    } else {
                         if (ioInput.getValue() != null) {
                             input.getChildren().add(new TreeItem<>("Value: " + ioInput.getValue().toString()));
                         } else {
                             input.getChildren().add(new TreeItem<>("Value: N/A"));
                         }
-                    //};
+                    };
         });
 
         step.getOutputs().stream().forEach(ioOutput -> {
@@ -411,11 +404,26 @@ public class ClientMasterDetailController {
 
         keyCol.prefWidthProperty().bind(table.widthProperty().multiply(columnWidth));
         valueCol.prefWidthProperty().bind(table.widthProperty().multiply(columnWidth));
-
         table.getColumns().addAll(keyCol, valueCol);
 
         ObservableList<Map.Entry<Number, Number>> items = FXCollections.observableArrayList();
-        items.addAll(((NumberMappingData) io).getItems().entrySet());
+
+
+        Map<Integer, Double> resultMap = parseStringToMap(linkedTreeMap.get("map").toString());
+
+        int value0 = 0;
+        if (resultMap.containsKey(0)) {
+            value0 = resultMap.get(0).intValue();
+            System.out.println("Value for key 0: " + value0);
+            items.add(new AbstractMap.SimpleEntry<>(0, value0));
+        }
+
+        int value1 = 0;
+        if (resultMap.containsKey(1)) {
+            value1 = resultMap.get(1).intValue();
+            System.out.println("Value for key 1: " + value1);
+            items.add(new AbstractMap.SimpleEntry<>(1, value1));
+        }
 
         table.getStyleClass().add("table-view-style");
 
@@ -426,31 +434,16 @@ public class ClientMasterDetailController {
         ListView<String> list = new ListView<>();
 
         ObservableList<String> items = FXCollections.observableArrayList();
-        int index =1;
+        int index = 1;
+        LinkedTreeMap<String, Object> linkedTreeMap = (LinkedTreeMap<String, Object>) io;
+        List<String> list1 = extractPathsFromList(linkedTreeMap.get("list").toString());
 
-        if(type.equals("FILE_LIST")) {
-/*            LinkedTreeMap tempMap = (LinkedTreeMap) io;
-            if (tempMap.get("hash") != null && tempMap.get("value") != null) {
-                io = tempMap.get("value");
-            }
-            List<FileData> FilesList = new ArrayList<>();
-            for (int j = 0; j < ((ArrayList) io).size(); j++) {
-                Object tempValue = ((ArrayList) io).get(j);
-                if (tempValue instanceof LinkedTreeMap && ((LinkedTreeMap) tempValue).get("path") != null) {
-                    FilesList.add(new FileData(((LinkedTreeMap) tempValue).get("path").toString()));
-                }
-            }*/
-            for (File value : ((FileListData) io).getItems()) {
-                String name = index +". " + value.getAbsolutePath();
-                index++;
-                items.add(name);
-            }
-        }else {//////////////////check in step 3
-            for (String value : ((StringListData) io).getItems()) {
-                String name = index +". " + value;
-                index++;
-                items.add(value);
-            }
+        for (String dictionary : list1) {
+            System.out.println(dictionary);
+            String val = index + ". " + dictionary;
+            index++;
+            items.add(val);
+
         }
 
         list.getStyleClass().add("list-view-style");
@@ -465,24 +458,46 @@ public class ClientMasterDetailController {
         double firstColumnWidth = tableWidth * 0.15;
         double remainingColumnsWidth = (tableWidth - firstColumnWidth) / 2;
 
-        for (String column : ((RelationData) io).getColumns()) {
+        List<String> columns = Arrays.asList("Serial Number", "Original file's name", "file's name after change");
+
+        for (int i = 0; i < columns.size(); i++) {
+            String column = columns.get(i);
             TableColumn<Map<String, String>, String> tableColumn = new TableColumn<>(column);
 
-            if (column.equals(((RelationData) io).getColumns().get(0))) {
+            if (i == 0) {
                 tableColumn.prefWidthProperty().bind(table.widthProperty().multiply(firstColumnWidth));
+                System.out.println(tableColumn);
             } else {
                 tableColumn.prefWidthProperty().bind(table.widthProperty().multiply(remainingColumnsWidth));
+                System.out.println(tableColumn);
             }
 
             tableColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(column)));
             table.getColumns().add(tableColumn);
         }
 
-        ObservableList<Map<String, String>> data = FXCollections.observableArrayList();
-        for (RelationData.SingleRow singleRow : ((RelationData) io).getRows()) {
-            Map<String, String> row = singleRow.getRowData();
-            data.add(row);
-            table.setItems(data);
+        LinkedTreeMap<String, Object> linkedTreeMap = (LinkedTreeMap<String, Object>) io;
+
+        for (Map.Entry<String, Object> entry : linkedTreeMap.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            System.out.println("Key: " + key + ", Value: " + value);
+        }
+
+        List<Map<String, String>> dataList = parseJsonStringToList(linkedTreeMap.get("rows").toString());
+
+        // Now, you can work with the dataList to extract the relevant information.
+        // For example, you can iterate over the dataList and extract each entry's data.
+        for (Map<String, String> dataMap : dataList) {
+            String fileNameAfterChange = dataMap.get("file's name after change");
+            String originalFileName = dataMap.get("Original file's name");
+            String serialNumber = dataMap.get("Serial Number");
+
+            // Now you can use this information as needed.
+            System.out.println("File's name after change: " + fileNameAfterChange);
+            System.out.println("Original file's name: " + originalFileName);
+            System.out.println("Serial Number: " + serialNumber);
+            System.out.println("===============================");
         }
         table.getStyleClass().add("table-view-style");
 

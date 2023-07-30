@@ -337,7 +337,7 @@ public class systemengineImpl implements systemengine {
                     .forEach(ioOutput -> {
                         if (ioOutput.getIOType().equals(IO.OUTPUT)) {
                             Object outputValue = IOlist.stream().filter(i-> (i.getFinalName().equals(ioOutput.getFinalName()) && i.getStepName().equals(ioOutput.getStepName()))).findFirst().get().getValue();
-                            outputs.add(new DTOOutput(ioOutput.getOriginalName(),ioOutput.getFinalName(), outputValue ,ioOutput.getStepName(), ioOutput.getDD().toString() ));
+                            outputs.add(new DTOOutput(ioOutput.getOriginalName(),ioOutput.getFinalName(), outputValue ,ioOutput.getStepName(), ioOutput.getDD().toString()));
                         }
                     });
 
@@ -354,7 +354,7 @@ public class systemengineImpl implements systemengine {
                 .forEach(io -> {
                     if (io.getIOType().equals(IO.OUTPUT)) {
                         Object outputValue = IOlist.stream().filter(i-> (i.getFinalName().equals(io.getFinalName()))).findFirst().get().getValue();
-                        outputsOfFlow.add(new DTOOutput(io.getOriginalName(),io.getFinalName(), outputValue , io.getStepName(), io.getDD().toString() ));
+                        outputsOfFlow.add(new DTOOutput(io.getOriginalName(),io.getFinalName(), outputValue , io.getStepName(), io.getDD().toString()));
                     }
                 });
 
@@ -393,7 +393,7 @@ public class systemengineImpl implements systemengine {
                     .forEach(ioInput -> {
                                 if (ioInput.getIOType().equals(IO.INPUT)) {
                                     Object inputValue = IOlist.stream().filter(i-> (i.getFinalName().equals(ioInput.getFinalName()) && i.getStepName().equals(ioInput.getStepName()))).findFirst().get().getValue();
-                                   inputs.add(new DTOInput(ioInput.getOriginalName(),ioInput.getFinalName(),inputValue,ioInput.getStepName(), ioInput.getDD().toString()));
+                                    inputs.add(new DTOInput(ioInput.getOriginalName(),ioInput.getFinalName(),inputValue,ioInput.getStepName(), ioInput.getDD().toString()));
                                 }
                             });
             List<DTOOutput> outputs = new ArrayList<>();
@@ -401,7 +401,7 @@ public class systemengineImpl implements systemengine {
                     .forEach(ioOutput -> {
                         if (ioOutput.getIOType().equals(IO.OUTPUT)) {
                             Object outputValue = IOlist.stream().filter(i-> (i.getFinalName().equals(ioOutput.getFinalName()) && i.getStepName().equals(ioOutput.getStepName()))).findFirst().get().getValue();
-                            outputs.add(new DTOOutput(ioOutput.getOriginalName(),ioOutput.getFinalName(), outputValue ,ioOutput.getStepName(), ioOutput.getDD().toString() ));
+                            outputs.add(new DTOOutput(ioOutput.getOriginalName(),ioOutput.getFinalName(), outputValue ,ioOutput.getStepName(), ioOutput.getDD().toString()));
                         }
                     });
             List <DTOLogger> loggers = new ArrayList<>();
@@ -415,7 +415,7 @@ public class systemengineImpl implements systemengine {
                 .forEach(io -> {
                     if (io.getIOType().equals(IO.OUTPUT)) {
                         Object outputValue = IOlist.stream().filter(i-> (i.getFinalName().equals(io.getFinalName()))).findFirst().get().getValue();
-                        outputsOfFlow.add(new DTOOutput(io.getOriginalName(),io.getFinalName(), outputValue , io.getStepName(), io.getDD().toString() ));
+                        outputsOfFlow.add(new DTOOutput(io.getOriginalName(),io.getFinalName(), outputValue , io.getStepName(), io.getDD().toString()));
                     }
                 });
 
@@ -688,7 +688,6 @@ public class systemengineImpl implements systemengine {
         Map<String, Object > freeInputsValues = executedFlow.getFreeInputsValues();
 
         flow.getFlowFreeInputs().stream().forEach(node -> {
-
             DTOInput freeInputs = new DTOInput(node.getOriginalName(),node.getFinalName(),freeInputsValues.get(node.getStepName() + "." + node.getOriginalName()) ,node.getStepName(),node.getDD().toString(), node.getNecessity().toString());
             freeInputsList.add(freeInputs);
         });

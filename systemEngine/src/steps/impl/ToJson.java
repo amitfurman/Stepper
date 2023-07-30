@@ -37,7 +37,7 @@ public class ToJson extends AbstractStepDefinition {
             Object jsonObject = gson.fromJson(content, Object.class);
             context.storeLogLineAndSummaryLine("Content is JSON string. Converting it to JSON...");
             JsonObject json = gson.toJsonTree(jsonObject).getAsJsonObject(); ////check
-            context.storeDataValue("JSON", json);
+            context.storeDataValue("JSON", json.toString());
 
 
         } catch (JsonSyntaxException e) {

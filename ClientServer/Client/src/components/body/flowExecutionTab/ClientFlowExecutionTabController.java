@@ -75,9 +75,11 @@ public class ClientFlowExecutionTabController {
     public ClientFlowExecutionTabController() {
         executedFlowIDProperty = new SimpleStringProperty();
     }
+
     public void setExecutedFlowID(UUID id) {
         this.executedFlowIDProperty.set(id.toString());
     }
+
     @FXML
     public void initialize() throws IOException {
         freeInputMap = new HashMap<>();
@@ -97,34 +99,41 @@ public class ClientFlowExecutionTabController {
 
         VBox masterDetailPaneVbox = new VBox(MasterDetailComponent);
         VBox.setVgrow(masterDetailPane, Priority.ALWAYS);
-        flowExecutionGridPane.add(masterDetailPaneVbox,0,1);
+        flowExecutionGridPane.add(masterDetailPaneVbox, 0, 1);
 
         Text asterisk1 = new Text("*");
         asterisk1.setFill(Color.RED);
         MandatoryLabel.setGraphic(asterisk1);
     }
-    public void initContinuationVbox(){
+
+    public void initContinuationVbox() {
         if (continuationTableView != null)
             continuationTableView.getItems().clear();
     }
+
     public void setMainController(CommonController mainController) {
         this.mainController = mainController;
     }
+
     public CommonController getMainController() {
         return mainController;
     }
+
     public void setMasterDetailsController(ClientMasterDetailController masterDetailComponentController) {
         this.clientMasterDetailController = masterDetailComponentController;
         masterDetailComponentController.setFlowExecutionTabController(this);
     }
+
     public void initDataInFlowExecutionTab() {
         clientMasterDetailController.initMasterDetailPaneController();
         initContinuationVbox();
     }
+
     public void initInputsInFlowExecutionTab() {
         executeButton.setDisable(true);
         inputValuesHBox.getChildren().clear();
     }
+
     public void initInputsTable(List<DTOFlowFreeInputs> freeInputs) {
         executeButton.setDisable(true);
         inputValuesHBox.getChildren().clear();
@@ -149,24 +158,28 @@ public class ClientFlowExecutionTabController {
 
             Spinner<Integer> spinner = new Spinner<>();
             TextField textField = new TextField();
-            
-            if(simpleName.equals("STRING")) {
+            ComboBox<String> comboBox = new ComboBox<>();
+
+            if (input.getOriginalName().equals("METHOD") || input.getOriginalName().equals("OPERATION")) {
+                setComboBox(comboBox, input);
+                vbox.setVgrow(spinner, Priority.ALWAYS);
+                vbox.getChildren().addAll(label, comboBox);
+            }
+            else if (simpleName.equals("STRING") || simpleName.equals("JSON")) {
                 setTextFieldSetting(textField, input);
-                if(input.getOriginalName().equals("FOLDER_NAME")){
+                if (input.getOriginalName().equals("FOLDER_NAME")) {
                     openDirectoryChooser(textField);
                     textField.setCursor(Cursor.HAND);
-                }
-                else if(input.getOriginalName().equals("SOURCE")){
+                } else if (input.getOriginalName().equals("SOURCE")) {
                     openChooseDialog(textField);
                     textField.setCursor(Cursor.HAND);
-                }
-                else if(input.getOriginalName().equals("FILE_NAME")){
+                } else if (input.getOriginalName().equals("FILE_NAME")) {
                     openFileChooser(textField);
                     textField.setCursor(Cursor.HAND);
                 }
                 vbox.getChildren().addAll(label, textField);
                 vbox.setVgrow(textField, Priority.ALWAYS);
-            } else {
+            }else {
                 setSpinnerSetting(spinner, input);
                 vbox.setVgrow(spinner, Priority.ALWAYS);
                 vbox.getChildren().addAll(label, spinner);
@@ -179,6 +192,24 @@ public class ClientFlowExecutionTabController {
             inputValuesHBox.getChildren().add(vbox);
             inputValuesHBox.setSpacing(50);
         });
+    }
+
+    public void setComboBox(ComboBox comboBox, Input input) {
+
+        if(input.getOriginalName().equals("METHOD")){
+            comboBox.getItems().addAll("PUT", "GET","POST", "DELETE");
+        }
+        if(input.getOriginalName().equals("OPERATION")) {
+            comboBox.getItems().addAll("ZIP", "UNZIP");
+        }
+
+        comboBox.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
+                commitEdit(t1,input); // Call the commitEdit() method with the selected value (t1)
+            }
+        });
+
     }
     public void getFreeInputs(String flowName) {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.FREE_INPUTS_BY_FLOW_NAME).newBuilder();

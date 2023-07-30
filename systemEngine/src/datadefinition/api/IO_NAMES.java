@@ -23,7 +23,9 @@ public class IO_NAMES {
    public final static String SOURCE = "SOURCE";
 
    public final static String RESULT = "RESULT";
+
    public final static String CONTENT = "CONTENT";
+
    public final static String FILE_NAME = "FILE_NAME";
    public final static String LINE = "LINE";
    public final static String DATA = "DATA";
@@ -38,6 +40,8 @@ public class IO_NAMES {
 
     public final static String CODE = "CODE";
     public final static String RESPONSE_BODY = "RESPONSE_BODY";
+    public final static String JSON = "JSON";
+    public final static String JSON_PATH = "JSON_PATH";
 
 
 
@@ -70,6 +74,11 @@ public class IO_NAMES {
    name2DataDefinition.put(BODY, DataDefinitionRegistry.JSON);
    name2DataDefinition.put(CODE, DataDefinitionRegistry.NUMBER);
    name2DataDefinition.put(RESPONSE_BODY, DataDefinitionRegistry.STRING);
+   name2DataDefinition.put(JSON, DataDefinitionRegistry.JSON);
+   name2DataDefinition.put(JSON_PATH, DataDefinitionRegistry.STRING);
+
+
+
     }
 
     //  public static DataDefinitions getDataDefinition(String name) {return name2DataDefinition.get(name);}

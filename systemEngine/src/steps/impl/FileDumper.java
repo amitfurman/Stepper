@@ -39,8 +39,9 @@ public class FileDumper extends AbstractStepDefinition {
         }*/
 
         context.storeLogLine("About to create file named " + fileName);
-        try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8")))
-        { out.write(content);}
+        try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8"))) {
+            out.write(content);
+        }
         catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (UnsupportedEncodingException e) {
