@@ -52,6 +52,8 @@ public class FlowExecutor implements Runnable {
 
 
         for (Map.Entry<String, Object> entry : freeInputs.getFreeInputMap().entrySet()) {
+            System.out.println("key" + entry.getKey());
+            System.out.println("Value" + entry.getValue());
             context.storeDataValue(entry.getKey(), entry.getValue());
         }
 

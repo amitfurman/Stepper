@@ -28,13 +28,16 @@ public class GetDTOFlowExecutionServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             systemengine system = ServletUtils.getSystemEngine(getServletContext());
             DTOFlowExeInfo dtoFlowExecution = system.getAllFlowExecutionData(uuid);
+            System.out.println("in servlettt");
+            System.out.println(dtoFlowExecution.getFlowName());
             Gson gson = new Gson();
             String json = gson.toJson(dtoFlowExecution);
             out.println(json);
             out.flush();
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("in catch");
+            e.printStackTrace();
         }
     }
 }

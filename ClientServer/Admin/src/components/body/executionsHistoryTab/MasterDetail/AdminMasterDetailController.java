@@ -197,14 +197,20 @@ public class AdminMasterDetailController {
         } else {
             flowNameItem = new TreeItem<>("Step Name:" + step.getOriginalName() + " (renamed to " + step.getFinalName() + ")");
         }
+        System.out.println("step name" + step.getOriginalName());
 
         rootItem.getChildren().add(flowNameItem);
+        System.out.println("step Total Running Time" + step.getTotalTime());
 
         TreeItem<Object> totalTimeItem = new TreeItem<>("Total Running Time: " + String.valueOf(step.getTotalTime().toMillis()) + " ms");
         rootItem.getChildren().add(totalTimeItem);
 
+        System.out.println("Step Result " + step.getResult());
+
         TreeItem<Object> resultItem = new TreeItem<>("Step Result: " + step.getResult());
         rootItem.getChildren().add(resultItem);
+
+        System.out.println("Step Summery Line " + step.getSummaryLine());
 
         TreeItem<Object> summaryItem = new TreeItem<>("Step Summery Line: " + step.getSummaryLine());
         rootItem.getChildren().add(summaryItem);
@@ -223,6 +229,9 @@ public class AdminMasterDetailController {
         AtomicInteger outputIndex = new AtomicInteger(1);
 
         step.getInputs().stream().forEach(ioInput-> {
+            System.out.println("ioInput name" + ioInput.getFinalName() );
+            System.out.println("ioInput Type" + ioInput.getType() );
+            System.out.println("ioInput Value" + ioInput.getValue());
             TreeItem<Object> input = new TreeItem<>("Input " + inputIndex.getAndIncrement());
             inputItem.getChildren().add(input);
             input.getChildren().add(new TreeItem<>("Final Name: " + ioInput.getFinalName()));
@@ -241,7 +250,6 @@ public class AdminMasterDetailController {
         step.getOutputs().stream().forEach(ioOutput -> {
             TreeItem<Object> output = new TreeItem<>("Output " + outputIndex.getAndIncrement());
             outputItem.getChildren().add(output);
-
             output.getChildren().add(new TreeItem<>("Final Name: " + ioOutput.getFinalName()));
             if (ioOutput.getType().equals("RELATION") || ioOutput.getType().equals("STRING_LIST")
                     || ioOutput.getType().equals("FILE_LIST") || ioOutput.getType().equals("MAPPING2NUMBERS")) {
@@ -278,24 +286,30 @@ public class AdminMasterDetailController {
         TreeItem<Object> rootItem = new TreeItem<>("Flow Details");
         rootItem.setExpanded(true);
 
+        System.out.println("floe name" + flowExecution.getFlowName());
         TreeItem<Object> flowNameItem = new TreeItem<>("Flow Name: " + flowExecution.getFlowName());
         rootItem.getChildren().add(flowNameItem);
+
+        System.out.println("floe id" + flowExecution.getID());
 
         TreeItem<Object> flowIdItem = new TreeItem<>("Flow ID: " + flowExecution.getID());
         rootItem.getChildren().add(flowIdItem);
 
+        System.out.println("floe start" + flowExecution.getStartTime());
         TreeItem<Object> startTimeItem = new TreeItem<>("Start Time: " + flowExecution.getStartTime());
         rootItem.getChildren().add(startTimeItem);
 
 
         if (flowExecution.getResultExecute() != null) {
-            // Add Flow Result
+            System.out.println("floe result" + flowExecution.getResultExecute());
             TreeItem<Object> flowResultItem = new TreeItem<>("Flow Result: " + flowExecution.getResultExecute());
             rootItem.getChildren().add(flowResultItem);
 
         }
         if (flowExecution.getTotalTime() != null) {
             // Add Total Running Time
+            System.out.println("floe getTotalTime" + flowExecution.getTotalTime());
+
             TreeItem<Object> totalTimeItem = new TreeItem<>("Total Running Time: " + String.format("%d ms", flowExecution.getTotalTime().toMillis()));
             rootItem.getChildren().add(totalTimeItem);
         }
@@ -312,6 +326,9 @@ public class AdminMasterDetailController {
 
         sortedList.forEach(input -> {
             TreeItem<Object> inputItem = new TreeItem<>("Free Input " + freeInputIndex.getAndIncrement());
+            System.out.println("free input name" + input.getName() );
+            System.out.println("free input Type" + input.getType().toString() );
+            System.out.println("free input Value" + input.getValue().toString() );
             freeInputsItem.getChildren().add(inputItem);
             inputItem.getChildren().addAll(
                     new TreeItem<>("Final Name: " + input.getName()),
@@ -335,7 +352,9 @@ public class AdminMasterDetailController {
                 TreeItem<Object> outputItem = new TreeItem<>("Output " + outputIndex.getAndIncrement());
                 outputsItem.getChildren().add(outputItem);
 
-
+                System.out.println("output name" + output.getFinalName() );
+                System.out.println("output Type" + output.getType().toString() );
+                System.out.println("output Value" + output.getValue());
                 outputItem.getChildren().addAll(
                         new TreeItem<>("Final Name: " + output.getFinalName()),
                         new TreeItem<>("Type: " + output.getType().toString()),

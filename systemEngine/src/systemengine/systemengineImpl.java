@@ -9,6 +9,7 @@ import flow.api.FlowDefinition;
 import flow.api.FlowIO.IO;
 import flow.api.FlowIO.SingleFlowIOData;
 import flow.execution.FlowExecution;
+import flow.execution.StepExecutionData;
 import flow.execution.runner.FlowExecutor;
 import flow.impl.FlowsManager;
 import flow.mapping.FlowContinuationMapping;
@@ -305,8 +306,17 @@ public class systemengineImpl implements systemengine {
     @Override
     public DTOFlowExeInfo getAllFlowExecutionData(UUID flowId) {
         FlowExecution executedFlow = flowExecutionList.stream().filter(flow -> flow.getUniqueId().equals(flowId)).findFirst().get();
+        out.println("before creating dto");
+        out.println(executedFlow.getUserName());
+        out.println(executedFlow.getFlowName());
+        out.println(executedFlow.getUniqueId().toString());
+        out.println(getStartTimeFormatted(executedFlow.getStartTime()));
+        out.println( executedFlow.getTotalTime());
+        out.println(executedFlow.getFlowExecutionResult());
+
         List<DTOFreeInputs> freeInputs = new ArrayList<>();
         Map<String, Object > freeInputsValues = executedFlow.getFreeInputsValues();
+        freeInputsValues.entrySet().stream().forEach(o -> out.println(o.getValue()));
 
         ////check if it's for outputs
         List<DTOSingleFlowIOData> IOlist = new LinkedList<>();
@@ -323,14 +333,24 @@ public class systemengineImpl implements systemengine {
             freeInputs.add(input);
         });
 
+        out.println("freeInputs" + freeInputs);
+
         List<DTOStepsInFlow> steps = new ArrayList<>();
-        executedFlow.getStepExecutionDataList().forEach(io -> {
+        out.println("size" + executedFlow.getStepExecutionDataList().size());
+        List<StepExecutionData> stepExecutionDataListCopy = new ArrayList<>(executedFlow.getStepExecutionDataList());
+
+        stepExecutionDataListCopy.forEach(io -> {
+            out.println("in for");
 
            List<DTOInput> inputs = new ArrayList<>();
             executedFlow.getIOlist().stream().filter(io1 -> io1.getStepName().equals(io.getFinalNameStep()))
                     .forEach(ioInput -> {
                                 if (ioInput.getIOType().equals(IO.INPUT)) {
                                     Object inputValue = IOlist.stream().filter(i-> (i.getFinalName().equals(ioInput.getFinalName()) && i.getStepName().equals(ioInput.getStepName()))).findFirst().get().getValue();
+                                    out.println(ioInput.getOriginalName());
+                                    out.println(inputValue);
+                                    out.println(ioInput.getStepName());
+                                    out.println(ioInput.getDD().toString());
                                    inputs.add(new DTOInput(ioInput.getOriginalName(),ioInput.getFinalName(),inputValue,ioInput.getStepName(), ioInput.getDD().toString()));
                                 }
                             });
@@ -340,6 +360,10 @@ public class systemengineImpl implements systemengine {
                     .forEach(ioOutput -> {
                         if (ioOutput.getIOType().equals(IO.OUTPUT)) {
                             Object outputValue = IOlist.stream().filter(i-> (i.getFinalName().equals(ioOutput.getFinalName()) && i.getStepName().equals(ioOutput.getStepName()))).findFirst().get().getValue();
+                            out.println(ioOutput.getOriginalName());
+                            out.println(outputValue);
+                            out.println(ioOutput.getStepName());
+                            out.println(ioOutput.getDD().toString());
                             outputs.add(new DTOOutput(ioOutput.getOriginalName(),ioOutput.getFinalName(), outputValue ,ioOutput.getStepName(), ioOutput.getDD().toString()));
                         }
                     });
@@ -348,23 +372,42 @@ public class systemengineImpl implements systemengine {
             io.getLoggerList().stream().forEach(logger -> {
                 loggers.add(new DTOLogger(logger));
             });
+            out.println("before add to step");
+            out.println(io.getOriginalName());
+            out.println(io.getFinalNameStep());
+            out.println(io.getResult());
+            out.println(io.getTotalStepTime());
+            out.println(inputs);
+            out.println(outputs);
+            out.println(loggers);
+            out.println(io.getSummaryLine());
 
+            out.println("before add step " + io.getOriginalName());
             steps.add(new DTOStepsInFlow(io.getOriginalName(),io.getFinalNameStep(),io.getResult(),io.getTotalStepTime(),inputs, outputs , loggers , io.getSummaryLine()));
+            out.println("after add step " + io.getOriginalName());
         });
 
+        out.println("after steps");
         List<DTOOutput> outputsOfFlow = new ArrayList<>();
         executedFlow.getIOlist().stream()
                 .forEach(io -> {
                     if (io.getIOType().equals(IO.OUTPUT)) {
                         Object outputValue = IOlist.stream().filter(i-> (i.getFinalName().equals(io.getFinalName()))).findFirst().get().getValue();
+                        out.println(io.getOriginalName());
+                        out.println(outputValue);
+                        out.println(io.getStepName());
+                        out.println(io.getDD().toString());
                         outputsOfFlow.add(new DTOOutput(io.getOriginalName(),io.getFinalName(), outputValue , io.getStepName(), io.getDD().toString()));
                     }
                 });
 
 
-        DTOFlowExeInfo dto= new DTOFlowExeInfo(executedFlow.getUserName(),executedFlow.getFlowName(), executedFlow.getUniqueId().toString(),getStartTimeFormatted(executedFlow.getStartTime()),
+        out.println(freeInputs);
+        out.println(steps);
+        out.println(outputsOfFlow);
+
+        return new DTOFlowExeInfo(executedFlow.getUserName(),executedFlow.getFlowName(), executedFlow.getUniqueId().toString(),getStartTimeFormatted(executedFlow.getStartTime()),
                 executedFlow.getTotalTime(), executedFlow.getFlowExecutionResult(), freeInputs, steps , outputsOfFlow );
-        return dto;
     }
     @Override
     public DTOFlowExeInfo getAllFlowExecutionDataNyName(String flowName) {
@@ -428,10 +471,14 @@ public class systemengineImpl implements systemengine {
     }
 
     public String getStartTimeFormatted(Instant startTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(startTime, ZoneId.systemDefault());
+        if (startTime!=null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            LocalDateTime localDateTime = LocalDateTime.ofInstant(startTime, ZoneId.systemDefault());
 
-        return localDateTime.format(formatter);
+            return localDateTime.format(formatter);
+        }
+        else
+            return null;
     }
 
     @Override

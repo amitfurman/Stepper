@@ -46,6 +46,7 @@ public class ExecuteFlowTask extends Task<Boolean> {
         return Boolean.TRUE;
     }
     public void getStepsFirstData(UUID flowId) throws IOException {
+        System.out.println(flowId + " flow id");
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.GET_DTO_FLOW_EXECUTION_SERVLET).newBuilder();
         urlBuilder.addQueryParameter("uuid", String.valueOf(flowId));
         String finalUrl = urlBuilder.build().toString();
@@ -60,7 +61,10 @@ public class ExecuteFlowTask extends Task<Boolean> {
 
         if (response.isSuccessful()) {
             String rawBody = response.body().string();
+            System.out.println(rawBody);
             DTOFlowExeInfo executedData = GSON_INSTANCE.fromJson(rawBody, new TypeToken<DTOFlowExeInfo>() {}.getType());
+            System.out.println("in servlet");
+            System.out.println(executedData.getFlowName() + "in servlet");
             masterDetailController.initMasterDetailPaneController(executedData);
             DTOFlowExeInfo finalExecutedData2 = executedData;
             Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData2));

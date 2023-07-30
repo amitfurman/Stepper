@@ -82,6 +82,7 @@ public class StepExecutionContextImpl implements StepExecutionContext {
             }
         });
 */
+
         if (expectedDataType.isAssignableFrom(theExpectedDataDefinition.getType())) {
             Object aValue = dataValues.get(ioAlias);
             if (aValue != null) {
@@ -123,7 +124,6 @@ public class StepExecutionContextImpl implements StepExecutionContext {
 
     @Override
     public boolean storeDataValue(String dataName, Object value) {
-        System.out.println("Data name: " + dataName);
         String ioAlias;
         DataDefinitions theData;
         if(currInvokingStep != null){
@@ -140,9 +140,6 @@ public class StepExecutionContextImpl implements StepExecutionContext {
             }
             theData = stepAndIOName2DD.get(dataName);
         }
-
-        System.out.println("data " + theData.getType());
-        System.out.println("value "+ value.getClass());
 
         if (value.getClass().equals(Double.class)) {
             value = ((Double) value).intValue();
