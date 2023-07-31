@@ -28,6 +28,7 @@ public class FileDumper extends AbstractStepDefinition {
         Instant start = Instant.now();
         String content = context.getDataValue(IO_NAMES.CONTENT, String.class);
         String fileName = context.getDataValue(IO_NAMES.FILE_NAME, String.class);
+        System.out.println("content" + content);
 
       //  File file = new File(fileName);
 

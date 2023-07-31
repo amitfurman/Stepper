@@ -84,11 +84,12 @@ public class StepExecutionContextImpl implements StepExecutionContext {
 */
 
         if (expectedDataType.isAssignableFrom(theExpectedDataDefinition.getType())) {
-            Object aValue = dataValues.get(ioAlias);
+            String alias = ioAlias;
+            Object aValue = dataValues.get(alias);
             if (aValue != null) {
                 return expectedDataType.cast(aValue);
-            }else if(!(IOlist.stream().filter(io -> io.getOriginalName().equals(dataName)).findFirst().get().getOptionalOutput().isEmpty())){
-                aValue = dataValues.get(IOlist.stream().filter(io -> io.getOriginalName().equals(dataName)).findFirst().get().getOptionalOutput().get(0).getFinalName());
+            }else if(!(IOlist.stream().filter(io -> (io.getFinalName().equals(alias) && io.getOriginalName().equals(dataName))).findFirst().get().getOptionalOutput().isEmpty())){
+                aValue = dataValues.get(IOlist.stream().filter(io -> (io.getFinalName().equals(alias) && io.getOriginalName().equals(dataName))).findFirst().get().getOptionalOutput().get(0).getFinalName());
                 return expectedDataType.cast(aValue);
             } else {
                 return null; //for the optional inputs that are not provided

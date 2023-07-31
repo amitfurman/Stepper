@@ -69,11 +69,8 @@ public class ClientMasterDetailController {
         FlowMasterDetails.setMasterNode(stackPane);
     }
     public void initMasterDetailPaneController(DTOFlowExeInfo flowExecution) {
-        System.out.println("initMasterDetailPaneController");
         if (flowExecution == null)
             System.out.println("flowexe is null");
-        System.out.println(flowExecution.getFlowName());
-        System.out.println(flowExecution.getID());
         this.flowExecution = flowExecution;
         detailPane = new VBox();
         detailPane.setPadding(new Insets(10));
@@ -85,7 +82,6 @@ public class ClientMasterDetailController {
         stepCounter = 1;
     }
     public void updateFlowLabel(DTOFlowExeInfo flowExecution) {
-        System.out.println("updateFlowLabel");
         this.flowExecution = flowExecution;
         TreeView treeView = null;
         treeView = cratingGeneralFlowExecutionDetail();
@@ -99,8 +95,6 @@ public class ClientMasterDetailController {
         }
     }
     public void addStepsToMasterDetail(DTOFlowExeInfo flowExecution) {
-        System.out.println("addStepsToMasterDetail");
-
         this.flowExecution = flowExecution;
         for (DTOStepsInFlow stepExecution : flowExecution.getSteps()) {
             String stepName = stepExecution.getFinalName();
@@ -130,8 +124,6 @@ public class ClientMasterDetailController {
         FlowMasterDetails.setDividerPosition(0.3);
     }
     private Label createDetailLabel(String text, MasterDetailPane masterDetailPane, boolean isFirstLabel, VBox detailPane) {
-        System.out.println("createDetailLabel");
-
         Label detailLabel = new Label(text);
         if (isFirstLabel) {
             detailLabel.getStyleClass().add("first-label");
@@ -191,12 +183,9 @@ public class ClientMasterDetailController {
         }
     }
     TreeView<Object> cratingStepsExecutionDetail(String dataName) {
-        System.out.println("cratingStepsExecutionDetail");
 
         TreeItem<Object> rootItem = new TreeItem<>("Step Details");
         rootItem.setExpanded(true);
-
-
 
         int colonIndex = dataName.indexOf(":"); // Find the index of the colon
         String stepFinalName;
@@ -213,11 +202,6 @@ public class ClientMasterDetailController {
         } else {
             flowNameItem = new TreeItem<>("Step Name:" + step.getOriginalName() + " (renamed to " + step.getFinalName() + ")");
         }
-        System.out.println("step name" + step.getOriginalName());
-        System.out.println("step Total Running Time" + step.getTotalTime());
-        System.out.println("Step Result " + step.getResult());
-        System.out.println("Step Summery Line " + step.getSummaryLine());
-
 
         rootItem.getChildren().add(flowNameItem);
 
@@ -247,9 +231,6 @@ public class ClientMasterDetailController {
                     TreeItem<Object> input = new TreeItem<>("Input " + inputIndex.getAndIncrement());
                     inputItem.getChildren().add(input);
                     input.getChildren().add(new TreeItem<>("Final Name: " + ioInput.getFinalName()));
-            System.out.println("ioInput name" + ioInput.getFinalName() );
-            System.out.println("ioInput Type" + ioInput.getType() );
-            System.out.println("ioInput Value" + ioInput.getValue());
 
                    if (ioInput.getType().equals("RELATION") || ioInput.getType().equals("STRING_LIST")
                             || ioInput.getType().equals("FILE_LIST") || ioInput.getType().equals("MAPPING2NUMBERS")) {
@@ -300,17 +281,6 @@ public class ClientMasterDetailController {
         return treeView;
     }
     TreeView<Object> cratingGeneralFlowExecutionDetail() {
-        System.out.println("cratingGeneralFlowExecutionDetail");
-
-        System.out.println("floe name" + flowExecution.getFlowName());
-        System.out.println("floe id" + flowExecution.getID());
-        System.out.println("floe start" + flowExecution.getStartTime());
-        System.out.println("floe result" + flowExecution.getResultExecute());
-        System.out.println("floe getTotalTime" + flowExecution.getTotalTime());
-
-
-
-
 
         TreeItem<Object> rootItem = new TreeItem<>("Flow Details");
         rootItem.setExpanded(true);
@@ -348,9 +318,6 @@ public class ClientMasterDetailController {
                 .collect(Collectors.toList());
 
         sortedList.forEach(input -> {
-            System.out.println("free input name" + input.getName() );
-            System.out.println("free input Type" + input.getType().toString() );
-            System.out.println("free input Value" + input.getValue());
             TreeItem<Object> inputItem = new TreeItem<>("Free Input " + freeInputIndex.getAndIncrement());
             freeInputsItem.getChildren().add(inputItem);
             inputItem.getChildren().addAll(
@@ -374,9 +341,6 @@ public class ClientMasterDetailController {
             for (DTOOutput output : outputs) {
                 TreeItem<Object> outputItem = new TreeItem<>("Output " + outputIndex.getAndIncrement());
                 outputsItem.getChildren().add(outputItem);
-                System.out.println("output name" + output.getFinalName() );
-                System.out.println("output Type" + output.getType().toString() );
-                System.out.println("output Value" + output.getValue());
                 outputItem.getChildren().addAll(
                         new TreeItem<>("Final Name: " + output.getFinalName()),
                         new TreeItem<>("Type: " + output.getType().toString()),
@@ -395,7 +359,6 @@ public class ClientMasterDetailController {
     }
 
     public Hyperlink showOutputValue(String type,Object io) {
-        System.out.println("showOutputValue");
 
         Hyperlink viewDataLink = new Hyperlink("View Data");
         viewDataLink.setOnAction(event -> {
@@ -428,7 +391,6 @@ public class ClientMasterDetailController {
     }
 
     public TableView showMappingData(Object io) {
-        System.out.println("showMappingData");
         LinkedTreeMap<String, Object> linkedTreeMap = (LinkedTreeMap<String, Object>) io;
         TableView<Map.Entry<Number, Number>> table = new TableView<>();
         table.setEditable(false);
@@ -474,14 +436,12 @@ public class ClientMasterDetailController {
     }
 
     public static Map<Integer, Double> parseStringToMap(String jsonString) {
-        System.out.println("parseStringToMap");
         Gson gson = new Gson();
         Type type = new TypeToken<Map<Integer, Double>>() {}.getType();
         return gson.fromJson(jsonString, type);
     }
 
     public ListView<String> showListData(Object io , String type) {
-        System.out.println("showListData");
         ListView<String> list = new ListView<>();
 
         ObservableList<String> items = FXCollections.observableArrayList();
@@ -500,7 +460,6 @@ public class ClientMasterDetailController {
         return list;
     }
     public List<String> extractPathsFromList(String listString) {
-        System.out.println("extractPathsFromList");
         List<String> pathsList = new ArrayList<>();
 
         // Regular expression pattern to match the paths
@@ -515,7 +474,6 @@ public class ClientMasterDetailController {
     }
 
     public TableView showRelationData(Object io) {
-        System.out.println("showRelationData");
         TableView<Map<String, String>> table = new TableView<>();
         table.setEditable(false);
         table.setSelectionModel(null);

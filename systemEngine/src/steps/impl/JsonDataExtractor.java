@@ -33,22 +33,43 @@ public class JsonDataExtractor extends AbstractStepDefinition {
         Instant start = Instant.now();
         String json = context.getDataValue("JSON", String.class); //need to be JSON?
         String jsonPath = context.getDataValue("JSON_PATH", String.class);
+       
 
         try {
-            JsonParser jsonParser = new JsonParser();
-            JsonElement jsonElement = jsonParser.parse(json);
+            String[] dataArray = jsonPath.split("\\|");
+            StringBuilder result = new StringBuilder();
+            StringBuilder jsonPathStr = new StringBuilder();
 
-            // Extract value based on the JSON path
-            Object result = JsonPath.read(jsonElement.toString(), jsonPath);
+            for (String path : dataArray) {
+                result.append(JsonPath.read(json, path.trim()).toString()).append(", ");
+            }
 
-            if (result == null) {
+/*
+            String result = JsonPath.read(json, jsonPath);
+*/
+
+            if (result.toString().equals("")) {
                 // No value found for the JSON path
                 String logMessage = "No value found for json path " + jsonPath;
                 context.storeLogLineAndSummaryLine(logMessage);
                 context.storeStepTotalTime(start);
                 return StepResult.SUCCESS;
             }
+
+            System.out.println("****value " + result.toString());
             context.storeDataValue("VALUE", result.toString());
+
+            // Log the extraction details
+            context.storeLogLineAndSummaryLine("Extracting data " + jsonPath + ". Value: " + result);
+            context.storeStepTotalTime(start);
+            return StepResult.SUCCESS;
+        } catch (Exception e) {
+            context.storeLogLineAndSummaryLine("Failed to extract data. Error: " + e.getMessage());
+            context.storeStepTotalTime(start);
+            return StepResult.FAILURE;
+        }
+    }
+}
 
 /*            JsonParser jsonParser = new JsonParser();
             JsonElement jsonElement = jsonParser.parse(json);*/
@@ -57,7 +78,7 @@ public class JsonDataExtractor extends AbstractStepDefinition {
 */
 
 
-            // Extract values based on the JSON path
+// Extract values based on the JSON path
 /*
             Object result = JsonPath.read(jsonElement.getAsString(), jsonPath);
 */
@@ -90,15 +111,3 @@ public class JsonDataExtractor extends AbstractStepDefinition {
             } else {
                 context.storeDataValue("VALUE", result.toString());
             }*/
-
-            // Log the extraction details
-            context.storeLogLineAndSummaryLine("Extracting data " + jsonPath + ". Value: " + result);
-            context.storeStepTotalTime(start);
-            return StepResult.SUCCESS;
-        } catch (Exception e) {
-            context.storeLogLineAndSummaryLine("Failed to extract data. Error: " + e.getMessage());
-            context.storeStepTotalTime(start);
-            return StepResult.FAILURE;
-        }
-    }
-}

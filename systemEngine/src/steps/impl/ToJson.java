@@ -3,9 +3,7 @@ package steps.impl;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;*/
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import datadefinition.DataDefinitionRegistry;
 import datadefinition.api.IO_NAMES;
 import flow.execution.context.StepExecutionContext;
@@ -31,12 +29,20 @@ public class ToJson extends AbstractStepDefinition {
     public StepResult invoke(StepExecutionContext context) {
         Instant start = Instant.now();
         String content = context.getDataValue(IO_NAMES.CONTENT, String.class);
-
+        System.out.println("content in json" + content);
         try {
             Gson gson = new Gson();
-            Object jsonObject = gson.fromJson(content, Object.class);
+           // Object jsonObject = gson.fromJson(content, Object.class);
             context.storeLogLineAndSummaryLine("Content is JSON string. Converting it to JSON...");
-            JsonObject json = gson.toJsonTree(jsonObject).getAsJsonObject(); ////check
+           // JsonObject json = gson.toJsonTree(jsonObject).getAsJsonObject(); ////check
+           // JsonObject object = JsonParser.parseString(content).getAsJsonObject();
+
+            JsonParser parser = new JsonParser();
+            JsonElement json = parser.parse(content);
+
+            System.out.println("to json" + json);
+            System.out.println("to json. to string " + json.toString());
+
             context.storeDataValue("JSON", json.toString());
 
 
