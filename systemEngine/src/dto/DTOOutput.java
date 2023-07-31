@@ -6,7 +6,6 @@ public class DTOOutput {
     Object value;
     String stepName;
     String type;
-    String valueString;
 
     public DTOOutput(String originalName, String finalName,Object value ,String type){
         this.originalName =originalName;
@@ -27,6 +26,4 @@ public class DTOOutput {
     public String getFinalName() {return finalName;}
     public String getStepName() {return stepName;}
     public String getType() {return type;}
-
-    public String getValueString() { return valueString;}
 }

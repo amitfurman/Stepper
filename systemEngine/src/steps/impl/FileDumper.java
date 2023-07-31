@@ -29,7 +29,7 @@ public class FileDumper extends AbstractStepDefinition {
         String content = context.getDataValue(IO_NAMES.CONTENT, String.class);
         String fileName = context.getDataValue(IO_NAMES.FILE_NAME, String.class);
 
-        File file = new File(fileName);
+      //  File file = new File(fileName);
 
 /*        if (file.exists()) {
             context.storeLogLineAndSummaryLine("Step failed because the target file path already exists.");

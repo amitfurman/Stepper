@@ -32,6 +32,7 @@ public class CollectFilesInFolder extends AbstractStepDefinition {
     public StepResult invoke(StepExecutionContext context) {
         Instant start = Instant.now();
         String folderPath = context.getDataValue(IO_NAMES.FOLDER_NAME, String.class);
+        System.out.println("folderPath " + folderPath);
         String filter = context.getDataValue(IO_NAMES.FILTER, String.class);
         FileListData FILES_LIST = new FileListData(new ArrayList<File>());
         int TotalFound = 0 ;

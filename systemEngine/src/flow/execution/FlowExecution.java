@@ -71,7 +71,7 @@ public class FlowExecution  implements Serializable {
     public void setTotalTime(Duration totalTime) {this.totalTime = totalTime;}
     public void setFlowExecutionResult(FlowExecutionResult result){ this.flowExecutionResult = result;}
     public void setStepExecutionDataList(List<StepExecutionData> stepExecutionDataList){this.stepExecutionDataList = stepExecutionDataList;}
-    public  List<StepExecutionData> getStepExecutionDataList(){ return stepExecutionDataList;}
+    synchronized public  List<StepExecutionData> getStepExecutionDataList(){ return stepExecutionDataList;}
     public Map<String,Object> getDataValues(){ return dataValues;}
     public void setDataValues(Map<String,Object> dataValues){ this.dataValues = dataValues;}
     public Instant getStartTime() { return startTime; }
