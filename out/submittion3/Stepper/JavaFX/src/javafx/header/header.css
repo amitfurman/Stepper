@@ -1,0 +1,44 @@
+#stepperTitle {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffeaec;
+    -fx-text-alignment: center;
+    -fx-font-family: "Cooper Black";
+    -fx-effect: dropshadow( gaussian , rgb(54, 69, 79), 0,0,2,1 );
+    -fx-effect-radius: 5px;
+}
+
+#chosenXmlFilePath {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #36454f;
+    -fx-background-color: #fdfff7;
+    -fx-border-color: #36454f;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+
+}
+
+#chooseXMLFileButton {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #36454f;
+    -fx-background-color: #ffeaec;
+    -fx-border-color: #36454f;
+    -fx-border-width: 1px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+
+}
+
+#chooseXMLFileButton:hover {
+    -fx-background-color: #ffeaec;
+    -fx-text-fill: #36454f;
+    -fx-opacity: 0.8;
+}
+
+.errors {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff316e;
+}

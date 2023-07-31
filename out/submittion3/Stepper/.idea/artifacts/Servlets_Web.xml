@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="Servlets:Web">
+    <output-path>$PROJECT_DIR$/out/artifacts/Servlets_Web</output-path>
+    <root id="archive" name="Servlets_Web.war">
+      <element id="artifact" artifact-name="Servlets:Web exploded" />
+      <element id="directory" name="WEB-INF" />
+    </root>
+  </artifact>
+</component>

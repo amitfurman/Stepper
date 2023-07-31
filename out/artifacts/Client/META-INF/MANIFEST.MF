@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Main-Class: ClientMain
+Class-Path: systemEngine.jar controlsfx-8.40.14.jar CommonUtils.jar gson
+ -2.1.jar gson-2.1-javadoc.jar gson-2.1-sources.jar accessors-smart-2.4.
+ 8.jar json-path-2.7.0.jar json-smart-2.4.8.jar slf4j-api-2.0.6.jar okio
+ -2.8.0.jar okhttp-4.9.1.jar kotlin-stdlib-common-1.4.10.jar kotlin-stdl
+ ib-1.4.10.jar annotations-13.0.jar gson-2.8.8.jar
+

@@ -1,0 +1,17 @@
+#barChart1,
+#barChart2,
+#barChart3,
+#barChart4{
+    -fx-background-color: #f0f0f0;
+}
+
+#barChart1 .chart-bar,
+#barChart2 .chart-bar,
+#barChart3 .chart-bar,
+#barChart4 .chart-bar{
+    -fx-bar-fill: #ffeaec;
+    -fx-bar-border-color: black;
+    -fx-bar-border-width: 1px;
+    -fx-bar-border-radius: 5px;
+}
+

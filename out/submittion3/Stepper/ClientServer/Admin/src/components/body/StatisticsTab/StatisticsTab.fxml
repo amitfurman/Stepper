@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.layout.*?>
+<Tab fx:id="StatisticsTab" styleClass="tabs" text="Statistics" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="components.body.StatisticsTab.AdminStatisticsTabController">
+  <content>
+    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="600.0" stylesheets="@StatisticsTab.css">
+         <children>
+            <GridPane alignment="CENTER" prefHeight="267.0" prefWidth="594.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="10.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <BarChart id="barChart1" fx:id="FlowNumberOfRunsChart" legendVisible="false" styleClass="chart-bar" title="Flow Number Of Runs" GridPane.rowIndex="1">
+                     <xAxis>
+                        <CategoryAxis fx:id="FlowNumberOfRunsChartXAxis" label="Flow Name" prefHeight="20.0" prefWidth="249.0" tickLength="10.0" tickMarkVisible="false">
+                           <padding>
+                              <Insets bottom="5.0" />
+                           </padding>
+                        </CategoryAxis>
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis label="Number Of Runs" prefHeight="126.0" prefWidth="43.0" side="LEFT" tickLength="10.0" upperBound="20.0" />
+                     </yAxis>
+                  </BarChart>
+                  <BarChart id="barChart2" fx:id="AverageFlowsRunTimeChart" legendVisible="false" styleClass="chart-bar" title="Average Flows Run Time in ms" GridPane.rowIndex="2">
+                     <xAxis>
+                        <CategoryAxis fx:id="AverageFlowsRunTimeChartXAxis" label="Flow Name" prefHeight="19.0" prefWidth="222.0" side="BOTTOM" tickMarkVisible="false" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis label="Average Run Time(ms)" side="LEFT" upperBound="20.0" />
+                     </yAxis>
+                  </BarChart>
+                  <BarChart id="barChart3" fx:id="StepNumberOfRunsChart" legendVisible="false" prefHeight="200.0" prefWidth="312.0" styleClass="chart-bar" title="Step Number Of Runs" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <xAxis>
+                        <CategoryAxis fx:id="StepNumberOfRunsChartXAxis" label="Step Name" prefHeight="19.0" prefWidth="222.0" side="BOTTOM" tickMarkVisible="false" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis label="Number of Runs" prefHeight="127.0" prefWidth="45.0" side="LEFT" upperBound="20.0" />
+                     </yAxis>
+                  </BarChart>
+                  <BarChart id="barChart4" fx:id="AverageStepsRunTimeChart" legendVisible="false" styleClass="chart-bar" title="Average Steps Run Time in ms" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <xAxis>
+                        <CategoryAxis fx:id="AverageStepsRunTimeChartXAxis" label="Step Name" prefHeight="20.0" prefWidth="243.0" side="BOTTOM" tickMarkVisible="false">
+                           <effect>
+                              <Glow />
+                           </effect>
+                        </CategoryAxis>
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis label="Average Run Time(ms)" prefHeight="126.0" prefWidth="49.0" side="LEFT" upperBound="20.0" />
+                     </yAxis>
+                  </BarChart>
+               </children>
+            </GridPane>
+         </children></AnchorPane>
+  </content>
+</Tab>
