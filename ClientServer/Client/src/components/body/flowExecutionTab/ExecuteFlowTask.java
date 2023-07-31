@@ -7,6 +7,7 @@ import components.body.flowExecutionTab.MasterDetail.ClientMasterDetailControlle
 import dto.DTOFlowExeInfo;
 import dto.DTOFlowExecution;
 import dto.DTOStepsInFlow;
+import flow.execution.FlowExecutionResult;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -65,9 +66,22 @@ public class ExecuteFlowTask extends Task<Boolean> {
             DTOFlowExeInfo executedData = GSON_INSTANCE.fromJson(rawBody, new TypeToken<DTOFlowExeInfo>() {}.getType());
             System.out.println("in servlet");
             System.out.println(executedData.getFlowName() + "in servlet");
+            System.out.println("result: " + executedData.getResultExecute());
             masterDetailController.initMasterDetailPaneController(executedData);
             DTOFlowExeInfo finalExecutedData2 = executedData;
             Platform.runLater(() -> masterDetailController.updateFlowLabel(finalExecutedData2));
+
+
+            if(executedData.getResultExecute() != null){
+                executedData =  makeSyncHttpRequest(this.flowId);
+                if (currentFlowId.getValue().equals(flowId.toString())) {
+                    DTOFlowExeInfo finalExecutedData = executedData;
+                    Platform.runLater(() -> masterDetailController.addStepsToMasterDetail(finalExecutedData));
+                }
+                //finalRequest();
+                response.close();
+            }
+/**/
             while (executedData.getResultExecute() == null) {
                 executedData =  makeSyncHttpRequest(this.flowId);
                 if (currentFlowId.getValue().equals(flowId.toString())) {
